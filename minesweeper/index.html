@@ -1,0 +1,25 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#07111d">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; connect-src 'none'; object-src 'none'; base-uri 'none'; form-action 'none'; frame-ancestors 'self'">
+  <title>Minesweeper</title>
+  <link rel="stylesheet" href="game.css">
+</head>
+<body>
+  <main class="game-shell">
+    <header><div><p>JasonDaemon.net Arcade · Puzzle</p><h1>Minesweeper</h1></div><button id="new-game-top" type="button">New field</button></header>
+    <section class="panel">
+      <div class="toolbar"><div class="difficulty" role="group" aria-label="Difficulty"><button class="active" data-difficulty="easy" type="button">Easy</button><button data-difficulty="medium" type="button">Medium</button><button data-difficulty="hard" type="button">Hard</button></div><button id="flag-mode" class="flag-button" type="button" aria-pressed="false">Flag mode</button></div>
+      <div class="readout"><article><span>Mines</span><strong id="mine-count">10</strong></article><article><span>Flags</span><strong id="flag-count">0</strong></article><article><span>Time</span><strong id="timer">0:00</strong></article><article><span>Best</span><strong id="best">—</strong></article></div>
+      <p id="status" class="status" aria-live="polite">Reveal a square to start.</p>
+      <div class="board-wrap"><div id="board" class="board" aria-label="Minefield"></div></div>
+      <p class="hint">Tap to reveal. Use flag mode on touch screens, or right-click to mark a mine.</p>
+    </section>
+  </main>
+  <script src="../shared/scores.js"></script>
+  <script src="game.js"></script>
+</body>
+</html>

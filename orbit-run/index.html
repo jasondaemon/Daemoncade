@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
+  <meta name="theme-color" content="#081421">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-title" content="Orbit Run">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <title>Orbit Run | JasonDaemon.net Arcade</title>
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-eval'; style-src 'self'; connect-src 'none'; img-src 'self' data:; object-src 'none'; base-uri 'none'; frame-ancestors 'self'">
+  <link rel="stylesheet" href="../shared/oiab-arcade.css">
+</head>
+<body>
+  <main class="arcade-shell">
+    <div id="stage" class="arcade-stage"></div>
+    <section class="arcade-hud" aria-live="polite">
+      <div><span>Score</span><strong id="score">0</strong></div>
+      <div><span>Stage</span><strong id="level">1</strong></div>
+      <div><span>Lives</span><strong id="lives">3</strong></div>
+      <div><span>Wave</span><strong id="wave">0</strong></div>
+    </section>
+    <div class="arcade-actions">
+      <span></span>
+      <button id="pauseButton" class="arcade-icon" type="button" aria-label="Pause">Ⅱ</button>
+    </div>
+    <p id="message" class="arcade-message" hidden></p>
+    <section id="startPanel" class="arcade-panel">
+      <p class="eyebrow">JasonDaemon.net Arcade</p>
+      <h1>Orbit Run</h1>
+      <p class="subtitle">Circle the edge of the tunnel and fire inward at enemies spiraling out of the center.</p>
+      <label class="arcade-field">Mode
+        <select id="runMode">
+          <option value="arcade">Arcade</option>
+          <option value="kids">Kids Mode</option>
+          <option value="challenge">Challenge</option>
+        </select>
+      </label>
+      <div class="arcade-menu">
+        <button id="startButton" class="primary" type="button">Start</button>
+        <button id="helpButton" type="button">How to Play</button>
+      </div>
+    </section>
+    <section id="helpPanel" class="arcade-panel" hidden>
+      <p class="eyebrow">How to Play</p>
+      <h2>Rotate. Fire. Survive.</h2>
+      <p>Use left/right, A/D, or touch around the ring to rotate. The ship auto-fires while moving. Enemies spiral outward and fire back.</p>
+      <p>Every fifth stage brings a center boss with rotating shields.</p>
+      <div class="arcade-menu"><button id="helpBack" class="primary" type="button">Back</button></div>
+    </section>
+    <section id="endPanel" class="arcade-panel" hidden>
+      <p class="eyebrow">Run Complete</p>
+      <h2 id="endTitle">Orbit Lost</h2>
+      <p id="endSummary"></p>
+      <div class="arcade-menu">
+        <button id="againButton" class="primary" type="button">Game Menu</button>
+      </div>
+    </section>
+  </main>
+  <script src="../vendor/pixi/pixi.min.js"></script>
+  <script src="../shared/scores.js"></script>
+  <script src="game.js"></script>
+</body>
+</html>

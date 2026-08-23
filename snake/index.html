@@ -1,0 +1,21 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#071827">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; connect-src 'none'; object-src 'none'; base-uri 'none'; form-action 'none'; frame-ancestors 'self'">
+  <title>Snake</title>
+  <link rel="stylesheet" href="game.css">
+</head>
+<body>
+  <main class="snake-shell">
+    <header><div><p>Arcade · DaemonOS edition</p><h1>Snake</h1></div><div class="score"><span>Score <b id="score">0</b></span><span>Best <b id="best">0</b></span></div></header>
+    <div class="toolbar"><button id="start" type="button">Start game</button><label>Difficulty<select id="difficulty"><option value="easy">Easy</option><option value="normal" selected>Normal</option><option value="hard">Hard</option></select></label><label>Walls<select id="walls"><option value="wrap">Wrap</option><option value="solid">Solid</option></select></label><button id="sound" type="button" aria-pressed="true">Sound on</button></div>
+    <section class="game-wrap"><canvas id="game" width="600" height="600" aria-label="Snake game board"></canvas><div id="message" class="message"><strong>Snake</strong><span>Use arrow keys, WASD, or the controls below.</span><small>Press Space to start · P to pause · R to restart</small></div></section>
+    <div class="touch-controls" aria-label="Touch controls"><button data-direction="up" type="button">↑</button><button data-direction="left" type="button">←</button><button data-direction="down" type="button">↓</button><button data-direction="right" type="button">→</button></div>
+  </main>
+  <script src="../shared/scores.js"></script>
+  <script src="game.js"></script>
+</body>
+</html>

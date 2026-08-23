@@ -1,0 +1,20 @@
+Standalone Games - Source and License Notes
+
+Minesweeper
+  Adapted by the repository owner from the Overland In A Box (OIAB) project.
+  OIAB has no public project license at the time of this adaptation.
+  The public edition removes OIAB profiles, server statistics, and appliance APIs.
+
+Snake
+  Adapted from DaemonOS, Copyright Jason Daemon.
+  DaemonOS source is licensed under the GNU General Public License, version 3.
+  Source: https://github.com/jasondaemon/daemonos
+  License: https://www.gnu.org/licenses/gpl-3.0.txt
+
+The public editions use no external runtime services or remotely loaded libraries.
+Checkers, Tic-Tac-Toe, and Blockfall were adapted from the local OIAB project for standalone, browser-only play. Multiplayer, server profiles, and network score submission have been removed.
+Connect Four, Dots and Boxes, and Hangman were similarly rebuilt as standalone local games from their OIAB counterparts.
+Chess uses the chess.js rules engine bundled with OIAB and a local-only computer opponent. See the chess.js source header for its license terms.
+Paddle Duel, Space Rocks, and Pinball were adapted from DaemonOS for standalone play. Pinball includes the Planck.js physics engine; its license notice remains in the bundled source.
+Casey was adapted from DaemonOS with its original maze, character, input, rendering, and synthesized-audio systems.
+Missiles Away, Chilopodophobia, Road Hopper, and Jungle Jumper were adapted from DaemonOS as local-only browser games.

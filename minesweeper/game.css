@@ -1,0 +1,50 @@
+:root{--bg:#102519;--text:#f5fbef;--muted:rgba(245,251,239,.68);--green:#80f08a;--gold:#ffd34e;--red:#ff756f;--line:rgba(236,248,236,.19);color-scheme:dark}
+*{box-sizing:border-box}
+html,body{margin:0;min-height:100%;overscroll-behavior:none}
+body{background:radial-gradient(circle at 15% 5%,rgba(128,240,138,.2),transparent 25rem),linear-gradient(135deg,#102519,#244e34 58%,#102b29);color:var(--text);font-family:"Avenir Next","Helvetica Neue",sans-serif}
+.game-shell{margin:auto;max-width:1040px;min-height:100dvh;padding:clamp(12px,2.5vw,28px)}
+header{align-items:end;display:flex;gap:1rem;justify-content:space-between;margin-bottom:1rem}
+header p{color:var(--green);font-size:.65rem;font-weight:800;letter-spacing:.15em;margin:0 0 .25rem;text-transform:uppercase}
+h1{font-size:clamp(2.2rem,7vw,4.5rem);letter-spacing:-.065em;line-height:.9;margin:0}
+.panel{backdrop-filter:blur(16px);background:linear-gradient(180deg,rgba(255,255,255,.08),transparent 35%),rgba(236,248,236,.1);border:1px solid var(--line);border-radius:22px;box-shadow:0 24px 70px rgba(0,0,0,.28);display:grid;gap:10px;padding:clamp(10px,2vw,18px)}
+button{color:inherit;cursor:pointer;font:750 .82rem inherit}
+.toolbar{align-items:center;display:grid;gap:8px;grid-template-columns:1fr auto}
+.difficulty{display:grid;gap:6px;grid-template-columns:repeat(3,minmax(0,1fr))}
+.difficulty button,.flag-button,header button{background:rgba(255,255,255,.09);border:1px solid var(--line);border-radius:99px;min-height:42px;padding:0 14px}
+.difficulty button.active,.flag-button.active,header button{background:var(--gold);border-color:transparent;color:#112015}
+.readout{display:grid;gap:6px;grid-template-columns:repeat(4,minmax(0,1fr))}
+.readout article{background:rgba(0,0,0,.18);border:1px solid var(--line);border-radius:14px;min-height:54px;padding:8px 10px}
+.readout span{color:var(--muted);display:block;font-size:.56rem;font-weight:800;letter-spacing:.12em;text-transform:uppercase}
+.readout strong{color:var(--green);display:block;font-size:clamp(1rem,3vw,1.45rem);line-height:1.1;margin-top:3px}
+.status{color:var(--gold);font-size:.85rem;font-weight:750;margin:0;min-height:1.5rem;padding:.2rem}
+.board-wrap{background:rgba(0,0,0,.16);border:1px solid rgba(128,240,138,.3);border-radius:16px;max-width:100%;overflow:auto;overscroll-behavior:contain}
+.board{--cols:9;display:grid;gap:3px;grid-template-columns:repeat(var(--cols),var(--cell-size,42px));min-width:100%;padding:7px;width:max-content}
+.cell{background:linear-gradient(145deg,rgba(255,255,255,.16),rgba(0,0,0,.08)),rgba(245,251,239,.15);border:1px solid rgba(245,251,239,.15);border-radius:8px;box-shadow:inset 0 2px 0 rgba(255,255,255,.1),0 3px 8px rgba(0,0,0,.17);font-size:clamp(.75rem,2vw,1.15rem);font-weight:850;height:var(--cell-size);padding:0;width:var(--cell-size)}
+.cell.open{background:rgba(245,251,239,.06);box-shadow:inset 0 0 0 1px rgba(245,251,239,.06);cursor:default}
+.cell.flagged{background:var(--gold);color:#2a1608}
+.cell.flagged::after{content:"⚑"}
+.cell.mine{background:var(--red);color:#250906}
+.cell.mine::after{content:"✹"}
+.cell.bad{background:linear-gradient(135deg,var(--gold),var(--red))}
+.cell.n1{color:#8ee8ff}
+.cell.n2{color:#80f08a}
+.cell.n3{color:#ffd34e}
+.cell.n4,.cell.n5,.cell.n6,.cell.n7,.cell.n8{color:#ff9f6f}
+.hint{color:var(--muted);font-size:.68rem;margin:.2rem 0 0;text-align:center}
+body.won .panel{box-shadow:0 0 0 1px rgba(128,240,138,.7),0 0 65px rgba(128,240,138,.2)}
+body.lost .panel{box-shadow:0 0 0 1px rgba(255,117,111,.55),0 0 65px rgba(255,117,111,.15)}
+@media(max-width:580px){.game-shell{padding:9px}
+header{align-items:center}
+header button{font-size:.7rem;min-height:38px}
+.toolbar{grid-template-columns:1fr}
+.flag-button{width:100%}
+.readout article{padding:7px}
+.readout{gap:4px}
+}
+
+/* JasonDaemon.net arcade shell */
+:root{--bg:#07111d;--text:#f3f7fc;--muted:#9eb1c5;--green:#55c7ff;--gold:#7dd3fc;--line:rgba(148,177,207,.22)}
+body{background:radial-gradient(circle at 15% 5%,rgba(85,199,255,.18),transparent 25rem),linear-gradient(135deg,#07111d,#15304a 58%,#0b1b2b)}
+.difficulty button.active,.flag-button.active,header button{color:#07111d}
+.board-wrap{border-color:rgba(85,199,255,.32)}
+body.won .panel{box-shadow:0 0 0 1px rgba(85,199,255,.7),0 0 65px rgba(85,199,255,.18)}
