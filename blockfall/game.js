@@ -107,6 +107,7 @@
     state.musicChoice = localStorage.getItem(musicStorageKey) || "";
     if (!musicTracks[state.musicChoice]) state.musicChoice = "";
     $("musicSelect").value = state.musicChoice;
+    $("gameMusicSelect").value = state.musicChoice;
     state.musicAudio = new Audio();
     state.musicAudio.loop = true;
     state.musicAudio.volume = 0.45;
@@ -123,6 +124,8 @@
   function setMusic(choice, preview = false) {
     state.musicChoice = musicTracks[choice] ? choice : "";
     localStorage.setItem(musicStorageKey, state.musicChoice);
+    $("musicSelect").value = state.musicChoice;
+    $("gameMusicSelect").value = state.musicChoice;
     if (!state.musicAudio) return;
     state.musicAudio.pause();
     state.musicAudio.currentTime = 0;
@@ -801,6 +804,7 @@
   function attachControls() {
     document.querySelectorAll("[data-mode]").forEach((button) => button.addEventListener("click", () => selectMode(button.dataset.mode)));
     $("musicSelect").addEventListener("change", () => setMusic($("musicSelect").value, true));
+    $("gameMusicSelect").addEventListener("change", () => setMusic($("gameMusicSelect").value, false));
     $("startMode").addEventListener("click", () => {
       if (state.selectedMode === "endless" || state.selectedMode === "timed") startSolo(state.selectedMode);
       else createBattle(state.selectedMode).catch((error) => message(error.message || "Could not create battle.", true));

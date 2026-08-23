@@ -209,6 +209,15 @@ select {
   padding: 0 14px;
 }
 
+.game-music-label {
+  margin-top: 8px;
+  width: 100%;
+}
+
+.game-music-label select {
+  min-height: 42px;
+}
+
 h2 {
   margin: 16px 0 8px;
   font-size: 0.86rem;
