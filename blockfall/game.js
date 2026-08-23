@@ -109,16 +109,29 @@
     $("musicSelect").value = state.musicChoice;
     $("gameMusicSelect").value = state.musicChoice;
     state.musicAudio = new Audio();
+    state.musicAudio.preload = "auto";
     state.musicAudio.loop = true;
     state.musicAudio.volume = 0.45;
+    state.musicAudio.defaultPlaybackRate = 1;
+    state.musicAudio.playbackRate = 1;
+    state.musicAudio.preservesPitch = true;
   }
 
   function playEffect(name, volume = 0.72) {
     const src = soundEffects[name];
     if (!src) return;
     const audio = new Audio(src);
+    audio.preload = "auto";
+    audio.defaultPlaybackRate = 1;
+    audio.playbackRate = 1;
+    audio.preservesPitch = true;
     audio.volume = volume;
     audio.play().catch(() => {});
+  }
+
+  function musicSourceMatches(src) {
+    if (!state.musicAudio?.currentSrc) return false;
+    return state.musicAudio.currentSrc === new URL(src, window.location.href).href;
   }
 
   function setMusic(choice, preview = false) {
@@ -130,16 +143,23 @@
     state.musicAudio.pause();
     state.musicAudio.currentTime = 0;
     if (!state.musicChoice) return;
-    state.musicAudio.src = musicTracks[state.musicChoice].src;
+    const src = musicTracks[state.musicChoice].src;
+    if (!musicSourceMatches(src)) state.musicAudio.src = src;
+    state.musicAudio.playbackRate = 1;
     state.musicAudio.volume = preview ? 0.55 : 0.28;
     state.musicAudio.play().catch(() => {});
   }
 
   function startGameplayMusic() {
     if (!state.musicAudio || !state.musicChoice) return;
-    state.musicAudio.src = musicTracks[state.musicChoice].src;
+    const src = musicTracks[state.musicChoice].src;
+    if (!musicSourceMatches(src)) {
+      state.musicAudio.src = src;
+      state.musicAudio.currentTime = 0;
+    }
+    state.musicAudio.playbackRate = 1;
     state.musicAudio.volume = 0.28;
-    state.musicAudio.play().catch(() => {});
+    if (state.musicAudio.paused) state.musicAudio.play().catch(() => {});
   }
 
   function stopMusic() {
