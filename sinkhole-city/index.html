@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
+  <meta name="theme-color" content="#0b1727">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; style-src 'self'; script-src 'self'; img-src 'self' data:; connect-src 'self'; media-src 'self'; object-src 'none'; frame-ancestors 'self'">
+  <title>Sinkhole City</title>
+  <link rel="stylesheet" href="game.css">
+</head>
+<body>
+  <main class="sh-shell">
+    <canvas id="gameCanvas" aria-label="Sinkhole City game canvas"></canvas>
+
+    <section id="hud" class="sh-hud" aria-live="polite">
+      <div><span>Time</span><strong id="timeText">2:00</strong></div>
+      <div><span>Score</span><strong id="scoreText">0</strong></div>
+      <div><span>Size</span><strong id="sizeText">Pothole</strong></div>
+      <div id="comboText" class="combo" hidden>Combo x1</div>
+    </section>
+
+    <div class="sh-actions">
+      <a class="sh-icon" href="/games/" aria-label="Back to games">‹</a>
+      <button id="pauseButton" class="sh-icon" type="button" aria-label="Pause">Ⅱ</button>
+    </div>
+
+    <div id="joystick" class="sh-joystick" hidden><div id="joystickKnob"></div></div>
+
+    <section id="startScreen" class="sh-panel sh-start">
+      <p class="eyebrow">JasonDaemon.net Arcade</p>
+      <h1>Sinkhole City</h1>
+      <p class="subtitle">Start as a pothole. Swallow cones, coolers, cars, cabins, and anything else small enough to fit.</p>
+      <div class="sh-menu">
+        <button id="soloButton" class="primary" type="button">Start Solo Run</button>
+        <button id="howButton" type="button">How to Play</button>
+      </div>
+      <p class="hint">Touch-drag anywhere, or use WASD / arrow keys.</p>
+    </section>
+
+    <section id="howScreen" class="sh-panel" hidden>
+      <p class="eyebrow">How to Play</p>
+      <h2>Grow before the clock runs out.</h2>
+      <p>Move your sinkhole around the world. Swallow smaller objects to grow. A bigger hole unlocks bigger targets, and chaining objects earns combo points.</p>
+      <p>Objects with a red bounce are still too large. Come back after eating smaller targets.</p>
+      <button id="howBackButton" class="primary" type="button">Back</button>
+    </section>
+
+    <section id="countdownScreen" class="sh-countdown" hidden>3</section>
+
+    <section id="endScreen" class="sh-panel sh-end" hidden>
+      <p class="eyebrow">Run Complete</p>
+      <h2 id="endRank">Sinkhole</h2>
+      <div class="sh-results">
+        <div><span>Final Score</span><strong id="finalScore">0</strong></div>
+        <div><span>Largest Size</span><strong id="finalSize">0</strong></div>
+        <div><span>Objects Swallowed</span><strong id="finalEaten">0</strong></div>
+      </div>
+      <div id="scoreCompare" class="sh-score-compare" aria-live="polite"></div>
+      <p id="scoreMessage" class="hint"></p>
+      <div class="sh-menu">
+        <button id="againButton" class="primary" type="button">Play Again</button>
+        <a href="/games/" class="button-link">All Games</a>
+      </div>
+    </section>
+  </main>
+  <script src="../shared/scores.js"></script>
+  <script src="game.js"></script>
+</body>
+</html>
