@@ -1,5 +1,6 @@
 (() => {
   const storageKey = "jasondaemon.sinkhole-city.best.v1";
+  const sceneStorageKey = "jasondaemon.sinkhole-city.best-by-scene.v1";
   const durationMs = 120000;
   const world = { width: 2600, height: 1800 };
   const basecampWorld = { width: 4200, height: 3000 };
@@ -161,6 +162,12 @@
   const metroLifeAtlas = new Image();
   metroLifeAtlas.decoding = "async";
   metroLifeAtlas.src = "./assets/sprites/metro-life.png?v=20260824-2";
+  const metroGardenAtlas = new Image();
+  metroGardenAtlas.decoding = "async";
+  metroGardenAtlas.src = "./assets/sprites/metro-garden.png?v=20260824-1";
+  const metroPedestrianAtlas = new Image();
+  metroPedestrianAtlas.decoding = "async";
+  metroPedestrianAtlas.src = "./assets/sprites/metro-pedestrians.png?v=20260824-1";
   const deepSinkLifeTypes = ["shark", "dolphin", "jellyfish", "diver"];
   const deepSinkLifeIndex = new Map(deepSinkLifeTypes.map((type, index) => [type, index]));
   const deepSinkLifeAtlas = new Image();
@@ -182,6 +189,43 @@
   deepSinkSand.decoding = "async";
   deepSinkSand.src = "./assets/terrain/deep-sink-sand.webp?v=20260824-1";
   let deepSinkSandPattern = null;
+  const orbitSpaceTexture = new Image();
+  orbitSpaceTexture.decoding = "async";
+  orbitSpaceTexture.src = "./assets/terrain/orbit-collapse-space.webp?v=20260824-1";
+  let orbitSpacePattern = null;
+  const orbitSpriteNames = [
+    "sun", "mercury", "venus", "earth", "moon", "mars", "jupiter", "saturn", "uranus", "neptune", "pluto",
+    "astronaut", "comet", "asteroid-small", "asteroid-large", "satellite", "station", "alien-saucer", "alien-craft",
+    "red-roadster", "shuttle", "capsule", "probe",
+  ];
+  const orbitSprites = Object.fromEntries(orbitSpriteNames.map((name) => {
+    const image = new Image();
+    image.decoding = "async";
+    image.src = `./assets/sprites/orbit-collapse/${name}.png?v=20260824-2`;
+    return [name, image];
+  }));
+  const celestialAnimation = new Image();
+  celestialAnimation.decoding = "async";
+  celestialAnimation.src = "./assets/sprites/orbit-collapse/celestial-animation.png?v=20260824-2";
+  const sunAnimation = new Image();
+  sunAnimation.decoding = "async";
+  sunAnimation.src = "./assets/sprites/orbit-collapse/sun-animation.png?v=20260824-1";
+  const solarBodyTypes = new Set(["mercury", "venus", "earth", "moon", "mars", "jupiter", "saturn", "uranus", "neptune", "pluto"]);
+  const orbitSpriteTypes = new Set(["sun", ...solarBodyTypes, "astronaut", "comet", "starRock", "meteor", "asteroid", "largeAsteroid", "satellite", "probe", "spaceStation", "stationModule", "ufo", "mothership", "spaceship", "xwing", "shuttle", "capsule", "redRoadster"]);
+  const alienTerrain = new Image();
+  alienTerrain.decoding = "async";
+  alienTerrain.src = "./assets/terrain/alien-world-terrain.webp?v=20260824-1";
+  let alienTerrainPattern = null;
+  const alienSpriteNames = ["crystal", "glow-pod", "crawler", "tiny-ufo", "tentacle-bud", "mushroom-tower", "egg-sac", "plasma-vent", "walker", "monolith", "alien-tree", "bio-dome", "mothership", "alien-temple", "leviathan", "portal"];
+  const alienSprites = Object.fromEntries(alienSpriteNames.map((name) => {
+    const image = new Image();
+    image.decoding = "async";
+    image.src = `./assets/sprites/alien-world/${name}.png?v=20260824-1`;
+    return [name, image];
+  }));
+  const alienLifeAnimation = new Image();
+  alienLifeAnimation.decoding = "async";
+  alienLifeAnimation.src = "./assets/sprites/alien-world/life-animation.png?v=20260824-1";
   const metroTerrain = Object.fromEntries(["asphalt", "sidewalk", "grass", "brick"].map((name) => {
     const image = new Image();
     image.decoding = "async";
@@ -190,7 +234,7 @@
   }));
   const metroTerrainPatterns = new Map();
   const metroObjectSizes = {
-    coffeeCup: 6, pigeon: 6, newspaperBundle: 7, pedestrian: 8, raccoon: 8, garbageBag: 9,
+    coffeeCup: 6, pigeon: 6, newspaperBundle: 7, pedestrian: 8, raccoon: 8, garbageBag: 9, flowerBed: 10,
     cone: 9, parkingMeter: 9, bollard: 9, cafeSign: 10, trash: 11, hydrant: 11,
     streetlight: 11, newspaperBox: 12, sidewalkPlanter: 12, scooter: 12, parkDog: 13,
     mailbox: 14, bike: 14, bench: 15, trafficLight: 16, vendingMachine: 16,
@@ -299,7 +343,9 @@
     startAt: 0,
     pausedAt: 0,
     scoreRecorded: false,
-    best: Number(localStorage.getItem(storageKey) || 0),
+    best: 0,
+    sceneBests: loadSceneBests(),
+    selectedEnvironmentId: requestedEnvironmentId() || environments[0].id,
     audioReady: false,
     audioLoading: null,
     audioContext: null,
@@ -427,6 +473,20 @@
     return { id: "local", name: "Player" };
   }
 
+  function loadSceneBests() {
+    try {
+      const stored = JSON.parse(localStorage.getItem(sceneStorageKey) || "{}");
+      return stored && typeof stored === "object" ? stored : {};
+    } catch {
+      return {};
+    }
+  }
+
+  function requestedEnvironmentId() {
+    const requested = new URLSearchParams(window.location.search).get("world");
+    return environments.some((environment) => environment.id === requested) ? requested : "";
+  }
+
   function rng(seed) {
     let t = seed >>> 0;
     return () => {
@@ -441,8 +501,7 @@
     return environments[Math.abs(Number(seed || 0)) % environments.length] || environments[0];
   }
 
-  function seedForRequestedEnvironment(seed) {
-    const requested = new URLSearchParams(window.location.search).get("world");
+  function seedForEnvironment(seed, requested = state.selectedEnvironmentId) {
     if (!requested || !environments.some((environment) => environment.id === requested)) return seed;
     let candidate = seed;
     while (environmentForSeed(candidate).id !== requested) candidate += 1;
@@ -495,9 +554,10 @@
     const config = tiers.find((item) => item.name === tier);
     const fixedFacing = new Set([
       "cone", "trash", "chair", "cooler", "lantern", "campfire", "backpack", "picnic", "campTable", "sign", "mailbox", "tent", "stove", "barrel",
-      "hydrant", "parkingMeter", "streetlight", "trafficLight", "busStop", "newspaperBox", "bench", "dumpster", "roadBarrier",
+      "hydrant", "parkingMeter", "streetlight", "trafficLight", "busStop", "newspaperBox", "bench", "dumpster", "roadBarrier", "flowerBed",
       "cabin", "building", "lodge", "skyscraper", "parkingGarage", "storefront", "underseaBase", "bioDome", "alienTemple", "hiveTower",
-      "pump", "watertower", "giantsign", "billboard", "portal", "wormholeGate",
+      "pump", "watertower", "giantsign", "billboard", "portal", "wormholeGate", "crystal", "crystalCluster", "megaCrystal", "spore", "glowPod",
+      "tentacleBud", "mushroomTower", "eggSac", "plasmaVent", "monolith", "alienTree", "alienShrub",
     ]);
     return {
       id,
@@ -543,6 +603,12 @@
       state.objects = generateUnderwaterObjects(rand);
       return;
     }
+    if (state.environment.id === "space") {
+      world.width = 4200;
+      world.height = 3000;
+      state.objects = generateSpaceObjects(rand);
+      return;
+    }
     world.width = 2600;
     world.height = 1800;
     const objects = [];
@@ -569,7 +635,109 @@
     add("medium", 88);
     add("large", 54);
     add("huge", 25);
+    if (state.environment.id === "alien") {
+      const roamingTypes = new Set(["crawler", "crawlerQueen", "walker", "leviathan", "tinyUfo", "hoverDrone", "ufo"]);
+      for (const object of objects) {
+        object.motionPhase = rand() * Math.PI * 2;
+        if (!roamingTypes.has(object.type) || rand() > .66) continue;
+        object.mobile = true;
+        object.moveSpeed = object.type === "crawler" ? 34 + rand() * 20 : object.type === "leviathan" ? 22 + rand() * 12 : 17 + rand() * 18;
+        object.heading = rand() * Math.PI * 2;
+        object.turnAt = 0;
+      }
+    }
     state.objects = objects;
+  }
+
+  function generateSpaceObjects(rand) {
+    const objects = [];
+    let id = 1;
+    const tierFor = (tier) => tiers.find((item) => item.name === tier);
+    const addAt = (type, tier, x, y, radius = null, rotation = 0) => {
+      const config = tierFor(tier);
+      const object = makeObject(id++, type, tier, x, y, radius || (config.min + config.max) / 2, rotation);
+      object.motionPhase = rand() * Math.PI * 2;
+      objects.push(object);
+      return object;
+    };
+    const placedBodies = [];
+    const bodyPoint = (radius) => {
+      for (let attempt = 0; attempt < 100; attempt += 1) {
+        const point = { x: 260 + rand() * (world.width - 520), y: 240 + rand() * (world.height - 480) };
+        if (placedBodies.every((body) => Math.hypot(point.x - body.x, point.y - body.y) > radius + body.radius + 360)) {
+          placedBodies.push({ ...point, radius });
+          return point;
+        }
+      }
+      return { x: 280 + rand() * (world.width - 560), y: 260 + rand() * (world.height - 520) };
+    };
+
+    const sunPoint = bodyPoint(150);
+    const sun = addAt("sun", "huge", sunPoint.x, sunPoint.y, 150, 0);
+    sun.lockedUntilPlanets = true;
+    sun.scoreValue = 2400;
+    sun.growthValue = 8;
+    const planets = [
+      ["pluto", "large", 40, 4], ["moon", "large", 48, 5], ["mercury", "large", 52, 6],
+      ["mars", "large", 62, 7], ["venus", "huge", 75, 9], ["earth", "huge", 78, 10],
+      ["neptune", "huge", 92, 12], ["uranus", "huge", 96, 13], ["saturn", "huge", 112, 15],
+      ["jupiter", "huge", 120, 18],
+    ];
+    for (const [type, tier, radius, growth] of planets) {
+      const point = bodyPoint(radius);
+      const body = addAt(type, tier, point.x, point.y, radius, 0);
+      body.solarBody = true;
+      body.growthValue = growth;
+      body.scoreValue = Math.round(220 + radius * 13);
+    }
+
+    const addMobile = (type, tier, count, speedMin, speedMax, radius = null) => {
+      for (let i = 0; i < count; i += 1) {
+        const object = addAt(type, tier, 180 + rand() * (world.width - 360), 180 + rand() * (world.height - 360), radius, rand() * Math.PI * 2);
+        object.mobile = true;
+        object.moveSpeed = speedMin + rand() * (speedMax - speedMin);
+        object.heading = rand() * Math.PI * 2;
+        object.targetHeading = object.heading;
+        object.turnAt = 0;
+        object.movementBounds = { x: 100, y: 100, w: world.width - 200, h: world.height - 200 };
+        if (["comet", "shuttle", "mothership", "redRoadster"].includes(type)) {
+          object.directionalFlight = true;
+          object.turnRate = type === "comet" ? .18 : type === "shuttle" ? .3 : .24;
+          object.spriteForwardAngle = type === "comet" ? 2.35 : type === "mothership" ? 2.45 : type === "redRoadster" ? 2.82 : 2.72;
+        }
+      }
+    };
+    addMobile("astronaut", "small", 3, 8, 14, 10);
+    addMobile("comet", "medium", 5, 54, 82, 20);
+    addMobile("satellite", "small", 12, 7, 13, 11);
+    addMobile("probe", "small", 7, 10, 18, 8);
+    addMobile("ufo", "medium", 3, 24, 38, 27);
+    addMobile("mothership", "large", 2, 18, 28, 34);
+    addMobile("shuttle", "medium", 3, 20, 32, 28);
+    addMobile("capsule", "small", 4, 12, 20, 16);
+    addMobile("redRoadster", "medium", 1, 19, 25, 24);
+    for (const object of objects) {
+      if (object.solarBody || object.type === "sun") continue;
+      if (object.type === "astronaut") object.growthValue = .42;
+      else if (object.type === "satellite" || object.type === "probe") object.growthValue = .36;
+      else if (object.type === "capsule" || object.type === "comet") object.growthValue = .62;
+      else if (object.mobile) object.growthValue = 1.05;
+    }
+    for (let i = 0; i < 2; i += 1) {
+      const station = addAt(i ? "stationModule" : "spaceStation", "large", 400 + rand() * 3400, 350 + rand() * 2200, 38, rand() * Math.PI * 2);
+      station.growthValue = 1.5;
+      station.scoreValue = 340;
+    }
+    // Dense fields of small debris give a fresh hole several viable paths before it can tackle spacecraft or planets.
+    for (let i = 0; i < 250; i += 1) {
+      const nearStart = i < 95;
+      const x = nearStart ? 150 + rand() * 900 : 100 + rand() * (world.width - 200);
+      const y = nearStart ? 150 + rand() * 720 : 100 + rand() * (world.height - 200);
+      const large = !nearStart && rand() > .9;
+      addAt(rand() > .5 ? "asteroid" : "starRock", large ? "large" : "small", x, y, large ? 16 + rand() * 9 : 5 + rand() * 8, rand() * Math.PI * 2);
+    }
+    for (let i = 0; i < 24; i += 1) addAt("probe", "small", 130 + rand() * (world.width - 260), 130 + rand() * (world.height - 260), 8 + rand() * 4, rand() * Math.PI * 2);
+    return objects;
   }
 
   function generateUnderwaterObjects(rand) {
@@ -770,6 +938,14 @@
       for (const [px, py] of benches) addAt("bench", "small", park.x + park.w * px + jitter(14), park.y + park.h * py + jitter(14), 0, .88);
       const lamps = [[.08, .08], [.5, .08], [.92, .08], [.08, .5], [.92, .5], [.08, .92], [.5, .92], [.92, .92]];
       for (const [px, py] of lamps) addAt("streetlight", "small", park.x + park.w * px, park.y + park.h * py, 0, .84);
+      const gardenCount = 10 + Math.floor(rand() * 5);
+      for (let garden = 0; garden < gardenCount; garden += 1) {
+        const angle = garden / gardenCount * Math.PI * 2 + rand() * .18;
+        const distanceX = park.w * (.2 + rand() * .08);
+        const distanceY = park.h * (.17 + rand() * .07);
+        const flowers = addAt("flowerBed", rand() > .72 ? "medium" : "small", park.x + park.w * .5 + Math.cos(angle) * distanceX, park.y + park.h * .5 + Math.sin(angle) * distanceY, 0);
+        flowers.flowerVariant = Math.floor(rand() * 16);
+      }
       for (let i = 0; i < 7; i += 1) {
         const type = i % 3 === 0 ? "trash" : i % 3 === 1 ? "bike" : "scooter";
         addAt(type, "small", park.x + 70 + rand() * (park.w - 140), park.y + 65 + rand() * (park.h - 130), 0, .72 + rand() * .12);
@@ -800,7 +976,7 @@
       pedestrian.moveSpeed = 34 + rand() * 18;
       pedestrian.heading = rand() > .5 ? 0 : Math.PI;
       pedestrian.turnAt = Number.POSITIVE_INFINITY;
-      pedestrian.colorVariant = i % 5;
+      pedestrian.pedestrianVariant = i % 4;
       pedestrian.movementBounds = { x: 80, y: roadY + side * 132 - 24, w: metroWorld.width - 160, h: 48 };
     }
 
@@ -820,7 +996,7 @@
         pedestrian.moveSpeed = 18 + rand() * 13;
         pedestrian.heading = rand() * Math.PI * 2;
         pedestrian.turnAt = 0;
-        pedestrian.colorVariant = Math.floor(rand() * 5);
+        pedestrian.pedestrianVariant = Math.floor(rand() * 4);
         pedestrian.movementBounds = { x: zone.x + 24, y: zone.y + 24, w: zone.w - 48, h: zone.h - 48 };
       }
     }
@@ -964,11 +1140,12 @@
       const cx = site.x + jitter(90);
       const cy = site.y + jitter(90);
       addAt("campfire", "small", cx, cy, 0, 1.08);
-      const chairCount = rand() > .45 ? 3 : 2;
+      const chairCount = 3 + Math.floor(rand() * 3);
+      const chairStart = rand() * Math.PI * 2;
       for (let i = 0; i < chairCount; i += 1) {
-        const angle = -.7 + i * (1.4 / Math.max(1, chairCount - 1)) + jitter(.16);
-        const distance = 74 + rand() * 24;
-        addAt("chair", "small", cx + Math.cos(angle) * distance, cy + Math.sin(angle) * distance, angle + Math.PI / 2);
+        const angle = chairStart + i * (Math.PI * 2 / chairCount) + jitter(.12);
+        const distance = 78 + rand() * 22;
+        addAt("chair", "small", cx + Math.cos(angle) * distance, cy + Math.sin(angle) * distance, angle + Math.PI);
       }
       addAt("tent", "medium", cx + jitter(55), cy - 126 - rand() * 35, jitter(.12));
       addAt("cooler", "small", cx + 105 + jitter(28), cy + 28 + jitter(35), jitter(.12));
@@ -1090,12 +1267,13 @@
     state.battleVariant = "objects";
     state.opponents = [];
     state.mode = "countdown";
-    state.seed = seedForRequestedEnvironment(Date.now() & 0xfffffff);
+    state.seed = seedForEnvironment(Date.now() & 0xfffffff);
     state.player = createPlayer();
     state.camera.zoom = 1.5;
     state.particles = [];
     state.scoreRecorded = false;
     generateWorld(state.seed);
+    document.body.classList.remove("game-idle");
     hidePanels();
     startBackgroundMusic();
     countdown(3);
@@ -1122,6 +1300,7 @@
     state.particles = [];
     state.scoreRecorded = false;
     generateWorld(state.seed);
+    document.body.classList.remove("game-idle");
     hidePanels();
     startBackgroundMusic();
     countdown(3);
@@ -1148,8 +1327,28 @@
 
   function showStart() {
     state.mode = "menu";
+    document.body.classList.add("game-idle");
     hidePanels();
     $("startScreen").hidden = false;
+    renderSceneChoices();
+  }
+
+  function selectEnvironment(id) {
+    if (!environments.some((environment) => environment.id === id)) return;
+    state.selectedEnvironmentId = id;
+    const url = new URL(window.location.href);
+    url.searchParams.set("world", id);
+    window.history.replaceState({}, "", url);
+    renderSceneChoices();
+  }
+
+  function renderSceneChoices() {
+    const selected = environments.find((environment) => environment.id === state.selectedEnvironmentId) || environments[0];
+    $("sceneChoices").innerHTML = environments.map((environment) => {
+      const best = Number(state.sceneBests[environment.id] || 0);
+      return `<button class="sh-scene-choice" type="button" data-scene="${environment.id}" aria-pressed="${environment.id === selected.id}"><strong>${environment.name}</strong><span>${best ? `Best: ${best}` : "No score yet"}</span></button>`;
+    }).join("");
+    $("soloButton").textContent = `Start ${selected.name} Run`;
   }
 
   function showHow() {
@@ -1248,7 +1447,7 @@
         const dx = obj.x - actor.x;
         const dy = obj.y - actor.y;
         const dist = Math.hypot(dx, dy);
-        const canEat = obj.radius <= actor.radius * .78;
+        const canEat = canEatObject(actor, obj);
         const overlap = dist < Math.max(12, actor.radius * .78);
         if (overlap && canEat) {
           eatObject(actor, obj, now);
@@ -1263,10 +1462,34 @@
     updateParticles(dt);
     state.camera.x += (p.x - state.camera.x) * Math.min(1, dt * 5);
     state.camera.y += (p.y - state.camera.y) * Math.min(1, dt * 5);
-    const desiredZoom = Math.max(.62, Math.min(1.5, 1.5 - Math.max(0, p.radius - 24) * .009));
+    const desiredZoom = state.environment?.id === "space"
+      ? spaceZoomForRadius(p.radius)
+      : Math.max(.62, Math.min(1.5, 1.5 - Math.max(0, p.radius - 24) * .009));
     state.camera.zoom += (desiredZoom - state.camera.zoom) * Math.min(1, dt * 2.8);
     state.camera.shake = Math.max(0, state.camera.shake - dt * 9);
     updateHud(now);
+  }
+
+  function canEatObject(actor, obj) {
+    if (obj.type === "sun" && obj.lockedUntilPlanets) {
+      return !state.objects.some((candidate) => candidate.solarBody && !candidate.swallowed);
+    }
+    return obj.radius <= actor.radius * .78;
+  }
+
+  function spaceZoomForRadius(radius) {
+    const stages = [
+      [18, 1.85], [30, 1.55], [48, 1.18], [70, .86], [96, .62], [125, .43], [150, .31], [170, .24],
+    ];
+    if (radius <= stages[0][0]) return stages[0][1];
+    for (let i = 1; i < stages.length; i += 1) {
+      if (radius > stages[i][0]) continue;
+      const [r0, z0] = stages[i - 1];
+      const [r1, z1] = stages[i];
+      const t = (radius - r0) / (r1 - r0);
+      return z0 + (z1 - z0) * t;
+    }
+    return stages.at(-1)[1];
   }
 
   function updateWildlife(dt, now) {
@@ -1337,6 +1560,10 @@
         continue;
       }
       if (!animal.mobile) continue;
+      if (state.environment?.id === "space" && animal.directionalFlight) {
+        updateDirectionalSpacecraft(animal, dt, now);
+        continue;
+      }
       const dx = player ? animal.x - player.x : 0;
       const dy = player ? animal.y - player.y : 0;
       const distance = Math.hypot(dx, dy);
@@ -1351,7 +1578,7 @@
       const pace = animal.moveSpeed * (flees && distance < 220 ? 1.45 : 1);
       animal.x += Math.cos(animal.heading) * pace * dt;
       animal.y += Math.sin(animal.heading) * pace * dt;
-      if (state.environment?.id === "underwater" && !deepSinkLifeIndex.has(animal.type)) animal.rotation = animal.heading;
+      if ((state.environment?.id === "underwater" && !deepSinkLifeIndex.has(animal.type)) || (state.environment?.id === "space" && animal.type !== "ufo") || state.environment?.id === "alien") animal.rotation = animal.heading;
       const margin = Math.max(40, animal.radius * 2);
       const bounds = animal.movementBounds || { x: margin, y: margin, w: world.width - margin * 2, h: world.height - margin * 2 };
       const minX = bounds.x;
@@ -1368,6 +1595,31 @@
       }
       animal.motionPhase = (animal.motionPhase || 0) + dt * pace * .13;
     }
+  }
+
+  function updateDirectionalSpacecraft(craft, dt, now) {
+    const margin = Math.max(110, craft.radius * 4);
+    const bounds = craft.movementBounds || { x: margin, y: margin, w: world.width - margin * 2, h: world.height - margin * 2 };
+    const minX = bounds.x + margin;
+    const maxX = bounds.x + bounds.w - margin;
+    const minY = bounds.y + margin;
+    const maxY = bounds.y + bounds.h - margin;
+    if (craft.x < minX || craft.x > maxX || craft.y < minY || craft.y > maxY) {
+      craft.targetHeading = Math.atan2(world.height * .5 - craft.y, world.width * .5 - craft.x);
+      craft.turnAt = now + 2200;
+    } else if (now >= (craft.turnAt || 0)) {
+      craft.targetHeading = craft.heading + (Math.random() - .5) * 1.15;
+      craft.turnAt = now + 3600 + Math.random() * 4200;
+    }
+    const delta = Math.atan2(Math.sin(craft.targetHeading - craft.heading), Math.cos(craft.targetHeading - craft.heading));
+    const maxTurn = (craft.turnRate || .24) * dt;
+    craft.heading += Math.max(-maxTurn, Math.min(maxTurn, delta));
+    craft.x += Math.cos(craft.heading) * craft.moveSpeed * dt;
+    craft.y += Math.sin(craft.heading) * craft.moveSpeed * dt;
+    craft.x = Math.max(bounds.x, Math.min(bounds.x + bounds.w, craft.x));
+    craft.y = Math.max(bounds.y, Math.min(bounds.y + bounds.h, craft.y));
+    craft.rotation = craft.heading - (craft.spriteForwardAngle || 0);
+    craft.motionPhase = (craft.motionPhase || 0) + dt * craft.moveSpeed * .08;
   }
 
   function actors() {
@@ -1504,7 +1756,8 @@
     actor.comboUntil = now + 1400;
     const comboBonus = Math.max(0, actor.combo - 1) * 8;
     actor.score += obj.scoreValue + comboBonus;
-    actor.targetRadius = Math.min(118, actor.targetRadius + obj.growthValue);
+    const maximumRadius = state.environment?.id === "space" ? 170 : 118;
+    actor.targetRadius = Math.min(maximumRadius, actor.targetRadius + obj.growthValue);
     actor.swallowed += 1;
     if (actor.isLocal) playSound(obj.tier);
     if (actor.isLocal && (obj.tier === "large" || obj.tier === "huge")) state.camera.shake = obj.tier === "huge" ? 7 : 4;
@@ -1567,7 +1820,12 @@
     $("finalEaten").textContent = String(p.swallowed);
     $("scoreCompare").innerHTML = "";
     $("endScreen").hidden = false;
-    localStorage.setItem(storageKey, String(Math.max(state.best, p.score)));
+    const environmentId = state.environment?.id || state.selectedEnvironmentId || "campsite";
+    const previousBest = Number(state.sceneBests[environmentId] || 0);
+    state.sceneBests[environmentId] = Math.max(previousBest, p.score);
+    state.best = state.sceneBests[environmentId];
+    localStorage.setItem(sceneStorageKey, JSON.stringify(state.sceneBests));
+    localStorage.setItem(storageKey, String(Math.max(Number(localStorage.getItem(storageKey) || 0), p.score)));
     recordScore();
   }
 
@@ -1583,8 +1841,9 @@
       value: p.score,
       meta: { radius: Math.round(p.radius), swallowed: p.swallowed, maxCombo: p.maxCombo, rank: rankFor(p.radius).label },
     });
-    const best = Math.max(state.best, p.score);
-    $("scoreCompare").innerHTML = `<strong>Local best</strong><span>${best} points</span>`;
+    const environmentId = state.environment?.id || "campsite";
+    const best = Math.max(Number(state.sceneBests[environmentId] || 0), p.score);
+    $("scoreCompare").innerHTML = `<strong>${state.environment?.name || "Scene"} best</strong><span>${best} points</span>`;
     $("scoreMessage").textContent = "Score saved on this device.";
   }
 
@@ -1637,6 +1896,20 @@
     ctx.globalAlpha = .24;
     ctx.fillRect(0, 0, world.width, world.height);
     ctx.globalAlpha = 1;
+    const activeSites = state.generatedBasecampSites || basecampSites;
+    for (let i = 0; i < activeSites.length; i += 1) {
+      const site = activeSites[i];
+      const radiusX = 150 + (i % 3) * 18;
+      const radiusY = 112 + (i % 2) * 16;
+      const clearing = ctx.createRadialGradient(site.x, site.y, 18, site.x, site.y, radiusX);
+      clearing.addColorStop(0, "rgba(197, 181, 126, .34)");
+      clearing.addColorStop(.68, "rgba(148, 137, 93, .22)");
+      clearing.addColorStop(1, "rgba(105, 123, 77, 0)");
+      ctx.fillStyle = clearing;
+      ctx.beginPath();
+      ctx.ellipse(site.x, site.y, radiusX, radiusY, (i % 5 - 2) * .08, 0, Math.PI * 2);
+      ctx.fill();
+    }
     for (let i = 0; i < 42; i += 1) {
       const x = 130 + (i * 617) % (world.width - 260);
       const y = 120 + (i * 389) % (world.height - 240);
@@ -1659,14 +1932,31 @@
     drawBasecampRoads();
 
     ctx.strokeStyle = terrainPattern("trail") || "rgba(61, 74, 43, .6)";
-    ctx.lineWidth = 22;
-    const activeSites = state.generatedBasecampSites || basecampSites;
-    for (let i = 0; i < activeSites.length - 1; i += 1) {
+    ctx.lineWidth = 20;
+    const closestRoadPoint = (site) => {
+      let best = { x: site.x, y: site.y, distance: Number.POSITIVE_INFINITY };
+      for (const road of basecampRoads) {
+        for (let segment = 1; segment < road.length; segment += 1) {
+          const a = road[segment - 1];
+          const b = road[segment];
+          const dx = b.x - a.x;
+          const dy = b.y - a.y;
+          const t = Math.max(0, Math.min(1, ((site.x - a.x) * dx + (site.y - a.y) * dy) / (dx * dx + dy * dy || 1)));
+          const x = a.x + dx * t;
+          const y = a.y + dy * t;
+          const distance = Math.hypot(site.x - x, site.y - y);
+          if (distance < best.distance) best = { x, y, distance };
+        }
+      }
+      return best;
+    };
+    for (let i = 0; i < activeSites.length; i += 1) {
       const a = activeSites[i];
-      const b = activeSites[i + 1];
+      const b = closestRoadPoint(a);
       ctx.beginPath();
       ctx.moveTo(a.x, a.y);
-      ctx.quadraticCurveTo((a.x + b.x) / 2, (a.y + b.y) / 2 + (i % 2 ? 80 : -80), b.x, b.y);
+      const bend = (i % 2 ? 1 : -1) * Math.min(60, b.distance * .18);
+      ctx.quadraticCurveTo((a.x + b.x) / 2 + bend, (a.y + b.y) / 2 - bend, b.x, b.y);
       ctx.stroke();
     }
 
@@ -1683,6 +1973,34 @@
     ctx.strokeStyle = "rgba(191, 235, 225, .38)";
     ctx.lineWidth = 5;
     ctx.stroke();
+
+    const now = performance.now() * .001;
+    ctx.strokeStyle = "rgba(221, 250, 242, .34)";
+    ctx.lineWidth = 3;
+    for (let ripple = 0; ripple < 13; ripple += 1) {
+      const t = ((ripple / 13) + now * .018) % 1;
+      const segment = Math.min(basecampRiverPath.length - 2, Math.floor(t * (basecampRiverPath.length - 1)));
+      const local = t * (basecampRiverPath.length - 1) - segment;
+      const a = basecampRiverPath[segment];
+      const b = basecampRiverPath[segment + 1];
+      const x = a.x + (b.x - a.x) * local;
+      const y = a.y + (b.y - a.y) * local;
+      ctx.beginPath();
+      ctx.arc(x, y, 12 + ripple % 4 * 5, .2, Math.PI * .92);
+      ctx.stroke();
+    }
+
+    ctx.fillStyle = "#f8e589";
+    for (let firefly = 0; firefly < activeSites.length * 2; firefly += 1) {
+      const site = activeSites[firefly % activeSites.length];
+      const angle = now * (.28 + firefly % 4 * .05) + firefly * 2.17;
+      const distance = 118 + (firefly % 5) * 18;
+      ctx.globalAlpha = .22 + (Math.sin(now * 2.1 + firefly) + 1) * .25;
+      ctx.beginPath();
+      ctx.arc(site.x + Math.cos(angle) * distance, site.y + Math.sin(angle * .83) * distance * .6, 2.2, 0, Math.PI * 2);
+      ctx.fill();
+    }
+    ctx.globalAlpha = 1;
 
     ctx.fillStyle = "rgba(29, 62, 39, .22)";
     for (let i = 0; i < 170; i += 1) {
@@ -1743,6 +2061,21 @@
       ctx.lineTo(park.x + park.w - 45, park.y + park.h / 2);
       ctx.moveTo(park.x + park.w / 2, park.y + 45);
       ctx.lineTo(park.x + park.w / 2, park.y + park.h - 45);
+      ctx.stroke();
+      ctx.strokeStyle = "rgba(226, 219, 188, .34)";
+      ctx.lineWidth = 11;
+      ctx.beginPath();
+      ctx.ellipse(park.x + park.w * .5, park.y + park.h * .5, park.w * .31, park.h * .27, 0, 0, Math.PI * 2);
+      ctx.stroke();
+      const fountainPulse = (Math.sin(performance.now() * .0022 + park.x) + 1) * .5;
+      ctx.fillStyle = "rgba(104, 196, 221, .38)";
+      ctx.beginPath();
+      ctx.arc(park.x + park.w * .5, park.y + park.h * .5, 28, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.strokeStyle = `rgba(211, 246, 252, ${.28 + fountainPulse * .32})`;
+      ctx.lineWidth = 4;
+      ctx.beginPath();
+      ctx.arc(park.x + park.w * .5, park.y + park.h * .5, 18 + fountainPulse * 8, 0, Math.PI * 2);
       ctx.stroke();
     }
     for (const plaza of metroPlazas) {
@@ -1809,29 +2142,32 @@
   }
 
   function drawSpaceWorld() {
-    const grd = ctx.createRadialGradient(world.width * .55, world.height * .45, 140, world.width * .5, world.height * .5, world.width);
-    grd.addColorStop(0, "#182a4b");
-    grd.addColorStop(.55, "#071126");
-    grd.addColorStop(1, "#01030a");
-    ctx.fillStyle = grd;
+    if (orbitSpaceTexture.complete && orbitSpaceTexture.naturalWidth) {
+      if (!orbitSpacePattern) orbitSpacePattern = ctx.createPattern(orbitSpaceTexture, "repeat");
+      ctx.fillStyle = orbitSpacePattern;
+    } else {
+      ctx.fillStyle = "#030612";
+    }
     ctx.fillRect(0, 0, world.width, world.height);
-    ctx.fillStyle = "rgba(255,255,255,.8)";
-    for (let i = 0; i < 170; i += 1) {
+
+    const vignette = ctx.createRadialGradient(world.width * .5, world.height * .48, 180, world.width * .5, world.height * .5, world.width * .72);
+    vignette.addColorStop(0, "rgba(16, 34, 68, 0)");
+    vignette.addColorStop(1, "rgba(0, 2, 9, .48)");
+    ctx.fillStyle = vignette;
+    ctx.fillRect(0, 0, world.width, world.height);
+
+    const now = performance.now() * .001;
+    for (let i = 0; i < 120; i += 1) {
       const x = (i * 419) % world.width;
       const y = (i * 233) % world.height;
-      ctx.globalAlpha = .28 + (i % 7) * .09;
+      const twinkle = .34 + Math.sin(now * (.55 + (i % 5) * .11) + i * 1.73) * .2;
+      ctx.globalAlpha = Math.max(.12, twinkle);
+      ctx.fillStyle = i % 11 === 0 ? "#8ddcff" : i % 7 === 0 ? "#c7b6ff" : "#ffffff";
       ctx.beginPath();
-      ctx.arc(x, y, 1 + (i % 3), 0, Math.PI * 2);
+      ctx.arc(x, y, .75 + (i % 4) * .42, 0, Math.PI * 2);
       ctx.fill();
     }
     ctx.globalAlpha = 1;
-    ctx.strokeStyle = "rgba(117, 210, 255, .18)";
-    ctx.lineWidth = 3;
-    for (let i = 0; i < 6; i += 1) {
-      ctx.beginPath();
-      ctx.ellipse(620 + i * 310, 820, 560 + i * 80, 110 + i * 12, -.25, 0, Math.PI * 2);
-      ctx.stroke();
-    }
   }
 
   function drawUnderwaterWorld() {
@@ -1861,23 +2197,19 @@
   }
 
   function drawAlienWorld() {
-    const grd = ctx.createLinearGradient(0, 0, world.width, world.height);
-    grd.addColorStop(0, "#47265f");
-    grd.addColorStop(.45, "#214c52");
-    grd.addColorStop(1, "#473f16");
-    ctx.fillStyle = grd;
-    ctx.fillRect(0, 0, world.width, world.height);
-    drawSoftBlobs("rgba(126, 229, 139, .22)", 11, 260, 280, 280, 330);
-    drawSoftBlobs("rgba(255, 116, 216, .16)", 9, 350, 1440, 260, -260);
-    ctx.strokeStyle = "rgba(255, 212, 81, .16)";
-    ctx.lineWidth = 5;
-    for (let i = 0; i < 9; i += 1) {
-      ctx.beginPath();
-      ctx.moveTo(120 + i * 270, 0);
-      ctx.bezierCurveTo(240 + i * 220, 430, 10 + i * 280, 920, 240 + i * 260, world.height);
-      ctx.stroke();
+    if (alienTerrain.complete && alienTerrain.naturalWidth) {
+      if (!alienTerrainPattern) alienTerrainPattern = ctx.createPattern(alienTerrain, "repeat");
+      ctx.fillStyle = alienTerrainPattern;
+    } else {
+      ctx.fillStyle = "#38294f";
     }
-    drawGrid("rgba(255,255,255,.06)", 180);
+    ctx.fillRect(0, 0, world.width, world.height);
+    const tint = ctx.createLinearGradient(0, 0, world.width, world.height);
+    tint.addColorStop(0, "rgba(30, 17, 62, .18)");
+    tint.addColorStop(.55, "rgba(9, 70, 74, .08)");
+    tint.addColorStop(1, "rgba(72, 20, 76, .2)");
+    ctx.fillStyle = tint;
+    ctx.fillRect(0, 0, world.width, world.height);
   }
 
   function drawSoftBlobs(fill, count, startX, startY, stepX, stepY) {
@@ -1948,9 +2280,9 @@
     for (const obj of items) {
       if (swallowedOnly !== Boolean(obj.swallowed)) continue;
       const p = state.player;
-      const canEat = p && obj.radius <= p.radius * .78;
+      const canEat = p && canEatObject(p, obj);
       const locksToSpritePerspective = ((state.environment?.id === "campsite" || (state.environment?.id === "city" && obj.type === "tree")) && (basecampSpriteIndex.has(obj.type) || basecampExtraIndex.has(obj.type) || basecampWildlifeIndex.has(obj.type) || obj.type === "fjCruiser"))
-        || (state.environment?.id === "city" && (metroSpriteIndex.has(obj.type) || metroExtraIndex.has(obj.type) || metroLifeIndex.has(obj.type)))
+        || (state.environment?.id === "city" && (metroSpriteIndex.has(obj.type) || metroExtraIndex.has(obj.type) || metroLifeIndex.has(obj.type) || obj.type === "flowerBed"))
         || (state.environment?.id === "underwater" && (deepSinkLifeIndex.has(obj.type) || deepSinkStaticTypes.has(obj.type) || deepSinkSeabedTypes.has(obj.type)));
       ctx.save();
       if (obj.swallowed) {
@@ -2023,6 +2355,10 @@
 
   function drawObjectShape(obj) {
     const r = obj.radius;
+    applyAmbientObjectMotion(obj, r);
+    drawGroundedAmbientEffects(obj, r);
+    if (state.environment?.id === "space" && drawOrbitSprite(obj, r)) return;
+    if (state.environment?.id === "alien" && drawAlienSprite(obj, r)) return;
     if (state.environment?.id === "underwater" && drawDeepSinkLife(obj, r)) return;
     if (state.environment?.id === "underwater" && drawDeepSinkStatic(obj, r)) return;
     if (state.environment?.id === "underwater" && drawDeepSinkSeabed(obj, r)) return;
@@ -2035,6 +2371,7 @@
     if (state.environment?.id === "campsite" && drawBasecampExtraSprite(obj, r)) return;
     if (state.environment?.id === "campsite" && drawBasecampSprite(obj, r)) return;
     if (state.environment?.id === "city" && obj.type === "tree" && drawBasecampSprite(obj, r)) return;
+    if (state.environment?.id === "city" && drawMetroGarden(obj, r)) return;
     if (state.environment?.id === "city" && drawMetroLife(obj, r)) return;
     if (state.environment?.id === "city" && drawMetroExtraSprite(obj, r)) return;
     if (state.environment?.id === "city" && drawMetroSprite(obj, r)) return;
@@ -2069,6 +2406,216 @@
     if (["satellite", "probe", "capsule", "lander", "spaceBuoy", "spaceship", "xwing", "shuttle", "stationModule", "spaceStation", "enterprise", "deathstar", "planet", "smallPlanet", "moon", "moonBuggy", "spaceDebris", "comet", "wormholeGate"].includes(obj.type)) return spaceObject(obj.type, r);
     if (["crystal", "crystalCluster", "megaCrystal", "spore", "glowPod", "crawler", "crawlerQueen", "tinyUfo", "ufo", "hoverDrone", "tentacleBud", "mushroomTower", "eggSac", "plasmaVent", "walker", "monolith", "mothership", "leviathan", "portal"].includes(obj.type)) return alienObject(obj.type, r);
     rect("#d9bb84", r * 1.6, r * 1.1, true);
+  }
+
+  function drawGroundedAmbientEffects(obj, r) {
+    const env = state.environment?.id;
+    const phase = performance.now() * .001 + obj.id * .63;
+    if (env === "campsite" && obj.type === "campfire") {
+      const glow = ctx.createRadialGradient(0, 0, r * .2, 0, 0, r * 4.2);
+      glow.addColorStop(0, `rgba(255, 206, 84, ${.32 + Math.sin(phase * 7.2) * .05})`);
+      glow.addColorStop(.42, "rgba(255, 114, 45, .15)");
+      glow.addColorStop(1, "rgba(255, 94, 35, 0)");
+      ctx.fillStyle = glow;
+      ctx.beginPath();
+      ctx.arc(0, 0, r * 4.25, 0, Math.PI * 2);
+      ctx.fill();
+      for (let spark = 0; spark < 5; spark += 1) {
+        const lift = (phase * (25 + spark * 3) + spark * 13) % (r * 3.2);
+        const drift = Math.sin(phase * 2.4 + spark * 1.7) * r * .55;
+        ctx.globalAlpha = Math.max(0, .8 - lift / (r * 4));
+        ctx.fillStyle = spark % 2 ? "#ff9d42" : "#ffe28a";
+        ctx.beginPath();
+        ctx.arc(drift, -r * .3 - lift, Math.max(1.1, r * .09), 0, Math.PI * 2);
+        ctx.fill();
+      }
+      ctx.globalAlpha = 1;
+    } else if (env === "campsite" && obj.type === "lantern") {
+      const glow = ctx.createRadialGradient(0, 0, 0, 0, 0, r * 2.8);
+      glow.addColorStop(0, "rgba(255, 232, 145, .31)");
+      glow.addColorStop(1, "rgba(255, 204, 95, 0)");
+      ctx.fillStyle = glow;
+      ctx.beginPath();
+      ctx.arc(0, 0, r * 2.8, 0, Math.PI * 2);
+      ctx.fill();
+    } else if (env === "city" && obj.type === "streetlight") {
+      const glow = ctx.createRadialGradient(0, -r * .8, 0, 0, -r * .8, r * 2.5);
+      glow.addColorStop(0, "rgba(255, 236, 172, .26)");
+      glow.addColorStop(1, "rgba(255, 230, 150, 0)");
+      ctx.fillStyle = glow;
+      ctx.beginPath();
+      ctx.arc(0, -r * .8, r * 2.5, 0, Math.PI * 2);
+      ctx.fill();
+    } else if (env === "city" && obj.type === "trafficLight") {
+      const colors = ["255, 82, 77", "255, 205, 75", "88, 224, 136"];
+      const color = colors[Math.floor(phase / 3.5) % colors.length];
+      ctx.fillStyle = `rgba(${color}, .22)`;
+      ctx.beginPath();
+      ctx.arc(0, -r * .3, r * 1.8, 0, Math.PI * 2);
+      ctx.fill();
+    } else if (env === "city" && obj.type === "hotdogVendor") {
+      ctx.strokeStyle = "rgba(245, 245, 235, .35)";
+      ctx.lineWidth = Math.max(1.5, r * .07);
+      for (let puff = 0; puff < 3; puff += 1) {
+        const lift = (phase * 10 + puff * 10) % (r * 1.8);
+        ctx.beginPath();
+        ctx.arc(r * .25 + Math.sin(phase + puff) * r * .16, -r * .6 - lift, r * (.12 + puff * .025), Math.PI * .15, Math.PI * 1.55);
+        ctx.stroke();
+      }
+    }
+  }
+
+  function drawAlienSprite(obj, r) {
+    const spriteName = {
+      crystalCluster: "crystal", megaCrystal: "crystal", alienRock: "crystal",
+      spore: "glow-pod", glowPod: "glow-pod",
+      crawlerQueen: "crawler", hoverDrone: "tiny-ufo", ufo: "tiny-ufo",
+      alienShrub: "alien-tree", hiveTower: "alien-temple",
+    }[obj.type] || obj.type.replace(/[A-Z]/g, (letter) => `-${letter.toLowerCase()}`);
+    const image = alienSprites[spriteName];
+    if (!image?.complete || !image.naturalWidth) return false;
+    const phase = performance.now() * .001 + obj.id * .47;
+    const animatedRow = { crawler: 0, crawlerQueen: 0, tentacleBud: 1, mushroomTower: 2, leviathan: 3 }[obj.type];
+    const scale = obj.tier === "small" ? 4.1 : obj.tier === "medium" ? 4.35 : obj.tier === "large" ? 4.55 : 4.75;
+    const size = r * scale;
+    ctx.save();
+    ctx.imageSmoothingEnabled = true;
+    ctx.imageSmoothingQuality = "high";
+    drawAlienAura(obj, r, phase);
+    if (animatedRow !== undefined && alienLifeAnimation.complete && alienLifeAnimation.naturalWidth) {
+      const frameRate = ["crawler", "crawlerQueen"].includes(obj.type) ? 6.5 : 3.2;
+      const frame = Math.floor((phase * frameRate) % 4);
+      ctx.drawImage(alienLifeAnimation, frame * 256, animatedRow * 256, 256, 256, -size / 2, -size / 2, size, size);
+    } else {
+      ctx.drawImage(image, -size / 2, -size / 2, size, size);
+    }
+    ctx.restore();
+    return true;
+  }
+
+  function drawAlienAura(obj, r, phase) {
+    if (["glowPod", "spore", "plasmaVent", "portal", "crystal", "crystalCluster", "megaCrystal"].includes(obj.type)) {
+      const pulse = .18 + (Math.sin(phase * 2.3) + 1) * .07;
+      const gradient = ctx.createRadialGradient(0, 0, r * .3, 0, 0, r * 2.6);
+      gradient.addColorStop(0, `rgba(112, 255, 231, ${pulse})`);
+      gradient.addColorStop(.5, `rgba(244, 88, 255, ${pulse * .58})`);
+      gradient.addColorStop(1, "rgba(112, 255, 231, 0)");
+      ctx.fillStyle = gradient;
+      ctx.beginPath();
+      ctx.arc(0, 0, r * 2.7, 0, Math.PI * 2);
+      ctx.fill();
+    }
+    if (["tinyUfo", "hoverDrone", "ufo", "mothership"].includes(obj.type)) {
+      ctx.fillStyle = `rgba(100, 235, 255, ${.13 + Math.sin(phase * 4) * .035})`;
+      ctx.beginPath();
+      ctx.ellipse(0, r * 1.35, r * 1.45, r * .42, 0, 0, Math.PI * 2);
+      ctx.fill();
+    }
+    if (obj.type === "plasmaVent") {
+      ctx.fillStyle = "rgba(255, 132, 235, .55)";
+      for (let i = 0; i < 4; i += 1) {
+        const lift = ((phase * 34 + i * 17) % (r * 2.8));
+        ctx.beginPath();
+        ctx.arc(Math.sin(phase + i * 2.1) * r * .52, r * .4 - lift, Math.max(1.5, r * (.09 + i * .018)), 0, Math.PI * 2);
+        ctx.fill();
+      }
+    }
+  }
+
+  function applyAmbientObjectMotion(obj, r) {
+    const env = state.environment?.id;
+    const phase = performance.now() * .001 + obj.id * .71;
+    if (env === "campsite") {
+      if (["tree", "shrub"].includes(obj.type)) {
+        ctx.rotate(Math.sin(phase * .72) * .007);
+        ctx.scale(1 + Math.sin(phase * .51) * .004, 1);
+      } else if (["campfire", "lantern"].includes(obj.type)) {
+        const flicker = 1 + Math.sin(phase * 6.3) * .025 + Math.sin(phase * 10.7) * .012;
+        ctx.scale(flicker, flicker);
+      }
+      return;
+    }
+    if (env === "city") {
+      if (obj.type === "tree") {
+        ctx.rotate(Math.sin(phase * .64) * .005);
+        ctx.scale(1 + Math.sin(phase * .48) * .0035, 1);
+      }
+      return;
+    }
+    if (env === "alien") {
+      if (["alienTree", "alienShrub", "mushroomTower", "tentacleBud"].includes(obj.type)) {
+        ctx.rotate(Math.sin(phase * .9) * .016);
+        ctx.scale(1 + Math.sin(phase * .57) * .012, 1);
+      } else if (["crystal", "crystalCluster", "glowPod", "spore", "eggSac", "plasmaVent", "megaCrystal"].includes(obj.type)) {
+        const pulse = 1 + Math.sin(phase * 1.5) * .018;
+        ctx.scale(pulse, pulse);
+      } else if (["tinyUfo", "hoverDrone", "ufo", "mothership"].includes(obj.type)) {
+        ctx.translate(0, Math.sin(phase * 1.25) * r * .11);
+        ctx.rotate(Math.sin(phase * .45) * .015);
+      }
+      return;
+    }
+    if (env === "space") {
+      if (["starRock", "meteor", "spaceDebris", "asteroid", "largeAsteroid"].includes(obj.type)) {
+        ctx.rotate(phase * (obj.id % 2 ? .055 : -.045));
+      } else if (["probe", "satellite", "capsule", "lander", "spaceBuoy", "stationModule", "spaceStation"].includes(obj.type)) {
+        ctx.rotate(Math.sin(phase * .34) * .025);
+        ctx.translate(0, Math.sin(phase * .72) * r * .055);
+      } else if (["smallPlanet", "moon", "planet", "deathstar", "wormholeGate", "sun", "mercury", "venus", "earth", "mars", "jupiter", "saturn", "uranus", "neptune", "pluto"].includes(obj.type)) {
+        const pulse = 1 + Math.sin(phase * .35) * .004;
+        ctx.scale(pulse, pulse);
+      } else if (["astronaut", "spaceship", "xwing", "shuttle", "enterprise", "mothership", "ufo", "redRoadster", "comet"].includes(obj.type)) {
+        ctx.translate(0, Math.sin(phase * .8) * r * .065);
+        ctx.rotate(Math.sin(phase * .38) * .012);
+      }
+    }
+  }
+
+  function drawOrbitSprite(obj, r) {
+    if (!orbitSpriteTypes.has(obj.type)) return false;
+    const spriteName = {
+      starRock: "asteroid-small", meteor: "asteroid-small", asteroid: "asteroid-small", largeAsteroid: "asteroid-large",
+      spaceStation: "station", stationModule: "station", ufo: "alien-saucer", mothership: "alien-craft",
+      spaceship: "alien-craft", xwing: "alien-craft", redRoadster: "red-roadster",
+    }[obj.type] || obj.type;
+    const animatedRow = { earth: 0, venus: 1, jupiter: 2 }[obj.type];
+    const usesAnimatedPlanet = animatedRow !== undefined && celestialAnimation.complete && celestialAnimation.naturalWidth;
+    const usesAnimatedSun = obj.type === "sun" && sunAnimation.complete && sunAnimation.naturalWidth;
+    const image = orbitSprites[spriteName];
+    if (!image?.complete || !image.naturalWidth) return false;
+    const scale = obj.type === "sun" ? 4.75
+      : solarBodyTypes.has(obj.type) ? 4.25
+      : ["starRock", "meteor", "asteroid"].includes(obj.type) ? 3
+      : obj.type === "largeAsteroid" ? 3.3
+      : obj.type === "comet" ? 5.1
+      : ["spaceStation", "stationModule", "mothership"].includes(obj.type) ? 4.8
+      : 4.45;
+    const size = r * scale;
+    const phase = performance.now() * .001 + obj.id * .43;
+    ctx.save();
+    ctx.imageSmoothingEnabled = true;
+    ctx.imageSmoothingQuality = "high";
+    if (usesAnimatedSun) {
+      drawRasterMorph(sunAnimation, 0, size, phase);
+    } else if (usesAnimatedPlanet) {
+      drawRasterMorph(celestialAnimation, animatedRow, size, phase);
+    } else {
+      ctx.drawImage(image, -size / 2, -size / 2, size, size);
+    }
+    ctx.restore();
+    return true;
+  }
+
+  function drawRasterMorph(image, row, size, phase) {
+    const progress = (phase * .82) % 4;
+    const frame = Math.floor(progress);
+    const nextFrame = (frame + 1) % 4;
+    const mix = (1 - Math.cos((progress - frame) * Math.PI)) * .5;
+    ctx.globalAlpha = 1 - mix;
+    ctx.drawImage(image, frame * 256, row * 256, 256, 256, -size / 2, -size / 2, size, size);
+    ctx.globalAlpha = mix;
+    ctx.drawImage(image, nextFrame * 256, row * 256, 256, 256, -size / 2, -size / 2, size, size);
+    ctx.globalAlpha = 1;
   }
 
   function drawDeepSinkLife(obj, r) {
@@ -2282,10 +2829,32 @@
     const size = r * (obj.type === "hotdogVendor" ? 4.5 : obj.type === "pedestrian" ? 4.15 : 3.8);
     ctx.save();
     if (obj.type !== "hotdogVendor" && Math.cos(obj.heading || 0) < 0) ctx.scale(-1, 1);
-    if (obj.type === "pedestrian" && obj.colorVariant) ctx.filter = `hue-rotate(${obj.colorVariant * 47}deg)`;
     ctx.imageSmoothingEnabled = true;
     ctx.imageSmoothingQuality = "high";
-    ctx.drawImage(metroLifeAtlas, frame * cell, index * cell, cell, cell, -size / 2, -size / 2, size, size);
+    if (obj.type === "pedestrian" && metroPedestrianAtlas.complete && metroPedestrianAtlas.naturalWidth) {
+      const variant = obj.pedestrianVariant || 0;
+      ctx.drawImage(metroPedestrianAtlas, frame * cell, variant * cell, cell, cell, -size / 2, -size / 2, size, size);
+    } else {
+      ctx.drawImage(metroLifeAtlas, frame * cell, index * cell, cell, cell, -size / 2, -size / 2, size, size);
+    }
+    ctx.restore();
+    return true;
+  }
+
+  function drawMetroGarden(obj, r) {
+    if (obj.type !== "flowerBed" || !metroGardenAtlas.complete || !metroGardenAtlas.naturalWidth) return false;
+    const cell = 256;
+    const variant = obj.flowerVariant || 0;
+    const sx = (variant % 4) * cell;
+    const sy = Math.floor(variant / 4) * cell;
+    const size = r * (obj.tier === "medium" ? 4.5 : 4.1);
+    const phase = performance.now() * .001 + obj.id * .54;
+    ctx.save();
+    ctx.rotate(Math.sin(phase * .62) * .008);
+    ctx.scale(1 + Math.sin(phase * .78) * .006, 1);
+    ctx.imageSmoothingEnabled = true;
+    ctx.imageSmoothingQuality = "high";
+    ctx.drawImage(metroGardenAtlas, sx, sy, cell, cell, -size / 2, -size / 2, size, size);
     ctx.restore();
     return true;
   }
@@ -2854,7 +3423,7 @@
   function blob(fill, r) {
     ctx.fillStyle = fill;
     ctx.beginPath();
-    for (let i = 0; i < 16; i += 1) {
+    for (let i = 0; i < 26; i += 1) {
       const a = (i / 16) * Math.PI * 2;
       const rr = r * (.74 + (i % 5) * .045 + Math.sin(i * 1.7) * .055);
       const x = Math.cos(a) * rr;
@@ -3276,6 +3845,10 @@
     canvas.addEventListener("pointerup", pointerUp);
     canvas.addEventListener("pointercancel", pointerUp);
     $("soloButton").addEventListener("click", startSolo);
+    $("sceneChoices").addEventListener("click", (event) => {
+      const choice = event.target.closest("[data-scene]");
+      if (choice) selectEnvironment(choice.dataset.scene);
+    });
     $("againButton").addEventListener("click", () => { playSound("ui"); showStart(); });
     $("howButton").addEventListener("click", showHow);
     $("howBackButton").addEventListener("click", () => { playSound("ui"); showStart(); });
@@ -3284,14 +3857,15 @@
 
   function init() {
     resize();
-    generateWorld();
     state.player = createPlayer();
     state.camera.x = state.player.x;
     state.camera.y = state.player.y;
     state.camera.zoom = 1.5;
     bind();
+    renderSceneChoices();
     updateHud();
-    render();
+    document.body.classList.add("game-idle");
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
   }
 
   init();

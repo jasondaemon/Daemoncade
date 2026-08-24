@@ -6,9 +6,9 @@
   <meta name="theme-color" content="#0b1727">
   <meta http-equiv="Content-Security-Policy" content="default-src 'self'; style-src 'self'; script-src 'self'; img-src 'self' data:; connect-src 'self'; media-src 'self'; object-src 'none'; frame-ancestors 'self'">
   <title>Sinkhole City</title>
-  <link rel="stylesheet" href="game.css?v=20260824-26">
+  <link rel="stylesheet" href="game.css?v=20260824-37">
 </head>
-<body>
+<body class="game-idle">
   <main class="sh-shell">
     <canvas id="gameCanvas" aria-label="Sinkhole City game canvas"></canvas>
 
@@ -30,8 +30,12 @@
       <p class="eyebrow">JasonDaemon.net Arcade</p>
       <h1>Sinkhole City</h1>
       <p class="subtitle">Start as a pothole. Swallow cones, coolers, cars, cabins, and anything else small enough to fit.</p>
+      <fieldset class="sh-scene-picker">
+        <legend>Choose a scene</legend>
+        <div id="sceneChoices" class="sh-scene-choices"></div>
+      </fieldset>
       <div class="sh-menu">
-        <button id="soloButton" class="primary" type="button">Start Solo Run</button>
+        <button id="soloButton" class="primary" type="button">Start Basecamp Run</button>
         <button id="howButton" type="button">How to Play</button>
       </div>
       <p class="hint">Touch-drag anywhere, or use WASD / arrow keys.</p>
@@ -64,6 +68,6 @@
     </section>
   </main>
   <script src="../shared/scores.js"></script>
-  <script src="game.js?v=20260824-26"></script>
+  <script src="game.js?v=20260824-37"></script>
 </body>
 </html>
