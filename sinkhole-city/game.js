@@ -580,7 +580,8 @@
       const config = tierFor(tier);
       const radius = (config.min + config.max) / 2;
       const object = makeObject(id++, type, tier, x, y, radius, rotation);
-      object.seabed = deepSinkSeabedTypes.has(type);
+      object.seabed = deepSinkSeabedTypes.has(type) || type === "octopus" || type === "giantSquid";
+      object.motionPhase = rand() * Math.PI * 2;
       objects.push(object);
       return object;
     };
@@ -609,7 +610,12 @@
       }
       for (let i = 0; i < 3 + Math.floor(rand() * 3); i += 1) {
         const point = pointIn(zone, 70);
-        addAt(rand() > .45 ? "turtle" : "ray", "medium", point.x, point.y, rand() * Math.PI * 2);
+        const animal = addAt(rand() > .45 ? "turtle" : "ray", "medium", point.x, point.y, rand() * Math.PI * 2);
+        animal.mobile = true;
+        animal.moveSpeed = animal.type === "ray" ? 18 + rand() * 8 : 12 + rand() * 6;
+        animal.heading = rand() * Math.PI * 2;
+        animal.turnAt = 0;
+        animal.movementBounds = { x: zone.x, y: zone.y, w: zone.w, h: zone.h };
       }
     }
 
@@ -2096,9 +2102,26 @@
     const scale = obj.type === "fish" ? 4.25 : obj.type === "whale" ? 5.7 : obj.type === "giantSquid" ? 5.4 : 4.8;
     const width = r * scale;
     const height = width * (image.naturalHeight / image.naturalWidth);
+    const phase = (obj.motionPhase || 0) + performance.now() * .001;
     ctx.save();
     if (obj.type !== "octopus" && obj.type !== "giantSquid" && Math.cos(obj.heading ?? obj.rotation ?? 0) < 0) ctx.scale(-1, 1);
     if (obj.type === "fish") ctx.rotate(Math.sin(obj.motionPhase || 0) * .035);
+    if (obj.type === "ray") {
+      ctx.translate(0, Math.sin(phase * 1.35) * r * .08);
+      ctx.scale(1, 1 + Math.sin(phase * 2.4) * .045);
+    } else if (obj.type === "turtle") {
+      ctx.translate(0, Math.sin(phase * .9) * r * .055);
+      ctx.rotate(Math.sin(phase * .72) * .012);
+    } else if (obj.type === "octopus" || obj.type === "giantSquid") {
+      const pulse = Math.sin(phase * .82);
+      ctx.translate(0, pulse * r * .035);
+      ctx.rotate(Math.sin(phase * .48 + obj.id) * .01);
+      ctx.scale(1 + pulse * .016, 1 - pulse * .012);
+      ctx.fillStyle = "rgba(4, 35, 43, .18)";
+      ctx.beginPath();
+      ctx.ellipse(0, height * .25, width * .3, Math.max(4, height * .07), 0, 0, Math.PI * 2);
+      ctx.fill();
+    }
     ctx.imageSmoothingEnabled = true;
     ctx.imageSmoothingQuality = "high";
     ctx.drawImage(image, -width / 2, -height / 2, width, height);
@@ -2118,8 +2141,17 @@
       : ["shipwreck", "sunkenShip", "kelpForest", "seaStack"].includes(obj.type) ? 5.05 : 4.25;
     const width = r * scale;
     const height = width * (image.naturalHeight / image.naturalWidth);
+    const phase = performance.now() * .001 + obj.id * .67;
     ctx.save();
-    if (obj.type === "seaweed" || obj.type === "kelpForest") ctx.rotate(Math.sin(performance.now() * .0015 + obj.id) * .025);
+    if (obj.type === "seaweed" || obj.type === "kelpForest") {
+      ctx.rotate(Math.sin(phase * 1.45) * .025);
+      ctx.scale(1 + Math.sin(phase * 1.1) * .012, 1);
+    } else if (obj.type === "reef" || obj.type === "coral") {
+      ctx.rotate(Math.sin(phase * .42) * .005);
+      ctx.scale(1 + Math.sin(phase * .6) * .006, 1 + Math.cos(phase * .55) * .004);
+    } else if (["shell", "starfish", "urchin", "crab"].includes(obj.type)) {
+      ctx.rotate(Math.sin(phase * .35) * .003);
+    }
     ctx.fillStyle = "rgba(4, 35, 43, .2)";
     ctx.beginPath();
     ctx.ellipse(0, height * .3, width * .32, Math.max(4, height * .075), 0, 0, Math.PI * 2);
