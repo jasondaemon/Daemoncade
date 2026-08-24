@@ -2,6 +2,33 @@
   const storageKey = "jasondaemon.sinkhole-city.best.v1";
   const durationMs = 120000;
   const world = { width: 2600, height: 1800 };
+  const basecampWorld = { width: 4200, height: 3000 };
+  const metroWorld = { width: 4400, height: 3200 };
+  const metroRoadX = [540, 1460, 2440, 3420, 4140];
+  const metroRoadY = [430, 1240, 2110, 2860];
+  const metroParks = [
+    { x: 690, y: 1380, w: 610, h: 570 },
+    { x: 2640, y: 1400, w: 610, h: 540 },
+  ];
+  const metroPlazas = [
+    { x: 1610, y: 560, w: 650, h: 510 },
+    { x: 3540, y: 2240, w: 420, h: 460 },
+  ];
+  const basecampRoads = [
+    [{ x: 120, y: 520 }, { x: 940, y: 500 }, { x: 1510, y: 820 }, { x: 2580, y: 790 }, { x: 4040, y: 510 }],
+    [{ x: 580, y: 120 }, { x: 620, y: 960 }, { x: 900, y: 1640 }, { x: 760, y: 2860 }],
+    [{ x: 150, y: 1940 }, { x: 980, y: 1780 }, { x: 1770, y: 2050 }, { x: 2760, y: 1880 }, { x: 4080, y: 2220 }],
+    [{ x: 2820, y: 120 }, { x: 2740, y: 900 }, { x: 3130, y: 1570 }, { x: 3420, y: 2860 }],
+  ];
+  const basecampSites = [
+    { x: 430, y: 360 }, { x: 1120, y: 610 }, { x: 1920, y: 480 }, { x: 3340, y: 420 },
+    { x: 520, y: 1430 }, { x: 1460, y: 1450 }, { x: 2390, y: 1320 }, { x: 3630, y: 1390 },
+    { x: 1220, y: 2520 }, { x: 2260, y: 2500 }, { x: 3650, y: 2570 },
+  ];
+  const basecampRiverPath = [
+    { x: -80, y: 2760 }, { x: 720, y: 2570 }, { x: 1380, y: 2340 },
+    { x: 2030, y: 2240 }, { x: 2740, y: 2110 }, { x: 3260, y: 1740 }, { x: 4280, y: 1510 },
+  ];
   const tiers = [
     { name: "small", min: 7, max: 16, score: 18, growth: .18 },
     { name: "medium", min: 17, max: 27, score: 48, growth: .36 },
@@ -44,7 +71,7 @@
       name: "Deep Sink",
       catalog: {
         small: ["fish", "shell", "starfish", "urchin", "seaweed", "bubbleCluster", "crab"],
-        medium: ["coral", "jellyfish", "turtle", "ray", "anchor", "treasureChest"],
+        medium: ["coral", "jellyfish", "turtle", "ray", "diver", "anchor", "treasureChest"],
         large: ["shark", "dolphin", "submarine", "reef", "shipwreck", "octopus"],
         huge: ["whale", "giantSquid", "sunkenShip", "kelpForest", "seaStack", "underseaBase"],
       },
@@ -61,6 +88,117 @@
     },
   ];
   const sfxBase = "./assets/sfx";
+  const basecampSpriteTypes = [
+    "rock", "cone", "trash", "shrub", "chair", "cooler",
+    "lantern", "campfire", "backpack", "picnic", "sign", "mailbox",
+    "tent", "bike", "stove", "barrel", "campTable", "jeep",
+    "trailer", "tree", "foodtruck", "cabin", "outhouse", "pump",
+    "rv", "lodge", "boulder", "watertower", "bridge", "giantsign",
+  ];
+  const basecampSpriteIndex = new Map(basecampSpriteTypes.map((type, index) => [type, index]));
+  const basecampSpriteAtlas = new Image();
+  basecampSpriteAtlas.decoding = "async";
+  basecampSpriteAtlas.src = "./assets/sprites/basecamp.webp";
+  const basecampJeepSprite = new Image();
+  basecampJeepSprite.decoding = "async";
+  basecampJeepSprite.src = "./assets/sprites/basecamp-jeep.png?v=20260824-1";
+  const basecampFjSprite = new Image();
+  basecampFjSprite.decoding = "async";
+  basecampFjSprite.src = "./assets/sprites/basecamp-fj-cruiser.png?v=20260824-1";
+  const basecampAmphitheaterSprite = new Image();
+  basecampAmphitheaterSprite.decoding = "async";
+  basecampAmphitheaterSprite.src = "./assets/sprites/basecamp-amphitheater.png?v=20260824-1";
+  const basecampObservationTowerSprite = new Image();
+  basecampObservationTowerSprite.decoding = "async";
+  basecampObservationTowerSprite.src = "./assets/sprites/basecamp-observation-tower.png?v=20260824-1";
+  const basecampPicnicShelterSprite = new Image();
+  basecampPicnicShelterSprite.decoding = "async";
+  basecampPicnicShelterSprite.src = "./assets/sprites/basecamp-picnic-shelter.png?v=20260824-1";
+  const basecampExtraTypes = [
+    "campMug", "crushedCan", "firewood", "hikingBoot", "trailMarker", "mushroomCluster",
+    "tackleBox", "campBlanket", "waterJug", "portableToilet", "canoe", "kayak",
+    "rangerPickup", "atv", "dirtBike", "fishingBoat", "foodLocker", "picnicShelter",
+    "rangerStation", "showerHouse", "welcomeKiosk", "observationTower", "maintenanceShed", "amphitheaterEntrance",
+  ];
+  const basecampExtraIndex = new Map(basecampExtraTypes.map((type, index) => [type, index]));
+  const basecampExtraAtlas = new Image();
+  basecampExtraAtlas.decoding = "async";
+  basecampExtraAtlas.src = "./assets/sprites/basecamp-extra.png?v=20260824-5";
+  const basecampWildlifeTypes = ["squirrel", "dog", "bear", "moose"];
+  const basecampWildlifeIndex = new Map(basecampWildlifeTypes.map((type, index) => [type, index]));
+  const basecampWildlifeAtlas = new Image();
+  basecampWildlifeAtlas.decoding = "async";
+  basecampWildlifeAtlas.src = "./assets/sprites/basecamp-wildlife-animated.png";
+  const basecampTerrain = Object.fromEntries(["grass", "gravel", "water", "trail"].map((name) => {
+    const image = new Image();
+    image.decoding = "async";
+    image.src = `./assets/terrain/basecamp-${name}.webp`;
+    return [name, image];
+  }));
+  const basecampTerrainPatterns = new Map();
+  const metroSpriteTypes = [
+    "cone", "trash", "hydrant", "parkingMeter", "streetlight", "newspaperBox",
+    "bench", "trafficLight", "mailbox", "bike", "scooter", "dumpster",
+    "busStop", "roadBarrier", "car", "taxi", "van", "foodtruck",
+    "bus", "storefront", "utilityTruck", "building", "skyscraper", "parkingGarage",
+  ];
+  const metroSpriteIndex = new Map(metroSpriteTypes.map((type, index) => [type, index]));
+  const metroSpriteAtlas = new Image();
+  metroSpriteAtlas.decoding = "async";
+  metroSpriteAtlas.src = "./assets/sprites/metro-sink.png?v=20260824-2";
+  const metroExtraTypes = [
+    "coffeeCup", "garbageBag", "sidewalkPlanter", "bollard", "cafeSign", "pigeon",
+    "newspaperBundle", "vendingMachine", "cafeTable", "phoneBooth", "shippingPallet", "motorcycle",
+    "suv", "pickup", "ambulance", "municipalSedan", "boxTruck", "excavator",
+    "townhouse", "warehouse", "hotel", "officeTower", "craneBase", "stadiumEntrance",
+  ];
+  const metroExtraIndex = new Map(metroExtraTypes.map((type, index) => [type, index]));
+  const metroExtraAtlas = new Image();
+  metroExtraAtlas.decoding = "async";
+  metroExtraAtlas.src = "./assets/sprites/metro-extra.png?v=20260824-1";
+  const metroLifeTypes = ["pedestrian", "hotdogVendor", "parkDog", "raccoon"];
+  const metroLifeIndex = new Map(metroLifeTypes.map((type, index) => [type, index]));
+  const metroLifeAtlas = new Image();
+  metroLifeAtlas.decoding = "async";
+  metroLifeAtlas.src = "./assets/sprites/metro-life.png?v=20260824-2";
+  const deepSinkLifeTypes = ["shark", "dolphin", "jellyfish", "diver"];
+  const deepSinkLifeIndex = new Map(deepSinkLifeTypes.map((type, index) => [type, index]));
+  const deepSinkLifeAtlas = new Image();
+  deepSinkLifeAtlas.decoding = "async";
+  deepSinkLifeAtlas.src = "./assets/sprites/deep-sink-life.png?v=20260824-1";
+  const metroTerrain = Object.fromEntries(["asphalt", "sidewalk", "grass", "brick"].map((name) => {
+    const image = new Image();
+    image.decoding = "async";
+    image.src = `./assets/terrain/metro-${name}.webp`;
+    return [name, image];
+  }));
+  const metroTerrainPatterns = new Map();
+  const metroObjectSizes = {
+    coffeeCup: 6, pigeon: 6, newspaperBundle: 7, pedestrian: 8, raccoon: 8, garbageBag: 9,
+    cone: 9, parkingMeter: 9, bollard: 9, cafeSign: 10, trash: 11, hydrant: 11,
+    streetlight: 11, newspaperBox: 12, sidewalkPlanter: 12, scooter: 12, parkDog: 13,
+    mailbox: 14, bike: 14, bench: 15, trafficLight: 16, vendingMachine: 16,
+    phoneBooth: 17, motorcycle: 17, cafeTable: 18, shippingPallet: 18, hotdogVendor: 19,
+    roadBarrier: 20, dumpster: 22, busStop: 24, car: 31, taxi: 31, municipalSedan: 31,
+    suv: 33, pickup: 35, van: 37, foodtruck: 39, utilityTruck: 41, ambulance: 41,
+    tree: 34, excavator: 42, boxTruck: 43, bus: 49, storefront: 58, townhouse: 64,
+    building: 70, craneBase: 72, stadiumEntrance: 74, hotel: 76, parkingGarage: 78,
+    warehouse: 80, skyscraper: 85, officeTower: 86,
+  };
+  const basecampObjectSizes = {
+    campMug: 6, crushedCan: 6, rock: 7, squirrel: 7, mushroomCluster: 7,
+    hikingBoot: 8, cone: 9, lantern: 9, trash: 10, backpack: 10, firewood: 10,
+    trailMarker: 10, shrub: 11, cooler: 11, chair: 12, tackleBox: 12,
+    campBlanket: 12, waterJug: 13, mailbox: 13, dog: 13, bike: 14,
+    campfire: 14, sign: 15, stove: 16, barrel: 16, campTable: 18,
+    portableToilet: 16, foodLocker: 18, picnic: 19, kayak: 20, tent: 21,
+    dirtBike: 16, canoe: 22, bear: 25, atv: 26, outhouse: 29, moose: 30,
+    welcomeKiosk: 30, pump: 31, jeep: 32, tree: 34, fishingBoat: 34,
+    rangerPickup: 35, fjCruiser: 35, trailer: 36, foodtruck: 39, picnicShelter: 40, boulder: 40,
+    showerHouse: 44, giantsign: 44, cabin: 48, rangerStation: 48,
+    maintenanceShed: 48, rv: 50, amphitheaterEntrance: 52, watertower: 55,
+    observationTower: 58, bridge: 60, lodge: 65,
+  };
   const soundFiles = {
     ui: "ui_select.mp3",
     countdownTick: "countdown_tick.mp3",
@@ -138,7 +276,8 @@
     particles: [],
     player: null,
     opponents: [],
-    camera: { x: 0, y: 0, shake: 0 },
+    camera: { x: 0, y: 0, shake: 0, zoom: 1.5 },
+    viewBounds: null,
     input: { x: 0, y: 0, keys: new Set(), pointerId: null, originX: 0, originY: 0 },
     last: 0,
     startAt: 0,
@@ -286,6 +425,14 @@
     return environments[Math.abs(Number(seed || 0)) % environments.length] || environments[0];
   }
 
+  function seedForRequestedEnvironment(seed) {
+    const requested = new URLSearchParams(window.location.search).get("world");
+    if (!requested || !environments.some((environment) => environment.id === requested)) return seed;
+    let candidate = seed;
+    while (environmentForSeed(candidate).id !== requested) candidate += 1;
+    return candidate;
+  }
+
   function resize() {
     state.dpr = Math.min(2, window.devicePixelRatio || 1);
     state.width = Math.max(1, window.innerWidth);
@@ -362,6 +509,26 @@
   function generateWorld(seed = state.seed) {
     const rand = rng(seed);
     state.environment = environmentForSeed(seed);
+    if (state.environment.id === "campsite") {
+      world.width = basecampWorld.width;
+      world.height = basecampWorld.height;
+      state.objects = generateBasecampObjects(rand);
+      return;
+    }
+    if (state.environment.id === "city") {
+      world.width = metroWorld.width;
+      world.height = metroWorld.height;
+      state.objects = generateMetroObjects(rand);
+      return;
+    }
+    if (state.environment.id === "underwater") {
+      world.width = 4200;
+      world.height = 3000;
+      state.objects = generateUnderwaterObjects(rand);
+      return;
+    }
+    world.width = 2600;
+    world.height = 1800;
     const objects = [];
     let id = 1;
     const add = (tier, count, zones = null) => {
@@ -371,7 +538,7 @@
         const zone = zones ? zones[Math.floor(rand() * zones.length)] : null;
         const x = zone ? zone.x + rand() * zone.w : 120 + rand() * (world.width - 240);
         const y = zone ? zone.y + rand() * zone.h : 120 + rand() * (world.height - 240);
-        const radius = config.min + rand() * (config.max - config.min);
+        const radius = (config.min + config.max) / 2;
         const type = names[Math.floor(rand() * names.length)];
         objects.push(makeObject(id, type, tier, x, y, radius, rand() * Math.PI * 2));
         id += 1;
@@ -389,6 +556,503 @@
     state.objects = objects;
   }
 
+  function generateUnderwaterObjects(rand) {
+    const objects = [];
+    let id = 1;
+    const tierFor = (tier) => tiers.find((item) => item.name === tier);
+    const addAt = (type, tier, x, y, rotation = 0) => {
+      const config = tierFor(tier);
+      const radius = (config.min + config.max) / 2;
+      const object = makeObject(id++, type, tier, x, y, radius, rotation);
+      objects.push(object);
+      return object;
+    };
+    const pointIn = (zone, margin = 0) => ({
+      x: zone.x + margin + rand() * Math.max(1, zone.w - margin * 2),
+      y: zone.y + margin + rand() * Math.max(1, zone.h - margin * 2),
+    });
+    const reefZones = [
+      { x: 260 + rand() * 260, y: 1880 + rand() * 210, w: 720 + rand() * 260, h: 640 },
+      { x: 1580 + rand() * 360, y: 2050 + rand() * 180, w: 850 + rand() * 240, h: 620 },
+      { x: 3040 + rand() * 220, y: 1770 + rand() * 260, w: 700 + rand() * 250, h: 720 },
+    ];
+    const wreckZones = [
+      { x: 960 + rand() * 420, y: 1280 + rand() * 300, w: 520, h: 420 },
+      { x: 2740 + rand() * 420, y: 930 + rand() * 390, w: 580, h: 460 },
+    ];
+    state.underwaterZones = { reefs: reefZones, wrecks: wreckZones };
+
+    for (const zone of reefZones) {
+      const reefCenter = pointIn(zone, 100);
+      addAt("reef", "large", reefCenter.x, reefCenter.y);
+      for (let i = 0; i < 18 + Math.floor(rand() * 9); i += 1) {
+        const point = pointIn(zone, 35);
+        const type = rand() < .34 ? "coral" : rand() < .58 ? "seaweed" : rand() < .78 ? "urchin" : rand() < .9 ? "starfish" : "crab";
+        addAt(type, type === "coral" ? "medium" : "small", point.x, point.y, rand() * Math.PI * 2);
+      }
+      for (let i = 0; i < 3 + Math.floor(rand() * 3); i += 1) {
+        const point = pointIn(zone, 70);
+        addAt(rand() > .45 ? "turtle" : "ray", "medium", point.x, point.y, rand() * Math.PI * 2);
+      }
+    }
+
+    for (const zone of wreckZones) {
+      const point = pointIn(zone, 90);
+      addAt(rand() > .48 ? "shipwreck" : "sunkenShip", "huge", point.x, point.y, rand() * .35 - .18);
+      for (let i = 0; i < 7; i += 1) {
+        const detail = pointIn(zone, 35);
+        addAt(["anchor", "treasureChest", "shell", "crab"][Math.floor(rand() * 4)], rand() > .55 ? "medium" : "small", detail.x, detail.y, rand() * Math.PI * 2);
+      }
+      const diver = addAt("diver", "medium", point.x + 120, point.y - 105, 0);
+      diver.mobile = true;
+      diver.moveSpeed = 22 + rand() * 12;
+      diver.heading = rand() * Math.PI * 2;
+      diver.turnAt = 0;
+      diver.movementBounds = { x: zone.x, y: zone.y, w: zone.w, h: zone.h };
+    }
+
+    state.underwaterSchools = [];
+    const schoolColors = ["#ffd34d", "#31c6ca", "#f48b3c", "#b8d8e8"];
+    for (let schoolId = 0; schoolId < 10; schoolId += 1) {
+      const center = { x: 320 + rand() * 3560, y: 300 + rand() * 1650 };
+      const school = { x: center.x, y: center.y, heading: rand() * Math.PI * 2, speed: 28 + rand() * 34, turnAt: 0 };
+      state.underwaterSchools.push(school);
+      const count = 10 + Math.floor(rand() * 11);
+      for (let i = 0; i < count; i += 1) {
+        const fish = addAt("fish", "small", center.x, center.y, school.heading);
+        fish.schoolId = schoolId;
+        fish.schoolOffsetX = (rand() - .5) * 290;
+        fish.schoolOffsetY = (rand() - .5) * 150;
+        fish.schoolColor = schoolColors[schoolId % schoolColors.length];
+        fish.motionPhase = rand() * Math.PI * 2;
+      }
+    }
+
+    state.underwaterPods = [];
+    for (let pod = 0; pod < 3; pod += 1) {
+      const center = { x: 500 + rand() * 3200, y: 300 + rand() * 1100 };
+      const heading = rand() * Math.PI * 2;
+      state.underwaterPods.push({ x: center.x, y: center.y, heading, speed: 54 + rand() * 14, turnAt: 0 });
+      for (let i = 0; i < 2 + Math.floor(rand() * 2); i += 1) {
+        const dolphin = addAt("dolphin", "large", center.x + (i - 1) * 115, center.y + (rand() - .5) * 90, 0);
+        dolphin.podId = pod;
+        dolphin.podOffsetX = (i - 1) * 125 + (rand() - .5) * 35;
+        dolphin.podOffsetY = (rand() - .5) * 100;
+        dolphin.heading = heading;
+        dolphin.motionPhase = rand() * Math.PI * 2;
+      }
+    }
+    for (let i = 0; i < 5; i += 1) {
+      const shark = addAt("shark", "large", 360 + rand() * 3480, 320 + rand() * 1500, 0);
+      shark.mobile = true;
+      shark.moveSpeed = 42 + rand() * 20;
+      shark.heading = rand() * Math.PI * 2;
+      shark.turnAt = 0;
+      shark.movementBounds = { x: 120, y: 120, w: world.width - 240, h: 1840 };
+    }
+    for (let i = 0; i < 14; i += 1) {
+      const jelly = addAt("jellyfish", "medium", 220 + rand() * 3760, 260 + rand() * 2050, 0);
+      jelly.mobile = true;
+      jelly.moveSpeed = 9 + rand() * 10;
+      jelly.heading = -Math.PI / 2 + (rand() - .5) * .5;
+      jelly.turnAt = 0;
+      jelly.movementBounds = { x: 120, y: 120, w: world.width - 240, h: 2320 };
+    }
+    for (let i = 0; i < 3; i += 1) {
+      const whale = addAt("whale", "huge", 620 + rand() * 2960, 320 + rand() * 1050, 0);
+      whale.mobile = true;
+      whale.moveSpeed = 15 + rand() * 8;
+      whale.heading = rand() > .5 ? 0 : Math.PI;
+      whale.turnAt = 0;
+      whale.movementBounds = { x: 180, y: 180, w: world.width - 360, h: 1320 };
+    }
+    for (let i = 0; i < 3; i += 1) addAt(i === 0 ? "giantSquid" : "octopus", i === 0 ? "huge" : "large", 500 + rand() * 3200, 2050 + rand() * 620, rand() * Math.PI * 2);
+    for (let i = 0; i < 90; i += 1) addAt(rand() > .46 ? "bubbleCluster" : "shell", "small", 100 + rand() * (world.width - 200), 130 + rand() * (world.height - 260), rand() * Math.PI * 2);
+    return objects;
+  }
+
+  function generateMetroObjects(rand) {
+    const objects = [];
+    let id = 1;
+    const tierFor = (tier) => tiers.find((item) => item.name === tier);
+    const jitter = (amount) => (rand() - .5) * amount;
+    const addAt = (type, tier, x, y, rotation = 0, _radiusScale = 1) => {
+      const config = tierFor(tier);
+      const radius = metroObjectSizes[type] || (config.min + config.max) / 2;
+      const object = makeObject(id++, type, tier, x, y, radius, rotation);
+      object.rotation = rotation;
+      object.visualScale = 1;
+      objects.push(object);
+      return object;
+    };
+
+    const blocks = [];
+    const xs = [90, ...metroRoadX.map((x) => x + 105)];
+    const xe = [...metroRoadX.map((x) => x - 105), metroWorld.width - 90];
+    const ys = [90, ...metroRoadY.map((y) => y + 105)];
+    const ye = [...metroRoadY.map((y) => y - 105), metroWorld.height - 90];
+    for (let row = 0; row < ys.length; row += 1) {
+      for (let col = 0; col < xs.length; col += 1) {
+        if (xe[col] - xs[col] < 230 || ye[row] - ys[row] < 230) continue;
+        blocks.push({ x: xs[col], y: ys[row], w: xe[col] - xs[col], h: ye[row] - ys[row], row, col });
+      }
+    }
+
+    for (const block of blocks) {
+      const centerX = block.x + block.w * .5;
+      const centerY = block.y + block.h * .5;
+      const park = metroParks.some((area) => centerX > area.x && centerX < area.x + area.w && centerY > area.y && centerY < area.y + area.h);
+      const plaza = metroPlazas.some((area) => block.x < area.x + area.w && block.x + block.w > area.x && block.y < area.y + area.h && block.y + block.h > area.y);
+      if (park) continue;
+      if (plaza) {
+        addAt("storefront", "large", block.x + block.w * .5, block.y + block.h * .38, 0, 1.08);
+        addAt("bench", "small", block.x + block.w * .25, block.y + block.h * .78, 0);
+        addAt("newspaperBox", "small", block.x + block.w * .73, block.y + block.h * .78, 0);
+        continue;
+      }
+      const major = (block.row + block.col) % 4 === 0;
+      const lots = [
+        { x: .27, y: .29 }, { x: .72, y: .29 },
+        { x: .27, y: .69 }, { x: .72, y: .69 },
+      ];
+      const buildingCount = block.w > 600 && block.h > 520 ? 4 : block.w > 430 ? 3 : 2;
+      for (let lot = 0; lot < buildingCount; lot += 1) {
+        const spot = lots[lot];
+        const landmark = major && lot === 0;
+        const landmarkTypes = ["skyscraper", "officeTower", "hotel"];
+        const neighborhoodTypes = ["building", "building", "parkingGarage", "townhouse", "warehouse"];
+        const type = landmark ? landmarkTypes[(block.row + block.col) % landmarkTypes.length] : neighborhoodTypes[Math.floor(rand() * neighborhoodTypes.length)];
+        addAt(type, "huge", block.x + block.w * spot.x + jitter(24), block.y + block.h * spot.y + jitter(20), 0, landmark ? .76 : .61 + rand() * .12);
+      }
+      const storefrontCount = block.w > 560 ? 2 : 1;
+      for (let shop = 0; shop < storefrontCount; shop += 1) {
+        addAt("storefront", "large", block.x + block.w * ((shop + 1) / (storefrontCount + 1)) + jitter(25), block.y + block.h - 58 + jitter(12), 0, .66 + rand() * .1);
+      }
+    }
+
+    for (const park of metroParks) {
+      const trees = [
+        [.11, .12], [.3, .13], [.7, .13], [.89, .12],
+        [.12, .34], [.88, .34], [.12, .66], [.88, .66],
+        [.11, .88], [.3, .87], [.7, .87], [.89, .88],
+      ];
+      for (const [px, py] of trees) {
+        addAt("tree", "large", park.x + park.w * px + jitter(12), park.y + park.h * py + jitter(12), 0);
+      }
+      const benches = [
+        [.18, .18], [.5, .18], [.82, .18], [.18, .82], [.5, .82], [.82, .82], [.26, .5], [.74, .5],
+      ];
+      for (const [px, py] of benches) addAt("bench", "small", park.x + park.w * px + jitter(14), park.y + park.h * py + jitter(14), 0, .88);
+      const lamps = [[.08, .08], [.5, .08], [.92, .08], [.08, .5], [.92, .5], [.08, .92], [.5, .92], [.92, .92]];
+      for (const [px, py] of lamps) addAt("streetlight", "small", park.x + park.w * px, park.y + park.h * py, 0, .84);
+      for (let i = 0; i < 7; i += 1) {
+        const type = i % 3 === 0 ? "trash" : i % 3 === 1 ? "bike" : "scooter";
+        addAt(type, "small", park.x + 70 + rand() * (park.w - 140), park.y + 65 + rand() * (park.h - 130), 0, .72 + rand() * .12);
+      }
+      for (let i = 0; i < 3; i += 1) {
+        const dog = addAt("parkDog", "medium", park.x + 90 + rand() * (park.w - 180), park.y + 90 + rand() * (park.h - 180), 0, .68);
+        dog.mobile = true;
+        dog.moveSpeed = 38 + rand() * 15;
+        dog.heading = rand() * Math.PI * 2;
+        dog.turnAt = 0;
+        dog.movementBounds = { x: park.x + 45, y: park.y + 45, w: park.w - 90, h: park.h - 90 };
+      }
+      for (let i = 0; i < 2; i += 1) {
+        const raccoon = addAt("raccoon", "small", park.x + 70 + rand() * (park.w - 140), park.y + 70 + rand() * (park.h - 140), 0, .62);
+        raccoon.mobile = true;
+        raccoon.moveSpeed = 48 + rand() * 20;
+        raccoon.heading = rand() * Math.PI * 2;
+        raccoon.turnAt = 0;
+        raccoon.movementBounds = { x: park.x + 25, y: park.y + 25, w: park.w - 50, h: park.h - 50 };
+      }
+    }
+
+    for (let i = 0; i < 16; i += 1) {
+      const roadY = metroRoadY[i % metroRoadY.length];
+      const side = i % 2 ? 1 : -1;
+      const pedestrian = addAt("pedestrian", "small", 140 + rand() * (metroWorld.width - 280), roadY + side * (112 + rand() * 12), 0, .7);
+      pedestrian.mobile = true;
+      pedestrian.moveSpeed = 34 + rand() * 18;
+      pedestrian.heading = rand() > .5 ? 0 : Math.PI;
+      pedestrian.turnAt = Number.POSITIVE_INFINITY;
+      pedestrian.colorVariant = i % 5;
+      pedestrian.movementBounds = { x: 80, y: roadY + side * 132 - 24, w: metroWorld.width - 160, h: 48 };
+    }
+
+    const vendorZones = [...metroParks, ...metroParks, ...metroPlazas];
+    for (const zone of vendorZones) {
+      const verticalEdge = rand() > .5;
+      const x = verticalEdge ? zone.x + (rand() > .5 ? 48 : zone.w - 48) : zone.x + 75 + rand() * (zone.w - 150);
+      const y = verticalEdge ? zone.y + 75 + rand() * (zone.h - 150) : zone.y + (rand() > .5 ? 58 : zone.h - 58);
+      const vendor = addAt("hotdogVendor", "medium", x, y, 0, .78);
+      vendor.animated = true;
+      vendor.motionPhase = rand() * Math.PI * 2;
+      const customerCount = 1 + Math.floor(rand() * 2);
+      for (let i = 0; i < customerCount; i += 1) {
+        const angle = rand() * Math.PI * 2;
+        const pedestrian = addAt("pedestrian", "small", x + Math.cos(angle) * (42 + rand() * 35), y + Math.sin(angle) * (42 + rand() * 35), 0, .68);
+        pedestrian.mobile = true;
+        pedestrian.moveSpeed = 18 + rand() * 13;
+        pedestrian.heading = rand() * Math.PI * 2;
+        pedestrian.turnAt = 0;
+        pedestrian.colorVariant = Math.floor(rand() * 5);
+        pedestrian.movementBounds = { x: zone.x + 24, y: zone.y + 24, w: zone.w - 48, h: zone.h - 48 };
+      }
+    }
+
+    for (let i = 0; i < 4; i += 1) {
+      const plaza = metroPlazas[i % metroPlazas.length];
+      const raccoon = addAt("raccoon", "small", plaza.x + 55 + rand() * (plaza.w - 110), plaza.y + 55 + rand() * (plaza.h - 110), 0, .6);
+      raccoon.mobile = true;
+      raccoon.moveSpeed = 44 + rand() * 18;
+      raccoon.heading = rand() * Math.PI * 2;
+      raccoon.turnAt = 0;
+      raccoon.movementBounds = { x: plaza.x + 20, y: plaza.y + 20, w: plaza.w - 40, h: plaza.h - 40 };
+    }
+
+    for (const x of metroRoadX) {
+      for (const y of metroRoadY) {
+        addAt("trafficLight", "medium", x - 82, y - 78, 0, .82);
+        if (rand() > .4) addAt("hydrant", "small", x + 82, y + 78, 0, .88);
+        if (rand() > .52) addAt("newspaperBox", "small", x - 75, y + 86, 0, .86);
+      }
+    }
+
+    const curbTypes = ["parkingMeter", "streetlight", "trash", "mailbox", "bike", "scooter", "bench"];
+    for (let i = 0; i < 115; i += 1) {
+      const vertical = rand() > .44;
+      if (vertical) {
+        const x = metroRoadX[Math.floor(rand() * metroRoadX.length)] + (rand() > .5 ? 88 : -88);
+        addAt(curbTypes[Math.floor(rand() * curbTypes.length)], "small", x + jitter(18), 120 + rand() * (metroWorld.height - 240), 0, .8 + rand() * .25);
+      } else {
+        const y = metroRoadY[Math.floor(rand() * metroRoadY.length)] + (rand() > .5 ? 88 : -88);
+        addAt(curbTypes[Math.floor(rand() * curbTypes.length)], "small", 120 + rand() * (metroWorld.width - 240), y + jitter(18), 0, .8 + rand() * .25);
+      }
+    }
+
+    const tinyStreetTypes = ["coffeeCup", "garbageBag", "sidewalkPlanter", "bollard", "cafeSign", "pigeon", "newspaperBundle"];
+    for (let i = 0; i < 92; i += 1) {
+      const vertical = rand() > .45;
+      const type = tinyStreetTypes[Math.floor(rand() * tinyStreetTypes.length)];
+      if (vertical) {
+        const x = metroRoadX[Math.floor(rand() * metroRoadX.length)] + (rand() > .5 ? 120 : -120) + jitter(24);
+        addAt(type, "small", x, 100 + rand() * (metroWorld.height - 200), 0);
+      } else {
+        const y = metroRoadY[Math.floor(rand() * metroRoadY.length)] + (rand() > .5 ? 120 : -120) + jitter(24);
+        addAt(type, "small", 100 + rand() * (metroWorld.width - 200), y, 0);
+      }
+    }
+
+    const plazaTypes = ["vendingMachine", "cafeTable", "phoneBooth", "shippingPallet", "motorcycle"];
+    for (const plaza of metroPlazas) {
+      for (let i = 0; i < 6; i += 1) {
+        addAt(plazaTypes[Math.floor(rand() * plazaTypes.length)], "medium", plaza.x + 45 + rand() * (plaza.w - 90), plaza.y + 45 + rand() * (plaza.h - 90), 0);
+      }
+    }
+
+    const vehicles = ["car", "taxi", "van", "foodtruck", "utilityTruck", "bus", "suv", "pickup", "ambulance", "municipalSedan", "boxTruck", "excavator"];
+    for (let i = 0; i < 68; i += 1) {
+      const vertical = rand() > .48;
+      const type = vehicles[Math.floor(rand() * vehicles.length)];
+      const tier = type === "bus" ? "large" : "large";
+      if (vertical) {
+        const x = metroRoadX[Math.floor(rand() * metroRoadX.length)] + (rand() > .5 ? 29 : -29);
+        addAt(type, tier, x, 150 + rand() * (metroWorld.height - 300), Math.PI / 2 + (rand() > .5 ? Math.PI : 0), type === "bus" ? 1.04 : .83);
+      } else {
+        const y = metroRoadY[Math.floor(rand() * metroRoadY.length)] + (rand() > .5 ? 29 : -29);
+        addAt(type, tier, 150 + rand() * (metroWorld.width - 300), y, rand() > .5 ? Math.PI : 0, type === "bus" ? 1.04 : .83);
+      }
+    }
+
+    for (let i = 0; i < 44; i += 1) {
+      const vertical = rand() > .5;
+      const x = vertical ? metroRoadX[Math.floor(rand() * metroRoadX.length)] + jitter(70) : 150 + rand() * (metroWorld.width - 300);
+      const y = vertical ? 150 + rand() * (metroWorld.height - 300) : metroRoadY[Math.floor(rand() * metroRoadY.length)] + jitter(70);
+      addAt(rand() > .35 ? "cone" : "roadBarrier", rand() > .35 ? "small" : "medium", x, y, 0, .82);
+    }
+    return objects;
+  }
+
+  function generateBasecampObjects(rand) {
+    const objects = [];
+    let id = 1;
+    const tierFor = (tier) => tiers.find((item) => item.name === tier);
+    const addAt = (type, tier, x, y, rotation = 0, _radiusScale = 1) => {
+      const config = tierFor(tier);
+      const radius = basecampObjectSizes[type] || (config.min + config.max) / 2;
+      const object = makeObject(id++, type, tier, x, y, radius, rotation);
+      object.rotation = rotation;
+      object.visualScale = 1;
+      objects.push(object);
+      return object;
+    };
+    const jitter = (amount) => (rand() - .5) * amount;
+    const pick = (items) => items[Math.floor(rand() * items.length)];
+    const distanceToSegment = (point, a, b) => {
+      const dx = b.x - a.x;
+      const dy = b.y - a.y;
+      const lengthSquared = dx * dx + dy * dy || 1;
+      const t = Math.max(0, Math.min(1, ((point.x - a.x) * dx + (point.y - a.y) * dy) / lengthSquared));
+      return Math.hypot(point.x - (a.x + dx * t), point.y - (a.y + dy * t));
+    };
+    const nearRiver = (x, y, margin = 105) => basecampRiverPath.some((point, index) => index && distanceToSegment({ x, y }, basecampRiverPath[index - 1], point) < margin);
+    const pointAlong = (path, offset = 0) => {
+      const segment = Math.floor(rand() * (path.length - 1));
+      const a = path[segment];
+      const b = path[segment + 1];
+      const t = .12 + rand() * .76;
+      const angle = Math.atan2(b.y - a.y, b.x - a.x);
+      return {
+        x: a.x + (b.x - a.x) * t - Math.sin(angle) * offset,
+        y: a.y + (b.y - a.y) * t + Math.cos(angle) * offset,
+        angle,
+      };
+    };
+    const randomLandPoint = (padding = 130) => {
+      for (let attempt = 0; attempt < 80; attempt += 1) {
+        const point = { x: padding + rand() * (world.width - padding * 2), y: padding + rand() * (world.height - padding * 2) };
+        if (!nearRiver(point.x, point.y, 145)) return point;
+      }
+      return { x: padding, y: padding };
+    };
+    const siteCandidates = basecampRoads.flatMap((road) => road.slice(0, -1).map((a, index) => {
+      const b = road[index + 1];
+      const angle = Math.atan2(b.y - a.y, b.x - a.x);
+      const t = .22 + rand() * .56;
+      const side = rand() > .5 ? 1 : -1;
+      const offset = side * (150 + rand() * 105);
+      return {
+        x: Math.max(190, Math.min(world.width - 190, a.x + (b.x - a.x) * t - Math.sin(angle) * offset)),
+        y: Math.max(190, Math.min(world.height - 190, a.y + (b.y - a.y) * t + Math.cos(angle) * offset)),
+      };
+    })).filter((site) => !nearRiver(site.x, site.y, 220));
+    const activeSites = [];
+    while (siteCandidates.length && activeSites.length < 11) {
+      const index = Math.floor(rand() * siteCandidates.length);
+      const candidate = siteCandidates.splice(index, 1)[0];
+      if (activeSites.every((site) => Math.hypot(site.x - candidate.x, site.y - candidate.y) > 330)) activeSites.push(candidate);
+    }
+    while (activeSites.length < 9) activeSites.push(randomLandPoint(240));
+    state.generatedBasecampSites = activeSites;
+
+    for (const site of activeSites) {
+      const cx = site.x + jitter(90);
+      const cy = site.y + jitter(90);
+      addAt("campfire", "small", cx, cy, 0, 1.08);
+      const chairCount = rand() > .45 ? 3 : 2;
+      for (let i = 0; i < chairCount; i += 1) {
+        const angle = -.7 + i * (1.4 / Math.max(1, chairCount - 1)) + jitter(.16);
+        const distance = 74 + rand() * 24;
+        addAt("chair", "small", cx + Math.cos(angle) * distance, cy + Math.sin(angle) * distance, angle + Math.PI / 2);
+      }
+      addAt("tent", "medium", cx + jitter(55), cy - 126 - rand() * 35, jitter(.12));
+      addAt("cooler", "small", cx + 105 + jitter(28), cy + 28 + jitter(35), jitter(.12));
+      addAt("lantern", "small", cx - 75 + jitter(24), cy + 62 + jitter(28), 0);
+      if (rand() > .45) addAt("backpack", "small", cx - 112 + jitter(20), cy - 45 + jitter(30), jitter(.18));
+      if (rand() > .55) addAt("picnic", "medium", cx + 165 + jitter(30), cy - 70 + jitter(35), jitter(.1));
+      const campClutter = ["campMug", "crushedCan", "firewood", "hikingBoot", "tackleBox", "campBlanket", "waterJug"];
+      const clutterCount = 3 + Math.floor(rand() * 3);
+      for (let i = 0; i < clutterCount; i += 1) {
+        const angle = rand() * Math.PI * 2;
+        const distance = 95 + rand() * 115;
+        const type = campClutter[Math.floor(rand() * campClutter.length)];
+        addAt(type, basecampObjectSizes[type] >= 12 ? "medium" : "small", cx + Math.cos(angle) * distance, cy + Math.sin(angle) * distance, jitter(.3));
+      }
+    }
+
+    const roadsideTypes = ["cabin", "cabin", "pump", "lodge", "cabin", "outhouse", "lodge", "cabin", "pump", "cabin", "lodge", "cabin"];
+    for (const type of roadsideTypes) {
+      const point = pointAlong(pick(basecampRoads), (rand() > .5 ? 1 : -1) * (105 + rand() * 55));
+      if (!nearRiver(point.x, point.y, 145)) addAt(type, type === "lodge" ? "huge" : "large", point.x, point.y, point.angle + (rand() > .5 ? Math.PI : 0));
+    }
+    for (let i = 0; i < 6; i += 1) {
+      const point = pointAlong(pick(basecampRoads), (rand() > .5 ? 1 : -1) * (80 + rand() * 35));
+      addAt(rand() > .32 ? "sign" : "giantsign", rand() > .32 ? "medium" : "huge", point.x, point.y, point.angle);
+    }
+    addAt("bridge", "huge", 2080, 2210, -.38);
+    const landmarkTypes = [
+      ["watertower", "huge"], ["rv", "huge"], ["rangerStation", "huge"], ["showerHouse", "huge"],
+      ["welcomeKiosk", "large"], ["observationTower", "huge"], ["maintenanceShed", "huge"],
+      ["amphitheaterEntrance", "huge"], ["picnicShelter", "large"], ["foodLocker", "medium"], ["portableToilet", "medium"],
+    ];
+    const landmarkSites = [];
+    let landmarkAttempts = 0;
+    while (landmarkSites.length < landmarkTypes.length && landmarkAttempts < 220) {
+      landmarkAttempts += 1;
+      const point = pointAlong(pick(basecampRoads), (rand() > .5 ? 1 : -1) * (185 + rand() * 115));
+      if (!nearRiver(point.x, point.y, 165)
+        && activeSites.every((site) => Math.hypot(site.x - point.x, site.y - point.y) > 260)
+        && landmarkSites.every((site) => Math.hypot(site.x - point.x, site.y - point.y) > 240)) landmarkSites.push(point);
+    }
+    while (landmarkSites.length < landmarkTypes.length) landmarkSites.push(randomLandPoint(210));
+    for (const [type, tier] of landmarkTypes) {
+      const site = landmarkSites.pop() || randomLandPoint(210);
+      addAt(type, tier, site.x + jitter(120), site.y + jitter(110), jitter(.08));
+    }
+
+    for (const type of ["canoe", "kayak", "canoe", "kayak", "fishingBoat"]) {
+      const point = pointAlong(basecampRiverPath, jitter(18));
+      addAt(type, type === "fishingBoat" ? "large" : "medium", point.x, point.y, point.angle);
+    }
+
+    const vehicleTypes = ["jeep", "fjCruiser", "trailer", "foodtruck", "rangerPickup", "atv", "dirtBike"];
+    for (const road of basecampRoads) {
+      for (let segment = 0; segment < road.length - 1; segment += 1) {
+        const a = road[segment];
+        const b = road[segment + 1];
+        const angle = Math.atan2(b.y - a.y, b.x - a.x);
+        const count = 1 + (rand() > .58 ? 1 : 0);
+        for (let i = 0; i < count; i += 1) {
+          const t = .22 + rand() * .56;
+          const side = rand() > .5 ? 1 : -1;
+          const offset = side * (34 + rand() * 22);
+          const x = a.x + (b.x - a.x) * t - Math.sin(angle) * offset;
+          const y = a.y + (b.y - a.y) * t + Math.cos(angle) * offset;
+          const type = vehicleTypes[Math.floor(rand() * vehicleTypes.length)];
+          const tier = type === "dirtBike" || type === "atv" ? "medium" : "large";
+          addAt(type, tier, x, y, angle + (side < 0 ? Math.PI : 0));
+        }
+      }
+    }
+
+    for (let i = 0; i < 260; i += 1) {
+      const type = rand() < .47 ? "rock" : rand() < .82 ? "shrub" : "backpack";
+      const point = randomLandPoint(90);
+      addAt(type, "small", point.x, point.y, rand() * Math.PI * 2);
+    }
+    const trailDetails = ["trailMarker", "mushroomCluster", "crushedCan", "campMug", "firewood", "hikingBoot"];
+    for (let i = 0; i < 85; i += 1) {
+      const type = trailDetails[Math.floor(rand() * trailDetails.length)];
+      const point = randomLandPoint(100);
+      addAt(type, "small", point.x, point.y, rand() * Math.PI * 2);
+    }
+    for (let i = 0; i < 70; i += 1) {
+      const edge = rand() > .5;
+      const x = edge ? (rand() > .5 ? 100 + rand() * 260 : world.width - 360 + rand() * 260) : 120 + rand() * (world.width - 240);
+      const y = edge ? 120 + rand() * (world.height - 240) : (rand() > .5 ? 100 + rand() * 250 : world.height - 350 + rand() * 250);
+      if (!nearRiver(x, y, 155)) addAt(rand() > .22 ? "tree" : "boulder", rand() > .22 ? "large" : "huge", x, y, rand() * Math.PI * 2);
+    }
+    const wildlife = [
+      { type: "squirrel", tier: "small", count: 7, speed: 82, radiusScale: .72 },
+      { type: "dog", tier: "medium", count: 4, speed: 52, radiusScale: .78 },
+      { type: "bear", tier: "large", count: 2, speed: 31, radiusScale: .92 },
+      { type: "moose", tier: "huge", count: 2, speed: 27, radiusScale: .88 },
+    ];
+    for (const animal of wildlife) {
+      for (let i = 0; i < animal.count; i += 1) {
+        const nearSite = animal.type === "dog" ? activeSites[Math.floor(rand() * activeSites.length)] : null;
+        const x = nearSite ? nearSite.x + jitter(320) : 180 + rand() * (world.width - 360);
+        const y = nearSite ? nearSite.y + jitter(260) : 180 + rand() * (world.height - 360);
+        const object = addAt(animal.type, animal.tier, x, y, 0, animal.radiusScale);
+        object.mobile = true;
+        object.moveSpeed = animal.speed * (.82 + rand() * .32);
+        object.heading = rand() * Math.PI * 2;
+        object.turnAt = 0;
+      }
+    }
+    return objects;
+  }
+
   async function startSolo() {
     const audioLoad = unlockAudio();
     await Promise.race([
@@ -401,8 +1065,9 @@
     state.battleVariant = "objects";
     state.opponents = [];
     state.mode = "countdown";
-    state.seed = Date.now() & 0xfffffff;
+    state.seed = seedForRequestedEnvironment(Date.now() & 0xfffffff);
     state.player = createPlayer();
+    state.camera.zoom = 1.5;
     state.particles = [];
     state.scoreRecorded = false;
     generateWorld(state.seed);
@@ -425,6 +1090,7 @@
     state.mode = "countdown";
     state.seed = Date.now() & 0xfffffff;
     state.player = createPlayer({ mark: "A", color: "#7ee58b", x: 420, y: 420 });
+    state.camera.zoom = 1.5;
     state.opponents = [
       createPlayer({ id: `cpu-${state.cpuDifficulty}`, name: `CPU ${state.cpuDifficulty}`, mark: "B", isLocal: false, isCpu: true, color: "#ffd451", x: world.width - 420, y: world.height - 420 }),
     ];
@@ -538,6 +1204,7 @@
   function update(dt, now) {
     const p = state.player;
     updateActor(p, inputVector(), dt, now);
+    updateWildlife(dt, now);
     for (const opponent of state.opponents) {
       if (opponent.isCpu) updateActor(opponent, cpuInput(opponent, now), dt, now);
       else {
@@ -571,8 +1238,111 @@
     updateParticles(dt);
     state.camera.x += (p.x - state.camera.x) * Math.min(1, dt * 5);
     state.camera.y += (p.y - state.camera.y) * Math.min(1, dt * 5);
+    const desiredZoom = Math.max(.62, Math.min(1.5, 1.5 - Math.max(0, p.radius - 24) * .009));
+    state.camera.zoom += (desiredZoom - state.camera.zoom) * Math.min(1, dt * 2.8);
     state.camera.shake = Math.max(0, state.camera.shake - dt * 9);
     updateHud(now);
+  }
+
+  function updateWildlife(dt, now) {
+    const player = state.player;
+    if (state.environment?.id === "underwater" && state.underwaterSchools) {
+      for (const school of state.underwaterSchools) {
+        if (now >= (school.turnAt || 0)) {
+          school.heading += (Math.random() - .5) * .65;
+          school.turnAt = now + 1500 + Math.random() * 2600;
+        }
+        school.x += Math.cos(school.heading) * school.speed * dt;
+        school.y += Math.sin(school.heading) * school.speed * dt;
+        if (school.x < 220 || school.x > world.width - 220) {
+          school.x = Math.max(220, Math.min(world.width - 220, school.x));
+          school.heading = Math.PI - school.heading;
+        }
+        if (school.y < 220 || school.y > 1940) {
+          school.y = Math.max(220, Math.min(1940, school.y));
+          school.heading = -school.heading;
+        }
+      }
+      for (const fish of state.objects) {
+        if (fish.swallowed || fish.schoolId === undefined) continue;
+        const school = state.underwaterSchools[fish.schoolId];
+        if (!school) continue;
+        const wave = Math.sin(now * .0025 + fish.id * .73) * 10;
+        const cos = Math.cos(school.heading);
+        const sin = Math.sin(school.heading);
+        fish.x = school.x + fish.schoolOffsetX * cos - (fish.schoolOffsetY + wave) * sin;
+        fish.y = school.y + fish.schoolOffsetX * sin + (fish.schoolOffsetY + wave) * cos;
+        fish.rotation = school.heading;
+        fish.motionPhase = (fish.motionPhase || 0) + dt * school.speed * .16;
+      }
+    }
+    if (state.environment?.id === "underwater" && state.underwaterPods) {
+      for (const pod of state.underwaterPods) {
+        if (now >= (pod.turnAt || 0)) {
+          pod.heading += (Math.random() - .5) * .42;
+          pod.turnAt = now + 2200 + Math.random() * 3200;
+        }
+        pod.x += Math.cos(pod.heading) * pod.speed * dt;
+        pod.y += Math.sin(pod.heading) * pod.speed * dt;
+        if (pod.x < 260 || pod.x > world.width - 260) {
+          pod.x = Math.max(260, Math.min(world.width - 260, pod.x));
+          pod.heading = Math.PI - pod.heading;
+        }
+        if (pod.y < 220 || pod.y > 1580) {
+          pod.y = Math.max(220, Math.min(1580, pod.y));
+          pod.heading = -pod.heading;
+        }
+      }
+      for (const dolphin of state.objects) {
+        if (dolphin.swallowed || dolphin.podId === undefined) continue;
+        const pod = state.underwaterPods[dolphin.podId];
+        if (!pod) continue;
+        const cos = Math.cos(pod.heading);
+        const sin = Math.sin(pod.heading);
+        dolphin.x = pod.x + dolphin.podOffsetX * cos - dolphin.podOffsetY * sin;
+        dolphin.y = pod.y + dolphin.podOffsetX * sin + dolphin.podOffsetY * cos + Math.sin(now * .002 + dolphin.id) * 9;
+        dolphin.heading = pod.heading;
+        dolphin.motionPhase = (dolphin.motionPhase || 0) + dt * pod.speed * .13;
+      }
+    }
+    for (const animal of state.objects) {
+      if (animal.swallowed) continue;
+      if (animal.animated && !animal.mobile) {
+        animal.motionPhase = (animal.motionPhase || 0) + dt * 2.4;
+        continue;
+      }
+      if (!animal.mobile) continue;
+      const dx = player ? animal.x - player.x : 0;
+      const dy = player ? animal.y - player.y : 0;
+      const distance = Math.hypot(dx, dy);
+      const flees = ["squirrel", "dog", "parkDog", "raccoon"].includes(animal.type);
+      if (flees && distance < 220) {
+        animal.heading = Math.atan2(dy, dx);
+        animal.turnAt = now + 650;
+      } else if (now >= (animal.turnAt || 0)) {
+        animal.heading += (Math.random() - .5) * (animal.type === "squirrel" ? 1.7 : .9);
+        animal.turnAt = now + 900 + Math.random() * (animal.type === "squirrel" ? 1100 : 2400);
+      }
+      const pace = animal.moveSpeed * (flees && distance < 220 ? 1.45 : 1);
+      animal.x += Math.cos(animal.heading) * pace * dt;
+      animal.y += Math.sin(animal.heading) * pace * dt;
+      if (state.environment?.id === "underwater" && !deepSinkLifeIndex.has(animal.type)) animal.rotation = animal.heading;
+      const margin = Math.max(40, animal.radius * 2);
+      const bounds = animal.movementBounds || { x: margin, y: margin, w: world.width - margin * 2, h: world.height - margin * 2 };
+      const minX = bounds.x;
+      const maxX = bounds.x + bounds.w;
+      const minY = bounds.y;
+      const maxY = bounds.y + bounds.h;
+      if (animal.x < minX || animal.x > maxX) {
+        animal.x = Math.max(minX, Math.min(maxX, animal.x));
+        animal.heading = Math.PI - animal.heading;
+      }
+      if (animal.y < minY || animal.y > maxY) {
+        animal.y = Math.max(minY, Math.min(maxY, animal.y));
+        animal.heading = -animal.heading;
+      }
+      animal.motionPhase = (animal.motionPhase || 0) + dt * pace * .13;
+    }
   }
 
   function actors() {
@@ -795,17 +1565,30 @@
 
   function render(now = performance.now()) {
     const shake = state.camera.shake ? (Math.random() - .5) * state.camera.shake : 0;
-    const camX = Math.max(state.width / 2, Math.min(world.width - state.width / 2, state.camera.x || 420));
-    const camY = Math.max(state.height / 2, Math.min(world.height - state.height / 2, state.camera.y || 420));
+    const zoom = state.camera.zoom || 1;
+    const halfViewWidth = Math.min(world.width / 2, state.width / (2 * zoom));
+    const halfViewHeight = Math.min(world.height / 2, state.height / (2 * zoom));
+    const camX = Math.max(halfViewWidth, Math.min(world.width - halfViewWidth, state.camera.x || 420));
+    const camY = Math.max(halfViewHeight, Math.min(world.height - halfViewHeight, state.camera.y || 420));
+    const cullMargin = 190;
+    state.viewBounds = {
+      left: camX - halfViewWidth - cullMargin,
+      right: camX + halfViewWidth + cullMargin,
+      top: camY - halfViewHeight - cullMargin,
+      bottom: camY + halfViewHeight + cullMargin,
+    };
     ctx.clearRect(0, 0, state.width, state.height);
     ctx.save();
-    ctx.translate(state.width / 2 - camX + shake, state.height / 2 - camY - shake);
+    ctx.translate(state.width / 2 + shake, state.height / 2 - shake);
+    ctx.scale(zoom, zoom);
+    ctx.translate(-camX, -camY);
     drawTown();
     drawObjects(now, false);
     drawParticles();
     drawPlayers(now);
     drawObjects(now, true);
     ctx.restore();
+    drawMinimap(camX, camY);
     if (state.mode === "paused") drawPaused();
   }
 
@@ -819,43 +1602,185 @@
   }
 
   function drawCampsiteWorld() {
-    ctx.fillStyle = "#b9d5b3";
+    const grass = ctx.createLinearGradient(0, 0, world.width, world.height);
+    grass.addColorStop(0, "#8eb17d");
+    grass.addColorStop(.5, "#709865");
+    grass.addColorStop(1, "#557b50");
+    ctx.fillStyle = terrainPattern("grass") || grass;
     ctx.fillRect(0, 0, world.width, world.height);
-    drawSoftBlobs("#9fd69b", 9, 240, 230, 285, 410);
-    ctx.strokeStyle = "#f3f2df";
-    ctx.lineWidth = 46;
+    ctx.fillStyle = grass;
+    ctx.globalAlpha = .24;
+    ctx.fillRect(0, 0, world.width, world.height);
+    ctx.globalAlpha = 1;
+    for (let i = 0; i < 42; i += 1) {
+      const x = 130 + (i * 617) % (world.width - 260);
+      const y = 120 + (i * 389) % (world.height - 240);
+      ctx.fillStyle = i % 3 ? "rgba(174, 202, 137, .14)" : "rgba(38, 86, 50, .13)";
+      ctx.beginPath();
+      ctx.ellipse(x, y, 145 + (i % 5) * 38, 82 + (i % 4) * 24, (i % 7) * .19, 0, Math.PI * 2);
+      ctx.fill();
+    }
+
     ctx.lineCap = "round";
-    drawRoads();
-    ctx.strokeStyle = "#f6a231";
-    ctx.lineWidth = 8;
-    drawRoads();
-    drawRiver("rgba(33, 136, 232, .55)", 34);
-    drawGrid("rgba(4, 63, 40, .22)", 160);
+    ctx.lineJoin = "round";
+    ctx.strokeStyle = "rgba(47, 72, 43, .58)";
+    ctx.lineWidth = 96;
+    drawBasecampRoads();
+    ctx.strokeStyle = terrainPattern("gravel") || "#b9a779";
+    ctx.lineWidth = 78;
+    drawBasecampRoads();
+    ctx.strokeStyle = "rgba(235, 220, 172, .45)";
+    ctx.lineWidth = 5;
+    drawBasecampRoads();
+
+    ctx.strokeStyle = terrainPattern("trail") || "rgba(61, 74, 43, .6)";
+    ctx.lineWidth = 22;
+    const activeSites = state.generatedBasecampSites || basecampSites;
+    for (let i = 0; i < activeSites.length - 1; i += 1) {
+      const a = activeSites[i];
+      const b = activeSites[i + 1];
+      ctx.beginPath();
+      ctx.moveTo(a.x, a.y);
+      ctx.quadraticCurveTo((a.x + b.x) / 2, (a.y + b.y) / 2 + (i % 2 ? 80 : -80), b.x, b.y);
+      ctx.stroke();
+    }
+
+    ctx.strokeStyle = "rgba(37, 83, 79, .7)";
+    ctx.lineWidth = 118;
+    ctx.beginPath();
+    ctx.moveTo(-80, 2760);
+    ctx.bezierCurveTo(760, 2580, 1280, 2340, 2030, 2240);
+    ctx.bezierCurveTo(2820, 2140, 3180, 1660, 4280, 1510);
+    ctx.stroke();
+    ctx.strokeStyle = terrainPattern("water") || "#4f9db0";
+    ctx.lineWidth = 86;
+    ctx.stroke();
+    ctx.strokeStyle = "rgba(191, 235, 225, .38)";
+    ctx.lineWidth = 5;
+    ctx.stroke();
+
+    ctx.fillStyle = "rgba(29, 62, 39, .22)";
+    for (let i = 0; i < 170; i += 1) {
+      const x = (i * 733 + 91) % world.width;
+      const y = (i * 431 + 173) % world.height;
+      ctx.beginPath();
+      ctx.arc(x, y, 2 + (i % 3), 0, Math.PI * 2);
+      ctx.fill();
+    }
+  }
+
+  function terrainPattern(name) {
+    if (basecampTerrainPatterns.has(name)) return basecampTerrainPatterns.get(name);
+    const image = basecampTerrain[name];
+    if (!image?.complete || !image.naturalWidth) return null;
+    const pattern = ctx.createPattern(image, "repeat");
+    basecampTerrainPatterns.set(name, pattern);
+    return pattern;
+  }
+
+  function metroPattern(name) {
+    if (metroTerrainPatterns.has(name)) return metroTerrainPatterns.get(name);
+    const image = metroTerrain[name];
+    if (!image?.complete || !image.naturalWidth) return null;
+    const pattern = ctx.createPattern(image, "repeat");
+    metroTerrainPatterns.set(name, pattern);
+    return pattern;
+  }
+
+  function drawBasecampRoads() {
+    for (const road of basecampRoads) {
+      ctx.beginPath();
+      ctx.moveTo(road[0].x, road[0].y);
+      for (let i = 1; i < road.length; i += 1) ctx.lineTo(road[i].x, road[i].y);
+      ctx.stroke();
+    }
   }
 
   function drawCityWorld() {
-    ctx.fillStyle = "#87938c";
+    ctx.fillStyle = metroPattern("sidewalk") || "#9c9b96";
     ctx.fillRect(0, 0, world.width, world.height);
-    drawGrid("rgba(28, 35, 33, .35)", 130);
-    ctx.strokeStyle = "#2d3432";
-    ctx.lineWidth = 72;
-    drawRoads();
-    ctx.strokeStyle = "#f5f1de";
-    ctx.lineWidth = 54;
-    drawRoads();
-    ctx.strokeStyle = "#f6a231";
+    ctx.fillStyle = "rgba(58, 67, 70, .16)";
+    ctx.fillRect(0, 0, world.width, world.height);
+
+    for (const park of metroParks) {
+      ctx.fillStyle = "rgba(45, 64, 43, .38)";
+      ctx.beginPath();
+      ctx.roundRect(park.x - 18, park.y - 18, park.w + 36, park.h + 36, 34);
+      ctx.fill();
+      ctx.fillStyle = metroPattern("grass") || "#567f46";
+      ctx.beginPath();
+      ctx.roundRect(park.x, park.y, park.w, park.h, 26);
+      ctx.fill();
+      ctx.strokeStyle = "rgba(226, 219, 188, .65)";
+      ctx.lineWidth = 20;
+      ctx.beginPath();
+      ctx.moveTo(park.x + 45, park.y + park.h / 2);
+      ctx.lineTo(park.x + park.w - 45, park.y + park.h / 2);
+      ctx.moveTo(park.x + park.w / 2, park.y + 45);
+      ctx.lineTo(park.x + park.w / 2, park.y + park.h - 45);
+      ctx.stroke();
+    }
+    for (const plaza of metroPlazas) {
+      ctx.fillStyle = metroPattern("brick") || "#956653";
+      ctx.beginPath();
+      ctx.roundRect(plaza.x, plaza.y, plaza.w, plaza.h, 18);
+      ctx.fill();
+    }
+
+    ctx.lineCap = "butt";
+    ctx.strokeStyle = "rgba(44, 47, 47, .8)";
+    ctx.lineWidth = 188;
+    drawMetroRoads();
+    ctx.strokeStyle = metroPattern("asphalt") || "#34383a";
+    ctx.lineWidth = 164;
+    drawMetroRoads();
+    ctx.strokeStyle = "rgba(245, 214, 97, .9)";
     ctx.lineWidth = 5;
-    drawRoads();
-    ctx.fillStyle = "rgba(55, 63, 60, .42)";
-    for (let y = 170; y < world.height; y += 310) {
-      for (let x = 210; x < world.width; x += 360) {
-        ctx.save();
-        ctx.translate(x, y);
-        ctx.rotate(((x + y) % 9 - 4) * .03);
-        rect("#737d75", 120 + (x % 5) * 15, 88 + (y % 4) * 18, true);
-        ctx.restore();
+    ctx.setLineDash([34, 28]);
+    drawMetroRoads();
+    ctx.setLineDash([]);
+    ctx.strokeStyle = "rgba(247, 244, 230, .52)";
+    ctx.lineWidth = 3;
+    for (const x of metroRoadX) {
+      ctx.beginPath();
+      ctx.moveTo(x - 55, 0);
+      ctx.lineTo(x - 55, world.height);
+      ctx.moveTo(x + 55, 0);
+      ctx.lineTo(x + 55, world.height);
+      ctx.stroke();
+    }
+    for (const y of metroRoadY) {
+      ctx.beginPath();
+      ctx.moveTo(0, y - 55);
+      ctx.lineTo(world.width, y - 55);
+      ctx.moveTo(0, y + 55);
+      ctx.lineTo(world.width, y + 55);
+      ctx.stroke();
+    }
+    ctx.fillStyle = "rgba(242, 240, 223, .76)";
+    for (const x of metroRoadX) {
+      for (const y of metroRoadY) {
+        for (let stripe = -3; stripe <= 3; stripe += 1) {
+          ctx.fillRect(x - 104 + stripe * 25, y - 101, 13, 36);
+          ctx.fillRect(x - 104 + stripe * 25, y + 65, 13, 36);
+          ctx.fillRect(x - 101, y - 104 + stripe * 25, 36, 13);
+          ctx.fillRect(x + 65, y - 104 + stripe * 25, 36, 13);
+        }
       }
     }
+  }
+
+  function drawMetroRoads() {
+    ctx.beginPath();
+    for (const x of metroRoadX) {
+      ctx.moveTo(x, 0);
+      ctx.lineTo(x, world.height);
+    }
+    for (const y of metroRoadY) {
+      ctx.moveTo(0, y);
+      ctx.lineTo(world.width, y);
+    }
+    ctx.stroke();
   }
 
   function drawSpaceWorld() {
@@ -886,21 +1811,53 @@
 
   function drawUnderwaterWorld() {
     const grd = ctx.createLinearGradient(0, 0, 0, world.height);
-    grd.addColorStop(0, "#43bdd0");
-    grd.addColorStop(.55, "#146c7d");
-    grd.addColorStop(1, "#073442");
+    grd.addColorStop(0, "#46c4d7");
+    grd.addColorStop(.42, "#147d92");
+    grd.addColorStop(.76, "#075064");
+    grd.addColorStop(1, "#04313f");
     ctx.fillStyle = grd;
     ctx.fillRect(0, 0, world.width, world.height);
-    drawRiver("rgba(173, 245, 255, .20)", 70);
-    ctx.strokeStyle = "rgba(199, 248, 236, .18)";
-    ctx.lineWidth = 4;
-    for (let y = 160; y < world.height; y += 220) {
+
+    const seabed = ctx.createLinearGradient(0, 1900, 0, world.height);
+    seabed.addColorStop(0, "rgba(73, 125, 119, 0)");
+    seabed.addColorStop(.25, "rgba(100, 137, 116, .72)");
+    seabed.addColorStop(1, "#7b8064");
+    ctx.fillStyle = seabed;
+    ctx.fillRect(0, 1750, world.width, world.height - 1750);
+
+    ctx.strokeStyle = "rgba(205, 251, 246, .13)";
+    ctx.lineWidth = 5;
+    for (let y = 170; y < 1780; y += 230) {
       ctx.beginPath();
       ctx.moveTo(0, y);
-      for (let x = 0; x <= world.width; x += 260) ctx.quadraticCurveTo(x + 110, y - 55, x + 260, y);
+      for (let x = 0; x <= world.width; x += 300) ctx.quadraticCurveTo(x + 125, y - 48, x + 300, y);
       ctx.stroke();
     }
-    drawSoftBlobs("rgba(37, 131, 93, .55)", 12, 180, 1360, 245, -230);
+    ctx.fillStyle = "rgba(220, 236, 194, .12)";
+    for (let i = 0; i < 75; i += 1) {
+      const x = 70 + (i * 547) % (world.width - 140);
+      const y = 1950 + (i * 313) % 900;
+      ctx.beginPath();
+      ctx.ellipse(x, y, 55 + (i % 5) * 18, 11 + (i % 3) * 5, (i % 7) * .27, 0, Math.PI * 2);
+      ctx.fill();
+    }
+    for (const zone of state.underwaterZones?.reefs || []) {
+      const glow = ctx.createRadialGradient(zone.x + zone.w / 2, zone.y + zone.h / 2, 20, zone.x + zone.w / 2, zone.y + zone.h / 2, zone.w * .55);
+      glow.addColorStop(0, "rgba(48, 152, 117, .25)");
+      glow.addColorStop(1, "rgba(14, 68, 67, 0)");
+      ctx.fillStyle = glow;
+      ctx.beginPath();
+      ctx.ellipse(zone.x + zone.w / 2, zone.y + zone.h / 2, zone.w * .56, zone.h * .48, -.08, 0, Math.PI * 2);
+      ctx.fill();
+    }
+    ctx.fillStyle = "rgba(220, 252, 255, .35)";
+    for (let i = 0; i < 95; i += 1) {
+      const x = (i * 769 + 113) % world.width;
+      const y = (i * 397 + 71) % world.height;
+      ctx.beginPath();
+      ctx.arc(x, y, 1 + (i % 4), 0, Math.PI * 2);
+      ctx.fill();
+    }
   }
 
   function drawAlienWorld() {
@@ -981,11 +1938,17 @@
   }
 
   function drawObjects(now, swallowedOnly = false) {
-    const items = [...state.objects].sort((a, b) => a.y - b.y);
+    const view = state.viewBounds;
+    const items = state.objects
+      .filter((obj) => obj.swallowed || !view || (obj.x + obj.radius * 6 >= view.left && obj.x - obj.radius * 6 <= view.right && obj.y + obj.radius * 6 >= view.top && obj.y - obj.radius * 6 <= view.bottom))
+      .sort((a, b) => a.y - b.y);
     for (const obj of items) {
       if (swallowedOnly !== Boolean(obj.swallowed)) continue;
       const p = state.player;
       const canEat = p && obj.radius <= p.radius * .78;
+      const locksToSpritePerspective = ((state.environment?.id === "campsite" || (state.environment?.id === "city" && obj.type === "tree")) && (basecampSpriteIndex.has(obj.type) || basecampExtraIndex.has(obj.type) || basecampWildlifeIndex.has(obj.type) || obj.type === "fjCruiser"))
+        || (state.environment?.id === "city" && (metroSpriteIndex.has(obj.type) || metroExtraIndex.has(obj.type) || metroLifeIndex.has(obj.type)))
+        || (state.environment?.id === "underwater" && deepSinkLifeIndex.has(obj.type));
       ctx.save();
       if (obj.swallowed) {
         const t = obj.swallowProgress;
@@ -1003,13 +1966,13 @@
         const y = target.y + Math.sin(baseAngle + spin) * orbit;
         drawSwallowTrail(target.x, target.y, sx, sy, baseAngle, dist, obj, eased);
         ctx.translate(x, y);
-        ctx.rotate(obj.rotation + obj.swallowDir * t * 13);
+        ctx.rotate((locksToSpritePerspective ? 0 : obj.rotation) + obj.swallowDir * t * 13);
         const scale = Math.max(0, Math.pow(1 - t, 1.35));
         ctx.scale(scale, scale);
       } else {
         const bounce = obj.reject ? Math.sin(now / 35) * obj.reject * 3 : 0;
         ctx.translate(obj.x, obj.y + bounce);
-        ctx.rotate(obj.rotation);
+        ctx.rotate(locksToSpritePerspective ? 0 : obj.rotation);
       }
       ctx.scale(obj.visualScale || 1, obj.visualScale || 1);
       drawObjectShape(obj);
@@ -1057,6 +2020,19 @@
 
   function drawObjectShape(obj) {
     const r = obj.radius;
+    if (state.environment?.id === "underwater" && drawDeepSinkLife(obj, r)) return;
+    if (state.environment?.id === "campsite" && drawBasecampWildlife(obj, r)) return;
+    if (state.environment?.id === "campsite" && obj.type === "jeep" && drawBasecampJeep(obj, r)) return;
+    if (state.environment?.id === "campsite" && obj.type === "fjCruiser" && drawBasecampStandaloneVehicle(basecampFjSprite, r)) return;
+    if (state.environment?.id === "campsite" && obj.type === "amphitheaterEntrance" && drawBasecampStandaloneSprite(basecampAmphitheaterSprite, r, 3.85)) return;
+    if (state.environment?.id === "campsite" && obj.type === "observationTower" && drawBasecampStandaloneSprite(basecampObservationTowerSprite, r, 3.85)) return;
+    if (state.environment?.id === "campsite" && obj.type === "picnicShelter" && drawBasecampStandaloneSprite(basecampPicnicShelterSprite, r, 3.85)) return;
+    if (state.environment?.id === "campsite" && drawBasecampExtraSprite(obj, r)) return;
+    if (state.environment?.id === "campsite" && drawBasecampSprite(obj, r)) return;
+    if (state.environment?.id === "city" && obj.type === "tree" && drawBasecampSprite(obj, r)) return;
+    if (state.environment?.id === "city" && drawMetroLife(obj, r)) return;
+    if (state.environment?.id === "city" && drawMetroExtraSprite(obj, r)) return;
+    if (state.environment?.id === "city" && drawMetroSprite(obj, r)) return;
     ctx.lineWidth = Math.max(2, r * .12);
     ctx.strokeStyle = "rgba(0,0,0,.28)";
     if (["rock", "boulder", "alienRock", "starRock", "asteroid", "largeAsteroid", "meteor"].includes(obj.type)) return blob(obj.type.includes("Asteroid") || obj.type === "meteor" ? "#786d7f" : "#7d8171", r);
@@ -1083,11 +2059,160 @@
     if (["hydrant", "parkingMeter", "streetlight", "trafficLight", "busStop", "newspaperBox", "bench", "dumpster"].includes(obj.type)) return streetFixture(obj.type, r);
     if (obj.type === "watertower") return waterTower(r);
     if (obj.type === "bridge") return bridge(r);
-    if (["fish", "shark", "whale", "dolphin"].includes(obj.type)) return fishShape(obj.type, r);
+    if (["fish", "shark", "whale", "dolphin"].includes(obj.type)) return fishShape(obj.type, r, obj);
     if (["coral", "jellyfish", "turtle", "ray", "anchor", "treasureChest", "reef", "shipwreck", "octopus", "giantSquid", "sunkenShip", "seaStack", "shell", "starfish", "urchin", "bubbleCluster", "crab"].includes(obj.type)) return seaObject(obj.type, r);
     if (["satellite", "probe", "capsule", "lander", "spaceBuoy", "spaceship", "xwing", "shuttle", "stationModule", "spaceStation", "enterprise", "deathstar", "planet", "smallPlanet", "moon", "moonBuggy", "spaceDebris", "comet", "wormholeGate"].includes(obj.type)) return spaceObject(obj.type, r);
     if (["crystal", "crystalCluster", "megaCrystal", "spore", "glowPod", "crawler", "crawlerQueen", "tinyUfo", "ufo", "hoverDrone", "tentacleBud", "mushroomTower", "eggSac", "plasmaVent", "walker", "monolith", "mothership", "leviathan", "portal"].includes(obj.type)) return alienObject(obj.type, r);
     rect("#d9bb84", r * 1.6, r * 1.1, true);
+  }
+
+  function drawDeepSinkLife(obj, r) {
+    const index = deepSinkLifeIndex.get(obj.type);
+    if (index === undefined || !deepSinkLifeAtlas.complete || !deepSinkLifeAtlas.naturalWidth) return false;
+    const cellWidth = deepSinkLifeAtlas.naturalWidth / 4;
+    const cellHeight = deepSinkLifeAtlas.naturalHeight / 4;
+    const frame = Math.floor((obj.motionPhase || 0) / (Math.PI * .5)) % 4;
+    const scale = obj.type === "shark" ? 5.15 : obj.type === "dolphin" ? 5 : obj.type === "jellyfish" ? 4.35 : 4.65;
+    const width = r * scale;
+    const height = width * (cellHeight / cellWidth);
+    ctx.save();
+    if (obj.type !== "jellyfish" && Math.cos(obj.heading || 0) < 0) ctx.scale(-1, 1);
+    if (obj.type === "jellyfish") {
+      const pulse = 1 + Math.sin(obj.motionPhase || 0) * .045;
+      ctx.scale(1 / pulse, pulse);
+    }
+    ctx.imageSmoothingEnabled = true;
+    ctx.imageSmoothingQuality = "high";
+    ctx.drawImage(deepSinkLifeAtlas, frame * cellWidth, index * cellHeight, cellWidth, cellHeight, -width / 2, -height / 2, width, height);
+    ctx.restore();
+    return true;
+  }
+
+  function drawBasecampSprite(obj, r) {
+    const index = basecampSpriteIndex.get(obj.type);
+    if (index === undefined || !basecampSpriteAtlas.complete || !basecampSpriteAtlas.naturalWidth) return false;
+    const cell = 256;
+    const sx = (index % 6) * cell;
+    const sy = Math.floor(index / 6) * cell;
+    const size = r * (obj.tier === "small" ? 3.25 : obj.tier === "medium" ? 3.45 : obj.tier === "large" ? 3.65 : 3.85);
+    ctx.save();
+    ctx.fillStyle = "rgba(6, 18, 24, .24)";
+    ctx.beginPath();
+    ctx.ellipse(0, r * .58, size * .31, size * .105, 0, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.imageSmoothingEnabled = true;
+    ctx.imageSmoothingQuality = "high";
+    ctx.drawImage(basecampSpriteAtlas, sx, sy, cell, cell, -size / 2, -size / 2, size, size);
+    ctx.restore();
+    return true;
+  }
+
+  function drawBasecampJeep(obj, r) {
+    return drawBasecampStandaloneVehicle(basecampJeepSprite, r);
+  }
+
+  function drawBasecampStandaloneVehicle(image, r) {
+    return drawBasecampStandaloneSprite(image, r, 3.65);
+  }
+
+  function drawBasecampStandaloneSprite(image, r, scale) {
+    if (!image.complete || !image.naturalWidth) return false;
+    const size = r * scale;
+    ctx.save();
+    ctx.fillStyle = "rgba(6, 18, 24, .2)";
+    ctx.beginPath();
+    ctx.ellipse(0, r * .56, size * .29, size * .085, 0, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.imageSmoothingEnabled = true;
+    ctx.imageSmoothingQuality = "high";
+    ctx.drawImage(image, -size / 2, -size / 2, size, size);
+    ctx.restore();
+    return true;
+  }
+
+  function drawBasecampExtraSprite(obj, r) {
+    const index = basecampExtraIndex.get(obj.type);
+    if (index === undefined || !basecampExtraAtlas.complete || !basecampExtraAtlas.naturalWidth) return false;
+    const cell = 256;
+    const sx = (index % 6) * cell;
+    const sy = Math.floor(index / 6) * cell;
+    const size = r * (obj.tier === "small" ? 3.25 : obj.tier === "medium" ? 3.45 : obj.tier === "large" ? 3.65 : 3.85);
+    ctx.save();
+    ctx.fillStyle = "rgba(6, 18, 24, .2)";
+    ctx.beginPath();
+    ctx.ellipse(0, r * .56, size * .29, size * .085, 0, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.imageSmoothingEnabled = true;
+    ctx.imageSmoothingQuality = "high";
+    ctx.drawImage(basecampExtraAtlas, sx, sy, cell, cell, -size / 2, -size / 2, size, size);
+    ctx.restore();
+    return true;
+  }
+
+  function drawBasecampWildlife(obj, r) {
+    const index = basecampWildlifeIndex.get(obj.type);
+    if (index === undefined || !basecampWildlifeAtlas.complete || !basecampWildlifeAtlas.naturalWidth) return false;
+    const cell = 256;
+    const size = r * (obj.type === "squirrel" ? 4.1 : obj.type === "dog" ? 3.85 : 3.65);
+    ctx.save();
+    ctx.fillStyle = "rgba(6, 18, 24, .2)";
+    ctx.beginPath();
+    ctx.ellipse(0, r * .55, size * .3, size * .09, 0, 0, Math.PI * 2);
+    ctx.fill();
+    if (Math.cos(obj.heading || 0) < 0) ctx.scale(-1, 1);
+    const frame = Math.floor((obj.motionPhase || 0) / (Math.PI * .5)) % 4;
+    ctx.imageSmoothingEnabled = true;
+    ctx.imageSmoothingQuality = "high";
+    ctx.drawImage(basecampWildlifeAtlas, frame * cell, index * cell, cell, cell, -size / 2, -size / 2, size, size);
+    ctx.restore();
+    return true;
+  }
+
+  function drawMetroSprite(obj, r) {
+    const index = metroSpriteIndex.get(obj.type);
+    if (index === undefined || !metroSpriteAtlas.complete || !metroSpriteAtlas.naturalWidth) return false;
+    const cell = 256;
+    const sx = (index % 6) * cell;
+    const sy = Math.floor(index / 6) * cell;
+    const scale = obj.tier === "small" ? 3.45 : obj.tier === "medium" ? 3.65 : obj.tier === "large" ? 3.85 : 4.05;
+    const size = r * scale;
+    ctx.save();
+    ctx.imageSmoothingEnabled = true;
+    ctx.imageSmoothingQuality = "high";
+    ctx.drawImage(metroSpriteAtlas, sx, sy, cell, cell, -size / 2, -size / 2, size, size);
+    ctx.restore();
+    return true;
+  }
+
+  function drawMetroExtraSprite(obj, r) {
+    const index = metroExtraIndex.get(obj.type);
+    if (index === undefined || !metroExtraAtlas.complete || !metroExtraAtlas.naturalWidth) return false;
+    const cell = 256;
+    const sx = (index % 6) * cell;
+    const sy = Math.floor(index / 6) * cell;
+    const size = r * (obj.tier === "small" ? 3.45 : obj.tier === "medium" ? 3.65 : obj.tier === "large" ? 3.85 : 4.05);
+    ctx.save();
+    ctx.imageSmoothingEnabled = true;
+    ctx.imageSmoothingQuality = "high";
+    ctx.drawImage(metroExtraAtlas, sx, sy, cell, cell, -size / 2, -size / 2, size, size);
+    ctx.restore();
+    return true;
+  }
+
+  function drawMetroLife(obj, r) {
+    const index = metroLifeIndex.get(obj.type);
+    if (index === undefined || !metroLifeAtlas.complete || !metroLifeAtlas.naturalWidth) return false;
+    const cell = 256;
+    const frame = Math.floor((obj.motionPhase || 0) / (Math.PI * .5)) % 4;
+    const size = r * (obj.type === "hotdogVendor" ? 4.5 : obj.type === "pedestrian" ? 4.15 : 3.8);
+    ctx.save();
+    if (obj.type !== "hotdogVendor" && Math.cos(obj.heading || 0) < 0) ctx.scale(-1, 1);
+    if (obj.type === "pedestrian" && obj.colorVariant) ctx.filter = `hue-rotate(${obj.colorVariant * 47}deg)`;
+    ctx.imageSmoothingEnabled = true;
+    ctx.imageSmoothingQuality = "high";
+    ctx.drawImage(metroLifeAtlas, frame * cell, index * cell, cell, cell, -size / 2, -size / 2, size, size);
+    ctx.restore();
+    return true;
   }
 
   function vehicleColor(type, r) {
@@ -1246,8 +2371,8 @@
     ctx.stroke();
   }
 
-  function fishShape(type, r) {
-    const fill = { shark: "#7f8f99", whale: "#536c85", dolphin: "#6aa6bd" }[type] || "#ff9c42";
+  function fishShape(type, r, obj = null) {
+    const fill = { shark: "#7f8f99", whale: "#536c85", dolphin: "#6aa6bd" }[type] || obj?.schoolColor || "#ff9c42";
     ctx.fillStyle = fill;
     ctx.beginPath();
     ctx.ellipse(0, 0, r * 1.15, r * .52, 0, 0, Math.PI * 2);
@@ -1881,7 +3006,9 @@
   }
 
   function drawParticles() {
+    const view = state.viewBounds;
     for (const particle of state.particles) {
+      if (view && (particle.x < view.left || particle.x > view.right || particle.y < view.top || particle.y > view.bottom)) continue;
       ctx.globalAlpha = Math.max(0, particle.life / particle.max);
       ctx.fillStyle = particle.color;
       ctx.beginPath();
@@ -1923,6 +3050,84 @@
     const label = `${p.name || p.mark} ${p.score || 0}`;
     ctx.strokeText(label, p.x, p.y - r - 12);
     ctx.fillText(label, p.x, p.y - r - 12);
+    ctx.restore();
+  }
+
+  function drawMinimap(camX, camY) {
+    if (!state.player || state.mode === "menu" || state.mode === "countdown") return;
+    const mapWidth = Math.min(214, Math.max(154, state.width * .2));
+    const mapHeight = mapWidth * (world.height / world.width);
+    const x = state.width - mapWidth - 18;
+    const y = state.height - mapHeight - 18;
+    const sx = mapWidth / world.width;
+    const sy = mapHeight / world.height;
+    ctx.save();
+    ctx.fillStyle = "rgba(7, 17, 28, .86)";
+    ctx.strokeStyle = "rgba(132, 205, 255, .6)";
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.roundRect(x - 8, y - 8, mapWidth + 16, mapHeight + 16, 12);
+    ctx.fill();
+    ctx.stroke();
+    ctx.beginPath();
+    ctx.rect(x, y, mapWidth, mapHeight);
+    ctx.clip();
+    ctx.fillStyle = state.environment?.id === "campsite" ? "#577c54" : state.environment?.id === "city" ? "#777b78" : "#26384b";
+    ctx.fillRect(x, y, mapWidth, mapHeight);
+    if (state.environment?.id === "campsite") {
+      ctx.strokeStyle = "rgba(220, 200, 145, .72)";
+      ctx.lineWidth = 2.5;
+      for (const road of basecampRoads) {
+        ctx.beginPath();
+        ctx.moveTo(x + road[0].x * sx, y + road[0].y * sy);
+        for (let i = 1; i < road.length; i += 1) ctx.lineTo(x + road[i].x * sx, y + road[i].y * sy);
+        ctx.stroke();
+      }
+    } else if (state.environment?.id === "city") {
+      ctx.strokeStyle = "rgba(38, 43, 45, .88)";
+      ctx.lineWidth = 4;
+      ctx.beginPath();
+      for (const roadX of metroRoadX) {
+        ctx.moveTo(x + roadX * sx, y);
+        ctx.lineTo(x + roadX * sx, y + mapHeight);
+      }
+      for (const roadY of metroRoadY) {
+        ctx.moveTo(x, y + roadY * sy);
+        ctx.lineTo(x + mapWidth, y + roadY * sy);
+      }
+      ctx.stroke();
+      ctx.fillStyle = "rgba(92, 137, 79, .9)";
+      for (const park of metroParks) ctx.fillRect(x + park.x * sx, y + park.y * sy, park.w * sx, park.h * sy);
+    }
+    const colors = { small: "#d7efb4", medium: "#68d8df", large: "#ffc35a", huge: "#ff7b6d" };
+    for (const object of state.objects) {
+      if (object.swallowed) continue;
+      ctx.globalAlpha = object.tier === "small" ? .38 : .82;
+      ctx.fillStyle = colors[object.tier] || "#ffffff";
+      const dot = object.tier === "huge" ? 2.4 : object.tier === "large" ? 1.8 : 1.15;
+      ctx.fillRect(x + object.x * sx - dot / 2, y + object.y * sy - dot / 2, dot, dot);
+    }
+    ctx.globalAlpha = 1;
+    const zoom = state.camera.zoom || 1;
+    const viewWidth = Math.min(world.width, state.width / zoom);
+    const viewHeight = Math.min(world.height, state.height / zoom);
+    ctx.strokeStyle = "rgba(255,255,255,.48)";
+    ctx.lineWidth = 1;
+    ctx.strokeRect(
+      x + Math.max(0, camX - viewWidth / 2) * sx,
+      y + Math.max(0, camY - viewHeight / 2) * sy,
+      viewWidth * sx,
+      viewHeight * sy,
+    );
+    const px = x + state.player.x * sx;
+    const py = y + state.player.y * sy;
+    ctx.fillStyle = "#7ee58b";
+    ctx.strokeStyle = "#07111c";
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.arc(px, py, 4.5, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.stroke();
     ctx.restore();
   }
 
@@ -1997,6 +3202,7 @@
     state.player = createPlayer();
     state.camera.x = state.player.x;
     state.camera.y = state.player.y;
+    state.camera.zoom = 1.5;
     bind();
     updateHud();
     render();
