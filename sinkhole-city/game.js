@@ -166,6 +166,14 @@
   const deepSinkLifeAtlas = new Image();
   deepSinkLifeAtlas.decoding = "async";
   deepSinkLifeAtlas.src = "./assets/sprites/deep-sink-life.png?v=20260824-1";
+  const deepSinkStaticAtlas = new Image();
+  deepSinkStaticAtlas.decoding = "async";
+  deepSinkStaticAtlas.src = "./assets/sprites/deep-sink-static.png?v=20260824-1";
+  const deepSinkSeabedAtlas = new Image();
+  deepSinkSeabedAtlas.decoding = "async";
+  deepSinkSeabedAtlas.src = "./assets/sprites/deep-sink-seabed.png?v=20260824-1";
+  const deepSinkStaticTypes = new Set(["fish", "turtle", "ray", "whale", "octopus", "giantSquid"]);
+  const deepSinkSeabedTypes = new Set(["reef", "coral", "kelpForest", "seaweed", "shipwreck", "sunkenShip", "anchor", "treasureChest", "shell", "starfish", "urchin", "crab", "seaStack"]);
   const metroTerrain = Object.fromEntries(["asphalt", "sidewalk", "grass", "brick"].map((name) => {
     const image = new Image();
     image.decoding = "async";
@@ -624,6 +632,7 @@
         fish.schoolOffsetX = (rand() - .5) * 290;
         fish.schoolOffsetY = (rand() - .5) * 150;
         fish.schoolColor = schoolColors[schoolId % schoolColors.length];
+        fish.schoolVariant = schoolId % 4;
         fish.motionPhase = rand() * Math.PI * 2;
       }
     }
@@ -1948,7 +1957,7 @@
       const canEat = p && obj.radius <= p.radius * .78;
       const locksToSpritePerspective = ((state.environment?.id === "campsite" || (state.environment?.id === "city" && obj.type === "tree")) && (basecampSpriteIndex.has(obj.type) || basecampExtraIndex.has(obj.type) || basecampWildlifeIndex.has(obj.type) || obj.type === "fjCruiser"))
         || (state.environment?.id === "city" && (metroSpriteIndex.has(obj.type) || metroExtraIndex.has(obj.type) || metroLifeIndex.has(obj.type)))
-        || (state.environment?.id === "underwater" && deepSinkLifeIndex.has(obj.type));
+        || (state.environment?.id === "underwater" && (deepSinkLifeIndex.has(obj.type) || deepSinkStaticTypes.has(obj.type) || deepSinkSeabedTypes.has(obj.type)));
       ctx.save();
       if (obj.swallowed) {
         const t = obj.swallowProgress;
@@ -2021,6 +2030,8 @@
   function drawObjectShape(obj) {
     const r = obj.radius;
     if (state.environment?.id === "underwater" && drawDeepSinkLife(obj, r)) return;
+    if (state.environment?.id === "underwater" && drawDeepSinkStatic(obj, r)) return;
+    if (state.environment?.id === "underwater" && drawDeepSinkSeabed(obj, r)) return;
     if (state.environment?.id === "campsite" && drawBasecampWildlife(obj, r)) return;
     if (state.environment?.id === "campsite" && obj.type === "jeep" && drawBasecampJeep(obj, r)) return;
     if (state.environment?.id === "campsite" && obj.type === "fjCruiser" && drawBasecampStandaloneVehicle(basecampFjSprite, r)) return;
@@ -2084,6 +2095,50 @@
     ctx.imageSmoothingEnabled = true;
     ctx.imageSmoothingQuality = "high";
     ctx.drawImage(deepSinkLifeAtlas, frame * cellWidth, index * cellHeight, cellWidth, cellHeight, -width / 2, -height / 2, width, height);
+    ctx.restore();
+    return true;
+  }
+
+  function drawDeepSinkStatic(obj, r) {
+    if (!deepSinkStaticTypes.has(obj.type) || !deepSinkStaticAtlas.complete || !deepSinkStaticAtlas.naturalWidth) return false;
+    const cellWidth = deepSinkStaticAtlas.naturalWidth / 4;
+    const cellHeight = deepSinkStaticAtlas.naturalHeight / 2;
+    const index = obj.type === "fish" ? (obj.schoolVariant || 0)
+      : { turtle: 4, ray: 5, whale: 6, octopus: 7, giantSquid: 7 }[obj.type];
+    const sx = (index % 4) * cellWidth;
+    const sy = Math.floor(index / 4) * cellHeight;
+    const scale = obj.type === "fish" ? 4.25 : obj.type === "whale" ? 5.7 : obj.type === "giantSquid" ? 5.4 : 4.8;
+    const width = r * scale;
+    const height = width * (cellHeight / cellWidth);
+    ctx.save();
+    if (obj.type !== "octopus" && obj.type !== "giantSquid" && Math.cos(obj.heading ?? obj.rotation ?? 0) < 0) ctx.scale(-1, 1);
+    if (obj.type === "fish") ctx.rotate(Math.sin(obj.motionPhase || 0) * .035);
+    ctx.imageSmoothingEnabled = true;
+    ctx.imageSmoothingQuality = "high";
+    ctx.drawImage(deepSinkStaticAtlas, sx, sy, cellWidth, cellHeight, -width / 2, -height / 2, width, height);
+    ctx.restore();
+    return true;
+  }
+
+  function drawDeepSinkSeabed(obj, r) {
+    if (!deepSinkSeabedTypes.has(obj.type) || !deepSinkSeabedAtlas.complete || !deepSinkSeabedAtlas.naturalWidth) return false;
+    const cellWidth = deepSinkSeabedAtlas.naturalWidth / 4;
+    const cellHeight = deepSinkSeabedAtlas.naturalHeight / 2;
+    const index = {
+      reef: 0, coral: 0, kelpForest: 1, seaweed: 1, shipwreck: 2, sunkenShip: 3,
+      anchor: 4, treasureChest: 5, shell: 6, starfish: 6, urchin: 6, crab: 6, seaStack: 7,
+    }[obj.type];
+    const sx = (index % 4) * cellWidth;
+    const sy = Math.floor(index / 4) * cellHeight;
+    const scale = ["coral", "seaweed", "shell", "starfish", "urchin", "crab"].includes(obj.type) ? 3.4
+      : ["shipwreck", "sunkenShip", "kelpForest", "seaStack"].includes(obj.type) ? 5.05 : 4.25;
+    const width = r * scale;
+    const height = width * (cellHeight / cellWidth);
+    ctx.save();
+    if (obj.type === "seaweed" || obj.type === "kelpForest") ctx.rotate(Math.sin(performance.now() * .0015 + obj.id) * .025);
+    ctx.imageSmoothingEnabled = true;
+    ctx.imageSmoothingQuality = "high";
+    ctx.drawImage(deepSinkSeabedAtlas, sx, sy, cellWidth, cellHeight, -width / 2, -height / 2, width, height);
     ctx.restore();
     return true;
   }
@@ -2429,7 +2484,18 @@
     if (type === "anchor") return anchor(r);
     if (type === "treasureChest") return rect("#8b5e32", r * 1.6, r, true);
     if (type === "octopus" || type === "giantSquid") return octopus(r);
-    if (type === "shipwreck" || type === "sunkenShip") return vehicle("#7b573d", r * 1.2, "wreck");
+    if (type === "shipwreck" || type === "sunkenShip") {
+      ctx.fillStyle = type === "sunkenShip" ? "#49636a" : "#6d4c35";
+      ctx.beginPath();
+      ctx.moveTo(-r * 1.45, -.2 * r);
+      ctx.lineTo(r * 1.25, -.55 * r);
+      ctx.lineTo(r * .85, .7 * r);
+      ctx.lineTo(-r * 1.05, .8 * r);
+      ctx.closePath();
+      ctx.fill();
+      ctx.stroke();
+      return;
+    }
     if (type === "starfish") return starShape("#f39a54", r, 5);
     if (type === "shell") return shell(r);
     if (type === "crab") return crab(r);
