@@ -166,14 +166,22 @@
   const deepSinkLifeAtlas = new Image();
   deepSinkLifeAtlas.decoding = "async";
   deepSinkLifeAtlas.src = "./assets/sprites/deep-sink-life.png?v=20260824-1";
-  const deepSinkStaticAtlas = new Image();
-  deepSinkStaticAtlas.decoding = "async";
-  deepSinkStaticAtlas.src = "./assets/sprites/deep-sink-static.png?v=20260824-1";
-  const deepSinkSeabedAtlas = new Image();
-  deepSinkSeabedAtlas.decoding = "async";
-  deepSinkSeabedAtlas.src = "./assets/sprites/deep-sink-seabed.png?v=20260824-1";
   const deepSinkStaticTypes = new Set(["fish", "turtle", "ray", "whale", "octopus", "giantSquid"]);
   const deepSinkSeabedTypes = new Set(["reef", "coral", "kelpForest", "seaweed", "shipwreck", "sunkenShip", "anchor", "treasureChest", "shell", "starfish", "urchin", "crab", "seaStack"]);
+  const deepSinkSpriteNames = [
+    "fish-yellow", "fish-blue", "fish-orange", "fish-silver", "turtle", "ray", "whale", "octopus",
+    "reef", "kelp", "wood-wreck", "steel-wreck", "anchor", "treasure", "shell-cluster", "sea-stack",
+  ];
+  const deepSinkSprites = Object.fromEntries(deepSinkSpriteNames.map((name) => {
+    const image = new Image();
+    image.decoding = "async";
+    image.src = `./assets/sprites/deep-sink/${name}.png?v=20260824-1`;
+    return [name, image];
+  }));
+  const deepSinkSand = new Image();
+  deepSinkSand.decoding = "async";
+  deepSinkSand.src = "./assets/terrain/deep-sink-sand.webp?v=20260824-1";
+  let deepSinkSandPattern = null;
   const metroTerrain = Object.fromEntries(["asphalt", "sidewalk", "grass", "brick"].map((name) => {
     const image = new Image();
     image.decoding = "async";
@@ -572,6 +580,7 @@
       const config = tierFor(tier);
       const radius = (config.min + config.max) / 2;
       const object = makeObject(id++, type, tier, x, y, radius, rotation);
+      object.seabed = deepSinkSeabedTypes.has(type);
       objects.push(object);
       return object;
     };
@@ -676,7 +685,8 @@
       whale.movementBounds = { x: 180, y: 180, w: world.width - 360, h: 1320 };
     }
     for (let i = 0; i < 3; i += 1) addAt(i === 0 ? "giantSquid" : "octopus", i === 0 ? "huge" : "large", 500 + rand() * 3200, 2050 + rand() * 620, rand() * Math.PI * 2);
-    for (let i = 0; i < 90; i += 1) addAt(rand() > .46 ? "bubbleCluster" : "shell", "small", 100 + rand() * (world.width - 200), 130 + rand() * (world.height - 260), rand() * Math.PI * 2);
+    for (let i = 0; i < 52; i += 1) addAt("bubbleCluster", "small", 100 + rand() * (world.width - 200), 130 + rand() * (world.height - 260), rand() * Math.PI * 2);
+    for (let i = 0; i < 38; i += 1) addAt("shell", "small", 100 + rand() * (world.width - 200), 1880 + rand() * 900, rand() * Math.PI * 2);
     return objects;
   }
 
@@ -1819,52 +1829,27 @@
   }
 
   function drawUnderwaterWorld() {
-    const grd = ctx.createLinearGradient(0, 0, 0, world.height);
-    grd.addColorStop(0, "#46c4d7");
-    grd.addColorStop(.42, "#147d92");
-    grd.addColorStop(.76, "#075064");
-    grd.addColorStop(1, "#04313f");
-    ctx.fillStyle = grd;
+    if (deepSinkSand.complete && deepSinkSand.naturalWidth) {
+      if (!deepSinkSandPattern) deepSinkSandPattern = ctx.createPattern(deepSinkSand, "repeat");
+      ctx.fillStyle = deepSinkSandPattern;
+    } else {
+      ctx.fillStyle = "#557f78";
+    }
     ctx.fillRect(0, 0, world.width, world.height);
 
-    const seabed = ctx.createLinearGradient(0, 1900, 0, world.height);
-    seabed.addColorStop(0, "rgba(73, 125, 119, 0)");
-    seabed.addColorStop(.25, "rgba(100, 137, 116, .72)");
-    seabed.addColorStop(1, "#7b8064");
-    ctx.fillStyle = seabed;
-    ctx.fillRect(0, 1750, world.width, world.height - 1750);
+    const depthTint = ctx.createLinearGradient(0, 0, 0, world.height);
+    depthTint.addColorStop(0, "rgba(18, 116, 130, .18)");
+    depthTint.addColorStop(.58, "rgba(8, 80, 93, .25)");
+    depthTint.addColorStop(1, "rgba(4, 48, 60, .36)");
+    ctx.fillStyle = depthTint;
+    ctx.fillRect(0, 0, world.width, world.height);
 
-    ctx.strokeStyle = "rgba(205, 251, 246, .13)";
-    ctx.lineWidth = 5;
-    for (let y = 170; y < 1780; y += 230) {
-      ctx.beginPath();
-      ctx.moveTo(0, y);
-      for (let x = 0; x <= world.width; x += 300) ctx.quadraticCurveTo(x + 125, y - 48, x + 300, y);
-      ctx.stroke();
-    }
-    ctx.fillStyle = "rgba(220, 236, 194, .12)";
-    for (let i = 0; i < 75; i += 1) {
-      const x = 70 + (i * 547) % (world.width - 140);
-      const y = 1950 + (i * 313) % 900;
-      ctx.beginPath();
-      ctx.ellipse(x, y, 55 + (i % 5) * 18, 11 + (i % 3) * 5, (i % 7) * .27, 0, Math.PI * 2);
-      ctx.fill();
-    }
-    for (const zone of state.underwaterZones?.reefs || []) {
-      const glow = ctx.createRadialGradient(zone.x + zone.w / 2, zone.y + zone.h / 2, 20, zone.x + zone.w / 2, zone.y + zone.h / 2, zone.w * .55);
-      glow.addColorStop(0, "rgba(48, 152, 117, .25)");
-      glow.addColorStop(1, "rgba(14, 68, 67, 0)");
-      ctx.fillStyle = glow;
-      ctx.beginPath();
-      ctx.ellipse(zone.x + zone.w / 2, zone.y + zone.h / 2, zone.w * .56, zone.h * .48, -.08, 0, Math.PI * 2);
-      ctx.fill();
-    }
-    ctx.fillStyle = "rgba(220, 252, 255, .35)";
-    for (let i = 0; i < 95; i += 1) {
+    ctx.fillStyle = "rgba(223, 250, 250, .25)";
+    for (let i = 0; i < 78; i += 1) {
       const x = (i * 769 + 113) % world.width;
       const y = (i * 397 + 71) % world.height;
       ctx.beginPath();
-      ctx.arc(x, y, 1 + (i % 4), 0, Math.PI * 2);
+      ctx.arc(x, y, 1.5 + (i % 4), 0, Math.PI * 2);
       ctx.fill();
     }
   }
@@ -1950,7 +1935,10 @@
     const view = state.viewBounds;
     const items = state.objects
       .filter((obj) => obj.swallowed || !view || (obj.x + obj.radius * 6 >= view.left && obj.x - obj.radius * 6 <= view.right && obj.y + obj.radius * 6 >= view.top && obj.y - obj.radius * 6 <= view.bottom))
-      .sort((a, b) => a.y - b.y);
+      .sort((a, b) => {
+        if (state.environment?.id === "underwater" && Boolean(a.seabed) !== Boolean(b.seabed)) return a.seabed ? -1 : 1;
+        return a.y - b.y;
+      });
     for (const obj of items) {
       if (swallowedOnly !== Boolean(obj.swallowed)) continue;
       const p = state.player;
@@ -2100,45 +2088,45 @@
   }
 
   function drawDeepSinkStatic(obj, r) {
-    if (!deepSinkStaticTypes.has(obj.type) || !deepSinkStaticAtlas.complete || !deepSinkStaticAtlas.naturalWidth) return false;
-    const cellWidth = deepSinkStaticAtlas.naturalWidth / 4;
-    const cellHeight = deepSinkStaticAtlas.naturalHeight / 2;
-    const index = obj.type === "fish" ? (obj.schoolVariant || 0)
-      : { turtle: 4, ray: 5, whale: 6, octopus: 7, giantSquid: 7 }[obj.type];
-    const sx = (index % 4) * cellWidth;
-    const sy = Math.floor(index / 4) * cellHeight;
+    if (!deepSinkStaticTypes.has(obj.type)) return false;
+    const spriteName = obj.type === "fish" ? ["fish-yellow", "fish-blue", "fish-orange", "fish-silver"][obj.schoolVariant || 0]
+      : { turtle: "turtle", ray: "ray", whale: "whale", octopus: "octopus", giantSquid: "octopus" }[obj.type];
+    const image = deepSinkSprites[spriteName];
+    if (!image?.complete || !image.naturalWidth) return false;
     const scale = obj.type === "fish" ? 4.25 : obj.type === "whale" ? 5.7 : obj.type === "giantSquid" ? 5.4 : 4.8;
     const width = r * scale;
-    const height = width * (cellHeight / cellWidth);
+    const height = width * (image.naturalHeight / image.naturalWidth);
     ctx.save();
     if (obj.type !== "octopus" && obj.type !== "giantSquid" && Math.cos(obj.heading ?? obj.rotation ?? 0) < 0) ctx.scale(-1, 1);
     if (obj.type === "fish") ctx.rotate(Math.sin(obj.motionPhase || 0) * .035);
     ctx.imageSmoothingEnabled = true;
     ctx.imageSmoothingQuality = "high";
-    ctx.drawImage(deepSinkStaticAtlas, sx, sy, cellWidth, cellHeight, -width / 2, -height / 2, width, height);
+    ctx.drawImage(image, -width / 2, -height / 2, width, height);
     ctx.restore();
     return true;
   }
 
   function drawDeepSinkSeabed(obj, r) {
-    if (!deepSinkSeabedTypes.has(obj.type) || !deepSinkSeabedAtlas.complete || !deepSinkSeabedAtlas.naturalWidth) return false;
-    const cellWidth = deepSinkSeabedAtlas.naturalWidth / 4;
-    const cellHeight = deepSinkSeabedAtlas.naturalHeight / 2;
-    const index = {
-      reef: 0, coral: 0, kelpForest: 1, seaweed: 1, shipwreck: 2, sunkenShip: 3,
-      anchor: 4, treasureChest: 5, shell: 6, starfish: 6, urchin: 6, crab: 6, seaStack: 7,
+    if (!deepSinkSeabedTypes.has(obj.type)) return false;
+    const spriteName = {
+      reef: "reef", coral: "reef", kelpForest: "kelp", seaweed: "kelp", shipwreck: "wood-wreck", sunkenShip: "steel-wreck",
+      anchor: "anchor", treasureChest: "treasure", shell: "shell-cluster", starfish: "shell-cluster", urchin: "shell-cluster", crab: "shell-cluster", seaStack: "sea-stack",
     }[obj.type];
-    const sx = (index % 4) * cellWidth;
-    const sy = Math.floor(index / 4) * cellHeight;
+    const image = deepSinkSprites[spriteName];
+    if (!image?.complete || !image.naturalWidth) return false;
     const scale = ["coral", "seaweed", "shell", "starfish", "urchin", "crab"].includes(obj.type) ? 3.4
       : ["shipwreck", "sunkenShip", "kelpForest", "seaStack"].includes(obj.type) ? 5.05 : 4.25;
     const width = r * scale;
-    const height = width * (cellHeight / cellWidth);
+    const height = width * (image.naturalHeight / image.naturalWidth);
     ctx.save();
     if (obj.type === "seaweed" || obj.type === "kelpForest") ctx.rotate(Math.sin(performance.now() * .0015 + obj.id) * .025);
+    ctx.fillStyle = "rgba(4, 35, 43, .2)";
+    ctx.beginPath();
+    ctx.ellipse(0, height * .3, width * .32, Math.max(4, height * .075), 0, 0, Math.PI * 2);
+    ctx.fill();
     ctx.imageSmoothingEnabled = true;
     ctx.imageSmoothingQuality = "high";
-    ctx.drawImage(deepSinkSeabedAtlas, sx, sy, cellWidth, cellHeight, -width / 2, -height / 2, width, height);
+    ctx.drawImage(image, -width / 2, -height / 2, width, height);
     ctx.restore();
     return true;
   }
