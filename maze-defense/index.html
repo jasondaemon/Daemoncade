@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#07111d">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; connect-src 'none'; object-src 'none'; base-uri 'none'; form-action 'none'; frame-ancestors 'self'">
+  <title>Maze Defense</title>
+  <link rel="stylesheet" href="game.css">
+  <link rel="stylesheet" href="refinements.css">
+</head>
+<body>
+  <main class="shell">
+    <header class="topbar">
+      <div><p>JasonDaemon.net Arcade · Strategy</p><h1>Maze Defense</h1></div>
+      <div class="top-actions"><button id="audio" type="button" aria-pressed="true">Sound on</button><button id="pause" type="button">Pause</button><button id="speed" type="button">1× speed</button><button id="new-game" type="button">New game</button></div>
+    </header>
+
+    <section id="start-screen" class="start-screen">
+      <div class="start-copy"><p class="eyebrow">Build the path. Hold the line.</p><h2>The maze is your weapon.</h2><p>Place towers directly on the field. Every placement reshapes the route, but every entrance must always have a way through.</p></div>
+      <div class="mode-tabs" role="tablist"><button class="active" data-tab="standard" type="button">Standard</button><button data-tab="challenge" type="button">Challenge</button></div>
+      <div id="mode-list" class="mode-list"></div>
+      <button id="begin" class="begin" type="button">Start Easy</button>
+    </section>
+
+    <section id="game-screen" class="game-screen" hidden>
+      <div class="stats">
+        <article><span>Mode</span><strong id="mode-name">Easy</strong></article>
+        <article><span>Wave</span><strong id="wave">0 / 30</strong></article>
+        <article><span>Lives</span><strong id="lives">20</strong></article>
+        <article><span>Credits</span><strong id="credits">80</strong></article>
+        <article><span>Score</span><strong id="score">0</strong></article>
+      </div>
+      <div class="play-layout">
+        <div class="board-panel">
+          <canvas id="board" width="960" height="640" aria-label="Tower defense field"></canvas>
+          <div class="wave-bar"><div><strong id="status">Build your first maze.</strong><span id="next-wave">Wave ready</span></div><button id="send-wave" type="button">Send wave</button></div>
+        </div>
+        <aside>
+          <section><p class="eyebrow">Build</p><div id="tower-list" class="tower-list"></div></section>
+          <section id="selection" class="selection"><p class="eyebrow">Selection</p><h3 id="selection-name">Nothing selected</h3><p id="selection-copy">Choose a tower, then place it on an open square.</p><div id="selection-stats" class="selection-stats" hidden></div><div class="selection-actions"><button id="upgrade" type="button" disabled>Upgrade</button><button id="sell" type="button" disabled>Sell</button></div></section>
+          <section class="legend"><p class="eyebrow">Incoming</p><div id="incoming">Normal creeps</div></section>
+        </aside>
+      </div>
+    </section>
+  </main>
+  <script src="../shared/scores.js"></script>
+  <script src="game.js"></script>
+</body>
+</html>

@@ -1,0 +1,10 @@
+.tower-button{align-items:center;display:grid;gap:6px;grid-template-columns:46px 1fr;padding:6px}
+.tower-button canvas{background:radial-gradient(circle,rgba(83,200,255,.13),transparent 70%);border-radius:10px;height:46px;width:46px}
+.tower-button .tower-copy{min-width:0}
+.tower-button .tower-dot{display:none!important}
+.selection-stats{border-bottom:1px solid var(--line);border-top:1px solid var(--line);display:grid;grid-template-columns:1fr auto auto;margin:.65rem 0;padding:.45rem 0}
+.selection-stats[hidden]{display:none}
+.selection-stats span{color:var(--muted);font-size:.58rem;padding:.22rem}
+.selection-stats strong{font-size:.63rem;padding:.22rem;text-align:right}
+.selection-stats .next{color:var(--lime)}
+@media(max-width:600px){.tower-list{grid-template-columns:repeat(2,1fr)}}
