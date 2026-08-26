@@ -13,19 +13,21 @@
   <main class="shell">
     <header class="topbar">
       <div><p>JasonDaemon.net Arcade · Strategy</p><h1>Maze Defense</h1></div>
-      <div class="top-actions"><button id="audio" type="button" aria-pressed="true">Sound on</button><button id="pause" type="button">Pause</button><button id="speed" type="button">1× speed</button><button id="new-game" type="button">New game</button></div>
+      <div class="top-actions"><button id="enemies" type="button">Enemy field guide</button><button id="progression" type="button">Tower progression</button><button id="audio" type="button" aria-pressed="true">Sound on</button><button id="pause" type="button">Pause</button><button id="speed" type="button">1× speed</button><button id="new-game" type="button">New game</button></div>
     </header>
 
     <section id="start-screen" class="start-screen">
       <div class="start-copy"><p class="eyebrow">Build the path. Hold the line.</p><h2>The maze is your weapon.</h2><p>Place towers directly on the field. Every placement reshapes the route, but every entrance must always have a way through.</p></div>
       <div class="mode-tabs" role="tablist"><button class="active" data-tab="standard" type="button">Standard</button><button data-tab="challenge" type="button">Challenge</button></div>
       <div id="mode-list" class="mode-list"></div>
+      <button id="continue-game" class="continue-game" type="button" hidden>Continue previous game</button>
       <button id="begin" class="begin" type="button">Start Easy</button>
     </section>
 
     <section id="game-screen" class="game-screen" hidden>
       <div class="stats">
         <article><span>Mode</span><strong id="mode-name">Easy</strong></article>
+        <article><span>Round</span><strong id="stage">1 / 5</strong></article>
         <article><span>Wave</span><strong id="wave">0 / 30</strong></article>
         <article><span>Lives</span><strong id="lives">20</strong></article>
         <article><span>Credits</span><strong id="credits">80</strong></article>
@@ -34,16 +36,36 @@
       <div class="play-layout">
         <div class="board-panel">
           <canvas id="board" width="960" height="640" aria-label="Tower defense field"></canvas>
-          <div class="wave-bar"><div><strong id="status">Build your first maze.</strong><span id="next-wave">Wave ready</span></div><button id="send-wave" type="button">Send wave</button></div>
+          <div id="round-notice" class="round-notice" aria-live="polite" aria-hidden="true">
+            <div class="notice-particles" aria-hidden="true"></div>
+            <p id="notice-kicker">Prepare the field</p>
+            <strong id="notice-title">Round 1</strong>
+            <span id="notice-copy">Open Field</span>
+          </div>
+          <div class="wave-bar"><div><strong id="status">Build your first maze.</strong><span id="next-wave">Wave ready</span></div><div class="field-abilities" aria-label="Field abilities"><button id="overdrive" type="button" title="Nearby systems fire faster for six seconds.">Overdrive</button><button id="lockdown" type="button" title="Briefly stuns every enemy currently on the field.">Lockdown</button></div><button id="send-wave" type="button">Send wave</button></div>
         </div>
         <aside>
           <section><p class="eyebrow">Build</p><div id="tower-list" class="tower-list"></div></section>
-          <section id="selection" class="selection"><p class="eyebrow">Selection</p><h3 id="selection-name">Nothing selected</h3><p id="selection-copy">Choose a tower, then place it on an open square.</p><div id="selection-stats" class="selection-stats" hidden></div><div class="selection-actions"><button id="upgrade" type="button" disabled>Upgrade</button><button id="sell" type="button" disabled>Sell</button></div></section>
+          <section id="selection" class="selection"><p class="eyebrow">Selection</p><h3 id="selection-name">Nothing selected</h3><p id="selection-copy">Choose a tower, then place it on an open square.</p><div id="selection-stats" class="selection-stats" hidden></div><label id="targeting-control" class="targeting-control" hidden><span>Target priority</span><select id="targeting"><option value="first">First</option><option value="last">Last</option><option value="strongest">Strongest</option><option value="weakest">Weakest</option><option value="fastest">Fastest</option></select></label><div class="selection-actions"><button id="upgrade" type="button" disabled>Upgrade</button><button id="sell" type="button" disabled>Sell</button></div></section>
           <section class="legend"><p class="eyebrow">Incoming</p><div id="incoming">Normal creeps</div></section>
         </aside>
       </div>
     </section>
   </main>
+  <dialog id="progression-dialog" class="progression-dialog">
+    <div class="progression-shell">
+      <header><div><p class="eyebrow">Upgrade field guide</p><h2>Tower progression</h2></div><button id="progression-close" type="button">Close</button></header>
+      <p class="progression-intro">Every level improves core power and range. Levels 5 and 10 unlock abilities that change how the tower handles a wave.</p>
+      <div id="progression-list" class="progression-list"></div>
+    </div>
+  </dialog>
+  <dialog id="enemy-dialog" class="progression-dialog enemy-dialog">
+    <div class="progression-shell">
+      <header><div><p class="eyebrow">Threat intelligence</p><h2>Enemy field guide</h2></div><button id="enemy-close" type="button">Close</button></header>
+      <p class="progression-intro">New threats enter the field as rounds advance. Health also scales with wave, round, and difficulty.</p>
+      <div id="enemy-list" class="enemy-list"></div>
+    </div>
+  </dialog>
   <script src="../shared/scores.js"></script>
   <script src="game.js"></script>
 </body>
