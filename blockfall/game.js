@@ -7,9 +7,6 @@
   const musicStorageKey = "iiab-overland-blockfall-music";
   const audioBase = "./audio/";
   const musicTracks = {
-    music1: { label: "Music 1", src: `${audioBase}MUSIC-1.mp3` },
-    music2: { label: "Music 2", src: `${audioBase}MUSIC-2.mp3` },
-    music3: { label: "Music 3", src: `${audioBase}MUSIC-3.mp3` },
     adventure: { label: "Adventure", src: `${audioBase}adventure.mp3` },
     casey: { label: "Casey", src: `${audioBase}casey.mp3` },
     midnight: { label: "Midnight Run", src: `${audioBase}midnightrun.mp3` },
