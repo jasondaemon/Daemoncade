@@ -1,20 +1,42 @@
-Standalone Games - Source and License Notes
+Daemoncade - Source and License Notes
 
-Minesweeper
-  Adapted by the repository owner from the Overland In A Box (OIAB) project.
-  OIAB has no public project license at the time of this adaptation.
+Project-specific code and assets
+  Copyright Jason Daemon.
+  Distributed under the GNU General Public License, version 3, except where a
+  third-party notice or source header states otherwise.
+
+Games adapted from Overland In A Box (OIAB)
+  Adapted by the repository owner from his OIAB project. The project-specific
+  portions included in Daemoncade are released here under GPLv3.
+
+  Minesweeper, Checkers, Tic-Tac-Toe, Blockfall, Connect Four, Dots and Boxes,
+  Hangman, and Chess originated in or were adapted from OIAB. Network play,
+  appliance profiles, server statistics, and network score submission were
+  removed for these standalone browser editions.
   The public edition removes OIAB profiles, server statistics, and appliance APIs.
 
-Snake
+Games adapted from DaemonOS
   Adapted from DaemonOS, Copyright Jason Daemon.
   DaemonOS source is licensed under the GNU General Public License, version 3.
   Source: https://github.com/jasondaemon/daemonos
   License: https://www.gnu.org/licenses/gpl-3.0.txt
 
-The public editions use no external runtime services or remotely loaded libraries.
-Checkers, Tic-Tac-Toe, and Blockfall were adapted from the local OIAB project for standalone, browser-only play. Multiplayer, server profiles, and network score submission have been removed.
-Connect Four, Dots and Boxes, and Hangman were similarly rebuilt as standalone local games from their OIAB counterparts.
-Chess uses the chess.js rules engine bundled with OIAB and a local-only computer opponent. See the chess.js source header for its license terms.
-Paddle Duel, Space Rocks, and Pinball were adapted from DaemonOS for standalone play. Pinball includes the Planck.js physics engine; its license notice remains in the bundled source.
-Casey was adapted from DaemonOS with its original maze, character, input, rendering, and synthesized-audio systems.
-Missiles Away, Chilopodophobia, Road Hopper, and Jungle Jumper were adapted from DaemonOS as local-only browser games.
+  Snake, Paddle Duel, Space Rocks, Pinball, Casey, Missiles Away,
+  Chilopodophobia, Road Hopper, and Jungle Jumper were adapted from DaemonOS.
+  Server integration and network score submission were removed.
+
+chess.js
+  Chess bundles chess.js by Jeff Hlywa under its two-clause BSD license. The
+  copyright, conditions, and disclaimer are retained in
+  chess/vendor/chess.js.
+
+Planck.js
+  Pinball bundles Planck.js by Ali Shakiba and Erin Catto under the zlib
+  license. Its license notice is retained in pinball/vendor/planck.min.js.
+
+PixiJS
+  A local PixiJS distribution is retained under the MIT License. See
+  vendor/pixi/LICENSE.txt.
+
+The public editions use no external runtime services or remotely loaded
+libraries.
