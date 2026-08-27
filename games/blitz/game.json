@@ -1,0 +1,16 @@
+{
+  "title": "Blitz!",
+  "slug": "blitz",
+  "version": "0.1.0-alpha.1",
+  "release_stage": "alpha",
+  "order": 25,
+  "category": "Arcade",
+  "source": "DaemonOS",
+  "players": "Solo",
+  "controls": "Keyboard, mouse, or touch",
+  "summary": "Lead a growing combat swarm through a four-lane neon rush of gates, enemies, bosses, and persistent upgrades.",
+  "accent": "cyan",
+  "mark": "ϟ",
+  "icon": "icon.webp",
+  "metric": "score"
+}

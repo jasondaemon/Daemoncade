@@ -22,8 +22,10 @@ Games adapted from DaemonOS
   License: https://www.gnu.org/licenses/gpl-3.0.txt
 
   Snake, Paddle Duel, Space Rocks, Pinball, Casey, Missiles Away,
-  Chilopodophobia, Road Hopper, and Jungle Jumper were adapted from DaemonOS.
-  Server integration and network score submission were removed.
+  Chilopodophobia, Road Hopper, Jungle Jumper, Blitz!, Racecar, Spacefighter,
+  and Space Defender were adapted from DaemonOS. Server integration and
+  network score submission were removed. Space Defender retains three
+  project-owned, Suno-generated sound effects from DaemonOS.
 
 chess.js
   Chess bundles chess.js by Jeff Hlywa under its two-clause BSD license. The

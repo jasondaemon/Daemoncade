@@ -1,0 +1,16 @@
+{
+  "title": "Racecar",
+  "slug": "racecar",
+  "version": "0.1.0-alpha.1",
+  "release_stage": "alpha",
+  "order": 24,
+  "category": "Racing",
+  "source": "DaemonOS",
+  "players": "Solo",
+  "controls": "Arrow keys",
+  "summary": "Change lanes through increasingly fast traffic and roadside hazards while chasing a local high score.",
+  "accent": "gold",
+  "mark": "▰",
+  "icon": "icon.webp",
+  "metric": "score"
+}

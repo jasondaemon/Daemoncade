@@ -1,0 +1,16 @@
+{
+  "title": "Spacefighter",
+  "slug": "spacefighter",
+  "version": "0.1.0-alpha.1",
+  "release_stage": "alpha",
+  "order": 23,
+  "category": "Arcade",
+  "source": "DaemonOS",
+  "players": "Solo",
+  "controls": "Keyboard",
+  "summary": "Thread a nimble fighter through dense enemy patterns, collect weapon upgrades, and unleash missiles and bombs.",
+  "accent": "violet",
+  "mark": "△",
+  "icon": "icon.webp",
+  "metric": "score"
+}

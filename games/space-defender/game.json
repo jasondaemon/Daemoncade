@@ -1,0 +1,16 @@
+{
+  "title": "Space Defender",
+  "slug": "space-defender",
+  "version": "1.0.0-beta.1",
+  "release_stage": "beta",
+  "order": 22,
+  "category": "Arcade",
+  "source": "DaemonOS",
+  "players": "Solo",
+  "controls": "Keyboard",
+  "summary": "Hold the line against marching alien formations, protect your shields, and survive escalating attack waves.",
+  "accent": "cyan",
+  "mark": "⌃",
+  "icon": "icon.webp",
+  "metric": "score"
+}
