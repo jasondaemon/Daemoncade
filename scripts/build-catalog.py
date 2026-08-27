@@ -14,7 +14,7 @@ SEMVER = re.compile(r"^(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)(?:-[0-9A-Za-z.-]
 
 def main() -> None:
     games = []
-    for metadata_path in sorted(ROOT.glob("*/game.json")):
+    for metadata_path in sorted((ROOT / "games").glob("*/game.json")):
         game = json.loads(metadata_path.read_text(encoding="utf-8"))
         slug = metadata_path.parent.name
         if game.get("slug") != slug:
@@ -60,12 +60,12 @@ def main() -> None:
         for game in stage_games:
             summary = str(game["summary"]).replace("|", "\\|").replace("\n", " ")
             markdown.append(
-                f'| <img src="{game["slug"]}/{game["icon"]}" width="48" height="48" alt=""> '
-                f'| [{game["title"]}]({game["slug"]}/) | `{game["version"]}` | {summary} |'
+                f'| <img src="../games/{game["slug"]}/{game["icon"]}" width="48" height="48" alt=""> '
+                f'| [{game["title"]}](../games/{game["slug"]}/) | `{game["version"]}` | {summary} |'
             )
         markdown.append("")
 
-    games_page = ROOT / "GAMES.md"
+    games_page = ROOT / "docs" / "GAMES.md"
     games_page.write_text("\n".join(markdown), encoding="utf-8")
     print(f"Wrote {destination} and {games_page} with {len(games)} games")
 

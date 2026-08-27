@@ -6,7 +6,7 @@ The public arcade is integrated into [www.jasondaemon.net/games](https://www.jas
 
 ## Games
 
-See the [game catalog](GAMES.md) for the complete list, icons, current versions, release stages, and a description of each game.
+See the [game catalog](docs/GAMES.md) for the complete list, icons, current versions, release stages, and a description of each game.
 
 ## Run locally
 
@@ -25,7 +25,7 @@ http://127.0.0.1:4174/
 The menu launches every game in the catalog. You can also open a game directly, such as:
 
 ```text
-http://127.0.0.1:4174/maze-defense/
+http://127.0.0.1:4174/games/maze-defense/
 ```
 
 Opening files directly with `file://` works for some games, but a local HTTP server is the supported development path because browsers restrict JavaScript modules and shared assets on local files.
@@ -36,14 +36,14 @@ Opening files directly with `file://` works for some games, but a local HTTP ser
 - Multiplayer means two players sharing one device, not network play.
 - Scores and resumable state use local browser storage.
 - Runtime dependencies must be committed locally; production games do not load code from CDNs.
-- Each game owns its HTML, styles, scripts, and assets in a named directory.
+- Each game owns its HTML, styles, scripts, metadata, and assets in a named directory under `games/`.
 - Each game directory also owns its `game.json` catalog record and `icon.webp` or `icon.png` card artwork.
 - `catalog.json` is generated from the per-game records with `./scripts/build-catalog.py` and is consumed by both the local menu and the Hugo website.
-- Cross-game utilities live in `shared/` or `daemonos-shared/`.
+- Cross-game utilities live in `games/shared/` or `games/daemonos-shared/`.
 - Game pages must remain safe to run inside the sandboxed iframe used by jasondaemon.net.
 
-See [CONTRIBUTING.md](CONTRIBUTING.md) for development conventions and [DEPLOYMENT.md](DEPLOYMENT.md) for the website promotion process.
-Each game is versioned independently; see [VERSIONING.md](VERSIONING.md) for the release-stage and version policy.
+See [CONTRIBUTING.md](CONTRIBUTING.md) for development conventions and [docs/DEPLOYMENT.md](docs/DEPLOYMENT.md) for the website promotion process.
+Each game is versioned independently; see [docs/VERSIONING.md](docs/VERSIONING.md) for the release-stage and version policy.
 
 ## License and provenance
 

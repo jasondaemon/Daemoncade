@@ -11,10 +11,10 @@
       games.forEach((game) => {
         const card = document.createElement("a");
         card.className = "game";
-        card.href = `${encodeURIComponent(game.slug)}/`;
+        card.href = `games/${encodeURIComponent(game.slug)}/`;
 
         const icon = document.createElement("img");
-        icon.src = `${encodeURIComponent(game.slug)}/${game.icon}`;
+        icon.src = `games/${encodeURIComponent(game.slug)}/${game.icon}`;
         icon.alt = "";
 
         const copy = document.createElement("div");

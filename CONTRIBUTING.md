@@ -5,7 +5,7 @@
 Every game should have a stable, lowercase slug and an `index.html` entry point:
 
 ```text
-game-slug/
+games/game-slug/
 ├── index.html
 ├── game.css
 ├── game.js
@@ -27,8 +27,8 @@ Existing games may use additional modules or shared libraries. Keep paths relati
 
 ## Shared behavior
 
-- Use `shared/scores.js` for website-compatible local score records.
-- Use `daemonos-shared/` only for the compatibility helpers used by games adapted from DaemonOS.
+- Use `games/shared/scores.js` for website-compatible local score records.
+- Use `games/daemonos-shared/` only for the compatibility helpers used by games adapted from DaemonOS.
 - New shared code should have a focused purpose and must not introduce a framework requirement across unrelated games.
 
 ## Assets and attribution

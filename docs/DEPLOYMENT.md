@@ -4,14 +4,14 @@ Daemoncade and jasondaemon.net have separate responsibilities.
 
 - This repository owns the playable game directories, shared runtime files, game metadata, icons, and portable local arcade menu.
 - The website repository owns the Games page shell, cards, navigation, launcher behavior, and surrounding site design. It reads the catalog and icons from this repository.
-- The website includes a pinned Daemoncade commit as the `static/games` Git submodule.
+- The website includes a pinned Daemoncade commit as the `vendor/daemoncade` Git submodule and mounts this repository's `games/` directory at the public `/games/` path.
 
 ## Promotion to jasondaemon.net
 
 Publishing a commit here does not change production by itself.
 
 1. Finish and test the Daemoncade commit.
-2. In the `www.jasondaemon.net` repository, update the `static/games` submodule to that exact commit.
+2. In the `www.jasondaemon.net` repository, update the `vendor/daemoncade` submodule to that exact commit.
 3. Test the Hugo site locally.
 4. Commit the submodule-pointer change in the website repository.
 5. Push the website `main` branch to its Forgejo origin.
@@ -22,7 +22,7 @@ This deliberate promotion gate keeps unfinished game work out of production and 
 
 ## Adding a game to the catalog
 
-Add `game.json` and its referenced icon to the game directory, then rebuild the checked-in catalog:
+Add `game.json` and its referenced icon under `games/<slug>/`, then rebuild the checked-in catalog and game-list documentation:
 
 ```sh
 ./scripts/build-catalog.py

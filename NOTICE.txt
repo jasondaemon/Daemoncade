@@ -28,15 +28,15 @@ Games adapted from DaemonOS
 chess.js
   Chess bundles chess.js by Jeff Hlywa under its two-clause BSD license. The
   copyright, conditions, and disclaimer are retained in
-  chess/vendor/chess.js.
+  games/chess/vendor/chess.js.
 
 Planck.js
   Pinball bundles Planck.js by Ali Shakiba and Erin Catto under the zlib
-  license. Its license notice is retained in pinball/vendor/planck.min.js.
+  license. Its license notice is retained in games/pinball/vendor/planck.min.js.
 
 PixiJS
   A local PixiJS distribution is retained under the MIT License. See
-  vendor/pixi/LICENSE.txt.
+  games/vendor/pixi/LICENSE.txt.
 
 The public editions use no external runtime services or remotely loaded
 libraries.
