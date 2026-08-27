@@ -6,31 +6,7 @@ The public arcade is integrated into [www.jasondaemon.net/games](https://www.jas
 
 ## Games
 
-Each game is versioned independently. The icon, metadata, and playable files travel together in the game's directory.
-
-| Icon | Game | Version | Stage |
-| --- | --- | --- | --- |
-| <img src="maze-defense/icon.png" width="48" height="48" alt=""> | Maze Defense | `1.0.0` | Stable |
-| <img src="mines/icon.webp" width="48" height="48" alt=""> | Mines | `1.0.0-beta.1` | Beta |
-| <img src="sinkhole-city/icon.webp" width="48" height="48" alt=""> | Sinkhole City | `1.0.0-beta.1` | Beta |
-| <img src="chess/icon.webp" width="48" height="48" alt=""> | Chess | `1.0.0-beta.1` | Beta |
-| <img src="checkers/icon.webp" width="48" height="48" alt=""> | Checkers | `1.0.0-beta.1` | Beta |
-| <img src="blockfall/icon.webp" width="48" height="48" alt=""> | Blockfall | `1.0.0-beta.1` | Beta |
-| <img src="dots-and-boxes/icon.webp" width="48" height="48" alt=""> | Dots and Boxes | `1.0.0-beta.1` | Beta |
-| <img src="space-rocks/icon.webp" width="48" height="48" alt=""> | Space Rocks! | `1.0.0-beta.1` | Beta |
-| <img src="canyon-crawler/icon.webp" width="48" height="48" alt=""> | Canyon Crawler | `0.1.0-alpha.1` | Alpha |
-| <img src="orbit-run/icon.webp" width="48" height="48" alt=""> | Orbit Run | `0.1.0-alpha.1` | Alpha |
-| <img src="connect-four/icon.webp" width="48" height="48" alt=""> | Connect Four | `0.1.0-alpha.1` | Alpha |
-| <img src="tic-tac-toe/icon.webp" width="48" height="48" alt=""> | Tic-Tac-Toe | `0.1.0-alpha.1` | Alpha |
-| <img src="snake/icon.webp" width="48" height="48" alt=""> | Snake | `0.1.0-alpha.1` | Alpha |
-| <img src="hangman/icon.webp" width="48" height="48" alt=""> | Hangman | `0.1.0-alpha.1` | Alpha |
-| <img src="paddle-duel/icon.webp" width="48" height="48" alt=""> | Paddle Duel | `0.1.0-alpha.1` | Alpha |
-| <img src="pinball/icon.webp" width="48" height="48" alt=""> | Pinball | `0.1.0-alpha.1` | Alpha |
-| <img src="casey/icon.webp" width="48" height="48" alt=""> | Casey | `0.1.0-alpha.1` | Alpha |
-| <img src="missiles-away/icon.webp" width="48" height="48" alt=""> | Missiles Away | `0.1.0-alpha.1` | Alpha |
-| <img src="chilopodophobia/icon.webp" width="48" height="48" alt=""> | Chilopodophobia | `0.1.0-alpha.1` | Alpha |
-| <img src="road-hopper/icon.webp" width="48" height="48" alt=""> | Road Hopper | `0.1.0-alpha.1` | Alpha |
-| <img src="jungle-jumper/icon.webp" width="48" height="48" alt=""> | Jungle Jumper | `0.1.0-alpha.1` | Alpha |
+See the [game catalog](GAMES.md) for the complete list, icons, current versions, release stages, and a description of each game.
 
 ## Run locally
 

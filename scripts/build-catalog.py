@@ -38,7 +38,36 @@ def main() -> None:
         json.dumps({"games": games}, indent=2, ensure_ascii=False) + "\n",
         encoding="utf-8",
     )
-    print(f"Wrote {destination} with {len(games)} games")
+
+    markdown = [
+        "# Daemoncade game catalog",
+        "",
+        "Every game is versioned independently. Its icon, metadata, and playable files travel together in its directory.",
+        "",
+        "This page is generated from the per-game `game.json` files by `./scripts/build-catalog.py`.",
+        "",
+    ]
+    for stage in ("stable", "beta", "alpha"):
+        stage_games = [game for game in games if game["release_stage"] == stage]
+        markdown.extend(
+            [
+                f"## {stage.title()}",
+                "",
+                "| Icon | Game | Version | About |",
+                "| --- | --- | --- | --- |",
+            ]
+        )
+        for game in stage_games:
+            summary = str(game["summary"]).replace("|", "\\|").replace("\n", " ")
+            markdown.append(
+                f'| <img src="{game["slug"]}/{game["icon"]}" width="48" height="48" alt=""> '
+                f'| [{game["title"]}]({game["slug"]}/) | `{game["version"]}` | {summary} |'
+            )
+        markdown.append("")
+
+    games_page = ROOT / "GAMES.md"
+    games_page.write_text("\n".join(markdown), encoding="utf-8")
+    print(f"Wrote {destination} and {games_page} with {len(games)} games")
 
 
 if __name__ == "__main__":
