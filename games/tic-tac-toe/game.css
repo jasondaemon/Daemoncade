@@ -1,1 +1,12 @@
-.board{grid-template-columns:repeat(3,1fr);gap:9px;padding:9px;background:#07140d;border-radius:22px}.board button{border-radius:17px;background:linear-gradient(145deg,#183b29,#0c2417);box-shadow:inset 0 0 0 1px rgba(255,255,255,.11);color:var(--ink);font-size:clamp(48px,14vw,110px);font-weight:1000}.board button:hover:not(:disabled){background:#204d35}.board button.win{background:rgba(255,212,81,.25);color:var(--gold)}.board button[data-mark="O"]{color:#65d6ff}
+.board { background:linear-gradient(145deg,#091a28,#030a11); border:1px solid rgba(85,199,255,.2); border-radius:26px; box-shadow:0 25px 58px rgba(0,0,0,.45),inset 0 0 35px rgba(56,189,248,.07); gap:clamp(7px,1.5vw,13px); grid-template-columns:repeat(3,1fr); padding:clamp(10px,2vw,17px); }
+.board button { background:linear-gradient(145deg,#17364e,#0b2132); border:1px solid rgba(255,255,255,.1); border-radius:20px; box-shadow:inset 0 1px rgba(255,255,255,.06),0 7px 15px rgba(0,0,0,.23); overflow:hidden; }
+.board button::before,.board button::after { content:""; position:absolute; }
+.board button[data-mark="X"]::before,.board button[data-mark="X"]::after { background:linear-gradient(#ffdd75,#f3a928); border-radius:99px; box-shadow:0 0 16px rgba(245,196,81,.32); height:13%; left:18%; top:44%; width:64%; }
+.board button[data-mark="X"]::before { transform:rotate(45deg); }
+.board button[data-mark="X"]::after { transform:rotate(-45deg); }
+.board button[data-mark="O"]::before { border:clamp(7px,1.5vw,14px) solid #55c7ff; border-radius:50%; box-shadow:0 0 18px rgba(85,199,255,.3),inset 0 0 14px rgba(85,199,255,.18); inset:20%; }
+.board button.placed::before,.board button.placed::after { animation:mark-draw .32s cubic-bezier(.2,.9,.3,1.18); }
+.board button:hover:not(:disabled) { background:linear-gradient(145deg,#204963,#0e2c41); transform:translateY(-2px); }
+.board button.win { background:linear-gradient(145deg,rgba(245,196,81,.34),rgba(85,199,255,.2)); box-shadow:inset 0 0 0 2px rgba(255,255,255,.35),0 0 24px rgba(245,196,81,.22); }
+.board button.win::before,.board button.win::after { filter:brightness(1.2); }
+@keyframes mark-draw { from{opacity:0;scale:.25}to{opacity:1;scale:1} }

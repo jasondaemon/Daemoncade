@@ -1,8 +1,8 @@
 {
   "title": "Connect Four",
   "slug": "connect-four",
-  "version": "0.1.0-alpha.1",
-  "release_stage": "alpha",
+  "version": "1.0.0",
+  "release_stage": "stable",
   "order": 13,
   "category": "Board",
   "source": "OIAB",

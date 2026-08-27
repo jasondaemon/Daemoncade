@@ -163,8 +163,8 @@
     {
       "title": "Chess",
       "slug": "chess",
-      "version": "1.0.0-beta.1",
-      "release_stage": "beta",
+      "version": "1.0.0",
+      "release_stage": "stable",
       "order": 15,
       "category": "Board",
       "source": "OIAB",
@@ -179,8 +179,8 @@
     {
       "title": "Checkers",
       "slug": "checkers",
-      "version": "1.0.0-beta.1",
-      "release_stage": "beta",
+      "version": "1.0.0",
+      "release_stage": "stable",
       "order": 14,
       "category": "Board",
       "source": "OIAB",
@@ -195,8 +195,8 @@
     {
       "title": "Connect Four",
       "slug": "connect-four",
-      "version": "0.1.0-alpha.1",
-      "release_stage": "alpha",
+      "version": "1.0.0",
+      "release_stage": "stable",
       "order": 13,
       "category": "Board",
       "source": "OIAB",
@@ -211,8 +211,8 @@
     {
       "title": "Tic-Tac-Toe",
       "slug": "tic-tac-toe",
-      "version": "0.1.0-alpha.1",
-      "release_stage": "alpha",
+      "version": "1.0.0",
+      "release_stage": "stable",
       "order": 12,
       "category": "Board",
       "source": "OIAB",

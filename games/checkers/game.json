@@ -1,8 +1,8 @@
 {
   "title": "Checkers",
   "slug": "checkers",
-  "version": "1.0.0-beta.1",
-  "release_stage": "beta",
+  "version": "1.0.0",
+  "release_stage": "stable",
   "order": 14,
   "category": "Board",
   "source": "OIAB",
