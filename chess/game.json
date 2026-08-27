@@ -1,0 +1,16 @@
+{
+  "title": "Chess",
+  "slug": "chess",
+  "version": "1.0.0-beta.1",
+  "release_stage": "beta",
+  "order": 15,
+  "category": "Board",
+  "source": "OIAB",
+  "players": "Solo or local two-player",
+  "controls": "Mouse or touch",
+  "summary": "Play a complete chess game against a local computer opponent or someone sharing the board.",
+  "accent": "gold",
+  "mark": "♞",
+  "icon": "icon.webp",
+  "metric": "score"
+}

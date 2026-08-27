@@ -1,0 +1,16 @@
+{
+  "title": "Sinkhole City",
+  "slug": "sinkhole-city",
+  "version": "1.0.0-beta.1",
+  "release_stage": "beta",
+  "order": 19,
+  "category": "Arcade",
+  "source": "OIAB",
+  "players": "Solo",
+  "controls": "Keyboard or touch",
+  "summary": "Start as a pothole, swallow everything small enough to fit, and grow into a world-eating sinkhole before time runs out.",
+  "accent": "cyan",
+  "mark": "●",
+  "icon": "icon.webp",
+  "metric": "score"
+}

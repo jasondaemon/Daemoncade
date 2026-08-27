@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" role="img" aria-label="Tic-Tac-Toe">
+  <defs><linearGradient id="bg" x1="24" y1="18" x2="232" y2="238"><stop stop-color="#173552"/><stop offset="1" stop-color="#07111d"/></linearGradient></defs>
+  <rect width="256" height="256" rx="52" fill="url(#bg)"/>
+  <path d="M96 35v186m64-186v186M35 96h186M35 160h186" fill="none" stroke="#647b94" stroke-width="8" stroke-linecap="round"/>
+  <g fill="none" stroke="#7dd3fc" stroke-width="13" stroke-linecap="round"><path d="m50 49 30 30M80 49 50 79"/><path d="m113 113 30 30m0-30-30 30"/><path d="m177 177 30 30m0-30-30 30"/></g>
+  <g fill="none" stroke="#a3e635" stroke-width="12"><circle cx="128" cy="64" r="20"/><circle cx="64" cy="128" r="20"/><circle cx="192" cy="128" r="20"/></g>
+  <path d="M42 214 214 42" stroke="#ff6f91" stroke-width="7" stroke-linecap="round" opacity=".8"/>
+</svg>

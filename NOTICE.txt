@@ -9,7 +9,7 @@ Games adapted from Overland In A Box (OIAB)
   Adapted by the repository owner from his OIAB project. The project-specific
   portions included in Daemoncade are released here under GPLv3.
 
-  Minesweeper, Checkers, Tic-Tac-Toe, Blockfall, Connect Four, Dots and Boxes,
+  Mines, Checkers, Tic-Tac-Toe, Blockfall, Connect Four, Dots and Boxes,
   Hangman, and Chess originated in or were adapted from OIAB. Network play,
   appliance profiles, server statistics, and network score submission were
   removed for these standalone browser editions.

@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" role="img" aria-label="Road Hopper">
+  <defs><linearGradient id="bg" x1="26" y1="18" x2="230" y2="238"><stop stop-color="#183651"/><stop offset="1" stop-color="#07111d"/></linearGradient></defs>
+  <rect width="256" height="256" rx="52" fill="url(#bg)"/>
+  <path d="M0 76h256v132H0Z" fill="#27384b"/>
+  <path d="M0 116h256M0 169h256" stroke="#f3f7fc" stroke-width="6" stroke-dasharray="25 18" opacity=".62"/>
+  <path d="M0 58h256M0 224h256" stroke="#a3e635" stroke-width="22" opacity=".58"/>
+  <path d="m23 180 26-29h55l23 29Z" fill="#ff6f91" stroke="#07111d" stroke-width="7" stroke-linejoin="round"/>
+  <circle cx="55" cy="183" r="13" fill="#07111d" stroke="#94a3b8" stroke-width="5"/><circle cx="105" cy="183" r="13" fill="#07111d" stroke="#94a3b8" stroke-width="5"/>
+  <g stroke="#07111d" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"><path d="M156 106c7-32 52-38 66-8 9 19-1 40-20 47-23 9-53-11-46-39Z" fill="#a3e635"/><path d="m163 132-24 23m66-15 20 21m-62-59-20-17m69 11 18-18" fill="none"/></g>
+  <circle cx="177" cy="102" r="6" fill="#07111d"/><circle cx="204" cy="101" r="6" fill="#07111d"/>
+  <path d="M179 121c8 6 16 6 24 0" fill="none" stroke="#07111d" stroke-width="5" stroke-linecap="round"/>
+  <path d="m183 47 10-20 10 20" fill="none" stroke="#7dd3fc" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>

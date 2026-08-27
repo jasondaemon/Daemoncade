@@ -1,0 +1,16 @@
+{
+  "title": "Connect Four",
+  "slug": "connect-four",
+  "version": "0.1.0-alpha.1",
+  "release_stage": "alpha",
+  "order": 13,
+  "category": "Board",
+  "source": "OIAB",
+  "players": "Solo or local two-player",
+  "controls": "Mouse or touch",
+  "summary": "Build a line of four against the computer or someone sharing your screen.",
+  "accent": "gold",
+  "mark": "●",
+  "icon": "icon.webp",
+  "metric": "score"
+}

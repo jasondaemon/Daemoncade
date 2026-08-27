@@ -1,0 +1,16 @@
+{
+  "title": "Blockfall",
+  "slug": "blockfall",
+  "version": "1.0.0-beta.1",
+  "release_stage": "beta",
+  "order": 17,
+  "category": "Puzzle",
+  "source": "OIAB",
+  "players": "Solo",
+  "controls": "Keyboard or touch",
+  "summary": "Stack falling pieces in endless or timed play and chase a high score saved on this device.",
+  "accent": "violet",
+  "mark": "▦",
+  "icon": "icon.webp",
+  "metric": "score"
+}

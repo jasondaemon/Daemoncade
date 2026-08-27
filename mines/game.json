@@ -1,0 +1,16 @@
+{
+  "title": "Mines",
+  "slug": "mines",
+  "version": "1.0.0-beta.1",
+  "release_stage": "beta",
+  "order": 20,
+  "category": "Puzzle",
+  "source": "OIAB",
+  "players": "Solo",
+  "controls": "Mouse, touch, or keyboard",
+  "summary": "Clear the field, mark the mines, and try to beat your best time at every difficulty.",
+  "accent": "lime",
+  "mark": "✦",
+  "icon": "icon.webp",
+  "metric": "time"
+}

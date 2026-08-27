@@ -1,0 +1,16 @@
+{
+  "title": "Dots and Boxes",
+  "slug": "dots-and-boxes",
+  "version": "1.0.0-beta.1",
+  "release_stage": "beta",
+  "order": 11,
+  "category": "Board",
+  "source": "OIAB",
+  "players": "Solo or local two-player",
+  "controls": "Mouse or touch",
+  "summary": "Draw one line at a time, close boxes, and hold the turn long enough to own the board.",
+  "accent": "cyan",
+  "mark": "□",
+  "icon": "icon.webp",
+  "metric": "score"
+}

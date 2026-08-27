@@ -1,0 +1,16 @@
+{
+  "title": "Canyon Crawler",
+  "slug": "canyon-crawler",
+  "version": "0.1.0-alpha.1",
+  "release_stage": "alpha",
+  "order": 18,
+  "category": "Arcade",
+  "source": "OIAB",
+  "players": "Solo or local co-op",
+  "controls": "Keyboard, mouse, or touch",
+  "summary": "Defend your rover from segmented trail worms and the hazards filling the canyon wash.",
+  "accent": "gold",
+  "mark": "⌁",
+  "icon": "icon.webp",
+  "metric": "score"
+}

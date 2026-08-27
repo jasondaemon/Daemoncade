@@ -1,0 +1,16 @@
+{
+  "title": "Pinball",
+  "slug": "pinball",
+  "version": "0.1.0-alpha.1",
+  "release_stage": "alpha",
+  "order": 6,
+  "category": "Arcade",
+  "source": "DaemonOS",
+  "players": "Solo",
+  "controls": "Keyboard",
+  "summary": "Launch into a neon physics table with bumpers, slingshots, ball saves, and multiball.",
+  "accent": "violet",
+  "mark": "●",
+  "icon": "icon.webp",
+  "metric": "score"
+}

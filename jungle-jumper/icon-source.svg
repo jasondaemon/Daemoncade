@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" role="img" aria-label="Jungle Jumper">
+  <defs><linearGradient id="bg" x1="24" y1="16" x2="232" y2="240"><stop stop-color="#174054"/><stop offset="1" stop-color="#07111d"/></linearGradient></defs>
+  <rect width="256" height="256" rx="52" fill="url(#bg)"/>
+  <circle cx="202" cy="51" r="25" fill="#ffd166"/>
+  <g fill="#4f9b55" stroke="#07111d" stroke-width="5"><path d="M17 43c25-16 48-11 61 12-29 8-49 4-61-12Z"/><path d="M238 78c-24-18-48-14-62 9 28 11 49 8 62-9Z"/><path d="M24 111c20-12 39-8 50 11-23 7-40 3-50-11Z"/></g>
+  <path d="M0 215h79l19-30h52l22 30h84v41H0Z" fill="#315f3d"/>
+  <path d="M94 184h58" stroke="#a76b3f" stroke-width="19" stroke-linecap="round"/>
+  <path d="M144 0c2 48-5 78-25 102" fill="none" stroke="#a3e635" stroke-width="8" stroke-linecap="round"/>
+  <g stroke="#07111d" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"><circle cx="113" cy="113" r="17" fill="#f1a66f"/><path d="m110 130-7 35m8-21 29 13m-35 4-24 25m23-22 24 22" fill="none"/><path d="M105 135c20-2 29-15 24-35" fill="none" stroke="#f1a66f" stroke-width="11"/></g>
+  <path d="M72 223c17-20 35-19 53 0m18 0c17-20 34-19 50 0" fill="none" stroke="#07111d" stroke-width="9" stroke-linecap="round"/>
+  <path d="m45 166 17-20 15 20" fill="none" stroke="#7dd3fc" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>

@@ -1,0 +1,16 @@
+{
+  "title": "Casey",
+  "slug": "casey",
+  "version": "0.1.0-alpha.1",
+  "release_stage": "alpha",
+  "order": 5,
+  "category": "Arcade",
+  "source": "DaemonOS",
+  "players": "Solo",
+  "controls": "Keyboard or touch",
+  "summary": "Guide an off-road hero through multiple maze routes, power tires, rivals, and roadside bonuses.",
+  "accent": "lime",
+  "mark": "◉",
+  "icon": "icon.webp",
+  "metric": "score"
+}

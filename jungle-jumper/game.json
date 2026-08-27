@@ -1,0 +1,16 @@
+{
+  "title": "Jungle Jumper",
+  "slug": "jungle-jumper",
+  "version": "0.1.0-alpha.1",
+  "release_stage": "alpha",
+  "order": 1,
+  "category": "Adventure",
+  "source": "DaemonOS",
+  "players": "Solo",
+  "controls": "Keyboard or touch",
+  "summary": "Run a long jungle route filled with pits, vines, crocodiles, rolling logs, snakes, and treasure.",
+  "accent": "gold",
+  "mark": "↗",
+  "icon": "icon.webp",
+  "metric": "score"
+}

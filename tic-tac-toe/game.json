@@ -1,0 +1,16 @@
+{
+  "title": "Tic-Tac-Toe",
+  "slug": "tic-tac-toe",
+  "version": "0.1.0-alpha.1",
+  "release_stage": "alpha",
+  "order": 12,
+  "category": "Board",
+  "source": "OIAB",
+  "players": "Solo or local two-player",
+  "controls": "Mouse or touch",
+  "summary": "Settle a quick round against three levels of computer play or a local opponent.",
+  "accent": "cyan",
+  "mark": "×",
+  "icon": "icon.webp",
+  "metric": "score"
+}

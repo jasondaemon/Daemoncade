@@ -1,0 +1,16 @@
+{
+  "title": "Road Hopper",
+  "slug": "road-hopper",
+  "version": "0.1.0-alpha.1",
+  "release_stage": "alpha",
+  "order": 2,
+  "category": "Arcade",
+  "source": "DaemonOS",
+  "players": "Solo",
+  "controls": "Keyboard or touch",
+  "summary": "Cross increasingly busy lanes, reach safety, and keep your remaining lives intact.",
+  "accent": "gold",
+  "mark": "↑",
+  "icon": "icon.webp",
+  "metric": "score"
+}

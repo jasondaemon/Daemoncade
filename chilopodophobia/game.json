@@ -1,0 +1,16 @@
+{
+  "title": "Chilopodophobia",
+  "slug": "chilopodophobia",
+  "version": "0.1.0-alpha.1",
+  "release_stage": "alpha",
+  "order": 3,
+  "category": "Arcade",
+  "source": "DaemonOS",
+  "players": "Solo",
+  "controls": "Keyboard or touch",
+  "summary": "Blast a splitting centipede through mushrooms while spiders, fleas, and scorpions invade the field.",
+  "accent": "lime",
+  "mark": "⌇",
+  "icon": "icon.webp",
+  "metric": "score"
+}

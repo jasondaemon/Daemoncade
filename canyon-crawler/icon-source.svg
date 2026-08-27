@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" role="img" aria-label="Canyon Crawler">
+  <defs><linearGradient id="bg" x1="28" y1="18" x2="226" y2="238"><stop stop-color="#213c57"/><stop offset="1" stop-color="#07111d"/></linearGradient></defs>
+  <rect width="256" height="256" rx="52" fill="url(#bg)"/>
+  <path d="M0 194c39-28 72-28 105-6 36 24 80 20 151-20v88H0Z" fill="#b56b3d" opacity=".72"/>
+  <path d="M21 210c48-30 83-22 118 1 29 19 65 13 100-8" fill="none" stroke="#e4a261" stroke-width="8" stroke-linecap="round"/>
+  <g stroke="#07111d" stroke-width="7"><circle cx="62" cy="80" r="25" fill="#a3e635"/><circle cx="101" cy="74" r="24" fill="#8bd13b"/><circle cx="139" cy="81" r="23" fill="#70b933"/><circle cx="174" cy="96" r="22" fill="#5da42b"/></g>
+  <circle cx="52" cy="73" r="5" fill="#07111d"/><circle cx="67" cy="70" r="5" fill="#07111d"/>
+  <path d="M49 89c9 6 17 6 25-1" fill="none" stroke="#07111d" stroke-width="5" stroke-linecap="round"/>
+  <path d="M68 184h99l-12-27H87l-19 27Z" fill="#f3f7fc" stroke="#07111d" stroke-width="8" stroke-linejoin="round"/>
+  <circle cx="91" cy="187" r="15" fill="#334155" stroke="#7dd3fc" stroke-width="7"/><circle cx="151" cy="187" r="15" fill="#334155" stroke="#7dd3fc" stroke-width="7"/>
+  <path d="M111 157v-30h22v30m-11-30 27-18" fill="none" stroke="#f3f7fc" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M157 104 179 89" stroke="#ff6f91" stroke-width="6" stroke-linecap="round"/>
+</svg>

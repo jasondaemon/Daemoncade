@@ -1,0 +1,16 @@
+{
+  "title": "Maze Defense",
+  "slug": "maze-defense",
+  "version": "1.0.0",
+  "release_stage": "stable",
+  "order": 21,
+  "category": "Strategy",
+  "source": "JasonDaemon.net",
+  "players": "Solo",
+  "controls": "Mouse or touch",
+  "summary": "Build the maze as you defend it. Place and upgrade towers, reshape enemy routes, and survive increasingly devious waves.",
+  "accent": "cyan",
+  "mark": "◆",
+  "icon": "icon.png",
+  "metric": "score"
+}

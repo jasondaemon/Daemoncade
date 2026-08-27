@@ -1,0 +1,16 @@
+{
+  "title": "Hangman",
+  "slug": "hangman",
+  "version": "0.1.0-alpha.1",
+  "release_stage": "alpha",
+  "order": 9,
+  "category": "Word",
+  "source": "OIAB",
+  "players": "Solo or local setter",
+  "controls": "Keyboard, mouse, or touch",
+  "summary": "Solve a random phrase or let someone nearby enter a secret one for you.",
+  "accent": "violet",
+  "mark": "A",
+  "icon": "icon.webp",
+  "metric": "score"
+}

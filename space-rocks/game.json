@@ -1,0 +1,16 @@
+{
+  "title": "Space Rocks!",
+  "slug": "space-rocks",
+  "version": "1.0.0-beta.1",
+  "release_stage": "beta",
+  "order": 7,
+  "category": "Arcade",
+  "source": "DaemonOS",
+  "players": "Solo",
+  "controls": "Keyboard",
+  "summary": "Pilot a vector ship through splitting asteroids, UFOs, hyperspace jumps, and escalating waves.",
+  "accent": "cyan",
+  "mark": "△",
+  "icon": "icon.webp",
+  "metric": "score"
+}

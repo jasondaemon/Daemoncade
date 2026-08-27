@@ -1,0 +1,16 @@
+{
+  "title": "Snake",
+  "slug": "snake",
+  "version": "0.1.0-alpha.1",
+  "release_stage": "alpha",
+  "order": 10,
+  "category": "Arcade",
+  "source": "DaemonOS",
+  "players": "Solo",
+  "controls": "Arrow keys, WASD, or touch",
+  "summary": "Eat, grow, accelerate, and avoid becoming your own biggest obstacle.",
+  "accent": "cyan",
+  "mark": "▰",
+  "icon": "icon.webp",
+  "metric": "score"
+}

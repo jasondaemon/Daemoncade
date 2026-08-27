@@ -1,0 +1,16 @@
+{
+  "title": "Paddle Duel",
+  "slug": "paddle-duel",
+  "version": "0.1.0-alpha.1",
+  "release_stage": "alpha",
+  "order": 8,
+  "category": "Arcade",
+  "source": "DaemonOS",
+  "players": "Solo or local two-player",
+  "controls": "Keyboard, mouse, or touch",
+  "summary": "Practice against the wall, challenge the computer, or share the keyboard for a local paddle match.",
+  "accent": "gold",
+  "mark": "↔",
+  "icon": "icon.webp",
+  "metric": "score"
+}

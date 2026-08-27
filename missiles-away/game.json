@@ -1,0 +1,16 @@
+{
+  "title": "Missiles Away",
+  "slug": "missiles-away",
+  "version": "0.1.0-alpha.1",
+  "release_stage": "alpha",
+  "order": 4,
+  "category": "Arcade",
+  "source": "DaemonOS",
+  "players": "Solo",
+  "controls": "Keyboard, mouse, or touch",
+  "summary": "Defend cities and missile silos through escalating barrages, bombers, smart weapons, and MIRVs.",
+  "accent": "cyan",
+  "mark": "⌁",
+  "icon": "icon.webp",
+  "metric": "score"
+}
