@@ -11,7 +11,7 @@
   "summary": "Break luminous formations, chain combos, and bend each run with modern power-ups in a kinetic brick-breaking tribute.",
   "accent": "cyan",
   "mark": "◈",
-  "icon": "icon.png",
+  "icon": "icon-1.0.0.png",
   "metric": "score",
   "mobile_ready": true
 }
