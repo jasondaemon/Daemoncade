@@ -1,0 +1,116 @@
+.shell {
+  gap: 8px;
+  grid-template-rows: minmax(0, 1fr);
+  max-width: 620px;
+}
+
+.stage-wrap {
+  background: linear-gradient(160deg, rgba(9, 31, 52, .96), rgba(4, 7, 20, .98));
+  flex-direction: column;
+}
+
+.stage-wrap > .hud {
+  background: transparent;
+  border: 0;
+  border-radius: 0;
+  box-shadow: none;
+  left: 18px;
+  padding: 14px 10px;
+  position: absolute;
+  right: 18px;
+  top: 10px;
+  width: auto;
+  z-index: 4;
+}
+
+#game-host {
+  height: 100%;
+  min-height: 0;
+}
+
+#game-host canvas {
+  filter: drop-shadow(0 18px 30px rgba(0, 0, 0, .45));
+}
+
+.game-footer {
+  align-items: center;
+  bottom: 12px;
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  left: 24px;
+  padding: 0;
+  position: absolute;
+  right: 24px;
+  z-index: 4;
+}
+
+.power-legend {
+  align-items: center;
+  display: flex;
+  gap: 8px;
+  justify-content: center;
+}
+
+.power-item {
+  align-items: center;
+  display: inline-flex;
+  gap: 3px;
+}
+
+.power-icon {
+  background: rgba(5, 15, 29, .88);
+  border-radius: 6px;
+  fill: none;
+  height: 21px;
+  padding: 3px;
+  stroke: currentColor;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-width: 2;
+  width: 21px;
+}
+
+.overlay-card .secondary-action {
+  background: rgba(104, 232, 255, .09);
+  border: 1px solid rgba(104, 232, 255, .35);
+  color: #dffaff;
+  margin-left: 8px;
+}
+
+.settings-panel{align-items:center;background:rgba(2,7,16,.84);display:flex;inset:0;justify-content:center;padding:18px;position:absolute;z-index:8}.settings-panel[hidden]{display:none}.settings-card{background:#09172a;border:1px solid rgba(104,232,255,.35);border-radius:20px;box-shadow:0 24px 70px rgba(0,0,0,.55);display:grid;gap:14px;max-width:360px;padding:28px;width:100%}.settings-card>p{color:#68e8ff;font-size:10px;font-weight:900;letter-spacing:.16em;margin:0;text-transform:uppercase}.settings-card h2{font-size:30px;letter-spacing:-.05em;margin:-6px 0 4px}.settings-card label{color:#91a5bd;display:grid;font-size:12px;font-weight:800;gap:7px}.settings-card label.check{align-items:center;display:flex}.settings-card select,.settings-card input[type=range]{accent-color:#68e8ff;background:#13243a;border:1px solid rgba(104,232,255,.24);border-radius:10px;color:#f4f8ff;min-height:38px;padding:0 10px;width:100%}.settings-actions{display:flex;gap:8px;justify-content:flex-end;margin-top:4px}.settings-actions button:last-child{background:#68e8ff;color:#04101a}
+
+.multi-icon { color: #ffca55; fill: currentColor; stroke: none; }
+.wide-icon { color: #ff4fd8; }
+.slow-icon { color: #68e8ff; }
+.laser-icon { color: #ff626d; }
+.super-icon { color: #8dff67; }
+
+@media (max-width: 620px) {
+  body { padding: 0; }
+  .shell { gap: 0; }
+  .stage-wrap > .hud {
+    left: 8px;
+    padding: 8px 4px;
+    right: 8px;
+    top: 4px;
+  }
+  .stage-wrap { border: 0; border-radius: 0; }
+  .readouts { gap: 10px; }
+  .game-footer {
+    bottom: 7px;
+    left: 10px;
+    right: 10px;
+  }
+  .power-legend {
+    gap: 5px;
+  }
+  .power-item {
+    font-size: 0;
+  }
+  .power-icon {
+    height: 19px;
+    width: 19px;
+  }
+  .overlay { padding: 14px; }
+  .overlay-card { max-width: 360px; }
+}

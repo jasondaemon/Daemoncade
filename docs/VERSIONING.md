@@ -6,6 +6,7 @@ Each `game.json` contains:
 
 - `version`: a Semantic Versioning value such as `1.0.0`, `1.0.0-beta.1`, or `0.1.0-alpha.1`
 - `release_stage`: `alpha`, `beta`, or `stable`
+- `mobile_ready`: optional boolean capability tag. Set it to `true` only after the current build has touch-friendly controls and has been visually checked at a phone-sized viewport. Missing or `false` means mobile support is not yet claimed.
 
 ## Meaning of the stages
 

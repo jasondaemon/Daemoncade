@@ -12,5 +12,6 @@
   "accent": "lime",
   "mark": "✦",
   "icon": "icon.webp",
-  "metric": "time"
+  "metric": "time",
+  "mobile_ready": true
 }

@@ -12,5 +12,6 @@
   "accent": "violet",
   "mark": "A",
   "icon": "icon.webp",
-  "metric": "score"
+  "metric": "score",
+  "mobile_ready": true
 }

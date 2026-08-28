@@ -1,6 +1,23 @@
 {
   "games": [
     {
+      "title": "Neon Breaker",
+      "slug": "neon-breaker",
+      "version": "1.0.0",
+      "release_stage": "stable",
+      "order": 26,
+      "category": "Arcade",
+      "source": "Daemoncade",
+      "players": "Solo",
+      "controls": "Keyboard, mouse, or touch",
+      "summary": "Break luminous formations, chain combos, and bend each run with modern power-ups in a kinetic brick-breaking tribute.",
+      "accent": "cyan",
+      "mark": "◈",
+      "icon": "icon.png",
+      "metric": "score",
+      "mobile_ready": true
+    },
+    {
       "title": "Blitz!",
       "slug": "blitz",
       "version": "0.1.0-alpha.1",
@@ -78,7 +95,8 @@
       "accent": "cyan",
       "mark": "◆",
       "icon": "icon.png",
-      "metric": "score"
+      "metric": "score",
+      "mobile_ready": true
     },
     {
       "title": "Mines",
@@ -94,7 +112,8 @@
       "accent": "lime",
       "mark": "✦",
       "icon": "icon.webp",
-      "metric": "time"
+      "metric": "time",
+      "mobile_ready": true
     },
     {
       "title": "Sinkhole City",
@@ -110,7 +129,8 @@
       "accent": "cyan",
       "mark": "●",
       "icon": "icon.webp",
-      "metric": "score"
+      "metric": "score",
+      "mobile_ready": true
     },
     {
       "title": "Canyon Crawler",
@@ -142,7 +162,8 @@
       "accent": "violet",
       "mark": "▦",
       "icon": "icon.webp",
-      "metric": "score"
+      "metric": "score",
+      "mobile_ready": true
     },
     {
       "title": "Orbit Run",
@@ -174,7 +195,8 @@
       "accent": "gold",
       "mark": "♞",
       "icon": "icon.webp",
-      "metric": "score"
+      "metric": "score",
+      "mobile_ready": true
     },
     {
       "title": "Checkers",
@@ -190,7 +212,8 @@
       "accent": "gold",
       "mark": "●",
       "icon": "icon.webp",
-      "metric": "score"
+      "metric": "score",
+      "mobile_ready": true
     },
     {
       "title": "Connect Four",
@@ -206,7 +229,8 @@
       "accent": "gold",
       "mark": "●",
       "icon": "icon.webp",
-      "metric": "score"
+      "metric": "score",
+      "mobile_ready": true
     },
     {
       "title": "Tic-Tac-Toe",
@@ -222,7 +246,8 @@
       "accent": "cyan",
       "mark": "×",
       "icon": "icon.webp",
-      "metric": "score"
+      "metric": "score",
+      "mobile_ready": true
     },
     {
       "title": "Dots and Boxes",
@@ -238,7 +263,8 @@
       "accent": "cyan",
       "mark": "□",
       "icon": "icon.webp",
-      "metric": "score"
+      "metric": "score",
+      "mobile_ready": true
     },
     {
       "title": "Snake",
@@ -254,7 +280,8 @@
       "accent": "cyan",
       "mark": "▰",
       "icon": "icon.webp",
-      "metric": "score"
+      "metric": "score",
+      "mobile_ready": true
     },
     {
       "title": "Hangman",
@@ -270,7 +297,8 @@
       "accent": "violet",
       "mark": "A",
       "icon": "icon.webp",
-      "metric": "score"
+      "metric": "score",
+      "mobile_ready": true
     },
     {
       "title": "Paddle Duel",

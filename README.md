@@ -44,6 +44,7 @@ Opening files directly with `file://` works for some games, but a local HTTP ser
 
 See [CONTRIBUTING.md](CONTRIBUTING.md) for development conventions and [docs/DEPLOYMENT.md](docs/DEPLOYMENT.md) for the website promotion process.
 Each game is versioned independently; see [docs/VERSIONING.md](docs/VERSIONING.md) for the release-stage and version policy.
+Engine choices and migration candidates are tracked in [docs/ENGINES.md](docs/ENGINES.md).
 
 ## License and provenance
 

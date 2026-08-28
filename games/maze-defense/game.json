@@ -12,5 +12,6 @@
   "accent": "cyan",
   "mark": "◆",
   "icon": "icon.png",
-  "metric": "score"
+  "metric": "score",
+  "mobile_ready": true
 }

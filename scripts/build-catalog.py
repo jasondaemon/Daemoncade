@@ -25,6 +25,8 @@ def main() -> None:
             raise SystemExit(
                 f"{metadata_path}: release_stage must be one of {sorted(RELEASE_STAGES)}"
             )
+        if "mobile_ready" in game and not isinstance(game["mobile_ready"], bool):
+            raise SystemExit(f"{metadata_path}: mobile_ready must be true or false")
         icon = game.get("icon")
         if not icon or not (metadata_path.parent / icon).is_file():
             raise SystemExit(f"{metadata_path}: icon {icon!r} does not exist")
@@ -53,15 +55,16 @@ def main() -> None:
             [
                 f"## {stage.title()}",
                 "",
-                "| Icon | Game | Version | About |",
-                "| --- | --- | --- | --- |",
+                "| Icon | Game | Version | Mobile | About |",
+                "| --- | --- | --- | --- | --- |",
             ]
         )
         for game in stage_games:
             summary = str(game["summary"]).replace("|", "\\|").replace("\n", " ")
             markdown.append(
                 f'| <img src="../games/{game["slug"]}/{game["icon"]}" width="48" height="48" alt=""> '
-                f'| [{game["title"]}](../games/{game["slug"]}/) | `{game["version"]}` | {summary} |'
+                f'| [{game["title"]}](../games/{game["slug"]}/) | `{game["version"]}` '
+                f'| {"Yes" if game.get("mobile_ready") else "—"} | {summary} |'
             )
         markdown.append("")
 

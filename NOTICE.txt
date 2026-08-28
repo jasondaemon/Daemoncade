@@ -40,5 +40,9 @@ PixiJS
   A local PixiJS distribution is retained under the MIT License. See
   games/vendor/pixi/LICENSE.txt.
 
+Phaser
+  Neon Breaker uses the local Phaser 3 Arcade Physics distribution by Phaser
+  Studio Inc. under the MIT License. See games/vendor/phaser/LICENSE.md.
+
 The public editions use no external runtime services or remotely loaded
 libraries.

@@ -1,0 +1,17 @@
+{
+  "title": "Neon Breaker",
+  "slug": "neon-breaker",
+  "version": "1.0.0",
+  "release_stage": "stable",
+  "order": 26,
+  "category": "Arcade",
+  "source": "Daemoncade",
+  "players": "Solo",
+  "controls": "Keyboard, mouse, or touch",
+  "summary": "Break luminous formations, chain combos, and bend each run with modern power-ups in a kinetic brick-breaking tribute.",
+  "accent": "cyan",
+  "mark": "◈",
+  "icon": "icon.png",
+  "metric": "score",
+  "mobile_ready": true
+}
