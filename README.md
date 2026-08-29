@@ -38,7 +38,7 @@ Opening files directly with `file://` works for some games, but a local HTTP ser
 - Runtime dependencies must be committed locally; production games do not load code from CDNs.
 - Each game owns its HTML, styles, scripts, metadata, and assets in a named directory under `games/`.
 - Each game directory also owns its `game.json` catalog record and `icon.webp` or `icon.png` card artwork.
-- `catalog.json` is generated from the per-game records with `./scripts/build-catalog.py` and is consumed by both the local menu and the Hugo website.
+- `catalog.json` is generated from the per-game records with `./scripts/build-catalog.py` and is consumed by both the local menu and the website's client-rendered Games page.
 - Cross-game utilities live in `games/shared/` or `games/daemonos-shared/`.
 - Game pages must remain safe to run inside the sandboxed iframe used by jasondaemon.net.
 
