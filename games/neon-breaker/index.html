@@ -5,8 +5,8 @@
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
   <meta http-equiv="Content-Security-Policy" content="default-src 'self'; style-src 'self'; script-src 'self'; img-src 'self' data: blob:; connect-src 'self'; object-src 'none'; frame-ancestors 'self'">
   <title>Neon Breaker</title>
-  <link rel="stylesheet" href="game.css?v=1.0.0">
-  <link rel="stylesheet" href="portrait.css?v=1.0.0">
+  <link rel="stylesheet" href="game.css?v=1.1.0">
+  <link rel="stylesheet" href="portrait.css?v=1.1.0">
 </head>
 <body>
   <main class="shell">
@@ -27,7 +27,8 @@
         <div class="settings-card">
           <p>Game settings</p><h2>Player setup</h2>
           <label>Ball pace<select id="pace"><option value="comfortable">Comfortable</option><option value="arcade">Arcade</option><option value="quick">Quick</option></select></label>
-          <label>Volume<input id="volume" type="range" min="0" max="100" step="5"></label>
+          <label>Effects volume<input id="volume" type="range" min="0" max="100" step="5"></label>
+          <label>Music volume<input id="music-volume" type="range" min="0" max="100" step="5"></label>
           <label class="check"><input id="reduced-motion" type="checkbox"> Reduced motion</label>
           <label class="check"><input id="haptics" type="checkbox"> Mobile haptics</label>
           <div class="settings-actions"><button id="fullscreen" type="button">Fullscreen</button><button id="close-settings" type="button">Done</button></div>
@@ -35,8 +36,8 @@
       </section>
     </section>
   </main>
-  <script src="../shared/scores.js?v=1.0.0"></script>
+  <script src="../shared/scores.js?v=1.1.0"></script>
   <script src="../vendor/phaser/phaser-arcade-physics.min.js?v=3.90.0"></script>
-  <script src="game.js?v=1.0.0"></script>
+  <script src="game.js?v=1.1.0"></script>
 </body>
 </html>

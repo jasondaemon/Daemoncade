@@ -9,6 +9,13 @@
   const progressKey = "jasondaemon.neon-breaker.progress.v1";
   const settingsKey = "jasondaemon.neon-breaker.settings.v1";
   const rankKey = "jasondaemon.neon-breaker.ranks.v1";
+  const musicFiles = {
+    neon: "assets/music/neon-sector-1.1.0.mp3",
+    armored: "assets/music/armored-sector-1.1.0.mp3",
+    hypergrid: "assets/music/hypergrid-1.1.0.mp3",
+    guardian: "assets/music/guardian-core-1.1.0.mp3",
+  };
+  const MUSIC_MASTER_GAIN = .14;
   let scene;
 
   class NeonBreaker extends Phaser.Scene {
@@ -16,9 +23,18 @@
 
     preload() {
       this.load.image("arena-art", "assets/arena-alpha32.png");
+      this.load.image("arena-overlay", "assets/arena-alpha32-overlay.png");
       this.load.image("paddle-art", "assets/paddle-alpha32.png");
       this.load.image("pulse-ball", "assets/pulse-ball-alpha32.png");
       this.load.image("drone", "assets/interceptor-alpha32.png");
+      this.load.image("brick-art", "assets/brick-base-1.1.0.png");
+      this.load.image("brick-damage", "assets/brick-damage-1.1.0.png");
+      this.load.image("power-W", "assets/power-wide-1.1.0.png");
+      this.load.image("power-M", "assets/power-multi-1.1.0.png");
+      this.load.image("power-S", "assets/power-slow-1.1.0.png");
+      this.load.image("power-L", "assets/power-laser-1.1.0.png");
+      this.load.image("power-B", "assets/power-super-1.1.0.png");
+      this.load.image("boss-core", "assets/guardian-1.1.0.png");
     }
 
     create() {
@@ -34,8 +50,8 @@
       this.nextLifeScore = 100000;
       this.best = Number(localStorage.getItem(bestKey) || 0);
       this.highestSector = Math.max(1, Number(localStorage.getItem(progressKey) || 1));
-      try { this.settings = { pace: "arcade", volume: .7, reducedMotion: false, haptics: true, ...JSON.parse(localStorage.getItem(settingsKey) || "{}") }; }
-      catch { this.settings = { pace: "arcade", volume: .7, reducedMotion: false, haptics: true }; }
+      try { this.settings = { pace: "arcade", volume: .7, musicVolume: .45, reducedMotion: false, haptics: true, ...JSON.parse(localStorage.getItem(settingsKey) || "{}") }; }
+      catch { this.settings = { pace: "arcade", volume: .7, musicVolume: .45, reducedMotion: false, haptics: true }; }
       try { this.sectorRanks = JSON.parse(localStorage.getItem(rankKey) || "{}"); }
       catch { this.sectorRanks = {}; }
       this.speedFactor = { comfortable: .84, arcade: 1, quick: 1.14 }[this.settings.pace] || 1;
@@ -48,6 +64,9 @@
       this.lastShot = 0;
       this.lastTrail = 0;
       this.soundOn = true;
+      const requestedTestLevel = Number(new URLSearchParams(location.search).get("testLevel"));
+      this.testLevel = Number.isInteger(requestedTestLevel) && requestedTestLevel > 0 ? Phaser.Math.Clamp(requestedTestLevel, 1, 99) : 0;
+      this.testMode = this.testLevel > 0;
       this.syncSettingsForm();
 
       this.drawBackdrop();
@@ -83,13 +102,15 @@
 
       this.cursors = this.input.keyboard.createCursorKeys();
       this.keys = this.input.keyboard.addKeys("A,D,P,O,ESC");
-      this.input.keyboard.on("keydown-SPACE", () => this.launchOrFire());
+      this.input.keyboard.on("keydown", () => this.primeAudio());
+      this.input.keyboard.on("keydown-SPACE", async () => { await this.primeAudio(); this.launchOrFire(); });
       this.input.keyboard.on("keydown-P", () => this.togglePause());
       this.input.keyboard.on("keydown-ESC", () => this.togglePause());
       this.input.keyboard.on("keydown-O", () => this.runState === "settings" ? this.closeSettings() : this.openSettings());
       this.input.on("pointermove", (pointer) => { this.targetX = pointer.worldX; });
-      this.input.on("pointerdown", (pointer) => {
+      this.input.on("pointerdown", async (pointer) => {
         if (pointer.worldY < 112) return;
+        await this.primeAudio();
         this.targetX = pointer.worldX; this.launchOrFire();
       });
 
@@ -97,7 +118,8 @@
       this.resetPaddle(true);
       this.physics.pause();
       this.updateHud();
-      if (!this.restoreRun()) {
+      if (this.testMode) this.startRun(this.testLevel);
+      else if (!this.restoreRun()) {
         const previewSector = Number(new URLSearchParams(location.search).get("sector"));
         if ((location.hostname === "127.0.0.1" || location.hostname === "localhost") && previewSector > 0) this.startRun(previewSector);
         else this.configureCampaignStart();
@@ -126,8 +148,71 @@
         graphics.lineBetween(34, y, 82, y); graphics.lineBetween(W - 82, y + 34, W - 34, y + 34);
         graphics.strokeCircle(86, y, 3); graphics.strokeCircle(W - 86, y + 34, 3);
       }
-      graphics.setDepth(-10);
-      this.sectorWash = this.add.rectangle(W / 2, H / 2, W, H, palette[0], .025).setDepth(-9);
+      graphics.setDepth(-19);
+      this.sectorWash = this.add.rectangle(W / 2, H / 2, W, H, palette[0], .025).setDepth(-18);
+      this.sectorPattern = this.add.graphics().setDepth(-17);
+      this.musicVisual = this.add.graphics().setDepth(-12);
+      this.add.image(W / 2, H / 2, "arena-overlay").setDisplaySize(W, H).setDepth(-8);
+    }
+
+    updateBackdrop(level = this.level) {
+      const g = this.sectorPattern;
+      if (!g) return;
+      g.clear();
+      const variant = (level - 1) % 4;
+      const accent = palette[(level - 1) % palette.length];
+      if (variant === 0) {
+        g.fillStyle(accent, .16);
+        for (let i = 0; i < 42; i++) g.fillCircle(32 + (i * 83) % 478, 120 + (i * 137) % 720, i % 7 === 0 ? 2 : 1);
+      } else if (variant === 1) {
+        g.lineStyle(1, accent, .1);
+        for (let y = 145; y < 850; y += 82) {
+          g.lineBetween(38, y, 122, y); g.lineBetween(122, y, 170, y + 42);
+          g.lineBetween(W - 38, y + 28, W - 122, y + 28); g.lineBetween(W - 122, y + 28, W - 170, y + 70);
+        }
+      } else if (variant === 2) {
+        g.lineStyle(2, accent, .08);
+        for (let radius = 70; radius < 370; radius += 58) g.strokeCircle(W / 2, 520, radius);
+        g.lineStyle(1, 0xffffff, .035);
+        for (let x = 70; x < W; x += 80) g.lineBetween(W / 2, 520, x, 120);
+      } else {
+        for (let y = 150; y < 870; y += 72) {
+          g.fillGradientStyle(accent, accent, 0x000000, 0x000000, .09, .09, 0, 0);
+          g.fillRect(34, y, W - 68, 20);
+        }
+        g.lineStyle(1, accent, .12);
+        for (let x = 54; x < W - 40; x += 54) g.lineBetween(x, 130, W / 2 + (x - W / 2) * .35, 860);
+      }
+    }
+
+    updateMusicVisual() {
+      const g = this.musicVisual;
+      if (!g || this.settings.reducedMotion) { g?.clear(); return; }
+      const now = this.time.now;
+      const interval = this.sys.game.device.input.touch ? 70 : 48;
+      if (now - (this.lastMusicVisual || 0) < interval) return;
+      this.lastMusicVisual = now;
+      const bins = this.musicFrequency || new Uint8Array(64);
+      if (this.musicAnalyser && this.currentMusic && !this.currentMusic.paused) this.musicAnalyser.getByteFrequencyData(bins);
+      else for (let i = 0; i < bins.length; i++) bins[i] = 18 + Math.sin(now * .0014 + i * .42) * 10;
+      this.musicFrequency = bins;
+      g.clear();
+      const accent = palette[(this.level - 1) % palette.length];
+      const secondary = palette[(this.level + 1) % palette.length];
+      const left = 8, right = W - 8, top = 8, bottom = H - 8;
+      const count = this.sys.game.device.input.touch ? 20 : 28;
+      const step = (right - left) / count;
+      const peak = Math.max(24, ...bins.slice(0, 48));
+      for (let i = 0; i < count; i++) {
+        const sourceIndex = Math.floor(i / count * Math.min(48, bins.length));
+        const value = Phaser.Math.Clamp(bins[sourceIndex] / peak, 0, 1);
+        const neighboring = Phaser.Math.Clamp(bins[Math.min(bins.length - 1, sourceIndex + 2)] / peak, 0, 1);
+        const height = 34 + Math.max(value, neighboring * .7) * (bottom - top - 28);
+        g.fillStyle(i % 4 === 0 ? secondary : accent, .025 + value * .085);
+        g.fillRoundedRect(left + i * step + 2, bottom - height, Math.max(3, step - 4), height, 4);
+        g.fillStyle(0xffffff, .008 + value * .02);
+        g.fillRect(left + i * step + 4, bottom - height + 3, Math.max(1, step - 8), Math.max(2, height * .08));
+      }
     }
 
     createPowerTextures() {
@@ -192,6 +277,7 @@
     syncSettingsForm() {
       $("pace").value = this.settings.pace;
       $("volume").value = String(Math.round(this.settings.volume * 100));
+      $("music-volume").value = String(Math.round(this.settings.musicVolume * 100));
       $("reduced-motion").checked = Boolean(this.settings.reducedMotion);
       $("haptics").checked = Boolean(this.settings.haptics);
     }
@@ -206,11 +292,14 @@
 
     closeSettings() {
       const previousFactor = this.speedFactor;
-      this.settings = { pace: $("pace").value, volume: Number($("volume").value) / 100, reducedMotion: $("reduced-motion").checked, haptics: $("haptics").checked };
+      this.settings = { pace: $("pace").value, volume: Number($("volume").value) / 100, musicVolume: Number($("music-volume").value) / 100, reducedMotion: $("reduced-motion").checked, haptics: $("haptics").checked };
       this.speedFactor = { comfortable: .84, arcade: 1, quick: 1.14 }[this.settings.pace] || 1;
       const ratio = this.speedFactor / previousFactor;
       this.balls?.children.iterate((ball) => { if (ball && !ball.getData("stuck")) ball.body.velocity.scale(ratio); });
       localStorage.setItem(settingsKey, JSON.stringify(this.settings)); $("settings-panel").hidden = true;
+      if (this.currentMusic) this.currentMusic.volume = this.soundOn ? this.musicOutputVolume() : 0;
+      if (this.soundOn && this.settings.musicVolume > 0) this.startMusicForLevel();
+      if (this.settings.reducedMotion) this.musicVisual?.clear();
       this.runState = this.settingsReturnState;
       if (this.runState === "playing") this.physics.resume();
     }
@@ -284,11 +373,17 @@
       this.hudLives = this.add.text(375, 49, "● ● ●", valueStyle);
       this.hudSector = this.add.text(290, 73, sectorNames[0].toUpperCase(), { ...labelStyle, color: "#91a5bd", fontSize: "7px" });
       this.hudPowers = this.add.text(180, 91, "", { ...labelStyle, color: "#ffca55", fontSize: "7px" });
+      this.hudTest = this.add.text(W - 20, 90, "TEST MODE", { ...labelStyle, color: "#ffca55", fontSize: "7px", backgroundColor: "#3a2108", padding: { x: 5, y: 3 } }).setOrigin(1, 0).setVisible(this.testMode);
 
       this.soundButton = this.add.text(443, 30, "Sound on", { fontFamily: "system-ui", fontSize: "9px", fontStyle: "800", color: "#f4f8ff", backgroundColor: "#14243a", padding: { x: 7, y: 7 } }).setOrigin(.5, 0).setInteractive({ useHandCursor: true });
       this.pauseButton = this.add.text(490, 30, "Ⅱ", { fontFamily: "system-ui", fontSize: "11px", fontStyle: "900", color: "#f4f8ff", backgroundColor: "#14243a", padding: { x: 8, y: 6 } }).setOrigin(.5, 0).setInteractive({ useHandCursor: true });
       this.settingsButton = this.add.text(522, 30, "⚙", { fontFamily: "system-ui", fontSize: "11px", color: "#f4f8ff", backgroundColor: "#14243a", padding: { x: 7, y: 6 } }).setOrigin(.5, 0).setInteractive({ useHandCursor: true });
-      this.soundButton.on("pointerdown", () => { this.soundOn = !this.soundOn; this.soundButton.setText(this.soundOn ? "Sound on" : "Sound off"); });
+      this.soundButton.on("pointerdown", async () => {
+        this.soundOn = !this.soundOn;
+        if (this.soundOn) await this.primeAudio();
+        else if (this.currentMusic) this.currentMusic.pause();
+        this.soundButton.setText(this.soundOn ? "Sound on" : "Sound off");
+      });
       this.pauseButton.on("pointerdown", () => this.togglePause());
       this.settingsButton.on("pointerdown", () => this.openSettings());
 
@@ -297,7 +392,7 @@
       this.add.text(145, 934, "CATCH", { ...labelStyle, color: "#91a5bd" });
       const legend = [["W", 188], ["M", 242], ["S", 296], ["L", 350], ["B", 404]];
       legend.forEach(([type, x]) => {
-        this.add.image(x, 939, `power-${type}`).setDisplaySize(17, 17);
+        this.add.image(x, 939, `power-${type}`).setDisplaySize(type === "W" ? 22 : 17, type === "W" ? 10 : 17);
         this.add.text(x + 12, 934, { W: "WIDE", M: "MULTI", S: "SLOW", L: "LASER", B: "SUPER" }[type], { fontFamily: "system-ui", fontSize: "7px", color: "#91a5bd" });
       });
     }
@@ -346,6 +441,8 @@
         brick?.getData("label")?.destroy();
         brick?.getData("shadow")?.destroy();
         brick?.getData("shine")?.destroy();
+        brick?.getData("art")?.destroy();
+        brick?.getData("damageArt")?.destroy();
       });
       this.bricks.clear(true, true);
       this.enemies?.children.iterate((enemy) => enemy?.getData("label")?.destroy());
@@ -356,6 +453,9 @@
       this.splitsGranted = 0;
       const pattern = (this.level - 1) % 10;
       this.sectorWash?.setFillStyle(palette[(this.level - 1) % palette.length], .035);
+      this.updateBackdrop(this.level);
+      this.musicKey = this.musicForLevel(this.level);
+      if (this.audioReady && this.runState !== "paused") this.startMusicForLevel();
       const cols = pattern === 4 || pattern === 7 ? 13 : 11;
       const rows = 13;
       const gap = cols >= 13 ? 4 : 5;
@@ -383,16 +483,18 @@
       if (type === "split") color = 0xffca55;
       if (type === "moving") color = 0x68e8ff;
       const shadow = this.add.rectangle(x, y + 3, width + 2, height + 2, 0x000000, .42);
-      const brick = this.add.rectangle(x, y, width, height, color).setStrokeStyle(indestructible ? 2 : hp > 1 ? 2 : 1, indestructible ? 0xdce7f5 : 0xffffff, indestructible ? .95 : hp > 1 ? .8 : .35);
-      const shine = this.add.rectangle(x, y - height * .27, width - 5, Math.max(2, height * .18), 0xffffff, .28);
+      const brick = this.add.rectangle(x, y, width, height, color, 0);
+      const art = this.add.image(x, y, "brick-art").setDisplaySize(width + 4, height + 5).setTint(color).setDepth(1);
+      const damageArt = this.add.image(x, y, "brick-damage").setDisplaySize(width + 3, height + 4).setDepth(2).setVisible(false);
+      const shine = this.add.rectangle(x, y - height * .27, width - 7, Math.max(1, height * .12), 0xffffff, .16).setDepth(2);
       const hidden = type === "hidden";
-      brick.setData({ hp, maxHp: hp, color, shadow, shine, indestructible, type, baseX: x, movePhase: (x + y) * .03, revealed: !hidden, switchControlled: type === "gate" });
+      brick.setData({ hp, maxHp: hp, color, shadow, shine, art, damageArt, artScaleX: art.scaleX, artScaleY: art.scaleY, damageScaleX: damageArt.scaleX, damageScaleY: damageArt.scaleY, indestructible, type, baseX: x, movePhase: (x + y) * .03, revealed: !hidden, switchControlled: type === "gate" });
       const symbol = { armor: "◆", gate: "◇", explosive: "✹", switch: "⌁", split: "●●", moving: "↔" }[type];
       if (hp > 1 || indestructible || symbol) {
-        const label = this.add.text(x, y + 1, symbol || String(hp), { fontFamily: "system-ui", fontSize: type === "split" ? "7px" : indestructible ? "8px" : "10px", fontStyle: "900", color: "#ffffff" }).setOrigin(.5);
+        const label = this.add.text(x, y + 1, symbol || String(hp), { fontFamily: "system-ui", fontSize: type === "split" ? "7px" : indestructible ? "8px" : "10px", fontStyle: "900", color: "#ffffff" }).setOrigin(.5).setDepth(3);
         brick.setData("label", label);
       }
-      if (hidden) { brick.setAlpha(.1); shine.setAlpha(.03); shadow.setAlpha(.08); brick.getData("label")?.setAlpha(.1); }
+      if (hidden) { art.setAlpha(.1); shine.setAlpha(.03); shadow.setAlpha(.08); brick.getData("label")?.setAlpha(.1); }
       this.bricks.add(brick);
       brick.body.updateFromGameObject();
     }
@@ -433,7 +535,7 @@
     }
 
     startRun(startLevel = 1) {
-      localStorage.removeItem(runKey);
+      if (!this.testMode) localStorage.removeItem(runKey);
       this.score = 0; this.level = Math.max(1, startLevel); this.lives = 3; this.combo = 1;
       this.sectorLivesLost = 0; this.sectorElapsedMs = 0; this.sectorPeakCombo = 1; this.nextLifeScore = 100000;
       this.wideUntil = this.slowUntil = this.laserUntil = this.superUntil = 0;
@@ -566,12 +668,12 @@
       if (brick.getData("indestructible")) {
         this.burst(x, y, 0xdce7f5, 4);
         this.impactShake(35, .0012);
-        this.tweens.add({ targets: brick, scaleX: .93, scaleY: .9, yoyo: true, duration: 55 });
+        this.pulseBrickArt(brick, .93, .9);
         this.tone(190, .055, "square", .012);
         return;
       }
       if (brick.getData("type") === "hidden" && !brick.getData("revealed")) {
-        brick.setData("revealed", true); brick.setAlpha(1);
+        brick.setData("revealed", true); brick.getData("art")?.setAlpha(1);
         brick.getData("shine")?.setAlpha(.28); brick.getData("shadow")?.setAlpha(.42); brick.getData("label")?.setAlpha(1);
         this.burst(x, y, brick.getData("color"), 7); this.tone(610, .09, "triangle", .014);
         this.scheduleSave(); return;
@@ -593,6 +695,8 @@
         const brickWidth = brick.width;
         brick.getData("shadow")?.destroy();
         brick.getData("shine")?.destroy();
+        brick.getData("art")?.destroy();
+        brick.getData("damageArt")?.destroy();
         if (label) label.destroy();
         this.maybeDrop(brick.x, brick.y);
         brick.destroy();
@@ -606,15 +710,29 @@
         if (maxHp > 1 || this.time.now < this.superUntil) this.impactShake(45, .0016);
       } else {
         const damage = 1 - hp / maxHp;
-        brick.setFillStyle(brick.getData("color"), 1 - damage * .48);
+        brick.getData("art")?.setAlpha(1 - damage * .18);
+        brick.getData("damageArt")?.setVisible(true).setAlpha(.38 + damage * .55);
         brick.getData("shine")?.setAlpha(Math.max(.06, .28 - damage * .18));
-        brick.setStrokeStyle(hp > 1 ? 3 : 1, 0xffffff, hp > 1 ? .72 : .3);
         if (label && (brick.getData("type") === "normal" || brick.getData("type") === "hidden")) label.setText(String(hp));
-        this.tweens.add({ targets: [brick, brick.getData("shine")], scaleX: .94, scaleY: .86, yoyo: true, duration: 55 });
+        this.pulseBrickArt(brick, .94, .86);
       }
       this.updateHud();
       this.scheduleSave();
       this.checkLevelComplete();
+    }
+
+    pulseBrickArt(brick, squashX, squashY) {
+      const targets = [
+        [brick.getData("art"), brick.getData("artScaleX"), brick.getData("artScaleY")],
+        [brick.getData("damageArt"), brick.getData("damageScaleX"), brick.getData("damageScaleY")],
+        [brick.getData("shine"), 1, 1],
+      ];
+      targets.forEach(([target, baseX, baseY]) => {
+        if (!target?.active) return;
+        this.tweens.killTweensOf(target);
+        target.setScale(baseX, baseY);
+        this.tweens.add({ targets: target, scaleX: baseX * squashX, scaleY: baseY * squashY, yoyo: true, duration: 55, onComplete: () => target.active && target.setScale(baseX, baseY) });
+      });
     }
 
     detonate(x, y, width) {
@@ -626,7 +744,7 @@
 
     disableGates() {
       this.bricks.getChildren().filter((brick) => brick.active && brick.getData("switchControlled")).forEach((brick) => {
-        brick.getData("label")?.destroy(); brick.getData("shadow")?.destroy(); brick.getData("shine")?.destroy();
+        brick.getData("label")?.destroy(); brick.getData("shadow")?.destroy(); brick.getData("shine")?.destroy(); brick.getData("art")?.destroy(); brick.getData("damageArt")?.destroy();
         this.burst(brick.x, brick.y, 0x8dff67, 6); brick.destroy();
       });
       this.showToast("Armor offline"); this.tone(740, .18, "square", .018);
@@ -638,7 +756,7 @@
       const enemy = this.add.image(x, y, boss ? "boss-core" : "drone").setDisplaySize(boss ? 72 : 42, boss ? 72 : 38);
       this.enemies.add(enemy);
       const hp = saved?.hp ?? (boss ? 14 + Math.floor(this.level / 10) * 4 : 2);
-      enemy.setData({ boss, hp, maxHp: saved?.maxHp ?? hp, baseY: y, phase: saved?.phase ?? Math.random() * Math.PI * 2 });
+      enemy.setData({ boss, hp, maxHp: saved?.maxHp ?? hp, baseScaleX: enemy.scaleX, baseScaleY: enemy.scaleY, baseY: y, phase: saved?.phase ?? Math.random() * Math.PI * 2 });
       enemy.body.setAllowGravity(false).setImmovable(true).setVelocityX(saved?.vx ?? (boss ? 75 : Phaser.Math.RND.pick([-95, 95]))).setBounce(1).setCollideWorldBounds(true);
       if (boss) {
         const label = this.add.text(x, y, String(hp), { fontFamily: "system-ui", fontSize: "13px", fontStyle: "900", color: "#ffffff" }).setOrigin(.5);
@@ -657,7 +775,10 @@
       enemy.setData("hp", hp); enemy.getData("label")?.setText(String(Math.max(0, hp)));
       this.score += enemy.getData("boss") ? 250 : shot ? 120 : 180;
       this.burst(x, y, enemy.getData("boss") ? 0xff626d : 0xff4fd8, enemy.getData("boss") ? 12 : 7);
-      this.tweens.add({ targets: enemy, scaleX: .82, scaleY: .82, yoyo: true, duration: 65 });
+      const baseScaleX = enemy.getData("baseScaleX"), baseScaleY = enemy.getData("baseScaleY");
+      this.tweens.killTweensOf(enemy);
+      enemy.setScale(baseScaleX, baseScaleY);
+      this.tweens.add({ targets: enemy, scaleX: baseScaleX * .82, scaleY: baseScaleY * .82, yoyo: true, duration: 65, onComplete: () => enemy.active && enemy.setScale(baseScaleX, baseScaleY) });
       this.tone(enemy.getData("boss") ? 145 : 480, .06, "square", .015);
       if (hp <= 0) {
         const boss = enemy.getData("boss"); enemy.getData("label")?.destroy(); enemy.destroy();
@@ -687,7 +808,7 @@
     maybeDrop(x, y) {
       if (Math.random() > .1) return;
       const type = Phaser.Utils.Array.GetRandom(["W", "M", "S", "L", "B"]);
-      const drop = this.add.image(x, y, `power-${type}`).setDisplaySize(34, 34);
+      const drop = this.add.image(x, y, `power-${type}`).setDisplaySize(type === "W" ? 46 : 38, type === "W" ? 22 : 38);
       drop.setData({ type });
       this.drops.add(drop);
       drop.body.setCircle(17).setVelocityY(165);
@@ -743,12 +864,14 @@
       this.score += sectorBonus;
       this.lastSectorRank = rank;
       const rankValue = { C: 1, B: 2, A: 3, S: 4 };
-      if (!rankValue[this.sectorRanks[this.level]] || rankValue[rank] > rankValue[this.sectorRanks[this.level]]) {
+      if (!this.testMode && (!rankValue[this.sectorRanks[this.level]] || rankValue[rank] > rankValue[this.sectorRanks[this.level]])) {
         this.sectorRanks[this.level] = rank; localStorage.setItem(rankKey, JSON.stringify(this.sectorRanks));
       }
       this.runState = "level"; this.physics.pause();
-      this.highestSector = Math.max(this.highestSector, this.level + 1);
-      localStorage.setItem(progressKey, this.highestSector);
+      if (!this.testMode) {
+        this.highestSector = Math.max(this.highestSector, this.level + 1);
+        localStorage.setItem(progressKey, this.highestSector);
+      }
       this.updateHud(); this.haptic([30, 35, 60]);
       const flawless = flawlessBonus ? " · Flawless +2,500" : "";
       this.setOverlay(`Sector cleared · Rank ${rank}`, `${sectorNames[(this.level - 1) % sectorNames.length]}`, `${clearSeconds}s · Peak combo ×${this.sectorPeakCombo} · Bonus +${sectorBonus.toLocaleString()}${flawless}.`, "Next level");
@@ -757,10 +880,12 @@
 
     finishRun() {
       this.runState = "over"; this.physics.pause();
-      localStorage.removeItem(runKey);
-      this.best = Math.max(this.best, this.score);
-      localStorage.setItem(bestKey, this.best);
-      window.GameScores?.record({ game: "neon-breaker", mode: "solo", difficulty: `level-${this.level}`, value: this.score, meta: { level: this.level } });
+      if (!this.testMode) {
+        localStorage.removeItem(runKey);
+        this.best = Math.max(this.best, this.score);
+        localStorage.setItem(bestKey, this.best);
+        window.GameScores?.record({ game: "neon-breaker", mode: "solo", difficulty: `level-${this.level}`, value: this.score, meta: { level: this.level } });
+      }
       this.setOverlay("Run complete", "Pulse expired", `Final score ${String(this.score).padStart(6, "0")}. Best ${String(this.best).padStart(6, "0")}.`, "Run it again");
       this.configureCampaignStart();
     }
@@ -769,14 +894,14 @@
       if (this.runState === "playing") {
         this.powerPauseStarted = this.time.now;
         if (this.slowTimer) this.slowTimer.paused = true;
-        this.runState = "paused"; this.physics.pause();
+        this.runState = "paused"; this.physics.pause(); this.currentMusic?.pause();
         this.setOverlay("Run suspended", "Paused", "The pulse is holding in place.", "Resume");
         this.saveRun();
       } else if (this.runState === "paused") {
         const pausedFor = Math.max(0, this.time.now - (this.powerPauseStarted || this.time.now));
         for (const key of ["wideUntil", "slowUntil", "laserUntil", "superUntil"]) if (this[key] > 0) this[key] += pausedFor;
         if (this.slowTimer) this.slowTimer.paused = false;
-        this.runState = "playing"; this.physics.resume(); this.hideOverlay();
+        this.runState = "playing"; this.physics.resume(); this.hideOverlay(); this.startMusicForLevel();
         if (this.balls.getChildren().some((ball) => ball.active && ball.getData("stuck"))) this.queueServe(1200);
       }
     }
@@ -797,6 +922,7 @@
       this.hudLevel.setText(String(this.level).padStart(2, "0"));
       this.hudLives.setText(this.lives > 0 ? "● ".repeat(this.lives).trim() : "—");
       this.hudSector.setText(sectorNames[(this.level - 1) % sectorNames.length].toUpperCase());
+      this.hudTest?.setText(`TEST MODE · LEVEL ${String(this.testLevel).padStart(2, "0")}`);
       this.sectorWash?.setFillStyle(palette[(this.level - 1) % palette.length], .035);
       this.hudCombo.setText(`COMBO ×${this.combo}`);
       this.hudBest.setText(`BEST ${String(Math.max(this.best, this.score)).padStart(6, "0")}`);
@@ -811,12 +937,14 @@
     }
 
     scheduleSave() {
+      if (this.testMode) return;
       if (this.runState !== "playing" && this.runState !== "paused" && this.runState !== "level") return;
       this.saveTimer?.remove(false);
       this.saveTimer = this.time.delayedCall(180, () => this.saveRun());
     }
 
     saveRun() {
+      if (this.testMode) return;
       if (this.runState !== "playing" && this.runState !== "paused" && this.runState !== "level") return;
       const now = this.time.now;
       const snapshot = {
@@ -868,12 +996,14 @@
       if (!snapshot || snapshot.schema !== 3 || !Array.isArray(snapshot.bricks) || !Array.isArray(snapshot.balls) || snapshot.lives < 1) return false;
 
       this.bricks.children.iterate((brick) => {
-        brick?.getData("label")?.destroy(); brick?.getData("shadow")?.destroy(); brick?.getData("shine")?.destroy();
+        brick?.getData("label")?.destroy(); brick?.getData("shadow")?.destroy(); brick?.getData("shine")?.destroy(); brick?.getData("art")?.destroy(); brick?.getData("damageArt")?.destroy();
       });
       this.bricks.clear(true, true); this.balls.clear(true, true); this.drops.clear(true, true); this.shots.clear(true, true);
       this.enemies.children.iterate((enemy) => enemy?.getData("label")?.destroy()); this.enemies.clear(true, true);
       this.score = Number(snapshot.score) || 0;
       this.level = Math.max(1, Number(snapshot.level) || 1);
+      this.updateBackdrop(this.level);
+      this.musicKey = this.musicForLevel(this.level);
       this.lives = Math.max(1, Number(snapshot.lives) || 3);
       this.combo = Phaser.Math.Clamp(Number(snapshot.combo) || 1, 1, 9);
       this.sectorLivesLost = Math.max(0, Number(snapshot.sectorLivesLost) || 0);
@@ -885,7 +1015,7 @@
         this.createBrick(brick.x, brick.y, brick.width, brick.height, brick.maxHp || brick.hp || 1, brick.color || palette[0], Boolean(brick.indestructible), brick.type || "normal");
         const restored = this.bricks.getChildren().at(-1);
         restored.setData("hp", brick.hp || 1);
-        if (brick.type === "hidden" && brick.revealed) { restored.setData("revealed", true); restored.setAlpha(1); restored.getData("shine")?.setAlpha(.28); restored.getData("shadow")?.setAlpha(.42); restored.getData("label")?.setAlpha(1); }
+        if (brick.type === "hidden" && brick.revealed) { restored.setData("revealed", true); restored.getData("art")?.setAlpha(1); restored.getData("shine")?.setAlpha(.28); restored.getData("shadow")?.setAlpha(.42); restored.getData("label")?.setAlpha(1); }
         if ((brick.type === "normal" || brick.type === "hidden") && !brick.indestructible) restored.getData("label")?.setText(String(brick.hp || 1));
       });
       this.remainingBricks = snapshot.bricks.filter((brick) => !brick.indestructible).length;
@@ -915,10 +1045,75 @@
       return true;
     }
 
+    async primeAudio() {
+      if (!this.soundOn || (this.settings.volume <= 0 && this.settings.musicVolume <= 0)) return false;
+      const AudioEngine = window.AudioContext || window.webkitAudioContext;
+      if (!AudioEngine) return false;
+      if (!this.audio) this.audio = new AudioEngine({ latencyHint: "interactive" });
+      const musicStarted = this.startMusicForLevel();
+      if (this.audio.state === "suspended") {
+        try { await this.audio.resume(); } catch (_error) { return false; }
+      }
+      if (musicStarted) await musicStarted.catch(() => false);
+      this.audioReady = this.audio.state === "running";
+      return this.audioReady;
+    }
+
+    musicForLevel(level) {
+      const sector = ((level - 1) % 10) + 1;
+      if (sector === 10) return "guardian";
+      return ["neon", "armored", "hypergrid"][(level - 1) % 3];
+    }
+
+    musicOutputVolume() {
+      return Phaser.Math.Clamp(this.settings.musicVolume * MUSIC_MASTER_GAIN, 0, 1);
+    }
+
+    connectMusicAnalyser(audioElement) {
+      if (!this.audio || !audioElement || audioElement.dataset.analyserConnected) return;
+      if (!this.musicAnalyser) {
+        this.musicAnalyser = this.audio.createAnalyser();
+        this.musicAnalyser.fftSize = 128;
+        this.musicAnalyser.smoothingTimeConstant = .84;
+        this.musicAnalyser.connect(this.audio.destination);
+        this.musicFrequency = new Uint8Array(this.musicAnalyser.frequencyBinCount);
+      }
+      const source = this.audio.createMediaElementSource(audioElement);
+      source.connect(this.musicAnalyser);
+      audioElement.dataset.analyserConnected = "true";
+    }
+
+    startMusicForLevel() {
+      if (!this.soundOn || this.settings.musicVolume <= 0 || this.runState === "paused") return null;
+      const key = this.musicKey || this.musicForLevel(this.level);
+      if (this.currentMusicKey === key && this.currentMusic) {
+        this.currentMusic.volume = this.musicOutputVolume();
+        return this.currentMusic.paused ? this.currentMusic.play() : Promise.resolve();
+      }
+      const next = new Audio(musicFiles[key]);
+      next.loop = true; next.preload = "auto"; next.volume = 0;
+      this.connectMusicAnalyser(next);
+      const previous = this.currentMusic;
+      const previousKey = this.currentMusicKey;
+      this.currentMusic = next; this.currentMusicKey = key;
+      const play = next.play();
+      play.then(() => {
+        this.musicFade?.stop(); this.previousMusicFade?.stop();
+        const incoming = { volume: 0 };
+        this.musicFade = this.tweens.add({ targets: incoming, volume: this.musicOutputVolume(), duration: previous ? 1100 : 650, onUpdate: () => { if (next === this.currentMusic) next.volume = Phaser.Math.Clamp(incoming.volume, 0, 1); } });
+        if (previous) {
+          const outgoing = { volume: previous.volume };
+          this.previousMusicFade = this.tweens.add({ targets: outgoing, volume: 0, duration: 700, onUpdate: () => { previous.volume = Phaser.Math.Clamp(outgoing.volume, 0, 1); }, onComplete: () => { previous.pause(); previous.src = ""; } });
+        }
+      }).catch(() => {
+        if (this.currentMusic === next) { this.currentMusic = previous; this.currentMusicKey = previousKey || null; }
+      });
+      return play;
+    }
+
     tone(freq, duration = .05, type = "sine", volume = .035) {
-      if (!this.soundOn || !window.AudioContext || this.settings.volume <= 0) return;
-      if (!this.audio) this.audio = new AudioContext();
-      this.audio.resume();
+      if (!this.soundOn || this.settings.volume <= 0) return;
+      if (!this.audio || this.audio.state !== "running") { this.primeAudio(); return; }
       const osc = this.audio.createOscillator(), gain = this.audio.createGain(), now = this.audio.currentTime;
       const outputVolume = Math.max(.0001, volume * this.settings.volume);
       osc.type = type; osc.frequency.setValueAtTime(freq, now); gain.gain.setValueAtTime(outputVolume, now); gain.gain.exponentialRampToValueAtTime(.0001, now + duration);
@@ -935,6 +1130,7 @@
         if (this.runState !== "playing") return;
       }
       this.updatePowerHud();
+      this.updateMusicVisual();
       const dt = Math.min(delta, 34) / 1000;
       if (this.level >= 4 && this.level % 10 !== 0 && this.time.now >= this.nextDroneAt) {
         const drones = this.enemies.getChildren().filter((enemy) => enemy.active && !enemy.getData("boss")).length;
@@ -956,6 +1152,11 @@
       this.paddle.body.reset(this.paddle.x, PADDLE_Y);
       this.paddleGlow.setPosition(this.paddle.x, PADDLE_Y).setDisplaySize(this.paddle.displayWidth + 14, 25);
       this.paddleArt.setPosition(this.paddle.x, PADDLE_Y).setDisplaySize(this.paddle.displayWidth + 30, 52);
+      if (this.time.now < this.laserUntil) this.paddleArt.setTint(0xff9aa2);
+      else if (this.time.now < this.superUntil) this.paddleArt.setTint(0xa8ff8f);
+      else if (this.time.now < this.slowUntil) this.paddleArt.setTint(0xa7f5ff);
+      else if (this.time.now < this.wideUntil) this.paddleArt.setTint(0xffa2ea);
+      else this.paddleArt.clearTint();
 
       this.aimGuide.clear();
       let serving = false;
@@ -1002,7 +1203,7 @@
         brick.x = nextX;
         if (typeof brick.body.refreshBody === "function") brick.body.refreshBody();
         else brick.body.updateFromGameObject();
-        brick.getData("label")?.setX(nextX); brick.getData("shadow")?.setX(nextX); brick.getData("shine")?.setX(nextX);
+        brick.getData("label")?.setX(nextX); brick.getData("shadow")?.setX(nextX); brick.getData("shine")?.setX(nextX); brick.getData("art")?.setX(nextX); brick.getData("damageArt")?.setX(nextX);
       });
       this.enemies.children.iterate((enemy) => {
         if (!enemy?.active) return;
@@ -1026,18 +1227,30 @@
     scene: NeonBreaker,
   });
 
-  $("start").onclick = () => {
+  $("start").onclick = async () => {
     if (!scene) return;
+    await scene.primeAudio();
     if (scene.runState === "title" || scene.runState === "over") scene.startRun();
     else if (scene.runState === "level") scene.nextLevel();
     else if (scene.runState === "paused") scene.togglePause();
   };
-  $("campaign").onclick = () => scene?.startRun(scene.highestSector);
+  $("campaign").onclick = async () => { if (scene) { await scene.primeAudio(); scene.startRun(scene.highestSector); } };
   $("close-settings").onclick = () => scene?.closeSettings();
   $("fullscreen").onclick = async () => {
+    if (window.parent !== window) {
+      window.parent.postMessage({ type: "daemoncade:request-fullscreen" }, location.origin);
+      return;
+    }
     try {
-      if (document.fullscreenElement) await document.exitFullscreen();
-      else await document.documentElement.requestFullscreen?.();
+      const active = document.fullscreenElement || document.webkitFullscreenElement;
+      if (active) {
+        const exit = document.exitFullscreen || document.webkitExitFullscreen;
+        if (exit) await exit.call(document);
+      } else {
+        const request = document.documentElement.requestFullscreen || document.documentElement.webkitRequestFullscreen;
+        if (request) await request.call(document.documentElement, { navigationUI: "hide" });
+        else throw new Error("Fullscreen unavailable");
+      }
     } catch (_error) { scene?.showToast("Fullscreen unavailable"); }
   };
   document.addEventListener("visibilitychange", () => { if (document.hidden && scene?.runState === "playing") scene.togglePause(); });

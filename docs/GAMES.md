@@ -8,7 +8,7 @@ This page is generated from the per-game `game.json` files by `./scripts/build-c
 
 | Icon | Game | Version | Mobile | About |
 | --- | --- | --- | --- | --- |
-| <img src="../games/neon-breaker/icon-1.0.0.png" width="48" height="48" alt=""> | [Neon Breaker](../games/neon-breaker/) | `1.0.0` | Yes | Break luminous formations, chain combos, and bend each run with modern power-ups in a kinetic brick-breaking tribute. |
+| <img src="../games/neon-breaker/icon-1.0.0.png" width="48" height="48" alt=""> | [Neon Breaker](../games/neon-breaker/) | `1.1.0` | Yes | Break luminous formations, chain combos, and bend each run with modern power-ups in a kinetic brick-breaking tribute. |
 | <img src="../games/maze-defense/icon.png" width="48" height="48" alt=""> | [Maze Defense](../games/maze-defense/) | `1.0.0` | Yes | Build the maze as you defend it. Place and upgrade towers, reshape enemy routes, and survive increasingly devious waves. |
 | <img src="../games/chess/icon.webp" width="48" height="48" alt=""> | [Chess](../games/chess/) | `1.0.0` | Yes | Play a complete chess game against a local computer opponent or someone sharing the board. |
 | <img src="../games/checkers/icon.webp" width="48" height="48" alt=""> | [Checkers](../games/checkers/) | `1.0.0` | Yes | Play classic checkers against the computer or share the board with someone beside you. |

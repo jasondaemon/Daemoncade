@@ -43,6 +43,9 @@ PixiJS
 Phaser
   Neon Breaker uses the local Phaser 3 Arcade Physics distribution by Phaser
   Studio Inc. under the MIT License. See games/vendor/phaser/LICENSE.md.
+  Its Neon Sector, Armored Sector, Hypergrid, and Guardian Core music is
+  project-owned and generated with Suno. Web editions are loudness-normalized
+  derivatives of the source WAV files.
 
 The public editions use no external runtime services or remotely loaded
 libraries.

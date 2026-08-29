@@ -51,3 +51,7 @@ The public edge may cache static JavaScript, CSS, images, and audio for a long t
 4. Test it inside the jasondaemon.net Games launcher when integration behavior changes.
 5. Search for broken relative references and missing files.
 6. Confirm no unrelated generated or local files were added.
+
+### Neon Breaker level testing
+
+Open `/games/neon-breaker/?testLevel=8` to start directly at any positive level. Test mode is visibly labeled and does not overwrite the campaign save, unlock progress, ranks, best score, or local score records.
