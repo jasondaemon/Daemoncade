@@ -469,9 +469,11 @@
         const reinforced = Math.max(0, Math.floor((this.level - 1) / 2));
         const hp = Math.min(4, 1 + (reinforced > 0 && row < reinforced ? 1 : 0) + (this.level >= 5 && (row + col) % 7 === 0 ? 1 : 0) + (this.level >= 9 && (row * cols + col) % 11 === 0 ? 1 : 0));
         const type = this.brickType(row, col, cols, barrier);
-        this.createBrick(sideChannel + col * (width + gap) + width / 2, 142 + row * (height + gap) + height / 2, width, height, hp, palette[(row * 2 + col + this.level) % palette.length], barrier, type);
+        const brick = this.createBrick(sideChannel + col * (width + gap) + width / 2, 142 + row * (height + gap) + height / 2, width, height, hp, palette[(row * 2 + col + this.level) % palette.length], barrier, type);
+        brick.setData({ gridRow: row, gridCol: col });
         if (!barrier) this.remainingBricks++;
       }
+      this.openClosedArmorPockets();
       this.nextDroneAt = this.time.now + 8000;
       if (this.level % 10 === 0) this.spawnEnemy(true);
     }
@@ -497,6 +499,40 @@
       if (hidden) { art.setAlpha(.1); shine.setAlpha(.03); shadow.setAlpha(.08); brick.getData("label")?.setAlpha(.1); }
       this.bricks.add(brick);
       brick.body.updateFromGameObject();
+      return brick;
+    }
+
+    destroyBrickDisplay(brick) {
+      ["label", "shadow", "shine", "art", "damageArt"].forEach((key) => brick.getData(key)?.destroy());
+      brick.destroy();
+    }
+
+    openClosedArmorPockets() {
+      // Four armor blocks at the corners of a rectangle can capture a ball on
+      // a repeating orbit even when the gaps look generous. Remove one corner
+      // from every such pocket while preserving the barrier challenge.
+      let changed = true;
+      while (changed) {
+        changed = false;
+        const armor = this.bricks.getChildren().filter((brick) => brick.active && brick.getData("indestructible") && Number.isInteger(brick.getData("gridRow")));
+        const at = new Map(armor.map((brick) => [`${brick.getData("gridRow")}:${brick.getData("gridCol")}`, brick]));
+        outer: for (const topLeft of armor) {
+          const row = topLeft.getData("gridRow"), col = topLeft.getData("gridCol");
+          for (const topRight of armor) {
+            const rightCol = topRight.getData("gridCol");
+            if (topRight.getData("gridRow") !== row || rightCol <= col) continue;
+            for (const bottomLeft of armor) {
+              const bottomRow = bottomLeft.getData("gridRow");
+              if (bottomLeft.getData("gridCol") !== col || bottomRow <= row) continue;
+              const bottomRight = at.get(`${bottomRow}:${rightCol}`);
+              if (!bottomRight) continue;
+              this.destroyBrickDisplay(bottomRight);
+              changed = true;
+              break outer;
+            }
+          }
+        }
+      }
     }
 
     resetPaddle(serve = true) {
@@ -528,6 +564,10 @@
       ball.setData("stuck", stuck);
       ball.setData("previousX", x);
       ball.setData("previousY", y);
+      ball.setData("armorHits", []);
+      ball.setData("lastPaddleAt", this.time.now);
+      ball.setData("lastProgressAt", this.time.now);
+      ball.setData("phaseUntil", 0);
       this.balls.add(ball);
       ball.body.setCircle(7).setBounce(1).setCollideWorldBounds(true).setVelocity(vx, vy);
       ball.body.onWorldBounds = true;
@@ -589,6 +629,9 @@
 
     hitPaddle(ball, paddleX = this.paddle.x) {
       if (ball.body.velocity.y <= 0) return;
+      ball.setData("armorHits", []);
+      ball.setData("lastPaddleAt", this.time.now);
+      ball.setData("lastProgressAt", this.time.now);
       const usableHalfWidth = Math.max(24, this.paddle.displayWidth / 2 - 7);
       const contact = Phaser.Math.Clamp((ball.x - paddleX) / usableHalfWidth, -1, 1);
       const windage = Phaser.Math.Clamp(this.paddleVelocityX / 900, -1, 1);
@@ -644,11 +687,44 @@
     }
 
     hitBrick(ball, brick) {
+      if (brick.getData("indestructible")) this.recordArmorImpact(ball);
+      else {
+        ball.setData("armorHits", []);
+        ball.setData("lastProgressAt", this.time.now);
+      }
       this.damageBrick(brick, ball.x, ball.y, false);
     }
 
+    recordArmorImpact(ball) {
+      const now = this.time.now;
+      const recent = (ball.getData("armorHits") || []).filter((hitAt) => now - hitAt < 7000);
+      recent.push(now);
+      ball.setData("armorHits", recent);
+      const stalled = now - (ball.getData("lastProgressAt") || now) > 4500;
+      const awayFromPaddle = now - (ball.getData("lastPaddleAt") || now) > 4500;
+      const cooledDown = now - (ball.getData("lastArmorReleaseAt") || -10000) > 7000;
+      if (recent.length >= 8 && stalled && awayFromPaddle && cooledDown) this.releaseTrappedBall(ball);
+    }
+
+    releaseTrappedBall(ball) {
+      const now = this.time.now;
+      ball.setData("phaseUntil", now + 1100);
+      ball.setData("lastArmorReleaseAt", now);
+      ball.setData("lastProgressAt", now);
+      ball.setData("armorHits", []);
+      const art = ball.getData("art");
+      art?.setTint(0x8dffde);
+      this.time.delayedCall(1150, () => {
+        if (ball.active && this.time.now >= (ball.getData("phaseUntil") || 0)) art?.clearTint();
+      });
+      this.showToast("PHASE RELEASE");
+      this.tone(760, .08, "sine", .018);
+    }
+
     shouldBounceBrick(ball, brick) {
-      return brick?.getData("indestructible") || this.time.now >= this.superUntil || !ball.active;
+      if (!ball.active) return false;
+      if (brick?.getData("indestructible") && this.time.now < (ball.getData("phaseUntil") || 0)) return false;
+      return brick?.getData("indestructible") || this.time.now >= this.superUntil;
     }
 
     superHitBrick(ball, brick) {
