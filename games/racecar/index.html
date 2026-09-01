@@ -1,1 +1,54 @@
-<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta http-equiv="Content-Security-Policy" content="default-src 'self';style-src 'self';script-src 'self';img-src 'self' data:;connect-src 'none';media-src 'none';object-src 'none';frame-ancestors 'self'"><title>Racecar</title><link rel="stylesheet" href="../daemonos-shared/standalone.css"></head><body><main id="game-root"></main><script src="../shared/scores.js"></script><script type="module" src="launch.js"></script></body></html>
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self';style-src 'self';script-src 'self';img-src 'self' data: blob:;connect-src 'self';object-src 'none';frame-ancestors 'self'">
+  <title>Racecar</title>
+  <link rel="stylesheet" href="game.css?v=1.0.0-beta.1">
+  <link rel="stylesheet" href="layout-alpha29.css?v=1.0.0-beta.1">
+</head>
+<body>
+  <main class="shell">
+    <section class="cabinet">
+      <div id="game-host" role="application" aria-label="Racecar game field"></div>
+      <div id="overlay" class="overlay">
+        <div class="overlay-card">
+          <p id="eyebrow">Daemoncade Highway Division</p>
+          <h1 id="overlay-title">Racecar</h1>
+          <p id="overlay-copy">Clear six fueled night routes, draft traffic, thread narrow gaps, and collect route cards.</p>
+          <div class="mode-select" aria-label="Game mode">
+            <button id="mode-battle" type="button">Battle Traffic</button>
+            <button id="mode-race" type="button">Circuit Race</button>
+          </div>
+          <div class="overlay-actions">
+            <button id="route-prev" class="route-step" type="button" aria-label="Previous route">‹</button>
+            <button id="start" type="button">Ignition</button>
+            <button id="route-next" class="route-step" type="button" aria-label="Next route">›</button>
+          </div>
+          <small>Steer: A D / ← → / drag · Race throttle and position: ↑ ↓ · Boost: Space · Pause: P</small>
+        </div>
+      </div>
+      <div class="cabinet-actions">
+        <button id="sound" type="button">Sound on</button>
+        <button id="pause" type="button">Pause</button>
+        <button id="fullscreen" type="button">Fullscreen</button>
+      </div>
+      <div class="mobile-controls" aria-label="Touch driving controls">
+        <div class="mobile-steering">
+          <button id="touch-left" type="button" aria-label="Steer left">←</button>
+          <button id="touch-right" type="button" aria-label="Steer right">→</button>
+        </div>
+        <div class="mobile-pedals">
+          <button id="touch-brake" type="button" aria-label="Brake">Brake</button>
+          <button id="touch-boost" type="button" aria-label="Boost">Boost</button>
+          <button id="touch-throttle" type="button" aria-label="Accelerate">Go</button>
+        </div>
+      </div>
+    </section>
+  </main>
+  <script src="../shared/scores.js?v=1.0.0-beta.1"></script>
+  <script src="../vendor/phaser/phaser-arcade-physics.min.js?v=3.90.0"></script>
+  <script src="game.js?v=1.0.0-beta.1"></script>
+</body>
+</html>
