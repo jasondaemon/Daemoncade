@@ -10,9 +10,9 @@
   <link rel="stylesheet" href="difficulty.css?v=0.1.0-alpha.1">
   <link rel="stylesheet" href="touch-controls.css?v=0.1.0-alpha.2">
   <link rel="stylesheet" href="settings.css?v=0.1.0-alpha.2">
-  <link rel="stylesheet" href="progression.css?v=0.1.0-alpha.2">
-  <link rel="stylesheet" href="results.css?v=0.1.0-alpha.6">
-  <link rel="stylesheet" href="title.css?v=0.1.0-alpha.1">
+  <link rel="stylesheet" href="progression.css?v=1.2.0">
+  <link rel="stylesheet" href="results.css?v=1.2.0">
+  <link rel="stylesheet" href="title.css?v=1.2.0">
 </head>
 <body>
   <main class="shell">
@@ -23,17 +23,19 @@
           <p id="eyebrow">Daemoncade Motorsports</p>
           <h1 id="title">Circuit Rush</h1>
           <p id="copy">Four cars. Five laps. The entire circuit is yours to read.</p>
+          <label id="mode-control" class="difficulty">Drivers <select id="player-count"><option value="1" selected>1 player</option><option value="2">2 players</option></select></label>
           <label id="difficulty-control" class="difficulty">Championship difficulty <select id="difficulty"><option value="easy">Easy</option><option value="normal" selected>Arcade</option><option value="hard">Expert</option></select></label>
           <div class="title-actions">
             <button id="start" class="primary" type="button">Start new game</button>
             <button id="continue-game" type="button" hidden>Continue championship</button>
           </div>
-          <small>Steer: ← → or A D · Throttle: ↑ or W · Brake/reverse: ↓ or S · Pause: P</small>
+          <small id="control-help">Drive: WASD, arrows, or numpad 8/4/5/6 · Pause: P</small>
         </section>
       </div>
       <div id="upgrade-panel" class="overlay" hidden>
         <section class="card upgrade-card">
           <p>Workshop</p><h2>Performance shop</h2><p id="upgrade-copy">Each upgrade costs two wrenches.</p>
+          <div id="workshop-players" class="workshop-players" hidden><button data-shop-player="0" class="active" type="button">P1 · Cyan</button><button data-shop-player="1" type="button">P2 · Red</button></div>
           <div id="workshop-wrenches" class="workshop-wrenches" aria-label="Available wrenches"><i></i><i></i><i></i></div>
           <div class="upgrade-actions">
             <button data-upgrade="grip"><strong>Grip</strong><small>Sharper cornering</small><span class="upgrade-meter" data-meter="grip"><i></i><i></i><i></i><i></i><i></i></span></button>
@@ -64,6 +66,7 @@
           <div id="podium-cars" class="podium-cars" aria-label="Race podium">
             <i data-place="2"></i><i data-place="1"></i><i data-place="3"></i>
           </div>
+          <div id="result-records" class="result-records" aria-label="Local records"></div>
           <button id="result-action" class="primary" type="button">Continue</button>
         </section>
       </div>
@@ -81,6 +84,6 @@
   </main>
   <script src="../shared/scores.js?v=0.1.0-alpha.1"></script>
   <script src="../vendor/phaser/phaser-arcade-physics.min.js?v=3.90.0"></script>
-  <script src="game.js?v=1.1.0"></script>
+  <script src="game.js?v=1.2.0"></script>
 </body>
 </html>

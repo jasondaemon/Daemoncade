@@ -1,4 +1,5 @@
 .workshop-wrenches{display:flex;gap:9px;justify-content:center;margin:18px 0 16px}
+.workshop-players{display:flex;gap:8px;justify-content:center;margin:12px auto 0}.workshop-players button{background:#101d2b;border:1px solid #29475b;border-radius:999px;color:#91a8b9;font-size:11px;padding:7px 13px}.workshop-players button.active{border-color:#66eaff;color:#fff;box-shadow:0 0 10px #66eaff44}.workshop-players button:last-child.active{border-color:#ff5c68;box-shadow:0 0 10px #ff5c6844}
 .upgrade-card{left:var(--field-center-x,50%);position:absolute;top:var(--field-center-y,50%);transform:translate(-50%,-50%)}
 .workshop-wrenches i{height:24px;opacity:.18;position:relative;transform:rotate(-35deg);width:10px}
 .workshop-wrenches i:before{background:#ffd05b;border-radius:2px;bottom:0;content:"";left:3px;position:absolute;top:7px;width:5px}

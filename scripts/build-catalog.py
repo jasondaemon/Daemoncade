@@ -9,6 +9,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
 RELEASE_STAGES = {"alpha", "beta", "stable"}
+ORIENTATIONS = {"auto", "portrait", "landscape"}
 SEMVER = re.compile(r"^(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)(?:-[0-9A-Za-z.-]+)?$")
 
 
@@ -27,6 +28,10 @@ def main() -> None:
             )
         if "mobile_ready" in game and not isinstance(game["mobile_ready"], bool):
             raise SystemExit(f"{metadata_path}: mobile_ready must be true or false")
+        if game.get("orientation", "auto") not in ORIENTATIONS:
+            raise SystemExit(
+                f"{metadata_path}: orientation must be one of {sorted(ORIENTATIONS)}"
+            )
         icon = game.get("icon")
         if not icon or not (metadata_path.parent / icon).is_file():
             raise SystemExit(f"{metadata_path}: icon {icon!r} does not exist")
