@@ -1,0 +1,16 @@
+.cabinet-actions{align-items:center;gap:11px;right:16px;top:10px}
+.cabinet-actions .hud-icon{align-items:center;background:transparent!important;border:0!important;border-radius:0;box-shadow:none;color:#91a6ba;display:flex;font-size:20px;height:36px;justify-content:center;min-height:0;min-width:28px;padding:0;text-shadow:0 0 14px rgba(102,234,255,.15)}
+.cabinet-actions .hud-icon:hover,.cabinet-actions .hud-icon:focus-visible{background:transparent!important;color:#66eaff;outline:0;text-shadow:0 0 12px rgba(102,234,255,.75)}
+.cabinet-actions #pause{font-size:18px}
+.cabinet-actions #fullscreen{font-size:23px}
+.settings-panel{z-index:30}
+.settings-card{max-width:420px}
+.settings-card h2{margin-bottom:26px}
+.setting-toggle,.setting-range{align-items:center;background:rgba(255,255,255,.04);border:1px solid rgba(102,234,255,.14);border-radius:14px;color:var(--ink);display:grid;font-size:13px;font-weight:850;gap:10px;margin:10px 0;padding:14px 16px;text-align:left}
+.setting-toggle{grid-template-columns:1fr auto}
+.setting-toggle input{accent-color:var(--cyan);height:20px;width:20px}
+.setting-range{grid-template-columns:1fr auto}
+.setting-range output{color:var(--cyan);font-variant-numeric:tabular-nums}
+.setting-range input{accent-color:var(--cyan);grid-column:1/-1;width:100%}
+.settings-card .primary{margin-top:20px}
+@media (pointer:coarse),(max-width:1024px){.cabinet-actions{gap:8px;right:14px;top:8px}.cabinet-actions .hud-icon{font-size:18px;height:34px;min-width:26px;padding:0}.cabinet-actions #fullscreen{font-size:21px}.settings-card{padding:24px}.setting-toggle,.setting-range{padding:12px 14px}}

@@ -1,0 +1,17 @@
+{
+  "title": "Circuit Rush",
+  "slug": "circuit-rush",
+  "version": "1.0.0",
+  "release_stage": "stable",
+  "order": 27,
+  "category": "Racing",
+  "source": "Daemoncade",
+  "players": "Solo",
+  "controls": "Keyboard or touch",
+  "mobile_ready": true,
+  "summary": "Read the entire circuit, master momentum and sliding grip, collect wrenches, and outdrive three rivals across compact arcade championships.",
+  "accent": "gold",
+  "mark": "◎",
+  "icon": "icon.webp",
+  "metric": "time"
+}

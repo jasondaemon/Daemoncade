@@ -1,0 +1,24 @@
+@media (pointer:coarse), (max-width:1024px){
+  .touch-controls{align-items:flex-end;bottom:max(12px,env(safe-area-inset-bottom));display:flex;left:max(12px,env(safe-area-inset-left));right:max(12px,env(safe-area-inset-right))}
+  .touch-controls>div{align-items:flex-end;display:flex;gap:10px}
+  .touch-controls button{align-items:center;background:rgba(3,10,18,.48);border:1px solid rgba(139,231,255,.45);box-shadow:0 5px 18px rgba(0,0,0,.24),inset 0 0 18px rgba(102,234,255,.05);color:#e8faff;display:flex;flex-direction:column;font-size:10px;height:64px;justify-content:center;line-height:1;min-width:64px;opacity:.72;padding:0;touch-action:none;-webkit-tap-highlight-color:transparent}
+  .touch-controls button span{font-size:19px;margin-bottom:5px}
+  .touch-controls .gas{background:rgba(40,31,5,.48);border-color:rgba(255,208,91,.62);color:#ffe390;height:76px}
+  .touch-steering button{border-radius:50%;font-size:27px;height:68px;min-width:68px}
+  .touch-controls button:active{background:rgba(102,234,255,.25);opacity:1;transform:scale(.96)}
+  .touch-controls .gas:active{background:rgba(255,208,91,.25)}
+}
+@media (pointer:coarse) and (orientation:landscape), (max-width:1024px) and (orientation:landscape){
+  .touch-controls{bottom:max(14px,env(safe-area-inset-bottom))}
+  .touch-controls button{height:68px;min-width:68px}
+  .touch-controls .gas{height:80px}
+  .touch-steering button{height:72px;min-width:72px}
+}
+.rotate-device{display:none}
+@media (pointer:coarse) and (orientation:portrait), (max-width:1024px) and (orientation:portrait){
+  .cabinet:fullscreen .rotate-device{align-items:center;background:#030912;display:flex;flex-direction:column;inset:0;justify-content:center;position:absolute;text-align:center;z-index:100}
+  .rotate-device span{color:var(--cyan);font-size:54px;line-height:1}
+  .rotate-device strong{font-size:24px;margin-top:12px}
+  .rotate-device small{color:var(--muted);font-size:12px;margin-top:8px}
+  .cabinet:fullscreen .touch-controls{display:none}
+}

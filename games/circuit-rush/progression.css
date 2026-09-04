@@ -1,0 +1,15 @@
+.workshop-wrenches{display:flex;gap:9px;justify-content:center;margin:18px 0 16px}
+.upgrade-card{left:var(--field-center-x,50%);position:absolute;top:var(--field-center-y,50%);transform:translate(-50%,-50%)}
+.workshop-wrenches i{height:24px;opacity:.18;position:relative;transform:rotate(-35deg);width:10px}
+.workshop-wrenches i:before{background:#ffd05b;border-radius:2px;bottom:0;content:"";left:3px;position:absolute;top:7px;width:5px}
+.workshop-wrenches i:after{border:4px solid #ffd05b;border-bottom-color:transparent;border-radius:50%;content:"";height:7px;left:0;position:absolute;top:0;width:7px}
+.workshop-wrenches i.lit{filter:drop-shadow(0 0 6px #ffd05b);opacity:1}
+.upgrade-actions{grid-template-columns:repeat(3,1fr)}
+.upgrade-actions button{align-items:flex-start;border-radius:14px;display:flex;flex-direction:column;gap:5px;min-height:112px;padding:14px;text-align:left}
+.upgrade-actions button strong{color:#f4f8ff;font-size:14px;text-transform:uppercase}
+.upgrade-actions button small{color:#91a6ba;font-size:9px;line-height:1.3;margin:0;min-height:24px;text-align:left}
+.upgrade-meter{display:flex;gap:3px;margin-top:auto;width:100%}
+.upgrade-meter i{background:#243442;border-radius:2px;display:block;height:7px;flex:1}
+.upgrade-meter i.lit{background:#66eaff;box-shadow:0 0 7px rgba(102,234,255,.7)}
+.upgrade-actions button:disabled{opacity:.32}
+@media(max-width:620px){.upgrade-actions{grid-template-columns:1fr}.upgrade-actions button{min-height:72px}.upgrade-actions button small{min-height:0}}

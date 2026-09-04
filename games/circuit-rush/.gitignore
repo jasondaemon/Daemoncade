@@ -1,0 +1,4 @@
+# Editable source masters retained locally; production uses optimized derivatives.
+assets/*.psd
+assets/*.wav
+assets/concepts/

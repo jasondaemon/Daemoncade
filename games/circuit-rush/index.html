@@ -1,0 +1,86 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self';style-src 'self';script-src 'self';img-src 'self' data: blob:;connect-src 'self';object-src 'none';frame-ancestors 'self'">
+  <title>Circuit Rush</title>
+  <link rel="stylesheet" href="game.css?v=0.1.0-alpha.2">
+  <link rel="stylesheet" href="layout.css?v=0.1.0-alpha.1">
+  <link rel="stylesheet" href="difficulty.css?v=0.1.0-alpha.1">
+  <link rel="stylesheet" href="touch-controls.css?v=0.1.0-alpha.2">
+  <link rel="stylesheet" href="settings.css?v=0.1.0-alpha.2">
+  <link rel="stylesheet" href="progression.css?v=0.1.0-alpha.2">
+  <link rel="stylesheet" href="results.css?v=0.1.0-alpha.6">
+  <link rel="stylesheet" href="title.css?v=0.1.0-alpha.1">
+</head>
+<body>
+  <main class="shell">
+    <section class="cabinet">
+      <div id="game-host" role="application" aria-label="Circuit Rush game field"></div>
+      <div id="overlay" class="overlay title-overlay">
+        <section id="title-card" class="card">
+          <p id="eyebrow">Daemoncade Motorsports</p>
+          <h1 id="title">Circuit Rush</h1>
+          <p id="copy">Four cars. Five laps. The entire circuit is yours to read.</p>
+          <label id="difficulty-control" class="difficulty">Championship difficulty <select id="difficulty"><option value="easy">Easy</option><option value="normal" selected>Arcade</option><option value="hard">Expert</option></select></label>
+          <div class="title-actions">
+            <button id="start" class="primary" type="button">Start new game</button>
+            <button id="continue-game" type="button" hidden>Continue championship</button>
+          </div>
+          <small>Steer: ← → or A D · Throttle: ↑ or W · Brake/reverse: ↓ or S · Pause: P</small>
+        </section>
+      </div>
+      <div id="upgrade-panel" class="overlay" hidden>
+        <section class="card upgrade-card">
+          <p>Workshop</p><h2>Performance shop</h2><p id="upgrade-copy">Each upgrade costs two wrenches.</p>
+          <div id="workshop-wrenches" class="workshop-wrenches" aria-label="Available wrenches"><i></i><i></i><i></i></div>
+          <div class="upgrade-actions">
+            <button data-upgrade="grip"><strong>Grip</strong><small>Sharper cornering</small><span class="upgrade-meter" data-meter="grip"><i></i><i></i><i></i><i></i><i></i></span></button>
+            <button data-upgrade="power"><strong>Power</strong><small>Faster acceleration</small><span class="upgrade-meter" data-meter="power"><i></i><i></i><i></i><i></i><i></i></span></button>
+            <button data-upgrade="speed"><strong>Speed</strong><small>Higher top speed</small><span class="upgrade-meter" data-meter="speed"><i></i><i></i><i></i><i></i><i></i></span></button>
+          </div>
+        </section>
+      </div>
+      <div id="settings-panel" class="overlay settings-panel" hidden>
+        <section class="card settings-card" role="dialog" aria-modal="true" aria-labelledby="settings-title">
+          <p>Race control</p><h2 id="settings-title">Settings</h2>
+          <label class="setting-toggle"><span>Background music</span><input id="music-enabled" type="checkbox" checked></label>
+          <label class="setting-range" for="music-volume"><span>Music level</span><output id="music-level">12%</output><input id="music-volume" type="range" min="0" max="100" value="12"></label>
+          <label class="setting-toggle"><span>Sound effects</span><input id="effects-enabled" type="checkbox" checked></label>
+          <label class="setting-range" for="effects-volume"><span>Effects level</span><output id="effects-level">100%</output><input id="effects-volume" type="range" min="0" max="100" value="100"></label>
+          <label class="setting-toggle"><span>Show track geometry</span><input id="geometry" type="checkbox"></label>
+          <button id="close-settings" class="primary" type="button">Done</button>
+        </section>
+      </div>
+      <div id="result-panel" class="overlay result-panel" hidden>
+        <section id="result-stage" class="result-stage" aria-live="polite">
+          <div id="result-confetti" class="result-confetti" aria-hidden="true"></div>
+          <div class="result-copy">
+            <p id="result-kicker">Race complete</p>
+            <h2 id="result-title">1st place</h2>
+            <p id="result-detail"></p>
+          </div>
+          <div id="podium-cars" class="podium-cars" aria-label="Race podium">
+            <i data-place="2"></i><i data-place="1"></i><i data-place="3"></i>
+          </div>
+          <button id="result-action" class="primary" type="button">Continue</button>
+        </section>
+      </div>
+      <div class="cabinet-actions" aria-label="Game controls">
+        <button id="settings" class="hud-icon" type="button" aria-label="Settings" title="Settings"><span aria-hidden="true">⚙</span></button>
+        <button id="pause" class="hud-icon" type="button" aria-label="Pause" title="Pause"><span id="pause-icon" aria-hidden="true">Ⅱ</span></button>
+        <button id="fullscreen" class="hud-icon" type="button" aria-label="Enter fullscreen" title="Fullscreen"><span aria-hidden="true">⛶</span></button>
+      </div>
+      <div class="touch-controls" aria-label="Touch driving controls">
+        <div class="touch-pedals"><button id="touch-brake" type="button" aria-label="Brake or reverse"><span>▼</span>Brake</button><button id="touch-throttle" class="gas" type="button" aria-label="Accelerate"><span>▲</span>Gas</button></div>
+        <div class="touch-steering"><button id="touch-left" type="button" aria-label="Steer left">←</button><button id="touch-right" type="button" aria-label="Steer right">→</button></div>
+      </div>
+      <div id="rotate-device" class="rotate-device" aria-live="polite"><span>↻</span><strong>Rotate to landscape</strong><small>Circuit Rush requires a wide screen.</small></div>
+    </section>
+  </main>
+  <script src="../shared/scores.js?v=0.1.0-alpha.1"></script>
+  <script src="../vendor/phaser/phaser-arcade-physics.min.js?v=3.90.0"></script>
+  <script src="game.js?v=1.0.0-rc.6"></script>
+</body>
+</html>
