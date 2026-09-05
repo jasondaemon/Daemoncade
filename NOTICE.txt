@@ -39,7 +39,7 @@ Planck.js
   Source: https://github.com/shakacode/planck.js
 
 PixiJS
-  Canyon Crawler, Orbit Run, and iMines use the local PixiJS 7.4.3 distribution under
+  Blockfall, Canyon Crawler, Orbit Run, and iMines use the local PixiJS 7.4.3 distribution under
   the MIT License. See games/vendor/pixi/LICENSE.txt.
   Source: https://github.com/pixijs/pixijs
 

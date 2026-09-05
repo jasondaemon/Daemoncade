@@ -170,8 +170,8 @@
     {
       "title": "Blockfall",
       "slug": "blockfall",
-      "version": "1.0.0-beta.1",
-      "release_stage": "beta",
+      "version": "1.0.0",
+      "release_stage": "stable",
       "order": 17,
       "category": "Puzzle",
       "source": "OIAB",
