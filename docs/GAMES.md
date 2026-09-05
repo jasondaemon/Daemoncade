@@ -15,6 +15,7 @@ This page is generated from the per-game `game.json` files by `./scripts/build-c
 | <img src="../games/checkers/icon.webp" width="48" height="48" alt=""> | [Checkers](../games/checkers/) | `1.0.0` | Yes | Play classic checkers against the computer or share the board with someone beside you. |
 | <img src="../games/connect-four/icon.webp" width="48" height="48" alt=""> | [Connect Four](../games/connect-four/) | `1.0.0` | Yes | Build a line of four against the computer or someone sharing your screen. |
 | <img src="../games/tic-tac-toe/icon.webp" width="48" height="48" alt=""> | [Tic-Tac-Toe](../games/tic-tac-toe/) | `1.0.0` | Yes | Settle a quick round against three levels of computer play or a local opponent. |
+| <img src="../games/space-rocks/icon.webp" width="48" height="48" alt=""> | [Space Rocks!](../games/space-rocks/) | `1.0.0` | — | Pilot a vector ship through splitting asteroids, UFOs, hyperspace jumps, and escalating waves. |
 
 ## Beta
 
@@ -26,7 +27,6 @@ This page is generated from the per-game `game.json` files by `./scripts/build-c
 | <img src="../games/sinkhole-city/icon.webp" width="48" height="48" alt=""> | [Sinkhole City](../games/sinkhole-city/) | `1.0.0-beta.1` | Yes | Start as a pothole, swallow everything small enough to fit, and grow into a world-eating sinkhole before time runs out. |
 | <img src="../games/blockfall/icon.webp" width="48" height="48" alt=""> | [Blockfall](../games/blockfall/) | `1.0.0-beta.1` | Yes | Stack falling pieces in endless or timed play and chase a high score saved on this device. |
 | <img src="../games/dots-and-boxes/icon.webp" width="48" height="48" alt=""> | [Dots and Boxes](../games/dots-and-boxes/) | `1.0.0-beta.1` | Yes | Draw one line at a time, close boxes, and hold the turn long enough to own the board. |
-| <img src="../games/space-rocks/icon.webp" width="48" height="48" alt=""> | [Space Rocks!](../games/space-rocks/) | `1.0.0-beta.1` | — | Pilot a vector ship through splitting asteroids, UFOs, hyperspace jumps, and escalating waves. |
 
 ## Alpha
 

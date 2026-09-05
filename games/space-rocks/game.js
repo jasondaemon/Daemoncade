@@ -1,6 +1,6 @@
-import { createGameSurface, startLoop } from "../daemonos-shared/gameUtils.js";
-import { audioRegistry } from "../daemonos-shared/audioRegistry.js";
-import { createScoreOverlay, getBoardIdForGame, submitFinalScore } from "../daemonos-shared/scoreSystem.js";
+import { createGameSurface, startLoop } from "../daemonos-shared/gameUtils.js?v=1.0.0";
+import { audioRegistry } from "../daemonos-shared/audioRegistry.js?v=1.0.0";
+import { getBoardIdForGame, submitFinalScore } from "../daemonos-shared/scoreSystem.js?v=1.0.0";
 
 const SETTINGS_KEY = "spacerocks_settings";
 const HIGH_KEY = "spacerocks_highscore";
@@ -22,17 +22,17 @@ export function createApp() {
   const { signal } = controller;
 
   const wrapper = document.createElement("div");
-  wrapper.style.display = "grid";
-  wrapper.style.gridTemplateRows = "auto 1fr";
-  wrapper.style.gap = "10px";
-  wrapper.style.height = "100%";
+  wrapper.className = "spacerocks-app";
 
   const toolbar = document.createElement("div");
   toolbar.className = "game-toolbar";
   toolbar.classList.add("spacerocks-toolbar");
+  const brand = document.createElement("div");
+  brand.className = "spacerocks-brand";
+  brand.innerHTML = "<i>△</i><span><small>Daemoncade classic</small><strong>Space Rocks!</strong></span>";
   const resetButton = document.createElement("button");
   resetButton.className = "menu-button";
-  resetButton.textContent = "New Game";
+  resetButton.textContent = "New game";
 
   const hyperspaceToggle = document.createElement("label");
   hyperspaceToggle.style.display = "inline-flex";
@@ -57,8 +57,22 @@ export function createApp() {
   sfxToggle.append(sfxInput, sfxText);
 
   const status = document.createElement("div");
-  status.className = "game-status";
-  toolbar.append(resetButton, hyperspaceToggle, sfxToggle, status);
+  status.className = "spacerocks-status";
+  status.innerHTML = '<span><small>Score</small><b data-stat="score">000000</b></span><span><small>High</small><b data-stat="high">000000</b></span><span><small>Wave</small><b data-stat="level">01</b></span><span><small>Ships</small><b data-stat="lives">△ △ △</b></span>';
+  const toolbarActions = document.createElement("div");
+  toolbarActions.className = "spacerocks-actions";
+  const settingsButton = document.createElement("button");
+  settingsButton.className = "icon-button";
+  settingsButton.type = "button";
+  settingsButton.textContent = "⚙";
+  settingsButton.setAttribute("aria-label", "Settings");
+  const fullscreenButton = document.createElement("button");
+  fullscreenButton.className = "icon-button";
+  fullscreenButton.type = "button";
+  fullscreenButton.textContent = "⛶";
+  fullscreenButton.setAttribute("aria-label", "Fullscreen");
+  toolbarActions.append(resetButton, settingsButton, fullscreenButton);
+  toolbar.append(brand, status, toolbarActions);
   wrapper.appendChild(toolbar);
 
   const { content, ctx, view, resizeObserver, clear } = createGameSurface({
@@ -68,13 +82,21 @@ export function createApp() {
   });
   wrapper.appendChild(content);
   content.style.position = "relative";
-  const scoreOverlay = createScoreOverlay({
-    parent: content,
-    getBoard: () => getBoardIdForGame("spacerocks", "classic", "normal"),
-    windowDays: 7,
-    limit: 5,
-  });
-  scoreOverlay.refresh();
+  const screenOverlay = document.createElement("div");
+  screenOverlay.className = "spacerocks-overlay";
+  screenOverlay.innerHTML = '<section><p>Daemoncade vector division</p><h1>Space Rocks!</h1><div class="spacerocks-record" data-overlay-record></div><p class="spacerocks-overlay-copy" data-overlay-copy></p><button class="primary" type="button" data-overlay-action>Launch ship</button><small>Turn: A/D or ←/→ · Thrust: W or ↑ · Fire: Space · Hyperspace: H · Pause: P</small></section>';
+  content.querySelector(".game-surface").appendChild(screenOverlay);
+  const overlayTitle = screenOverlay.querySelector("h1");
+  const overlayCopy = screenOverlay.querySelector("[data-overlay-copy]");
+  const overlayRecord = screenOverlay.querySelector("[data-overlay-record]");
+  const overlayAction = screenOverlay.querySelector("[data-overlay-action]");
+
+  const settingsPanel = document.createElement("div");
+  settingsPanel.className = "spacerocks-settings";
+  settingsPanel.hidden = true;
+  settingsPanel.innerHTML = '<section><button class="settings-close" type="button" aria-label="Close settings">×</button><p>Ship systems</p><h2>Settings</h2><div data-settings-controls></div><small>Hyperspace is powerful, unstable, and entirely optional.</small></section>';
+  settingsPanel.querySelector("[data-settings-controls]").append(hyperspaceToggle, sfxToggle);
+  content.appendChild(settingsPanel);
 
   const stored = localStorage.getItem(SETTINGS_KEY);
   const settings = stored ? { hyperspace: true, sfx: true, ...JSON.parse(stored) } : { hyperspace: true, sfx: true };
@@ -83,6 +105,10 @@ export function createApp() {
 
   const highKey = localStorage.getItem(HIGH_KEY);
   let highScore = highKey ? Number(highKey) : 0;
+  const statScore = status.querySelector('[data-stat="score"]');
+  const statHigh = status.querySelector('[data-stat="high"]');
+  const statLevel = status.querySelector('[data-stat="level"]');
+  const statLives = status.querySelector('[data-stat="lives"]');
 
   const ship = {
     x: view.baseWidth / 2,
@@ -108,7 +134,7 @@ export function createApp() {
   let turnLeft = false;
   let turnRight = false;
   let lastShot = 0;
-  let state = "ready"; // ready | playing | gameover
+  let state = "ready"; // ready | playing | paused | gameover
   let runStart = performance.now();
   let scoreSubmitted = false;
 
@@ -241,7 +267,30 @@ export function createApp() {
   };
 
   const updateStatus = () => {
-    status.textContent = `Lives ${lives} • Score ${score} • Level ${level}`;
+    statScore.textContent = String(score).padStart(6, "0");
+    statHigh.textContent = String(Math.max(score, highScore)).padStart(6, "0");
+    statLevel.textContent = String(level).padStart(2, "0");
+    statLives.textContent = Array.from({ length: Math.max(0, lives) }, () => "△").join(" ") || "—";
+  };
+
+  const syncOverlay = () => {
+    screenOverlay.hidden = state === "playing";
+    if (state === "ready") {
+      overlayTitle.textContent = "Space Rocks!";
+      overlayCopy.textContent = "Clear each field, split the rocks, and survive the next wave.";
+      overlayRecord.textContent = highScore ? `Local high score · ${String(highScore).padStart(6, "0")}` : "No local high score yet";
+      overlayAction.textContent = "Launch ship";
+    } else if (state === "paused") {
+      overlayTitle.textContent = "Paused";
+      overlayCopy.textContent = `Wave ${level} · ${String(score).padStart(6, "0")} points`;
+      overlayRecord.textContent = "Ship systems holding";
+      overlayAction.textContent = "Resume";
+    } else if (state === "gameover") {
+      overlayTitle.textContent = "Game over";
+      overlayCopy.textContent = `Final score · ${String(score).padStart(6, "0")}`;
+      overlayRecord.textContent = score >= highScore && score > 0 ? "New local high score" : `Local best · ${String(highScore).padStart(6, "0")}`;
+      overlayAction.textContent = "Fly again";
+    }
   };
 
   const reset = () => {
@@ -266,6 +315,7 @@ export function createApp() {
     ship.alive = false;
     state = "ready";
     updateStatus();
+    syncOverlay();
   };
 
   const startGame = () => {
@@ -273,7 +323,7 @@ export function createApp() {
     state = "playing";
     runStart = performance.now();
     scoreSubmitted = false;
-    scoreOverlay.hide();
+    screenOverlay.hidden = true;
     lives = 3;
     score = 0;
     level = 1;
@@ -317,6 +367,11 @@ export function createApp() {
         ship.alive = false;
         state = "gameover";
         playSfx(gameOverAudio);
+        if (score > highScore) {
+          highScore = score;
+          localStorage.setItem(HIGH_KEY, String(highScore));
+        }
+        syncOverlay();
       }
     } else {
       const spawn = safeSpawnPoint();
@@ -338,7 +393,7 @@ export function createApp() {
           runMs: Math.floor(performance.now() - runStart),
         }).catch(() => {});
         scoreSubmitted = true;
-        scoreOverlay.refresh();
+        syncOverlay();
       }
       return;
     }
@@ -508,6 +563,7 @@ export function createApp() {
               highScore = score;
               localStorage.setItem(HIGH_KEY, String(highScore));
             }
+            syncOverlay();
           }
         }
       });
@@ -531,6 +587,7 @@ export function createApp() {
             highScore = score;
             localStorage.setItem(HIGH_KEY, String(highScore));
           }
+          syncOverlay();
         }
       }
     });
@@ -566,14 +623,6 @@ export function createApp() {
     ctx.fillRect(0, 0, view.baseWidth, view.baseHeight);
     ctx.strokeStyle = "#7bd5ff";
     ctx.lineWidth = 1.5;
-
-    ctx.fillStyle = "#e6edf6";
-    ctx.font = "13px 'Avenir Next', sans-serif";
-    ctx.textAlign = "left";
-    ctx.fillText(`Score ${score}`, 12, 20);
-    ctx.fillText(`High ${highScore}`, 120, 20);
-    ctx.fillText(`Level ${level}`, 240, 20);
-    ctx.fillText(`Lives ${lives}`, view.baseWidth - 90, 20);
 
     asteroids.forEach((a) => {
       ctx.save();
@@ -620,34 +669,6 @@ export function createApp() {
       ctx.globalAlpha = 1;
     });
 
-    if (state === "ready") {
-      ctx.fillStyle = "rgba(0,0,0,0.7)";
-      ctx.fillRect(0, 0, view.baseWidth, view.baseHeight);
-      ctx.fillStyle = "#e6edf6";
-      ctx.font = "22px 'Avenir Next', sans-serif";
-      ctx.textAlign = "center";
-      ctx.fillText("Space Rocks!", view.baseWidth / 2, view.baseHeight / 2 - 20);
-      ctx.font = "14px 'Avenir Next', sans-serif";
-      ctx.fillText("Press Enter or New Game", view.baseWidth / 2, view.baseHeight / 2 + 6);
-      ctx.fillText("Arrows/WASD to fly, Space to fire", view.baseWidth / 2, view.baseHeight / 2 + 26);
-      scoreOverlay.show("Top Scores", "Last 7 days");
-    }
-
-    if (state === "gameover") {
-      ctx.fillStyle = "rgba(0,0,0,0.7)";
-      ctx.fillRect(0, 0, view.baseWidth, view.baseHeight);
-      ctx.fillStyle = "#e6edf6";
-      ctx.font = "22px 'Avenir Next', sans-serif";
-      ctx.textAlign = "center";
-      ctx.fillText("Game Over", view.baseWidth / 2, view.baseHeight / 2 - 20);
-      ctx.font = "14px 'Avenir Next', sans-serif";
-      ctx.fillText(`Score ${score}  High ${highScore}`, view.baseWidth / 2, view.baseHeight / 2 + 6);
-      ctx.fillText("Press New Game", view.baseWidth / 2, view.baseHeight / 2 + 26);
-      scoreOverlay.show("Top Scores", "Last 7 days");
-    }
-    if (state === "playing") {
-      scoreOverlay.hide();
-    }
   };
 
   document.addEventListener("keydown", (event) => {
@@ -660,6 +681,10 @@ export function createApp() {
     if (key === "r") reset();
     if (key === "h") hyperspace();
     if (key === "enter") startGame();
+    if (key === "p" && (state === "playing" || state === "paused")) {
+      state = state === "playing" ? "paused" : "playing";
+      syncOverlay();
+    }
   }, { signal });
 
   document.addEventListener("keyup", (event) => {
@@ -671,7 +696,33 @@ export function createApp() {
   }, { signal });
 
   resetButton.addEventListener("click", () => {
+    reset();
     startGame();
+  }, { signal });
+
+  overlayAction.addEventListener("click", () => {
+    if (state === "paused") {
+      state = "playing";
+      syncOverlay();
+    } else {
+      startGame();
+    }
+  }, { signal });
+
+  settingsButton.addEventListener("click", () => {
+    settingsPanel.hidden = false;
+  }, { signal });
+
+  settingsPanel.querySelector(".settings-close").addEventListener("click", () => {
+    settingsPanel.hidden = true;
+  }, { signal });
+
+  settingsPanel.addEventListener("click", (event) => {
+    if (event.target === settingsPanel) settingsPanel.hidden = true;
+  }, { signal });
+
+  fullscreenButton.addEventListener("click", () => {
+    window.parent.postMessage({ type: "daemoncade:request-fullscreen" }, window.location.origin);
   }, { signal });
 
   hyperspaceInput.addEventListener("change", () => {
