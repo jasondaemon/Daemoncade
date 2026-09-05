@@ -1,8 +1,8 @@
-import { createGameSurface } from "../daemonos-shared/gameUtils.js";
-import { createAppLoop } from "../daemonos-shared/appPerformance.js";
-import { resourceTracker } from "../daemonos-shared/resourceTracker.js";
-import { audioRegistry } from "../daemonos-shared/audioRegistry.js";
-import { getBoardIdForGame, submitFinalScore, fetchHighScores, getActivePlayerName } from "../daemonos-shared/scoreSystem.js";
+import { createGameSurface } from "../daemonos-shared/gameUtils.js?v=1.0.0-beta.2";
+import { createAppLoop } from "../daemonos-shared/appPerformance.js?v=1.0.0-beta.2";
+import { resourceTracker } from "../daemonos-shared/resourceTracker.js?v=1.0.0-beta.2";
+import { audioRegistry } from "../daemonos-shared/audioRegistry.js?v=1.0.0-beta.2";
+import { getBoardIdForGame, submitFinalScore, fetchHighScores, getActivePlayerName } from "../daemonos-shared/scoreSystem.js?v=1.0.0-beta.2";
 
 const SETTINGS_KEY = "space-defender_settings";
 const HIGH_KEY = "space-defender_highscore";

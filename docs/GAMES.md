@@ -21,7 +21,7 @@ This page is generated from the per-game `game.json` files by `./scripts/build-c
 | Icon | Game | Version | Mobile | About |
 | --- | --- | --- | --- | --- |
 | <img src="../games/racecar/icon.webp" width="48" height="48" alt=""> | [Racecar](../games/racecar/) | `1.0.0-beta.1` | — | Battle traffic or race CPU rivals across six segment-projected night routes with authored curves, drafting, pickups, and changing road conditions. |
-| <img src="../games/space-defender/icon.webp" width="48" height="48" alt=""> | [Space Defender](../games/space-defender/) | `1.0.0-beta.1` | — | Hold the line against marching alien formations, protect your shields, and survive escalating attack waves. |
+| <img src="../games/space-defender/icon.webp" width="48" height="48" alt=""> | [Space Defender](../games/space-defender/) | `1.0.0-beta.2` | — | Hold the line against marching alien formations, protect your shields, and survive escalating attack waves. |
 | <img src="../games/mines/icon.webp" width="48" height="48" alt=""> | [Mines](../games/mines/) | `1.0.0-beta.1` | Yes | Clear the field, mark the mines, and try to beat your best time at every difficulty. |
 | <img src="../games/sinkhole-city/icon.webp" width="48" height="48" alt=""> | [Sinkhole City](../games/sinkhole-city/) | `1.0.0-beta.1` | Yes | Start as a pothole, swallow everything small enough to fit, and grow into a world-eating sinkhole before time runs out. |
 | <img src="../games/blockfall/icon.webp" width="48" height="48" alt=""> | [Blockfall](../games/blockfall/) | `1.0.0-beta.1` | Yes | Stack falling pieces in endless or timed play and chase a high score saved on this device. |
