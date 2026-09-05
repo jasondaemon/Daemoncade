@@ -1,25 +1,5 @@
 <!doctype html>
-<html lang="en">
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-  <meta name="theme-color" content="#07111d">
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; connect-src 'none'; object-src 'none'; base-uri 'none'; form-action 'none'; frame-ancestors 'self'">
-  <title>Mines</title>
-  <link rel="stylesheet" href="game.css">
-</head>
-<body>
-  <main class="game-shell">
-    <header><div><p>JasonDaemon.net Arcade · Puzzle</p><h1>Mines</h1></div><button id="new-game-top" type="button">New field</button></header>
-    <section class="panel">
-      <div class="toolbar"><div class="difficulty" role="group" aria-label="Difficulty"><button class="active" data-difficulty="easy" type="button">Easy</button><button data-difficulty="medium" type="button">Medium</button><button data-difficulty="hard" type="button">Hard</button></div><button id="flag-mode" class="flag-button" type="button" aria-pressed="false">Flag mode</button></div>
-      <div class="readout"><article><span>Mines</span><strong id="mine-count">10</strong></article><article><span>Flags</span><strong id="flag-count">0</strong></article><article><span>Time</span><strong id="timer">0:00</strong></article><article><span>Best</span><strong id="best">—</strong></article></div>
-      <p id="status" class="status" aria-live="polite">Reveal a square to start.</p>
-      <div class="board-wrap"><div id="board" class="board" aria-label="Minefield"></div></div>
-      <p class="hint">Tap to reveal. Use flag mode on touch screens, or right-click to mark a mine.</p>
-    </section>
-  </main>
-  <script src="../shared/scores.js"></script>
-  <script src="game.js"></script>
-</body>
-</html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#07111d"><meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-eval'; style-src 'self'; img-src 'self' data:; connect-src 'none'; media-src 'none'; object-src 'none'; base-uri 'none'; form-action 'none'; frame-ancestors 'self'"><title>iMines</title><link rel="stylesheet" href="../shared/board-games.css?v=1.0.0"><link rel="stylesheet" href="game.css?v=1.0.0-controls"><link rel="stylesheet" href="mobile.css?v=1.0.0"></head>
+<body><main class="shell"><header class="topbar"><div class="title"><p class="eyebrow">JasonDaemon.net Arcade · Puzzle</p><h1>iMines</h1><p>Clear the field, mark every threat, and chase a faster local record.</p></div><div class="controls"><select id="difficulty" aria-label="Field difficulty"><option value="easy">Easy · 9 × 9</option><option value="medium">Medium · 16 × 16</option><option value="hard">Hard · 30 × 16</option><option value="infinite">Infinite sectors</option></select><button id="sound" class="icon-button" type="button" aria-pressed="true" aria-label="Mute sound" title="Mute sound">🔊</button><button id="flag-mode" class="icon-button" type="button" aria-pressed="false" aria-label="Enable flag mode" title="Flag mode">⚑</button><button id="new-game" class="primary" type="button">New field</button></div></header>
+<section class="game-layout"><div class="panel field-panel"><div class="field-heading" aria-live="polite"><strong id="field-label">Easy field</strong><span id="field-progress">71 safe squares remain</span></div><div class="board-wrap"><div id="board" class="board" role="application" tabindex="0" aria-label="Minefield. Use arrow keys to move, Enter to reveal, and F to flag."></div></div><p class="hint">Reveal: click, tap, Enter, or Space · Flag: right-click, hold, or F · Move: arrow keys</p></div>
+<aside class="panel status"><div class="status-grid"><div class="status-card"><span>Remaining</span><strong id="remaining">10</strong></div><div class="status-card"><span>Time</span><strong id="timer">0:00</strong></div><div class="status-card"><span>Best</span><strong id="best">—</strong></div><div class="status-card"><span>Cleared</span><strong id="clear-rate">0%</strong></div></div><div id="result-card" class="result-card" data-state="ready"><span id="result-kicker">Field ready</span><strong id="result-title">Choose a square</strong><p id="status" class="message" aria-live="polite">Your first move and its surrounding squares are always safe.</p></div><div id="stats" class="stats"></div><details><summary>How to play</summary><p>Numbers show how many mines touch a square. Mark likely mines, then reveal every safe square. Activate an open number when its surrounding flags match to clear its remaining neighbors.</p></details></aside></section></main><script src="../shared/scores.js?v=1.0.0"></script><script src="../vendor/pixi/pixi.min.js?v=7.4.3"></script><script src="game.js?v=1.0.0-rc"></script></body></html>
