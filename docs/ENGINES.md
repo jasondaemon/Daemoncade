@@ -4,9 +4,10 @@ Daemoncade vendors runtime dependencies locally. An engine should be adopted whe
 
 ## Available engines
 
-- **Phaser 3.90 (Arcade Physics build):** WebGL-first game framework used by Neon Breaker. Best for action games with many moving bodies, collision rules, effects, multiple levels, or combined keyboard/pointer/touch input.
-- **PixiJS 7.4:** GPU renderer used by Canyon Crawler and Orbit Run. Best when a game needs accelerated presentation but already has suitable game logic and collision handling.
-- **Planck.js:** rigid-body physics used by Pinball. Retain it there; pinball behavior benefits from its dedicated Box2D-style simulation.
+- **Phaser 3.90.0 (Arcade Physics build):** WebGL-first game framework used by Neon Breaker, Racecar, and Circuit Rush. Best for action games with many moving bodies, collision rules, effects, multiple levels, or combined keyboard/pointer/touch input.
+- **PixiJS 7.4.3:** GPU renderer used by Canyon Crawler and Orbit Run. Best when a game needs accelerated presentation but already has suitable game logic and collision handling.
+- **Three.js r185 (0.185.1 distribution):** WebGL 3D renderer used by Space Defender's instanced voxel presentation. Best when real 3D geometry, cameras, materials, or high-volume instancing are integral to the visual design.
+- **Planck.js 0.3.0:** rigid-body physics used by Pinball. Retain it there; pinball behavior benefits from its dedicated Box2D-style simulation.
 - **Native DOM or Canvas:** still appropriate for board games, word games, fixed-grid puzzles, and very small deterministic loops.
 
 ## Phaser migration priority
@@ -27,7 +28,7 @@ Daemoncade vendors runtime dependencies locally. An engine should be adopted whe
 
 | Game | Recommendation |
 | --- | --- |
-| Space Defender | Phaser would help, but the game is already beta; migrate only if performance or planned wave/effect work justifies regression testing. |
+| Space Defender | Already uses a purpose-built Three.js instanced voxel renderer while retaining its deterministic 2D gameplay model. Improve that renderer rather than migrating to Phaser without a concrete gameplay requirement. |
 | Space Rocks! | Phaser is suitable for wraparound bodies and projectiles, but the beta implementation should not be rewritten without a concrete gameplay benefit. |
 | Sinkhole City | Phaser could accelerate rendering and collision queries, but this is a large beta rewrite. Profile first and migrate only around a planned major enhancement. |
 | Casey | Complex custom systems make this a potentially valuable but high-risk migration. Treat it as a dedicated project. |

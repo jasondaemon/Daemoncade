@@ -31,22 +31,32 @@ chess.js
   Chess bundles chess.js by Jeff Hlywa under its two-clause BSD license. The
   copyright, conditions, and disclaimer are retained in
   games/chess/vendor/chess.js.
+  Source: https://github.com/jhlywa/chess.js
 
 Planck.js
-  Pinball bundles Planck.js by Ali Shakiba and Erin Catto under the zlib
+  Pinball bundles Planck.js 0.3.0 by Ali Shakiba and Erin Catto under the zlib
   license. Its license notice is retained in games/pinball/vendor/planck.min.js.
+  Source: https://github.com/shakacode/planck.js
 
 PixiJS
-  A local PixiJS distribution is retained under the MIT License. See
-  games/vendor/pixi/LICENSE.txt.
+  Canyon Crawler and Orbit Run use the local PixiJS 7.4.3 distribution under
+  the MIT License. See games/vendor/pixi/LICENSE.txt.
+  Source: https://github.com/pixijs/pixijs
 
 Phaser
-  Neon Breaker, Racecar, and Circuit Rush use the local Phaser 3 Arcade Physics distribution
-  by Phaser Studio Inc. under the MIT License. See
+  Neon Breaker, Racecar, and Circuit Rush use the local Phaser 3.90.0 Arcade
+  Physics distribution by Phaser Studio Inc. under the MIT License. See
   games/vendor/phaser/LICENSE.md.
+  Source: https://github.com/phaserjs/phaser
   Its Neon Sector, Armored Sector, Hypergrid, and Guardian Core music is
   project-owned and generated with Suno. Web editions are loudness-normalized
   derivatives of the source WAV files.
+
+Three.js
+  Space Defender uses the local Three.js r185 (0.185.1 distribution) under
+  the MIT License for its instanced voxel renderer. See
+  games/vendor/three/LICENSE.txt.
+  Source: https://github.com/mrdoob/three.js
 
 JavaScript Racer
   Racecar's pseudo-3D segment projection is adapted from Jake Gordon's
