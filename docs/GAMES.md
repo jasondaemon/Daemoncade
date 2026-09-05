@@ -10,6 +10,7 @@ This page is generated from the per-game `game.json` files by `./scripts/build-c
 | --- | --- | --- | --- | --- |
 | <img src="../games/circuit-rush/icon.webp" width="48" height="48" alt=""> | [Circuit Rush](../games/circuit-rush/) | `1.2.0` | Yes | Read the entire circuit, master momentum and sliding grip, collect wrenches, and outdrive three rivals across compact arcade championships. |
 | <img src="../games/neon-breaker/icon-1.0.0.png" width="48" height="48" alt=""> | [Neon Breaker](../games/neon-breaker/) | `1.1.1` | Yes | Break luminous formations, chain combos, and bend each run with modern power-ups in a kinetic brick-breaking tribute. |
+| <img src="../games/space-defender/icon.webp" width="48" height="48" alt=""> | [Space Defender](../games/space-defender/) | `1.0.0` | — | Hold the line against marching alien formations, protect your shields, and survive escalating attack waves. |
 | <img src="../games/maze-defense/icon.png" width="48" height="48" alt=""> | [Maze Defense](../games/maze-defense/) | `1.0.0` | Yes | Build the maze as you defend it. Place and upgrade towers, reshape enemy routes, and survive increasingly devious waves. |
 | <img src="../games/chess/icon.webp" width="48" height="48" alt=""> | [Chess](../games/chess/) | `1.0.0` | Yes | Play a complete chess game against a local computer opponent or someone sharing the board. |
 | <img src="../games/checkers/icon.webp" width="48" height="48" alt=""> | [Checkers](../games/checkers/) | `1.0.0` | Yes | Play classic checkers against the computer or share the board with someone beside you. |
@@ -22,7 +23,6 @@ This page is generated from the per-game `game.json` files by `./scripts/build-c
 | Icon | Game | Version | Mobile | About |
 | --- | --- | --- | --- | --- |
 | <img src="../games/racecar/icon.webp" width="48" height="48" alt=""> | [Racecar](../games/racecar/) | `1.0.0-beta.1` | — | Battle traffic or race CPU rivals across six segment-projected night routes with authored curves, drafting, pickups, and changing road conditions. |
-| <img src="../games/space-defender/icon.webp" width="48" height="48" alt=""> | [Space Defender](../games/space-defender/) | `1.0.0` | — | Hold the line against marching alien formations, protect your shields, and survive escalating attack waves. |
 | <img src="../games/mines/icon.webp" width="48" height="48" alt=""> | [Mines](../games/mines/) | `1.0.0-beta.1` | Yes | Clear the field, mark the mines, and try to beat your best time at every difficulty. |
 | <img src="../games/sinkhole-city/icon.webp" width="48" height="48" alt=""> | [Sinkhole City](../games/sinkhole-city/) | `1.0.0-beta.1` | Yes | Start as a pothole, swallow everything small enough to fit, and grow into a world-eating sinkhole before time runs out. |
 | <img src="../games/blockfall/icon.webp" width="48" height="48" alt=""> | [Blockfall](../games/blockfall/) | `1.0.0-beta.1` | Yes | Stack falling pieces in endless or timed play and chase a high score saved on this device. |
