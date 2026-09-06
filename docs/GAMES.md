@@ -24,6 +24,7 @@ This page is generated from the per-game `game.json` files by `./scripts/build-c
 
 | Icon | Game | Version | Mobile | About |
 | --- | --- | --- | --- | --- |
+| <img src="../games/blitz/icon.webp" width="48" height="48" alt=""> | [Blitz!](../games/blitz/) | `0.5.0-beta.1` | Yes | Lead a 3D strike squad through an industrial waterfront, build its firepower, dodge return fire, and break the final fortress. |
 | <img src="../games/racecar/icon.webp" width="48" height="48" alt=""> | [Racecar](../games/racecar/) | `1.0.0-beta.1` | — | Battle traffic or race CPU rivals across six segment-projected night routes with authored curves, drafting, pickups, and changing road conditions. |
 | <img src="../games/sinkhole-city/icon.webp" width="48" height="48" alt=""> | [Sinkhole City](../games/sinkhole-city/) | `1.0.0-beta.1` | Yes | Start as a pothole, swallow everything small enough to fit, and grow into a world-eating sinkhole before time runs out. |
 | <img src="../games/dots-and-boxes/icon.webp" width="48" height="48" alt=""> | [Dots and Boxes](../games/dots-and-boxes/) | `1.0.0-beta.1` | Yes | Draw one line at a time, close boxes, and hold the turn long enough to own the board. |
@@ -32,7 +33,6 @@ This page is generated from the per-game `game.json` files by `./scripts/build-c
 
 | Icon | Game | Version | Mobile | About |
 | --- | --- | --- | --- | --- |
-| <img src="../games/blitz/icon.webp" width="48" height="48" alt=""> | [Blitz!](../games/blitz/) | `0.1.0-alpha.1` | — | Lead a growing combat swarm through a four-lane neon rush of gates, enemies, bosses, and persistent upgrades. |
 | <img src="../games/spacefighter/icon.webp" width="48" height="48" alt=""> | [Spacefighter](../games/spacefighter/) | `0.1.0-alpha.1` | — | Thread a nimble fighter through dense enemy patterns, collect weapon upgrades, and unleash missiles and bombs. |
 | <img src="../games/canyon-crawler/icon.webp" width="48" height="48" alt=""> | [Canyon Crawler](../games/canyon-crawler/) | `0.1.0-alpha.1` | — | Defend your rover from segmented trail worms and the hazards filling the canyon wash. |
 | <img src="../games/orbit-run/icon.webp" width="48" height="48" alt=""> | [Orbit Run](../games/orbit-run/) | `0.1.0-alpha.1` | — | Circle the tunnel, fire inward, and survive enemies spiraling out from its center. |

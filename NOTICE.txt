@@ -53,10 +53,17 @@ Phaser
   derivatives of the source WAV files.
 
 Three.js
-  Space Defender uses the local Three.js r185 (0.185.1 distribution) under
-  the MIT License for its instanced voxel renderer. See
+  Blitz! and Space Defender use the local Three.js r185 (0.185.1 distribution)
+  under the MIT License for their 3D renderers. See
   games/vendor/three/LICENSE.txt.
   Source: https://github.com/mrdoob/three.js
+
+Kenney City Kit (Industrial)
+  Blitz! includes selected industrial buildings, tanks, towers, chimneys, and
+  shipping containers from Kenney's City Kit (Industrial), released under
+  Creative Commons Zero (CC0 1.0). The source license is retained alongside
+  the models in games/blitz/assets/models/industrial/LICENSE.txt.
+  Source: https://kenney.nl/assets/city-kit-industrial
 
 JavaScript Racer
   Racecar's pseudo-3D segment projection is adapted from Jake Gordon's

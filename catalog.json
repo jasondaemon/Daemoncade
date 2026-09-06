@@ -38,18 +38,19 @@
     {
       "title": "Blitz!",
       "slug": "blitz",
-      "version": "0.1.0-alpha.1",
-      "release_stage": "alpha",
+      "version": "0.5.0-beta.1",
+      "release_stage": "beta",
       "order": 25,
       "category": "Arcade",
       "source": "DaemonOS",
       "players": "Solo",
       "controls": "Keyboard, mouse, or touch",
-      "summary": "Lead a growing combat swarm through a four-lane neon rush of gates, enemies, bosses, and persistent upgrades.",
+      "summary": "Lead a 3D strike squad through an industrial waterfront, build its firepower, dodge return fire, and break the final fortress.",
       "accent": "cyan",
       "mark": "ϟ",
       "icon": "icon.webp",
-      "metric": "score"
+      "metric": "score",
+      "mobile_ready": true
     },
     {
       "title": "Racecar",

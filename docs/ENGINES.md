@@ -6,7 +6,7 @@ Daemoncade vendors runtime dependencies locally. An engine should be adopted whe
 
 - **Phaser 3.90.0 (Arcade Physics build):** WebGL-first game framework used by Neon Breaker, Racecar, and Circuit Rush. Best for action games with many moving bodies, collision rules, effects, multiple levels, or combined keyboard/pointer/touch input.
 - **PixiJS 7.4.3:** GPU renderer used by Blockfall, Canyon Crawler, Orbit Run, and iMines. Best when a game needs accelerated presentation but already has suitable game logic and collision handling.
-- **Three.js r185 (0.185.1 distribution):** WebGL 3D renderer used by Space Defender's instanced voxel presentation. Best when real 3D geometry, cameras, materials, or high-volume instancing are integral to the visual design.
+- **Three.js r185 (0.185.1 distribution):** WebGL 3D renderer used by Blitz!'s perspective runner world and Space Defender's instanced voxel presentation. Best when real 3D geometry, cameras, materials, or high-volume instancing are integral to the visual design.
 - **Planck.js 0.3.0:** rigid-body physics used by Pinball. Retain it there; pinball behavior benefits from its dedicated Box2D-style simulation.
 - **Native DOM or Canvas:** still appropriate for board games, word games, fixed-grid puzzles, and very small deterministic loops.
 
@@ -32,12 +32,12 @@ Daemoncade vendors runtime dependencies locally. An engine should be adopted whe
 | Space Rocks! | Phaser is suitable for wraparound bodies and projectiles, but the beta implementation should not be rewritten without a concrete gameplay benefit. |
 | Sinkhole City | Phaser could accelerate rendering and collision queries, but this is a large beta rewrite. Profile first and migrate only around a planned major enhancement. |
 | Casey | Complex custom systems make this a potentially valuable but high-risk migration. Treat it as a dedicated project. |
-| Blitz! | Phaser may help the combat loop, but its existing art and progression architecture should be assessed before replacing the renderer. |
 
 ### Keep the current approach
 
 | Game | Reason |
 | --- | --- |
+| Blitz! | Uses Three.js for its true-perspective road, animated formations, physical gates, projectiles, and authored fortress mission. |
 | Canyon Crawler | Already uses the vendored PixiJS renderer. Improve its existing implementation rather than migrate by default. |
 | Orbit Run | Already uses PixiJS and has a suitable custom circular movement model. |
 | Pinball | Already uses Planck.js, which is a better fit for physical pinball behavior than Arcade Physics. |

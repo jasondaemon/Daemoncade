@@ -1,1 +1,45 @@
-<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta http-equiv="Content-Security-Policy" content="default-src 'self';style-src 'self';script-src 'self';img-src 'self' data:;connect-src 'none';media-src 'self';object-src 'none';frame-ancestors 'self'"><title>Blitz!</title><link rel="stylesheet" href="../daemonos-shared/standalone.css"></head><body><main id="game-root"></main><script src="../shared/scores.js"></script><script type="module" src="launch.js"></script></body></html>
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self';style-src 'self';script-src 'self';img-src 'self' data: blob:;media-src 'self';connect-src 'self';object-src 'none';frame-ancestors 'self'">
+  <title>Blitz!</title>
+  <link rel="stylesheet" href="game.css?v=0.5.0-beta.1">
+</head>
+<body>
+  <main class="shell">
+    <section class="cabinet">
+      <div id="game-host" role="application" aria-label="Blitz squad runner game field"></div>
+      <header id="hud" class="hud" aria-live="polite">
+        <div><span>FORCE</span><strong id="force">12</strong></div>
+        <div><span>WEAPON</span><strong id="power">RIFLE</strong></div>
+        <div class="score"><span>SCORE</span><strong id="score">000000</strong></div>
+        <div><span>ZONE</span><strong id="zone">1</strong></div>
+      </header>
+      <div id="banner" class="banner" hidden></div>
+      <section id="overlay" class="overlay">
+        <div class="overlay-card">
+          <p id="eyebrow">Daemoncade Rapid Response</p>
+          <h1 id="overlay-title">BLITZ!</h1>
+          <p id="overlay-copy">Build the squad. Break weapon crates. Dodge incoming fire. Reach the fortress.</p>
+          <div id="mode-picker" class="mode-picker" aria-label="Difficulty">
+            <button type="button" data-difficulty="easy">CADET</button>
+            <button type="button" data-difficulty="normal" class="active">FIELD</button>
+            <button type="button" data-difficulty="hard">BLITZ</button>
+          </div>
+          <button id="start" type="button" class="start">DEPLOY</button>
+          <small>Move: A D / ← → / drag · Aim by steering · Dodge red fire · P pauses</small>
+        </div>
+      </section>
+      <nav class="cabinet-actions" aria-label="Game controls">
+        <button id="sound" type="button" aria-label="Toggle sound" title="Sound">🔊</button>
+        <button id="pause" type="button" aria-label="Pause" title="Pause">Ⅱ</button>
+        <button id="fullscreen" type="button" aria-label="Fullscreen" title="Fullscreen">⛶</button>
+      </nav>
+    </section>
+  </main>
+  <script src="../shared/scores.js?v=1.0.0"></script>
+  <script type="module" src="game.js?v=0.5.0-beta.1"></script>
+</body>
+</html>
