@@ -65,6 +65,13 @@ Kenney City Kit (Industrial)
   the models in games/blitz/assets/models/industrial/LICENSE.txt.
   Source: https://kenney.nl/assets/city-kit-industrial
 
+Quaternius Toon Shooter Game Kit
+  Blitz! includes the Soldier and Enemy animated character models from the
+  Toon Shooter Game Kit by Quaternius, released under Creative Commons Zero
+  (CC0 1.0). Source and license details are retained alongside the models in
+  games/blitz/assets/models/quaternius-toon-shooter/README.txt.
+  Source: https://quaternius.com/packs/toonshootergamekit.html
+
 JavaScript Racer
   Racecar's pseudo-3D segment projection is adapted from Jake Gordon's
   JavaScript Racer, distributed under the MIT License.

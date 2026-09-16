@@ -3,43 +3,42 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self';style-src 'self';script-src 'self';img-src 'self' data: blob:;media-src 'self';connect-src 'self';object-src 'none';frame-ancestors 'self'">
-  <title>Blitz!</title>
-  <link rel="stylesheet" href="game.css?v=0.5.0-beta.1">
+  <meta name="theme-color" content="#09202b">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self';style-src 'self';script-src 'self';img-src 'self' data: blob:;media-src 'self';connect-src 'self' blob:;object-src 'none';frame-ancestors 'self'">
+  <title>Blitz! · Harbor Strike</title>
+  <link rel="stylesheet" href="game.css?v=1.0.0">
 </head>
 <body>
   <main class="shell">
-    <section class="cabinet">
-      <div id="game-host" role="application" aria-label="Blitz squad runner game field"></div>
-      <header id="hud" class="hud" aria-live="polite">
-        <div><span>FORCE</span><strong id="force">12</strong></div>
-        <div><span>WEAPON</span><strong id="power">RIFLE</strong></div>
-        <div class="score"><span>SCORE</span><strong id="score">000000</strong></div>
-        <div><span>ZONE</span><strong id="zone">1</strong></div>
+    <section class="cabinet" aria-label="Blitz Harbor Strike">
+      <div id="game-host" tabindex="0" role="application" aria-label="Battlefield. Drag to steer, or use A and D or arrow keys. Space activates overdrive. P pauses."></div>
+      <div class="top-shade"></div>
+      <header class="hud">
+        <div class="mission-top"><span id="district">01 / THE DOCKS</span><span id="progress-label">INSERTION</span></div>
+        <progress id="progress" max="100" value="0" aria-label="Mission progress"></progress>
+        <div class="instruments"><div class="force"><span>SQUAD</span><strong id="force">12</strong></div><div class="weapon"><span>FIREPOWER</span><strong id="power">ASSAULT</strong><span id="boost-state">AUTO FIRE</span></div><div class="score"><span>SCORE</span><strong id="score">00000</strong></div></div>
       </header>
-      <div id="banner" class="banner" hidden></div>
-      <section id="overlay" class="overlay">
+      <div id="boss-hud" class="boss-hud" hidden><div><span id="boss-name">COMMAND TANK</span><span id="boss-time">45s</span></div><progress id="boss-health" value="100" max="100" aria-label="Boss health"></progress></div>
+      <nav class="cabinet-actions" aria-label="Game controls"><button id="pause" title="Pause (P)" aria-label="Pause">Ⅱ</button><button id="sound" title="Sound" aria-label="Mute sound">♪</button><button id="fullscreen" title="Fullscreen" aria-label="Fullscreen">⛶</button></nav>
+      <div id="banner" class="banner" role="status" aria-live="polite" hidden></div>
+      <div class="bottom-hud"><span id="hint">DRAG TO STEER · AUTO FIRE</span><button id="overdrive" disabled title="Overdrive (Space)"><span>ϟ OVERDRIVE</span><span id="charge">0%</span><progress id="energy" max="100" value="0" aria-label="Overdrive charge"></progress></button></div>
+      <section id="overlay" class="overlay" aria-labelledby="overlay-title">
         <div class="overlay-card">
-          <p id="eyebrow">Daemoncade Rapid Response</p>
-          <h1 id="overlay-title">BLITZ!</h1>
-          <p id="overlay-copy">Build the squad. Break weapon crates. Dodge incoming fire. Reach the fortress.</p>
-          <div id="mode-picker" class="mode-picker" aria-label="Difficulty">
-            <button type="button" data-difficulty="easy">CADET</button>
-            <button type="button" data-difficulty="normal" class="active">FIELD</button>
-            <button type="button" data-difficulty="hard">BLITZ</button>
-          </div>
-          <button id="start" type="button" class="start">DEPLOY</button>
-          <small>Move: A D / ← → / drag · Aim by steering · Dodge red fire · P pauses</small>
+          <p id="eyebrow">HARBOR STRIKE</p><h1 id="overlay-title">BLITZ<span>!</span></h1>
+          <p id="overlay-copy" hidden></p>
+          <div id="campaign-status" class="campaign-status"><span id="stage-number">STAGE 01 / 03</span><strong id="stage-name">Harbor Breach</strong><div class="campaign-track" aria-hidden="true"><i></i><i></i><i></i></div></div>
+          <div id="mode-picker" class="mode-picker" role="group" aria-label="Difficulty"><button data-difficulty="easy">EASY</button><button data-difficulty="normal">NORMAL</button><button data-difficulty="hard">HARD</button></div>
+          <div id="result" class="result" hidden></div>
+          <button id="start" class="start" disabled>PREPARING SQUAD…</button>
+          <button id="menu" class="menu-button" hidden>MAIN MENU</button>
+          <small id="controls">Drag or ← → to move · Firing is automatic</small>
+          <details class="preferences"><summary>Settings & controls</summary><div class="settings"><label><input id="reduced" type="checkbox"> Reduced effects</label><label>Graphics <select id="quality"><option value="auto">High</option><option value="low">Performance</option></select></label></div><p class="control-guide">Move: drag, A / D, or ← / →<br>Overdrive: Space · Pause: P / Esc</p></details>
+          <a class="back-link" href="../../" aria-label="Back to games">← Games</a>
         </div>
       </section>
-      <nav class="cabinet-actions" aria-label="Game controls">
-        <button id="sound" type="button" aria-label="Toggle sound" title="Sound">🔊</button>
-        <button id="pause" type="button" aria-label="Pause" title="Pause">Ⅱ</button>
-        <button id="fullscreen" type="button" aria-label="Fullscreen" title="Fullscreen">⛶</button>
-      </nav>
     </section>
   </main>
   <script src="../shared/scores.js?v=1.0.0"></script>
-  <script type="module" src="game.js?v=0.5.0-beta.1"></script>
+  <script type="module" src="game.js?v=1.0.0"></script>
 </body>
 </html>

@@ -10,6 +10,7 @@ This page is generated from the per-game `game.json` files by `./scripts/build-c
 | --- | --- | --- | --- | --- |
 | <img src="../games/circuit-rush/icon.webp" width="48" height="48" alt=""> | [Circuit Rush](../games/circuit-rush/) | `1.2.0` | Yes | Read the entire circuit, master momentum and sliding grip, collect wrenches, and outdrive three rivals across compact arcade championships. |
 | <img src="../games/neon-breaker/icon-1.0.0.png" width="48" height="48" alt=""> | [Neon Breaker](../games/neon-breaker/) | `1.1.1` | Yes | Break luminous formations, chain combos, and bend each run with modern power-ups in a kinetic brick-breaking tribute. |
+| <img src="../games/blitz/icon.webp" width="48" height="48" alt=""> | [Blitz!](../games/blitz/) | `1.0.0` | Yes | Lead an animated strike squad through three harbor operations. Recruit through math gates, unlock four weapons, dodge aimed volleys, and defeat the command tanks. |
 | <img src="../games/space-defender/icon.webp" width="48" height="48" alt=""> | [Space Defender](../games/space-defender/) | `1.0.0` | — | Hold the line against marching alien formations, protect your shields, and survive escalating attack waves. |
 | <img src="../games/maze-defense/icon.png" width="48" height="48" alt=""> | [Maze Defense](../games/maze-defense/) | `1.0.0` | Yes | Build the maze as you defend it. Place and upgrade towers, reshape enemy routes, and survive increasingly devious waves. |
 | <img src="../games/mines/icon.webp" width="48" height="48" alt=""> | [iMines](../games/mines/) | `1.0.0` | Yes | Clear classic minefields for faster times or expand an endless world of connected sectors. |
@@ -24,7 +25,6 @@ This page is generated from the per-game `game.json` files by `./scripts/build-c
 
 | Icon | Game | Version | Mobile | About |
 | --- | --- | --- | --- | --- |
-| <img src="../games/blitz/icon.webp" width="48" height="48" alt=""> | [Blitz!](../games/blitz/) | `0.5.0-beta.1` | Yes | Lead a 3D strike squad through an industrial waterfront, build its firepower, dodge return fire, and break the final fortress. |
 | <img src="../games/racecar/icon.webp" width="48" height="48" alt=""> | [Racecar](../games/racecar/) | `1.0.0-beta.1` | — | Battle traffic or race CPU rivals across six segment-projected night routes with authored curves, drafting, pickups, and changing road conditions. |
 | <img src="../games/sinkhole-city/icon.webp" width="48" height="48" alt=""> | [Sinkhole City](../games/sinkhole-city/) | `1.0.0-beta.1` | Yes | Start as a pothole, swallow everything small enough to fit, and grow into a world-eating sinkhole before time runs out. |
 | <img src="../games/dots-and-boxes/icon.webp" width="48" height="48" alt=""> | [Dots and Boxes](../games/dots-and-boxes/) | `1.0.0-beta.1` | Yes | Draw one line at a time, close boxes, and hold the turn long enough to own the board. |
