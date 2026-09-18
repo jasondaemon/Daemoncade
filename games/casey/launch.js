@@ -1,1 +1,1 @@
-import{createApp}from"./casey.js";import{mount}from"../daemonos-shared/bootstrap.js";mount(createApp);
+import{createApp}from"./casey.js?v=18";import{mount}from"../daemonos-shared/bootstrap.js";mount(createApp);

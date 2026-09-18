@@ -20,6 +20,7 @@ This page is generated from the per-game `game.json` files by `./scripts/build-c
 | <img src="../games/connect-four/icon.webp" width="48" height="48" alt=""> | [Connect Four](../games/connect-four/) | `1.0.0` | Yes | Build a line of four against the computer or someone sharing your screen. |
 | <img src="../games/tic-tac-toe/icon.webp" width="48" height="48" alt=""> | [Tic-Tac-Toe](../games/tic-tac-toe/) | `1.0.0` | Yes | Settle a quick round against three levels of computer play or a local opponent. |
 | <img src="../games/space-rocks/icon.webp" width="48" height="48" alt=""> | [Space Rocks!](../games/space-rocks/) | `1.0.0` | — | Pilot a vector ship through splitting asteroids, UFOs, hyperspace jumps, and escalating waves. |
+| <img src="../games/casey/icon.webp" width="48" height="48" alt=""> | [Casey](../games/casey/) | `1.0.0` | — | Keep Casey fueled and outmaneuver a pack of colorful off-road rivals across rugged 3D trails. |
 
 ## Beta
 
@@ -40,7 +41,6 @@ This page is generated from the per-game `game.json` files by `./scripts/build-c
 | <img src="../games/hangman/icon.webp" width="48" height="48" alt=""> | [Hangman](../games/hangman/) | `0.1.0-alpha.1` | Yes | Solve a random phrase or let someone nearby enter a secret one for you. |
 | <img src="../games/paddle-duel/icon.webp" width="48" height="48" alt=""> | [Paddle Duel](../games/paddle-duel/) | `0.1.0-alpha.1` | — | Practice against the wall, challenge the computer, or share the keyboard for a local paddle match. |
 | <img src="../games/pinball/icon.webp" width="48" height="48" alt=""> | [Pinball](../games/pinball/) | `0.1.0-alpha.1` | — | Launch into a neon physics table with bumpers, slingshots, ball saves, and multiball. |
-| <img src="../games/casey/icon.webp" width="48" height="48" alt=""> | [Casey](../games/casey/) | `0.1.0-alpha.1` | — | Guide an off-road hero through multiple maze routes, power tires, rivals, and roadside bonuses. |
 | <img src="../games/missiles-away/icon.webp" width="48" height="48" alt=""> | [Missiles Away](../games/missiles-away/) | `0.1.0-alpha.1` | — | Defend cities and missile silos through escalating barrages, bombers, smart weapons, and MIRVs. |
 | <img src="../games/chilopodophobia/icon.webp" width="48" height="48" alt=""> | [Chilopodophobia](../games/chilopodophobia/) | `0.1.0-alpha.1` | — | Blast a splitting centipede through mushrooms while spiders, fleas, and scorpions invade the field. |
 | <img src="../games/road-hopper/icon.webp" width="48" height="48" alt=""> | [Road Hopper](../games/road-hopper/) | `0.1.0-alpha.1` | — | Cross increasingly busy lanes, reach safety, and keep your remaining lives intact. |

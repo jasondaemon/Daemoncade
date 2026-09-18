@@ -7,6 +7,7 @@ export function parseMaze(layout) {
   let playerStart = null;
   const enemyStarts = [];
   let garage = null;
+  const garageTiles = [];
   let gateTiles = [];
   let bonusTile = null;
 
@@ -25,7 +26,10 @@ export function parseMaze(layout) {
       if (ch === "o") powers.add(`${c},${r}`);
       if (ch === "P") playerStart = { c, r };
       if (ch === "E") enemyStarts.push({ c, r });
-      if (ch === "G") garage = { c, r };
+      if (ch === "G") {
+        garage = { c, r };
+        garageTiles.push({ c, r });
+      }
       if (ch === "=") gateTiles.push({ c, r });
       if (ch === "B") bonusTile = { c, r };
     }
@@ -46,6 +50,7 @@ export function parseMaze(layout) {
       { c: 15, r: 16 },
     ],
     garage: garage || { c: 13, r: 15 },
+    garageTiles,
     gateTiles,
     bonusTile: bonusTile || { c: 14, r: 19 },
   };

@@ -38,11 +38,11 @@ const maze2 = [
   "############################",
   "#............##............#",
   "#.####.##.########.##.####.#",
-  "#o....##....##....##....o..#",
+  "#o....##....##    ##....o..#",
   "#.####.##.########.##.####.#",
   "#..........................#",
   "#.##.####.######.####.##..##",
-  "#..#......##..##......#..###",
+  "#..#......##  ##......#..###",
   "##.###.##########.###.###.##",
   "#............##............#",
   "#.####.#####.##.#####.####.#",
@@ -58,11 +58,11 @@ const maze2 = [
   "#.####.#####.##.#####.####.#",
   "#............##............#",
   "##.###.##########.###.###.##",
-  "#..#......##..##......#..###",
+  "#..#......##  ##......#..###",
   "#.##.####.######.####.##..##",
   "#..........................#",
   "#.####.##.########.##.####.#",
-  "#o....##....##....##....o..#",
+  "#o....##....##    ##....o..#",
   "#.####.##.########.##.####.#",
   "#....P...............E.....#",
   "############################",
@@ -188,5 +188,38 @@ export function validateMazes() {
         throw new Error(`Maze ${maze.id} row ${idx} expected ${COLS} cols, got ${row.length}`);
       }
     });
+    const start = findTile(maze.layout, "P");
+    if (!start) throw new Error(`Maze ${maze.id} has no player start`);
+    const reachable = floodFill(maze.layout, start);
+    const stranded = [];
+    maze.layout.forEach((row, r) => {
+      [...row].forEach((cell, c) => {
+        if ((cell === "." || cell === "o" || cell === "B") && !reachable.has(`${c},${r}`)) stranded.push(`${c},${r}`);
+      });
+    });
+    if (stranded.length) throw new Error(`Maze ${maze.id} has unreachable pickups at ${stranded.join(" ")}`);
   });
+}
+
+function findTile(layout, target) {
+  for (let r = 0; r < layout.length; r += 1) {
+    const c = layout[r].indexOf(target);
+    if (c >= 0) return { c, r };
+  }
+  return null;
+}
+
+function floodFill(layout, start) {
+  const seen = new Set([`${start.c},${start.r}`]);
+  const queue = [start];
+  while (queue.length) {
+    const tile = queue.shift();
+    for (const [dc, dr] of [[0, -1], [0, 1], [-1, 0], [1, 0]]) {
+      const c = tile.c + dc, r = tile.r + dr, key = `${c},${r}`;
+      if (r < 0 || r >= layout.length || c < 0 || c >= layout[0].length || seen.has(key)) continue;
+      if (layout[r][c] === "#" || layout[r][c] === "=") continue;
+      seen.add(key); queue.push({ c, r });
+    }
+  }
+  return seen;
 }

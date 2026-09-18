@@ -1,4 +1,4 @@
-export function createInput({ root, onDirection, onPause, onStart, onToggleMute }) {
+export function createInput({ root, onDirection, onPause, onStart, onToggleMute, onBoost }) {
   const controller = new AbortController();
   const { signal } = controller;
   const isTouch = window.matchMedia?.("(pointer: coarse)")?.matches || navigator.maxTouchPoints > 0;
@@ -32,6 +32,11 @@ export function createInput({ root, onDirection, onPause, onStart, onToggleMute 
       onStart?.();
       return;
     }
+    if ((key === " " || key === "shift") && down) {
+      event.preventDefault();
+      if (!event.repeat) onBoost?.();
+      return;
+    }
     const dir = dirForKey(key);
     if (!dir) return;
     event.preventDefault();
@@ -46,9 +51,6 @@ export function createInput({ root, onDirection, onPause, onStart, onToggleMute 
       if (sameDir(state.heldDir, dir)) {
         const remaining = Array.from(pressed).map(dirForKey).filter(Boolean);
         state.heldDir = remaining[0] || null;
-        if (!state.heldDir) {
-          state.bufferedDir = { x: 0, y: 0 };
-        }
       }
     }
   };
@@ -81,14 +83,12 @@ export function createInput({ root, onDirection, onPause, onStart, onToggleMute 
         event.preventDefault();
         if (sameDir(state.heldDir, btn.dir)) {
           state.heldDir = null;
-          state.bufferedDir = { x: 0, y: 0 };
         }
       }, { signal });
       button.addEventListener("pointercancel", (event) => {
         event.preventDefault();
         if (sameDir(state.heldDir, btn.dir)) {
           state.heldDir = null;
-          state.bufferedDir = { x: 0, y: 0 };
         }
       }, { signal });
       dpad.appendChild(button);
@@ -105,6 +105,13 @@ export function createInput({ root, onDirection, onPause, onStart, onToggleMute 
     pauseBtn.textContent = "Pause";
     pauseBtn.addEventListener("click", () => onPause?.(), { signal });
     root.appendChild(pauseBtn);
+
+    const boostBtn = document.createElement("button");
+    boostBtn.type = "button";
+    boostBtn.className = "casey-boost-button";
+    boostBtn.textContent = "4×4 Boost";
+    boostBtn.addEventListener("click", () => onBoost?.(), { signal });
+    root.appendChild(boostBtn);
   }
 
   return {

@@ -24,6 +24,12 @@ export const EAT_SCORES = [200, 400, 800, 1600];
 
 export const LEVEL_SPEED_STEP = 3;
 export const FRIGHT_BLINK_TIME = 2.2;
+export const FLOW_WINDOW = 1.45;
+export const MAX_FLOW_MULTIPLIER = 5;
+export const RAMP_AIR_TIME = 0.82;
+export const BOOST_DURATION = 3.2;
+export const BOOST_SPEED_MULTIPLIER = 1.65;
+export const BOOST_MIN_CHARGE = 35;
 
 export const SCATTER_CHASE_SCHEDULE = [
   { mode: "scatter", duration: 7 },
@@ -49,3 +55,38 @@ export const OFFROAD_PARTS = [
 export const SETTINGS_KEY = "casey.settings";
 export const HIGHSCORE_KEY = "casey.highscore";
 export const HIGHSCORES_KEY = "casey.highscores";
+export const DIFFICULTY_HIGHSCORES_KEY = "casey.highscores.byDifficulty";
+export const DIFFICULTY_KEY = "casey.difficulty";
+
+export const DIFFICULTIES = {
+  easy: {
+    id: "easy",
+    label: "Sunday Drive",
+    rating: "★",
+    description: "Jeeps wander, hesitate, and give Casey more room.",
+    intelligence: "local",
+    mistakeRate: 0.42,
+    speed: 0.9,
+    releaseDelay: 1.18,
+  },
+  normal: {
+    id: "normal",
+    label: "Trail Rated",
+    rating: "★★",
+    description: "Balanced rivals with distinct pursuit personalities.",
+    intelligence: "local",
+    mistakeRate: 0.08,
+    speed: 1,
+    releaseDelay: 1,
+  },
+  hard: {
+    id: "hard",
+    label: "Black Diamond",
+    rating: "★★★",
+    description: "Jeeps read the maze and hunt by the shortest routes.",
+    intelligence: "path",
+    mistakeRate: 0,
+    speed: 1.07,
+    releaseDelay: 0.78,
+  },
+};
