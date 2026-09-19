@@ -8,7 +8,11 @@ python3 scripts/build-game-apps.py
 ```
 
 The shared host at `games/shared/game-app.*` reserves a control row outside the
-iframe. A per-game manifest identity and scope keep installed games distinct.
+iframe in ordinary browser mode. Native fullscreen and Home Screen launches
+hide that row entirely and give the space to the game. Leave native fullscreen
+with Escape / the browser's system control or the game's fullscreen toggle;
+leave the installed app using the phone's app switcher. System safe areas remain
+respected. A per-game manifest identity and scope keep installed games distinct.
 Launch URLs omit the one-time `?install=1` instructions parameter. No service
 worker is installed: internet access is required and game updates use normal
 HTTP loading, avoiding a second offline cache/version lifecycle.

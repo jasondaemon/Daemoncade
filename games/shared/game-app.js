@@ -2,13 +2,14 @@
 (() => {
   'use strict';
   const frame=document.querySelector('#app-game'),guide=document.querySelector('#app-guide');
-  const standalone=matchMedia('(display-mode: standalone)').matches || navigator.standalone===true;
+  const standaloneMode=matchMedia('(display-mode: standalone)'),fullscreenMode=matchMedia('(display-mode: fullscreen)');
+  const standalone=standaloneMode.matches || navigator.standalone===true;
   const racecar=location.pathname.split('/').includes('racecar');
   const size=()=>document.documentElement.style.setProperty('--app-height',`${visualViewport?.height || innerHeight}px`);
   size();addEventListener('resize',size);visualViewport?.addEventListener('resize',size);
   document.querySelector('#app-help').onclick=()=>guide.showModal();
   document.querySelector('#guide-close').onclick=()=>{guide.close();frame.focus();};
-  if(standalone) document.querySelector('#install-help').textContent='You’re playing from the Home Screen. Use Arcade to return to the game collection, or your phone’s app switcher to leave.';
+  if(standalone) document.querySelector('#install-help').textContent='You’re playing from the Home Screen. Use your phone’s app switcher to leave. Career backup and restore are available in the game’s Settings.';
   document.querySelector('#racecar-transfer').hidden=!racecar;
   document.querySelector('#other-transfer').hidden=racecar;
   if(new URLSearchParams(location.search).has('install')&&!standalone)guide.showModal();
@@ -33,7 +34,13 @@
     }catch{/* Browser permission/support varies; do not claim fullscreen succeeded. */}
   };
   fullscreen.onclick=toggleFullscreen;
-  const sync=()=>fullscreen.textContent=(document.fullscreenElement || document.webkitFullscreenElement)?'Exit fullscreen':'Fullscreen';
+  const sync=()=>{
+    const nativeFullscreen=Boolean(document.fullscreenElement || document.webkitFullscreenElement);
+    fullscreen.textContent=nativeFullscreen?'Exit fullscreen':'Fullscreen';
+    document.documentElement.classList.toggle('app-immersive',nativeFullscreen || standaloneMode.matches || fullscreenMode.matches || navigator.standalone===true);
+    size();
+  };
+  sync();standaloneMode.addEventListener('change',sync);fullscreenMode.addEventListener('change',sync);
   document.addEventListener('fullscreenchange',sync);document.addEventListener('webkitfullscreenchange',sync);
   addEventListener('message',event=>{
     if(event.origin===location.origin && event.source===frame.contentWindow && event.data?.type==='daemoncade:request-fullscreen')toggleFullscreen();

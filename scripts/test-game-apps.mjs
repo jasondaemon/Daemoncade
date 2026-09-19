@@ -33,12 +33,24 @@ try {
   const geometry=await page.evaluate(()=>({bar:document.querySelector('.app-bar').getBoundingClientRect().bottom,frame:document.querySelector('iframe').getBoundingClientRect().toJSON(),height:innerHeight,scroll:document.documentElement.scrollHeight}));
   assert.ok(geometry.frame.y>=geometry.bar);assert.ok(geometry.frame.bottom<=geometry.height+1);assert.ok(geometry.scroll<=geometry.height+1);
  }
+ // Native fullscreen removes the row; leaving fullscreen restores it.
+ const desktop=await browser.newPage();await desktop.goto(base+'/games/racecar/app.html');
+ await desktop.locator('#app-fullscreen').click();
+ await desktop.waitForFunction(()=>Boolean(document.fullscreenElement));
+ assert.equal(await desktop.locator('.app-bar').isVisible(),false);
+ assert.equal(await desktop.locator('#app-game').evaluate(e=>e.getBoundingClientRect().top),0);
+ await desktop.evaluate(()=>document.exitFullscreen());
+ await desktop.waitForFunction(()=>!document.fullscreenElement);
+ await desktop.locator('.app-bar').waitFor({state:'visible'});
+ assert.equal(await desktop.locator('.app-bar').isVisible(),true);await desktop.close();
  // Separate browser storage models installation without altering the original save.
  const installed=await browser.newContext({viewport:{width:430,height:932}});
  await installed.addInitScript(()=>Object.defineProperty(navigator,'standalone',{value:true}));
  const app=await installed.newPage();app.on('pageerror',e=>errors.push(e.message));app.on('dialog',d=>d.accept());
  await app.goto(base+'/games/racecar/app.html?install=1');
  assert.equal(await app.locator('#app-guide').evaluate(d=>d.open),false);
+ assert.equal(await app.locator('.app-bar').isVisible(),false,'Installed launch has no host toolbar');
+ assert.equal(await app.locator('#app-game').evaluate(e=>e.getBoundingClientRect().top),0);
  const game=app.frameLocator('#app-game');await game.locator('#start').waitFor();
  await game.locator('#settings summary').click();
  await game.locator('#import-career').setInputFiles({name:'racecar-careers.json',mimeType:'application/json',buffer:Buffer.from(JSON.stringify(backup))});
