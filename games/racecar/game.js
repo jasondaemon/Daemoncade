@@ -1,6 +1,6 @@
 import { Run, safeSpeed, clamp } from "./rules.js?v=39";
 import { resultPresentation } from './results.js?v=39';
-import { RoadScene } from "./view.js?v=39";
+import { RoadScene } from "./view.js?v=40";
 import { FrameDiagnostics } from './performance.js?v=39';
 import { captureMotion, interpolateMotion } from './render-motion.js?v=39';
 import { Sound } from "./sound.js?v=39";

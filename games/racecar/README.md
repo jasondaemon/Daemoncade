@@ -1,6 +1,10 @@
 # Racecar — Career release candidate
 
-1.0.0-beta.2, build 39. Physical-device and human approval remain Stable release gates.
+1.0.0-beta.2, build 40. Physical-device and human approval remain Stable release gates.
+
+Build 40 enlarges mobile showroom previews and thumbnails. The preview camera
+fits actual vehicle geometry over a complete rotation, excluding fallback
+exhaust/shadow geometry. Driving scale, handling and career saves are unchanged.
 
 ## Career
 

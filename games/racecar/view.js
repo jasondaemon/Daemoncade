@@ -229,10 +229,17 @@ export class RoadScene {
       if(material.emissive)material.emissive.set(0);
       grayMaterials.push(material);o.material=material;
     }});
-    const camera=new THREE.PerspectiveCamera(32,canvas.width/canvas.height,0.1,30);
-    const bounds=new THREE.Box3().setFromObject(car),size=bounds.getSize(new THREE.Vector3()),center=bounds.getCenter(new THREE.Vector3());
-    const distance=Math.max(size.y*1.4,Math.hypot(size.z,size.x))/(2*Math.tan(16*Math.PI/180))*1.25;
-    camera.position.copy(center).add(new THREE.Vector3(1,.58,1.25).normalize().multiplyScalar(distance));camera.lookAt(center);
+    // Frame the actual vehicle, not the fallback shadow/exhaust geometry. Fit a
+    // full turntable rotation so wide collectibles never clip or pump in size.
+    const vehicle=car.userData.vehicle,bounds=new THREE.Box3().setFromObject(vehicle.body);
+    for(const wheel of vehicle.wheels)bounds.union(new THREE.Box3().setFromObject(wheel.pivot));
+    const size=bounds.getSize(new THREE.Vector3());
+    const radius=Math.hypot(Math.max(Math.abs(bounds.min.x),Math.abs(bounds.max.x)),Math.max(Math.abs(bounds.min.z),Math.abs(bounds.max.z)));
+    const direction=new THREE.Vector3(1,.58,1.25).normalize(),aspect=canvas.width/canvas.height;
+    const halfHeight=Math.max(size.y/2*Math.sqrt(1-direction.y**2)+radius*direction.y,radius/aspect)*1.12;
+    const camera=new THREE.OrthographicCamera(-halfHeight*aspect,halfHeight*aspect,halfHeight,-halfHeight,.1,40);
+    const center=new THREE.Vector3(0,(bounds.min.y+bounds.max.y)/2,0);
+    camera.position.copy(center).addScaledVector(direction,20);camera.lookAt(center);
     const target=new THREE.WebGLRenderTarget(canvas.width,canvas.height);
     target.texture.colorSpace=THREE.SRGBColorSpace;
     const pixels=new Uint8Array(canvas.width*canvas.height*4),ctx=canvas.getContext('2d'),frame=ctx.createImageData(canvas.width,canvas.height);

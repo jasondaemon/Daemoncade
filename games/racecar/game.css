@@ -621,11 +621,11 @@ body:not(.in-game) .touch {
 .is-career[data-panel=garage] #car-paint { grid-row:6; }
 @media(max-width:700px) {
   .is-career[data-panel=garage] #garage { grid-template-rows:auto minmax(55px,1fr) auto auto auto auto auto; gap:5px; }
-  .is-career[data-panel=garage] #garage-preview { max-height:95px; }
+  .is-career[data-panel=garage] #garage-preview { height:clamp(150px,23dvh,230px); max-height:none; margin-top:0; }
   .is-career[data-panel=garage] #purchase-performance { grid-row:3; }
   #purchase-curve { height:95px; }
   #purchase-specs { font-size:10px; margin:2px 0; }
-  .is-career[data-panel=garage] #car-list { grid-row:4; height:66px; }
+  .is-career[data-panel=garage] #car-list { grid-row:4; height:96px; }
   .is-career[data-panel=garage] #car-pages { grid-row:5; }
   .is-career[data-panel=garage] #car-actions { grid-row:6; }
   .is-career[data-panel=garage] #car-paint { grid-row:7; }
@@ -672,6 +672,8 @@ body:not(.in-game) .touch {
   .is-career[data-panel=map] #series-standings { grid-row:5; padding:8px; }
 }
 @media(max-width:700px) and (max-height:720px) {
+  .is-career[data-panel=garage] #garage-preview { height:110px; }
+  .is-career[data-panel=garage] #car-list { height:72px; }
   .is-career[data-panel=upgrades] #garage-preview { max-height:85px; }
   .is-career[data-panel=upgrades] #performance-curve { height:85px; }
   .is-career[data-panel=upgrades] #purchase-note { display:none; }
