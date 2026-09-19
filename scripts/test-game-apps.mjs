@@ -7,7 +7,9 @@ try {
  const catalog=await (await fetch(base+'/games/catalog.json')).json();
  for(const game of catalog.games){
   const root=base+'/games/'+game.slug+'/';
-  const manifest=await (await fetch(root+'manifest.webmanifest')).json();
+  const response=await fetch(root+'app-manifest.json');
+  assert.match(response.headers.get('content-type'),/json/);
+  const manifest=await response.json();
   assert.equal(manifest.name,game.title);assert.equal(manifest.display,'standalone');
   assert.equal(manifest.start_url,'./app.html');assert.equal(manifest.scope,'./');
   assert.equal((await fetch(root+'app-icon.png')).status,200);

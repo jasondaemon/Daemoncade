@@ -20,7 +20,7 @@ for metadata in sorted((ROOT / 'games').glob('*/game.json')):
         'background_color': '#081522', 'theme_color': '#081522',
         'icons': [{'src': 'app-icon.png', 'sizes': '512x512', 'type': 'image/png', 'purpose': 'any'}],
     }
-    (folder / 'manifest.webmanifest').write_text(json.dumps(manifest, indent=2) + '\n')
+    (folder / 'app-manifest.json').write_text(json.dumps(manifest, indent=2) + '\n')
     subprocess.run(['sips', '-s', 'format', 'png', '-z', '512', '512',
                     str(folder / game['icon']), '--out', str(folder / 'app-icon.png')],
                    check=True, stdout=subprocess.DEVNULL)
@@ -34,7 +34,7 @@ for metadata in sorted((ROOT / 'games').glob('*/game.json')):
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; object-src 'none'; base-uri 'self'">
 <title>{title}</title>
-<link rel="manifest" href="manifest.webmanifest">
+<link rel="manifest" href="app-manifest.json">
 <link rel="apple-touch-icon" href="app-icon.png">
 <link rel="icon" href="app-icon.png">
 <link rel="stylesheet" href="../shared/game-app.css?v=1">

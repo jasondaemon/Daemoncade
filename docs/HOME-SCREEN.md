@@ -1,6 +1,6 @@
 # Home Screen games
 
-Each game has `app.html`, `manifest.webmanifest`, and `app-icon.png`. The PNG is
+Each game has `app.html`, `app-manifest.json`, and `app-icon.png`. The PNG is
 converted from that game's existing icon. Generate launchers after adding a game:
 
 ```sh
