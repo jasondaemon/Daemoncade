@@ -1,4 +1,17 @@
-# Blockfall 1.0.1
+# Blockfall 1.0.2
+
+Mobile performance pass: one capped 2D effects canvas replaces Pixi/WebGL and
+per-particle DOM animations. No full-cabinet white flash or shake/filter pass.
+Cached block sprites and dirty board rendering avoid repainting gradients,
+shadows and LCD textures every display frame. Rendering density is capped at 2×;
+effects run at up to 30fps on coarse-pointer devices, independent of input.
+Hard-drop batches its HUD work. Four-line clears release the next piece after
+240ms (other clears 180ms); confetti continues without blocking controls.
+Restart cancels the previous game loop, and paused/background effects are cleared.
+
+`scripts/test-blockfall-performance.mjs` stress-tests 36 four-line clears across
+all themes with 4× CPU throttling, bounded caches/particles, pause/restart cleanup,
+and no white overlay. This is not a physical iPhone performance measurement.
 
 On touch devices, swipe across the playfield to move by columns, tap to rotate,
 and swipe down then release to hard-drop. Hold and soft-down remain buttons;

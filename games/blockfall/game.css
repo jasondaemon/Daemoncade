@@ -30,4 +30,6 @@ body.gesture-input .touch-controls button:not([data-control="hold"]):not([data-c
 body.gesture-input .touch-controls button{min-height:48px}
 body.gesture-input .gesture-help{display:block}
 @media(any-pointer:coarse){.touch-controls{grid-template-columns:1fr 1fr;max-width:360px}.touch-controls button:not([data-control="hold"]):not([data-control="soft"]){display:none}.touch-controls button{min-height:48px}.gesture-help{display:block}}
-.cabinet-particle{display:block;left:0;pointer-events:none;position:absolute;top:0;z-index:8}.game-panel.tetris-cabinet-flash{animation:cabinet-tetris .72s steps(6,end)}.game-panel.tetris-cabinet-flash:after{animation:tetris-flash .72s steps(5,end);background:#fff;content:"";inset:0;pointer-events:none;position:absolute;z-index:7}@keyframes cabinet-tetris{0%,100%{transform:translate(0)}20%{transform:translate(-5px,2px)}40%{transform:translate(5px,-2px)}60%{transform:translate(-3px,-1px)}80%{transform:translate(3px,1px)}}@keyframes tetris-flash{0%,45%,100%{opacity:0}12%,58%{opacity:.22}28%{opacity:.08}}body[data-theme="eightbit"] .cabinet-particle{box-shadow:2px 2px 0 #050505}
+/* One transparent effects canvas; never cover the cabinet with a white layer. */
+.game-panel>.effects-layer{z-index:2;pointer-events:none;contain:strict}
+#level.level-palette-shift{animation:level-label .5s ease-out}@keyframes level-label{from{color:#fff}to{color:var(--ink)}}

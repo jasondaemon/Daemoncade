@@ -2,6 +2,7 @@
   const gestures=new BlockfallGestures();
   const repeatStops=[];
   const activeEffects=new Set();
+  const soundPools=new Map();
   let appSuspended=false;
   const cancelInput=()=>{gestures.cancel();repeatStops.forEach(stop=>stop());};
   const COLS = 10;
@@ -116,11 +117,16 @@
   const holdCtx = $("holdCanvas").getContext("2d");
   const attractCanvas = $("attractCanvas");
   const attractCtx = attractCanvas.getContext("2d");
-  const effectsApp = new PIXI.Application({ width: 300, height: 600, backgroundAlpha: 0, antialias: false, resolution: Math.min(window.devicePixelRatio || 1, 2), autoDensity: true });
-  const effectsRoot = new PIXI.Container();
+  const mobileEffects=matchMedia('(pointer:coarse)').matches;
+  const reducedEffects=matchMedia('(prefers-reduced-motion:reduce)').matches;
+  const particleLimit=reducedEffects?32:mobileEffects?128:224;
+  const effectsCanvas=document.createElement('canvas'),effectsCtx=effectsCanvas.getContext('2d');
+  let effectSize={width:300,height:600,cell:30,ox:0,oy:0,floor:580};
+  let effectLast=0,effectsPainted=false,boardDirty=true,lastAttractStep=-1;
+  const cellCache=new Map();
   const particles = [];
-  $("effectsLayer").appendChild(effectsApp.view);
-  effectsApp.stage.addChild(effectsRoot);
+  $('gamePanel').appendChild($('effectsLayer'));
+  $("effectsLayer").appendChild(effectsCanvas);
 
   function cleanName(value) {
     return String(value || "").replace(/[\x00-\x1f]+/g, "").trim().slice(0, 24);
@@ -181,7 +187,7 @@
     document.body.style.setProperty("--gold", scheme.gold);
     document.body.style.setProperty("--line", `${scheme.accent}66`);
     if (animate && state.running) {
-      const panel = $("gamePanel"); panel.classList.remove("level-palette-shift"); void panel.offsetWidth; panel.classList.add("level-palette-shift");
+      const panel = $("level"); panel.classList.remove("level-palette-shift"); panel.classList.add("level-palette-shift");
       window.setTimeout(() => panel.classList.remove("level-palette-shift"), 720);
     }
   }
@@ -190,12 +196,19 @@
     if (!state.sound) return;
     const src = soundEffects[name];
     if (!src) return;
-    const audio = new Audio(src);
     if(document.hidden||appSuspended)return;
+    if(activeEffects.size>=8)return;
+    const pool=soundPools.get(src)||[];soundPools.set(src,pool);
+    let audio=pool.find(item=>item.paused||item.ended);
+    if(!audio){
+      if(pool.length>=3)return;
+      audio=new Audio(src);pool.push(audio);
+      audio.addEventListener('play',()=>{if(document.hidden||appSuspended)audio.pause();});
+      audio.addEventListener('ended',()=>activeEffects.delete(audio));
+      audio.addEventListener('error',()=>activeEffects.delete(audio));
+    }
+    audio.currentTime=0;
     activeEffects.add(audio);
-    audio.addEventListener('play',()=>{if(document.hidden||appSuspended)audio.pause();});
-    audio.addEventListener('ended',()=>activeEffects.delete(audio),{once:true});
-    audio.addEventListener('error',()=>activeEffects.delete(audio),{once:true});
     audio.preload = "auto";
     audio.defaultPlaybackRate = 1;
     audio.playbackRate = 1;
@@ -212,23 +225,20 @@
   }
 
   function effectMetrics() {
-    const width = effectsApp.screen.width, height = effectsApp.screen.height, cell = Math.min(width / COLS, height / ROWS);
-    return { cell, ox: (width - cell * COLS) / 2, oy: (height - cell * ROWS) / 2 };
+    return effectSize;
   }
 
   function burstAt(x, y, color, count = 8, force = 1) {
-    const resolvedColor = typeof color === "string" ? Number.parseInt(color.replace("#", ""), 16) : color;
-    for (let i = 0; i < count; i += 1) {
-      const graphic = new PIXI.Graphics(), size = 1.5 + Math.random() * 3.5, angle = -Math.PI + Math.random() * Math.PI, speed = (35 + Math.random() * 105) * force;
-      graphic.beginFill(resolvedColor, .95);graphic.drawRect(-size / 2, -size / 2, size, size);graphic.endFill();graphic.position.set(x, y);effectsRoot.addChild(graphic);
-      particles.push({ graphic, vx: Math.cos(angle) * speed, vy: Math.sin(angle) * speed - 25 * force, gravity: 190, age: 0, life: .28 + Math.random() * .42, spin: (Math.random() - .5) * 9 });
+    const resolvedColor = typeof color === "string" ? color : '#'+color.toString(16).padStart(6,'0');
+    for (let i = 0; i < Math.ceil(count*(reducedEffects ? .25 : mobileEffects ? .5 : 1)) && particles.length<particleLimit; i += 1) {
+      const size = 1.5 + Math.random() * 3.5, angle = -Math.PI + Math.random() * Math.PI, speed = (35 + Math.random() * 105) * force;
+      particles.push({x,y,size,color:resolvedColor,vx:Math.cos(angle)*speed,vy:Math.sin(angle)*speed-25*force,gravity:190,age:0,life:.28+Math.random()*.42,spin:(Math.random()-.5)*9,rotation:0});
     }
   }
 
   function landEffect(cells, color, sealed = false) {
     const { cell, ox, oy } = effectMetrics();
     cells.filter(([, y]) => y >= HIDDEN).forEach(([x, y]) => burstAt(ox + (x + .5) * cell, oy + (y - HIDDEN + .88) * cell, sealed ? 0xffd166 : color, sealed ? 7 : 3, sealed ? 1.15 : .55));
-    const wrap = boardCanvas.closest(".board-wrap");wrap.classList.remove("impact", "seal-impact");void wrap.offsetWidth;wrap.classList.add(sealed ? "seal-impact" : "impact");
   }
 
   function dropTrail(fromPiece, toPiece) {
@@ -244,25 +254,14 @@
   }
 
   function cabinetTetrisEffect() {
-    const panel = $("gamePanel"), boardRect = boardCanvas.getBoundingClientRect(), panelRect = panel.getBoundingClientRect(), controlsRect = document.querySelector(".touch-controls").getBoundingClientRect();
-    panel.classList.remove("tetris-cabinet-flash"); void panel.offsetWidth; panel.classList.add("tetris-cabinet-flash");
-    const palette = Object.values(colors).slice(0, 7), reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches, count = reduced ? 18 : 72;
-    for (let i = 0; i < count; i += 1) {
-      const bit = document.createElement("i"), size = state.theme === "eightbit" ? 7 + Math.floor(Math.random() * 5) : 5 + Math.random() * 7;
-      bit.className = "cabinet-particle"; bit.style.width = `${size}px`; bit.style.height = `${size}px`; bit.style.background = palette[i % palette.length]; panel.appendChild(bit);
-      let x = boardRect.left - panelRect.left + boardRect.width * (.12 + Math.random() * .76), y = boardRect.bottom - panelRect.top - 8;
-      let vx = (Math.random() - .5) * 520, vy = -260 - Math.random() * 530, rotation = Math.random() * 180;
-      const floor = Math.min(panelRect.height - 18, controlsRect.top - panelRect.top + Math.random() * Math.max(16, controlsRect.height * .7));
-      const frames = [], steps = 26, dt = .055;
-      for (let step = 0; step <= steps; step += 1) {
-        frames.push({ transform: `translate(${x}px,${y}px) rotate(${rotation}deg)`, opacity: step < steps - 4 ? 1 : (steps - step) / 4 });
-        vy += 980 * dt; x += vx * dt; y += vy * dt; rotation += (vx > 0 ? 1 : -1) * 22;
-        if (x < 5) { x = 5; vx = Math.abs(vx) * .72; } else if (x > panelRect.width - size - 5) { x = panelRect.width - size - 5; vx = -Math.abs(vx) * .72; }
-        if (y > floor) { y = floor; vy = -Math.abs(vy) * (.38 + Math.random() * .24); vx *= .8; }
-      }
-      bit.animate(frames, { duration: 1500 + Math.random() * 450, easing: "linear", fill: "forwards" }).finished.finally(() => bit.remove());
-    }
-    window.setTimeout(() => panel.classList.remove("tetris-cabinet-flash"), 760);
+    const palette=Object.values(colors).slice(0,7),count=reducedEffects?8:mobileEffects?28:48;
+    const {cell,ox,oy}=effectSize;
+    for(let i=0;i<count&&particles.length<particleLimit;i++)particles.push({
+      x:ox+cell*COLS*(.12+Math.random()*.76),y:oy+cell*ROWS-8,
+      size:4+Math.random()*5,color:palette[i%palette.length],vx:(Math.random()-.5)*400,
+      vy:-240-Math.random()*350,gravity:800,age:0,life:1.3+Math.random()*.3,
+      spin:(Math.random()-.5)*10,rotation:0,bounce:true,
+    });
   }
 
   function countHoles(board = state.board) {
@@ -271,10 +270,25 @@
     return holes;
   }
 
-  effectsApp.ticker.add(delta => {
-    const dt = Math.min(.035, effectsApp.ticker.deltaMS / 1000);
-    for (let i = particles.length - 1; i >= 0; i -= 1) { const p = particles[i];p.age += dt;p.vy += p.gravity * dt;p.graphic.x += p.vx * dt;p.graphic.y += p.vy * dt;p.graphic.rotation += p.spin * dt;p.graphic.alpha = Math.max(0, 1 - p.age / p.life);if (p.age >= p.life) { effectsRoot.removeChild(p.graphic);p.graphic.destroy();particles.splice(i, 1); } }
-  });
+  function clearEffects(){particles.length=0;effectsCtx?.clearRect(0,0,effectSize.width,effectSize.height);effectsPainted=false;effectLast=0;}
+  function drawEffects(now){
+    if(!effectsCtx)return;
+    if(effectLast&&now-effectLast<(mobileEffects?1000/30:1000/60))return;
+    const elapsed=effectLast?Math.max(0,(now-effectLast)/1000):0;effectLast=now;
+    if(!particles.length&&!effectsPainted)return;
+    effectsCtx.clearRect(0,0,effectSize.width,effectSize.height);effectsPainted=particles.length>0;
+    const dt=Math.min(.05,elapsed);
+    for(let i=particles.length-1;i>=0;i--){
+      const p=particles[i];p.age+=elapsed;if(p.age>=p.life){particles.splice(i,1);continue;}
+      p.vy+=p.gravity*dt;p.x+=p.vx*dt;p.y+=p.vy*dt;p.rotation+=p.spin*dt;
+      if(p.bounce){
+        if(p.x<4){p.x=4;p.vx=Math.abs(p.vx)*.7;}else if(p.x>effectSize.width-8){p.x=effectSize.width-8;p.vx=-Math.abs(p.vx)*.7;}
+        if(p.y>effectSize.floor){p.y=effectSize.floor;p.vy=-Math.abs(p.vy)*.48;p.vx*=.8;}
+      }
+      effectsCtx.save();effectsCtx.globalAlpha=Math.min(1,(p.life-p.age)*4);effectsCtx.fillStyle=p.color;
+      effectsCtx.translate(p.x,p.y);effectsCtx.rotate(p.rotation);effectsCtx.fillRect(-p.size/2,-p.size/2,p.size,p.size);effectsCtx.restore();
+    }
+  }
 
   function musicSourceMatches(src) {
     if (!state.musicAudio?.currentSrc) return false;
@@ -363,6 +377,7 @@
 
   function resetEngine(mode, duration = 0) {
     cancelInput();
+    cancelAnimationFrame(state.raf);clearEffects();boardDirty=true;
     state.mode = mode;
     state.board = emptyBoard();
     state.bag = [];
@@ -399,7 +414,7 @@
     updateStatus();
     resizeCanvases();
     saveLocal();
-    requestAnimationFrame(loop);
+    state.raf=requestAnimationFrame(loop);
   }
 
   function visiblePreview() {
@@ -437,7 +452,7 @@
     if (!canAct()) return;
     const origin = { ...state.piece };
     let rows = 0;
-    while (move(0, 1, false)) rows += 1;
+    while (!collides({...state.piece,y:state.piece.y+1})) {state.piece.y+=1;rows+=1;}
     dropTrail(origin, state.piece);
     state.score += rows * 2;
     lockPiece();
@@ -475,7 +490,7 @@
       state.clearAnimation = {
         lines: fullLines,
         start: performance.now(),
-        duration: fullLines.length >= 4 ? 620 : 420,
+        duration: reducedEffects ? 100 : fullLines.length >= 4 ? 240 : 180,
         tetris: fullLines.length >= 4,
       };
       const garbage = garbageForClear(fullLines.length);
@@ -518,6 +533,7 @@
       state.combo = -1;
     }
     state.clearAnimation = null;
+    state.dropAccumulator=0;
     spawn();
     updateStatus();
     saveLocal();
@@ -553,13 +569,13 @@
 
   function loop(now) {
     if (!state.running) return;
-    const dt = now - state.lastTick;
+    const dt = Math.min(250,Math.max(0,now - state.lastTick));
     state.lastTick = now;
     if (!state.paused && !state.over) {
-      if (state.clearAnimation && now - state.clearAnimation.start >= state.clearAnimation.duration) {
-        finishLineClear();
-      } else if (state.timeLimit && now - state.startTime >= state.timeLimit) {
+      if (state.timeLimit && now - state.startTime >= state.timeLimit) {
         endGame("Timer complete");
+      } else if (state.clearAnimation) {
+        if(now-state.clearAnimation.start>=state.clearAnimation.duration)finishLineClear();
       } else {
         state.dropAccumulator += dt;
         if (state.dropAccumulator >= dropInterval()) {
@@ -568,7 +584,10 @@
         }
       }
     }
-    draw();
+    if(!state.paused&&!document.hidden){
+      if(boardDirty||state.clearAnimation)draw();
+      drawEffects(now);
+    }
     state.raf = requestAnimationFrame(loop);
   }
 
@@ -591,6 +610,7 @@
 
   function pauseGame(show = true) {
     cancelInput();
+    if(show)clearEffects();
     if (!state.running || state.over) return;
     if (show && !state.paused) state.pauseStarted = performance.now();
     if (!show && state.paused) {
@@ -611,6 +631,7 @@
 
   function endGame(reason = "Game over") {
     cancelInput();
+    clearEffects();cancelAnimationFrame(state.raf);
     if (state.over) return;
     state.over = true;
     state.running = false;
@@ -640,6 +661,7 @@
   }
 
   function updateStatus(extra = "") {
+    boardDirty=true;
     $("score").textContent = String(state.score);
     $("lines").textContent = String(state.lines);
     $("level").textContent = String(state.level);
@@ -658,7 +680,7 @@
 
   function saveLocal() {
     if (state.mode.includes("battle")) return;
-    localStorage.setItem(localStorageKey, JSON.stringify({
+    try {localStorage.setItem(localStorageKey, JSON.stringify({
       mode: state.mode,
       score: state.score,
       lines: state.lines,
@@ -666,20 +688,21 @@
       maxCombo: state.maxCombo,
       over: state.over,
       recorded: state.scoreRecorded,
-    }));
+    }));} catch { /* Storage denial must not stop the gameplay animation loop. */ }
   }
 
   function resizeCanvases() {
     const rect = boardCanvas.getBoundingClientRect();
-    const ratio = window.devicePixelRatio || 1;
+    const ratio = Math.min(2,window.devicePixelRatio || 1);
     boardCanvas.width = Math.max(220, Math.floor(rect.width * ratio));
     boardCanvas.height = Math.max(440, Math.floor(rect.height * ratio));
     const effectsLayer = $("effectsLayer");
-    effectsLayer.style.left = `${boardCanvas.offsetLeft}px`;
-    effectsLayer.style.top = `${boardCanvas.offsetTop}px`;
-    effectsLayer.style.width = `${rect.width}px`;
-    effectsLayer.style.height = `${rect.height}px`;
-    effectsApp.renderer.resize(Math.max(1, Math.floor(rect.width)), Math.max(1, Math.floor(rect.height)));
+    const panel=$('gamePanel').getBoundingClientRect(),controls=document.querySelector('.touch-controls').getBoundingClientRect();
+    const width=Math.max(1,Math.floor(panel.width)),height=Math.max(1,Math.floor(panel.height));
+    effectsLayer.style.left='0px';effectsLayer.style.top='0px';effectsLayer.style.width=`${width}px`;effectsLayer.style.height=`${height}px`;
+    effectsCanvas.width=width;effectsCanvas.height=height;
+    effectSize={width,height,cell:Math.min(rect.width/COLS,rect.height/ROWS),ox:rect.left-panel.left,oy:rect.top-panel.top,floor:Math.min(height-12,controls.top-panel.top+controls.height*.6)};
+    clearEffects();cellCache.clear();lastAttractStep=-1;
     [nextCtx, holdCtx].forEach((ctx) => {
       const canvas = ctx.canvas;
       const box = canvas.getBoundingClientRect();
@@ -689,7 +712,18 @@
     draw();
   }
 
-  function drawCell(ctx, x, y, size, fill, alpha = 1) {
+  function drawCell(ctx,x,y,size,fill,alpha=1){
+    const variant=(Math.round(x/size)+Math.round(y/size))&3,key=[state.theme,size,fill,variant].join(':');
+    let sprite=cellCache.get(key);
+    if(!sprite){
+      sprite=document.createElement('canvas');sprite.width=sprite.height=Math.ceil(size);
+      drawCellRaw(sprite.getContext('2d'),0,0,size,fill,1,variant);
+      if(cellCache.size>=192)cellCache.delete(cellCache.keys().next().value);
+      cellCache.set(key,sprite);
+    }
+    ctx.save();ctx.globalAlpha=alpha;ctx.drawImage(sprite,x,y,size,size);ctx.restore();
+  }
+  function drawCellRaw(ctx, x, y, size, fill, alpha = 1,textureVariant=0) {
     ctx.save();
     ctx.globalAlpha = alpha;
     const gap = Math.max(1, Math.round(size * .055));
@@ -699,7 +733,7 @@
       ctx.strokeStyle = "#18361f"; ctx.lineWidth = Math.max(1, Math.round(size * .07)); ctx.strokeRect(x + gap, y + gap, size - gap * 2, size - gap * 2);
       ctx.fillStyle = "rgba(190,213,105,.24)"; ctx.fillRect(x + gap + px, y + gap + px, size - gap * 2 - px * 2, size - gap * 2 - px * 2);
       ctx.fillStyle = "rgba(17,48,25,.28)"; ctx.fillRect(x + gap + px, y + size - gap - px * 1.4, size - gap * 2 - px * 2, px * .55);
-      const dot = Math.max(1, Math.round(size * .055)), step = dot * 4, variant = (Math.round(x / size) + Math.round(y / size)) & 3;
+      const dot = Math.max(1, Math.round(size * .055)), step = dot * 4, variant = textureVariant;
       ctx.fillStyle = variant === 1 ? "rgba(216,228,165,.2)" : "rgba(20,53,28,.24)";
       for (let py = y + gap + px; py < y + size - gap - px; py += step) {
         for (let px2 = x + gap + px + (((py - y) / step + variant) & 1) * dot * 2; px2 < x + size - gap - px; px2 += step) ctx.fillRect(Math.round(px2), Math.round(py), dot, dot);
@@ -726,6 +760,7 @@
   }
 
   function draw() {
+    boardDirty=false;
     const w = boardCanvas.width;
     const h = boardCanvas.height;
     const cell = Math.floor(Math.min(w / COLS, h / ROWS));
@@ -778,7 +813,8 @@
   }
 
   function attractLoop(now) {
-    if (!$("lobby").hidden) drawAttract(now);
+    const step=Math.floor(now/520);
+    if (!document.hidden&&!$("lobby").hidden&&step!==lastAttractStep){lastAttractStep=step;drawAttract(now);}
     requestAnimationFrame(attractLoop);
   }
 
@@ -973,7 +1009,7 @@
           state.running = true;
           state.startTime = performance.now();
           state.lastTick = performance.now();
-          requestAnimationFrame(loop);
+          cancelAnimationFrame(state.raf);state.raf=requestAnimationFrame(loop);
         } else if (!state.running && startedAt) {
           showOverlay("Get Ready", `Starting in ${Math.max(1, Math.ceil((startedAt - Date.now()) / 1000))}...`, false);
         }
@@ -1159,6 +1195,7 @@
     cancelInput();
     if (state.running && !state.over && !window.confirm("Leave this run and return to mode selection?")) return;
     stopBattleTimers();
+    clearEffects();cancelAnimationFrame(state.raf);lastAttractStep=-1;
     state.running = false;
     state.paused = false;
     state.gameId = "";
