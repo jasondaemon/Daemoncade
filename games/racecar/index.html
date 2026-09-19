@@ -1,54 +1,151 @@
 <!doctype html>
 <html lang="en">
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self';style-src 'self';script-src 'self';img-src 'self' data: blob:;connect-src 'self';object-src 'none';frame-ancestors 'self'">
-  <title>Racecar</title>
-  <link rel="stylesheet" href="game.css?v=1.0.0-beta.1">
-  <link rel="stylesheet" href="layout-alpha29.css?v=1.0.0-beta.1">
-</head>
-<body>
-  <main class="shell">
-    <section class="cabinet">
-      <div id="game-host" role="application" aria-label="Racecar game field"></div>
-      <div id="overlay" class="overlay">
-        <div class="overlay-card">
-          <p id="eyebrow">Daemoncade Highway Division</p>
-          <h1 id="overlay-title">Racecar</h1>
-          <p id="overlay-copy">Clear six fueled night routes, draft traffic, thread narrow gaps, and collect route cards.</p>
-          <div class="mode-select" aria-label="Game mode">
-            <button id="mode-battle" type="button">Battle Traffic</button>
-            <button id="mode-race" type="button">Circuit Race</button>
+  <head>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width,initial-scale=1,viewport-fit=cover"
+    />
+    <meta name="theme-color" content="#081522" />
+    <meta
+      http-equiv="Content-Security-Policy"
+      content="default-src 'self';style-src 'self';script-src 'self';img-src 'self' data: blob:;connect-src 'self';object-src 'none'"
+    />
+    <title>Racecar</title>
+    <link rel="icon" href="icon.webp" type="image/webp" />
+    <link rel="stylesheet" href="game.css?v=39" />
+  </head>
+  <body>
+    <main id="cabinet">
+      <div
+        id="host"
+        tabindex="0"
+        role="application"
+        aria-label="Racecar. Arrows or WASD to drive. Shift to drift. Space for nitro. P to pause."
+      ></div>
+      <header class="hud">
+        <div class="route-line">
+          <span id="route">Neon District</span><span id="corner"></span>
+        </div>
+        <progress
+          id="route-progress"
+          max="100"
+          value="0"
+          aria-label="Route progress"
+        ></progress>
+        <div class="instruments">
+          <div>
+            <span id="main-label">CONDITION</span
+            ><strong id="main-value">100%</strong>
           </div>
-          <div class="overlay-actions">
-            <button id="route-prev" class="route-step" type="button" aria-label="Previous route">‹</button>
-            <button id="start" type="button">Ignition</button>
-            <button id="route-next" class="route-step" type="button" aria-label="Next route">›</button>
+          <div>
+            <span id="sub-label">FUEL</span><strong id="sub-value">100%</strong>
           </div>
-          <small>Steer: A D / ← → / drag · Race throttle and position: ↑ ↓ · Boost: Space · Pause: P</small>
+          <div>
+            <span id="speed-unit">KM/H</span><strong id="speed">0</strong>
+          </div>
+          <div>
+            <span id="score-label">SCORE</span><strong id="score">0</strong>
+          </div>
+        </div>
+      </header>
+      <nav class="actions" aria-label="Game controls">
+        <button id="sound" aria-label="Mute sound">♪</button
+        ><button id="pause" aria-label="Pause">Ⅱ</button
+        ><button id="fullscreen" aria-label="Fullscreen">⛶</button>
+      </nav>
+      <div id="countdown" aria-live="polite"></div>
+      <div id="notice" role="status" hidden></div>
+      <div class="boost-hud">
+        <span id="boost-title">BOOST · SPACE</span
+        ><progress
+          id="boost"
+          max="100"
+          value="35"
+          aria-label="Boost reserve"
+        ></progress
+        ><span id="draft" hidden>SLIPSTREAM</span>
+      </div>
+      <p class="gesture-hint">Hold & drag to drive · Lift to brake<br>Hold a second finger to drift · Tap it for nitro</p>
+      <div class="touch" aria-label="Touch controls" hidden>
+        <div>
+          <button data-drive="left" aria-label="Steer left">←</button
+          ><button data-drive="right" aria-label="Steer right">→</button>
+        </div>
+        <div>
+          <button data-drive="brake">Brake</button
+          ><button data-drive="drift">Drift</button
+          ><button data-drive="boost">Nitro</button
+          ><button id="throttle" data-drive="throttle">Go</button>
         </div>
       </div>
-      <div class="cabinet-actions">
-        <button id="sound" type="button">Sound on</button>
-        <button id="pause" type="button">Pause</button>
-        <button id="fullscreen" type="button">Fullscreen</button>
-      </div>
-      <div class="mobile-controls" aria-label="Touch driving controls">
-        <div class="mobile-steering">
-          <button id="touch-left" type="button" aria-label="Steer left">←</button>
-          <button id="touch-right" type="button" aria-label="Steer right">→</button>
+      <section id="overlay" aria-labelledby="title">
+        <div class="menu-card">
+          <p class="eyebrow">CAREER</p>
+          <h1 id="title">RACECAR</h1>
+          <p id="subtitle" hidden></p>
+          <nav id="career-tabs" aria-label="Career views"><button id="show-map" type="button" aria-pressed="true">CIRCUITS</button><button id="show-garage" type="button" aria-pressed="false">CARS</button><button id="show-upgrades" type="button" aria-pressed="false">UPGRADES</button></nav>
+          <div id="splash" hidden>
+            <p class="splash-intro">Choose your career</p>
+            <div
+              class="segmented difficulty"
+              role="group"
+              aria-label="Separate career saves — difficulty is fixed in each"
+            >
+              <button data-difficulty="easy">EASY</button
+              ><button data-difficulty="normal">NORMAL</button
+              ><button data-difficulty="hard">HARD</button>
+            </div>
+            <p class="career-help">Your cars, cash, and progress are saved separately for each difficulty.</p>
+          </div>
+          <button id="title-screen" type="button" hidden>← Change career</button>
+          <div id="options" hidden>
+            <p id="mode-note"></p>
+            <div id="map-wrap"><canvas id="career-map" width="480" height="260" aria-hidden="true"></canvas><div id="map-nodes" aria-label="Circuit selection"></div></div>
+            <div id="circuit-list" aria-label="Circuit selection"></div>
+            <div id="track-list" aria-label="Circuit tracks"></div>
+            <p id="series-standings" aria-label="Championship points"></p>
+            <p id="circuit-advice"></p>
+            <section id="garage"><div class="garage-heading">GARAGE · <span id="garage-current">Metro</span></div>
+              <canvas id="garage-preview" width="480" height="230" aria-label="Selected vehicle preview"></canvas>
+              <div id="purchase-performance"><canvas id="purchase-curve" width="480" height="160" aria-label="Stock and fully upgraded speed over time"></canvas><p id="purchase-specs"></p></div>
+              <p id="career-status"></p><div id="car-list"></div><nav id="car-pages" aria-label="Car collection pages"></nav><p id="car-stats"></p>
+              <div id="car-actions"></div>
+              <p id="purchase-note" role="status"></p>
+              <p class="paint-label">Paint · Free</p><div id="car-paint" role="group" aria-label="Car paint"></div>
+              <div id="upgrade-list"></div>
+              <canvas id="performance-curve" width="480" height="250" aria-label="Speed and acceleration over time comparison"></canvas>
+              <p id="curve-caption"></p>
+            </section>
+          </div>
+          <div id="stage">
+            <span id="stage-label">ROUTE 1 / 6</span
+            ><strong id="stage-name">Neon District</strong>
+          </div>
+          <div id="result" hidden></div>
+          <button id="start" disabled>LOADING</button
+          ><button id="menu" hidden>MAIN MENU</button>
+          <details id="settings">
+            <summary>Settings & controls</summary>
+            <p id="build-version">Racecar 1.0.0-beta.2 · Build 39</p>
+            <p>
+              Steer: A / D, ← / →, or drag.<br />Brake: S / ↓. Circuit throttle:
+              W / ↑.<br />Hold Shift + steer to drift (always available). Nitro: Space. Pause: P / Esc.
+              <br />Touch: hold and drag to steer and accelerate; lift to brake.
+              Hold a second finger to drift, or tap it for a short nitro burst.
+            </p>
+            <label
+              ><input type="checkbox" id="reduced" /> Reduced effects</label
+            >
+            <button id="export-career" type="button">BACK UP CAREERS</button>
+            <label>Restore backup <input id="import-career" type="file" accept="application/json,.json" /></label>
+            <p id="save-status" role="status"></p>
+          </details>
         </div>
-        <div class="mobile-pedals">
-          <button id="touch-brake" type="button" aria-label="Brake">Brake</button>
-          <button id="touch-boost" type="button" aria-label="Boost">Boost</button>
-          <button id="touch-throttle" type="button" aria-label="Accelerate">Go</button>
-        </div>
-      </div>
-    </section>
-  </main>
-  <script src="../shared/scores.js?v=1.0.0-beta.1"></script>
-  <script src="../vendor/phaser/phaser-arcade-physics.min.js?v=3.90.0"></script>
-  <script src="game.js?v=1.0.0-beta.1"></script>
-</body>
+      </section>
+    </main>
+    <script src="../shared/scores.js?v=39.0.0"></script>
+    <output id="performance" hidden></output>
+    <script type="module" src="game.js?v=39"></script>
+  </body>
 </html>

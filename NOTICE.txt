@@ -44,7 +44,7 @@ PixiJS
   Source: https://github.com/pixijs/pixijs
 
 Phaser
-  Neon Breaker, Racecar, and Circuit Rush use the local Phaser 3.90.0 Arcade
+  Neon Breaker and Circuit Rush use the local Phaser 3.90.0 Arcade
   Physics distribution by Phaser Studio Inc. under the MIT License. See
   games/vendor/phaser/LICENSE.md.
   Source: https://github.com/phaserjs/phaser
@@ -53,7 +53,7 @@ Phaser
   derivatives of the source WAV files.
 
 Three.js
-  Blitz! and Space Defender use the local Three.js r185 (0.185.1 distribution)
+  Blitz!, Racecar, and Space Defender use the local Three.js r185 (0.185.1 distribution)
   under the MIT License for their 3D renderers. See
   games/vendor/three/LICENSE.txt.
   Source: https://github.com/mrdoob/three.js
@@ -73,8 +73,10 @@ Quaternius Toon Shooter Game Kit
   Source: https://quaternius.com/packs/toonshootergamekit.html
 
 JavaScript Racer
-  Racecar's pseudo-3D segment projection is adapted from Jake Gordon's
-  JavaScript Racer, distributed under the MIT License.
+  Racecar's earlier pseudo-3D renderer was adapted from Jake Gordon's
+  JavaScript Racer, distributed under the MIT License. The current renderer
+  uses fixed world geometry and a Three.js perspective camera; this credit is
+  retained for the earlier implementation and its influence.
   Source: https://github.com/jakesgordon/javascript-racer
 
 Kenney Racing Pack
@@ -84,3 +86,14 @@ Kenney Racing Pack
 
 The public editions use no external runtime services or remotely loaded
 libraries.
+
+Quaternius Cars Pack (Racecar)
+  Authored vehicle models by Quaternius, CC0 1.0 per the original pack's
+  included License.txt. Source: https://quaternius.com/packs/cars.html
+  Originals, license, and conversion notes: games/racecar/assets/quaternius-cars/
+
+Kenney Car Kit 3.1 and Nature Kit (Racecar)
+  Selected vehicles, trees, rocks, cacti, and campsite models by Kenney,
+  Creative Commons Zero (CC0). Original license files and source models are
+  retained in games/racecar/assets/kenney-cars/ and kenney-nature/.
+  Sources: https://kenney.nl/assets/car-kit and https://kenney.nl/assets/nature-kit

@@ -1,2 +1,678 @@
-:root{color-scheme:dark;--cyan:#68e8ff;--violet:#9b7bff;--ink:#eef7ff;--muted:#8fa7bd}*{box-sizing:border-box}html,body{height:100%;margin:0}body{background:radial-gradient(circle at 50% -15%,#163450 0,transparent 45%),linear-gradient(145deg,#04101c,#02050b 70%);color:var(--ink);font-family:"Avenir Next","Helvetica Neue",system-ui,sans-serif;overflow:hidden;padding:max(5px,env(safe-area-inset-top)) max(5px,env(safe-area-inset-right)) max(5px,env(safe-area-inset-bottom)) max(5px,env(safe-area-inset-left));user-select:none}.shell{height:100%;margin:auto;max-width:700px}.cabinet{background:#030913;border:1px solid rgba(104,232,255,.28);border-radius:25px;box-shadow:0 30px 90px #000,inset 0 0 0 5px rgba(24,67,91,.28);height:100%;overflow:hidden;position:relative}#game-host{height:100%;width:100%}#game-host canvas{display:block;height:100%!important;margin:auto;max-width:100%;object-fit:contain;touch-action:none}.overlay{align-items:center;background:radial-gradient(circle at 50% 58%,rgba(14,55,78,.54),rgba(2,7,13,.94) 70%);display:flex;inset:0;justify-content:center;padding:24px;position:absolute;z-index:5}.overlay[hidden]{display:none}.overlay-card{background:linear-gradient(160deg,rgba(7,24,39,.95),rgba(4,10,19,.94));border:1px solid rgba(104,232,255,.34);border-radius:26px;box-shadow:0 30px 80px rgba(0,0,0,.65),inset 0 1px rgba(255,255,255,.06);max-width:480px;padding:clamp(28px,7vw,52px);text-align:center}.overlay-card p{color:var(--muted);line-height:1.55;margin:10px 0 22px}.overlay-card #eyebrow{color:var(--cyan);font-size:10px;font-weight:900;letter-spacing:.2em;margin:0;text-transform:uppercase}.overlay-card h1{font-size:clamp(52px,14vw,88px);font-style:italic;letter-spacing:-.08em;line-height:.82;margin:18px 0;text-shadow:4px 4px 0 #172b43,0 0 34px rgba(104,232,255,.3);text-transform:uppercase}.overlay-card button{background:linear-gradient(135deg,var(--cyan),var(--violet));border:0;border-radius:999px;box-shadow:0 10px 35px rgba(104,232,255,.25);color:#03101a;cursor:pointer;font:inherit;font-size:15px;font-weight:950;min-height:50px;padding:0 30px;text-transform:uppercase}.overlay-card small{color:#6f8498;display:block;font-size:10px;line-height:1.55;margin-top:20px}.cabinet-actions{display:flex;gap:6px;position:absolute;right:max(12px,env(safe-area-inset-right));top:max(12px,env(safe-area-inset-top));z-index:4}.cabinet-actions button{backdrop-filter:blur(10px);background:rgba(3,12,22,.72);border:1px solid rgba(104,232,255,.25);border-radius:999px;color:var(--ink);cursor:pointer;font:inherit;font-size:10px;font-weight:850;min-height:34px;padding:0 11px}.cabinet-actions button:hover{background:rgba(24,82,108,.72)}@media(max-width:480px){body{padding:0}.cabinet{border:0;border-radius:0}.cabinet-actions{right:8px;top:max(7px,env(safe-area-inset-top))}.cabinet-actions button{font-size:0;height:34px;padding:0;width:34px}.cabinet-actions button:before{font-size:13px}#sound:before{content:"♪"}#pause:before{content:"Ⅱ"}#fullscreen:before{content:"⛶"}.overlay{padding:18px}.overlay-card{padding:30px 20px}}
-.mobile-controls{bottom:max(18px,env(safe-area-inset-bottom));display:none;inset-inline:14px;justify-content:space-between;pointer-events:none;position:absolute;z-index:4}.mobile-steering,.mobile-pedals{display:flex;gap:9px;pointer-events:auto}.mobile-controls button{backdrop-filter:blur(10px);background:rgba(5,17,29,.76);border:1px solid rgba(104,232,255,.45);border-radius:50%;box-shadow:0 8px 25px rgba(0,0,0,.45);color:#f2f8ff;font:900 13px/1 system-ui;height:58px;touch-action:none;width:58px}.mobile-controls button:active,.mobile-controls button.is-down{background:rgba(104,232,255,.78);color:#03101a;transform:scale(.94)}#touch-brake{border-color:rgba(255,95,83,.65)}#touch-boost{border-color:rgba(255,198,79,.7)}#touch-throttle{border-color:rgba(115,240,181,.7)}@media(pointer:coarse),(max-width:560px){.mobile-controls{display:flex}.mobile-controls button{height:54px;width:54px}.mobile-pedals{gap:6px}.mobile-controls{bottom:max(12px,env(safe-area-inset-bottom))}}
+:root {
+  color-scheme: dark;
+  font-family:
+    system-ui,
+    -apple-system,
+    sans-serif;
+  color: #eef5f4;
+  background: #050e17;
+  --accent: #80e4eb;
+}
+.track-map {
+  position: absolute;
+  top: 158px;
+  left: 14px;
+  width: 120px;
+  height: 82px;
+  max-width: 28%;
+  background: #071522ce;
+  border-radius: 8px;
+  pointer-events: none;
+}
+* {
+  box-sizing: border-box;
+}
+body {
+  margin: 0;
+  height: 100dvh;
+  display: flex;
+  justify-content: center;
+  padding: 10px;
+  background: radial-gradient(ellipse at top, #183643, #050e17 75%);
+}
+button,
+a,
+input,
+summary {
+  -webkit-tap-highlight-color: transparent;
+}
+button {
+  cursor: pointer;
+  font: inherit;
+  color: inherit;
+}
+button:disabled {
+  opacity: 0.45;
+  cursor: default;
+}
+button:focus-visible,
+a:focus-visible,
+summary:focus-visible {
+  outline: 2px solid white;
+  outline-offset: 4px;
+}
+[hidden] {
+  display: none !important;
+}
+#cabinet {
+  height: 100%;
+  width: min(100%, calc(100dvh * 0.72));
+  max-width: 960px;
+  position: relative;
+  overflow: hidden;
+  border: 1px solid #a9d7e337;
+  border-radius: 14px;
+  background: #081522;
+}
+#host {
+  position: absolute;
+  inset: 0;
+  touch-action: none;
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-touch-callout: none;
+  outline: none;
+}
+#host canvas {
+  display: block;
+}
+.hud {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  padding: 18px 18px 30px;
+  background: linear-gradient(#06121af5, #06121abc 70%, transparent);
+  pointer-events: none;
+}
+.route-line {
+  display: flex;
+  justify-content: space-between;
+  font-size: 10px;
+  letter-spacing: 0.09em;
+  font-weight: 800;
+  text-transform: uppercase;
+  gap: 12px;
+}
+#corner {
+  color: #ffd275;
+  font-size: 9px;
+}
+progress {
+  appearance: none;
+  border: 0;
+  background: #213943;
+  height: 3px;
+  width: 100%;
+  display: block;
+}
+progress::-webkit-progress-bar {
+  background: #213943;
+}
+progress::-webkit-progress-value {
+  background: var(--accent);
+}
+progress::-moz-progress-bar {
+  background: var(--accent);
+}
+#route-progress {
+  margin: 10px 0 13px;
+}
+.instruments {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+}
+.instruments span {
+  display: block;
+  font-size: 8px;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  color: #a9c8ce;
+}
+.instruments strong {
+  font-size: clamp(15px, 3vw, 24px);
+  font-weight: 850;
+  font-variant-numeric: tabular-nums;
+}
+.instruments > div:last-child {
+  text-align: right;
+}
+.actions {
+  position: absolute;
+  right: 14px;
+  top: 112px;
+  display: flex;
+  gap: 7px;
+}
+.actions button {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  border: 1px solid #9dbfcc55;
+  background: #102532d9;
+  font-size: 17px;
+}
+.boost-hud {
+  position: absolute;
+  bottom: 22px;
+  left: 20px;
+  width: 140px;
+  font-size: 9px;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  pointer-events: none;
+}
+.boost-hud small {
+  color: #a3bbc7;
+  margin-left: 9px;
+  font-size: 8px;
+}
+.boost-hud progress {
+  height: 5px;
+  margin-top: 7px;
+}
+#draft {
+  display: block;
+  color: #ffd275;
+  margin-top: 8px;
+}
+#countdown {
+  position: absolute;
+  top: 42%;
+  left: 0;
+  right: 0;
+  text-align: center;
+  font-size: clamp(45px, 10vw, 90px);
+  font-weight: 950;
+  font-style: italic;
+  text-shadow: 0 5px 0 #172e44;
+  pointer-events: none;
+}
+#notice {
+  position: absolute;
+  top: 30%;
+  left: 0;
+  right: 0;
+  text-align: center;
+  color: #ffe099;
+  font-size: 16px;
+  font-weight: 850;
+  pointer-events: none;
+  text-shadow: 0 2px 6px #000;
+}
+.touch {
+  display: none;
+  position: absolute;
+  bottom: max(12px, env(safe-area-inset-bottom));
+  left: 12px;
+  right: 12px;
+  justify-content: space-between;
+  gap: 8px;
+}
+.touch > div {
+  display: flex;
+  gap: 6px;
+}
+.touch button {
+  touch-action: none;
+  width: clamp(40px, calc((100vw - 56px) / 6), 48px);
+  height: 48px;
+  border-radius: 12px;
+  font-size: 11px;
+  font-weight: 800;
+  background: #122936db;
+  border: 1px solid #8fc9d566;
+}
+.touch button.down {
+  background: #80e4eb;
+  color: #081522;
+}
+#overlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: safe center;
+  justify-content: center;
+  overflow: auto;
+  padding: 28px;
+  background: linear-gradient(#081522e6, #08152280 45%, #081522f2);
+}
+.menu-card {
+  width: 100%;
+  max-width: 360px;
+}
+.eyebrow {
+  font-size: 10px;
+  letter-spacing: 0.22em;
+  color: var(--accent);
+  font-weight: 850;
+  margin: 0 0 15px;
+}
+h1 {
+  font-size: clamp(40px, 8vw, 64px);
+  font-weight: 950;
+  font-style: italic;
+  letter-spacing: -0.065em;
+  line-height: 0.95;
+  margin: 0 0 30px;
+  text-shadow: 0 4px 0 #1d3548;
+}
+.segmented {
+  display: flex;
+  gap: 6px;
+}
+.segmented button {
+  flex: 1;
+  padding: 12px 4px;
+  background: #172f3ad9;
+  border: 1px solid #b2dbe32b;
+  border-radius: 5px;
+  font-size: 11px;
+  font-weight: 850;
+  letter-spacing: 0.05em;
+}
+.segmented button[aria-pressed="true"] {
+  border-color: #a2eeea;
+  background: #b2e8df;
+  color: #16333b;
+}
+.difficulty button {
+  font-size: 9px;
+  padding: 9px 3px;
+}
+.difficulty button[aria-pressed="true"] {
+  background: #413b2d;
+  border-color: #ffcc78;
+  color: #ffcc78;
+}
+#mode-note,
+#subtitle {
+  font-size: 12px;
+  line-height: 1.5;
+  color: #b9ced3;
+  margin: 12px 0 18px;
+}
+#stage {
+  border-top: 1px solid #c5e9ed2b;
+  border-bottom: 1px solid #c5e9ed2b;
+  padding: 18px 0;
+  margin: 22px 0;
+}
+#stage span {
+  display: block;
+  font-size: 9px;
+  letter-spacing: 0.1em;
+  color: #9dbac4;
+}
+#stage strong {
+  display: block;
+  font-size: 22px;
+  margin-top: 6px;
+}
+#start {
+  display: block;
+  width: 100%;
+  border: 1px solid #ffe5ab;
+  background: #ffd077;
+  color: #182d37;
+  border-radius: 6px;
+  padding: 15px;
+  font-size: 13px;
+  font-weight: 900;
+  letter-spacing: 0.06em;
+  box-shadow: 0 4px 0 #9d7540;
+}
+#menu {
+  width: 100%;
+  margin-top: 16px;
+  padding: 12px;
+  background: transparent;
+  border: 1px solid #9ac1ca50;
+  border-radius: 5px;
+  font-size: 11px;
+  font-weight: 700;
+}
+details {
+  margin-top: 25px;
+  text-align: center;
+  color: #b5cbd2;
+  font-size: 11px;
+}
+summary {
+  cursor: pointer;
+  list-style: none;
+}
+summary::after {
+  content: " +";
+  color: #ffd077;
+}
+details[open] summary::after {
+  content: " −";
+}
+details p {
+  line-height: 1.8;
+}
+details label {
+  display: block;
+  margin: 16px 0;
+}
+a {
+  display: block;
+  text-align: center;
+  text-decoration: none;
+  font-size: 11px;
+  color: #99b8c5;
+  margin-top: 17px;
+}
+#result {
+  margin: 24px 0;
+}
+#result > div {
+  display: flex;
+  justify-content: space-between;
+  border-bottom: 1px solid #aecbd22b;
+  padding: 12px 0;
+  gap: 15px;
+  font-size: 12px;
+}
+#result strong {
+  font-variant-numeric: tabular-nums;
+}
+body:not(.in-game) .hud,
+body:not(.in-game) .actions,
+body:not(.in-game) .boost-hud,
+body:not(.in-game) .touch {
+  visibility: hidden;
+}
+@media (pointer: coarse), (max-width: 600px) {
+  body {
+    padding: 0;
+  }
+  #cabinet {
+    width: 100%;
+    border: 0;
+    border-radius: 0;
+  }
+  .touch {
+    display: none;
+  }
+  .boost-hud {
+    bottom: 78px;
+    width: 120px;
+  }
+  .hud {
+    padding-top: max(14px, env(safe-area-inset-top));
+  }
+}
+.gesture-hint {display:none;pointer-events:none;position:absolute;bottom:10px;left:12px;right:12px;margin:0;text-align:center;font-size:11px;line-height:1.5;color:#edf5ef;text-shadow:0 1px 3px #000;background:#081923b0;border-radius:8px;padding:5px;}
+@media (pointer:coarse) {body.in-game .gesture-hint {display:block;}}
+@media (max-height: 650px) {
+  #overlay {
+    padding: 18px;
+  }
+  h1 {
+    font-size: 42px;
+    margin-bottom: 18px;
+  }
+  #stage {
+    padding: 10px 0;
+    margin: 12px 0;
+  }
+  details {
+    margin-top: 18px;
+  }
+  .menu-card {
+    max-width: 330px;
+  }
+  .hud {
+    padding-top: 10px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  * {
+    scroll-behavior: auto;
+  }
+}
+#garage { margin: 12px 0; border: 1px solid #385468; border-radius: 10px; padding: 10px; text-align: left; }
+#garage .garage-heading { cursor: pointer; font-weight: 800; letter-spacing: .06em; }
+#garage-preview { display: block; width: 100%; height: auto; border-radius: 8px; margin-top: 10px; }
+#car-list { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 6px; }
+#car-list button { font-size: 12px; padding: 9px 5px; min-width: 0; border: 1px solid #426077; border-radius: 6px; background: #183041; color: #e4f2ff; cursor: pointer; }
+#car-list button[aria-pressed="true"] { background: #ffdc75; color: #14212d; }
+#career-status, #car-stats { font-size: 12px; line-height: 1.5; color: #b7cedd; }
+.menu-card { width:min(920px,96vw); max-width:920px; background:#0b1b29f5; padding:24px; }
+.menu-card h1 { font-size:42px; margin:4px 0 16px; }
+.menu-card .eyebrow { margin:0; }
+#options { display:grid; grid-template-columns:minmax(0,1fr) minmax(0,1fr); gap:10px 24px; }
+#options[hidden] { display:none; }
+#mode-note,.career-help,.difficulty { grid-column:1; margin:4px 0; }
+#garage { grid-column:2; grid-row:1 / 6; margin:0; background:#102534; }
+#circuit-list { grid-column:1; grid-template-columns:1fr; margin:8px 0; }
+#circuit-list button,#upgrade-list button,#car-actions button { border:1px solid #395569; border-radius:7px; background:#183143; color:#edf6ff; font:inherit; padding:10px; cursor:pointer; }
+#circuit-list button[aria-pressed=true] { border-color:#ffdc75; background:#31434a; }
+#circuit-list button:disabled,#upgrade-list button:disabled,#car-actions button:disabled { opacity:.5; cursor:default; }
+#upgrade-list button { font-size:12px; }
+#garage-preview { max-height:200px; object-fit:contain; }
+#car-paint { display:flex; flex-wrap:wrap; gap:8px; margin:8px 0 20px; }
+#car-paint button { padding:4px; width:42px; height:42px; border:2px solid transparent; background:#183143; border-radius:7px; cursor:pointer; }
+#car-paint canvas { width:100%; height:100%; border-radius:3px; }
+#car-paint button[aria-pressed=true] { border-color:#ffdc75; }
+#car-paint button:disabled { opacity:.4; cursor:default; }
+#map-wrap { grid-column:1; position:relative; align-self:start; }
+#map-wrap canvas { display:block; }
+#map-nodes { position:absolute; inset:0; }
+#map-nodes button { position:absolute; width:44px; height:44px; transform:translate(-50%,-50%); border:2px solid transparent; border-radius:50%; background:transparent; cursor:pointer; }
+#map-nodes button:focus-visible,#map-nodes button:hover:not(:disabled) { outline:3px solid white; }
+#map-nodes button:disabled { cursor:default; }
+#map-nodes button:nth-child(1) { left:11.4583%; top:73.0769%; }
+#map-nodes button:nth-child(2) { left:31.25%; top:48.0769%; }
+#map-nodes button:nth-child(3) { left:51.0417%; top:69.2308%; }
+#map-nodes button:nth-child(4) { left:67.7083%; top:28.8462%; }
+#map-nodes button:nth-child(5) { left:88.5417%; top:42.3077%; }
+#title-screen { background:transparent; border:0; color:#a9c2d1; padding:8px 0 16px; cursor:pointer; }
+.menu-card.is-splash { max-width:820px; text-align:center; padding:48px 32px 28px; }
+.is-splash h1 { font-size:clamp(48px,10vw,86px); margin:12px 0 34px; }
+.splash-intro { font-size:20px; }
+#splash .difficulty { display:grid; grid-template-columns:repeat(3,1fr); gap:12px; }
+#splash .difficulty button { display:flex; flex-direction:column; align-items:center; gap:16px; padding:24px 10px; min-height:156px; white-space:normal; }
+#splash .difficulty span { font:14px system-ui; }
+#splash .difficulty small { font:12px system-ui; color:#aec4d6; }
+#overlay .is-splash #start { position:static; width:260px; margin:24px auto; display:block; }
+.is-splash #settings { text-align:left; }
+@media(max-width:700px) {
+  .menu-card[data-panel=garage] #map-wrap { display:none; }
+  #splash .difficulty { grid-template-columns:1fr; }
+  #splash .difficulty button { min-height:90px; padding:14px; gap:8px; }
+  .menu-card.is-splash { padding:24px 18px; }
+}
+@media(max-width:700px) {
+  .menu-card { max-width:96vw; padding:18px; }
+  #options { display:block; }
+  #garage { margin-top:16px; }
+  #circuit-list { grid-template-columns:repeat(2,minmax(0,1fr)); }
+}
+#circuit-list { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:10px; margin:16px 0; }
+#circuit-list button { width:100%; min-height:52px; text-align:left; }
+#circuit-list small { display:block; font-size:11px; color:#a7bbcb; padding:5px; }
+.career-help, #curve-caption { color:#a7bbcb; font-size:12px; line-height:1.5; }
+#upgrade-list { display:grid; gap:6px; margin:14px 0; }
+#upgrade-list>div { display:grid; grid-template-columns:1fr 100px; gap:6px; }
+#upgrade-list button { min-height:42px; }
+.paint-label { display:flex; align-items:center; justify-content:space-between; margin:12px 0; }
+#performance-curve { width:100%; height:auto; background:#091621; border-radius:8px; }
+@media(max-width:480px) { #circuit-list { grid-template-columns:1fr; } }
+#overlay { position:fixed; z-index:20; padding:18px; background:#06111de8; }
+.menu-card { flex-shrink:0; border:1px solid #345064; border-radius:16px; }
+#circuit-list { grid-template-columns:1fr; }
+#garage { align-self:start; }
+#career-map { grid-column:1; width:100%; height:auto; border-radius:12px; border:1px solid #496879; cursor:pointer; }
+#garage { grid-row:1 / 9; }
+#track-list { grid-column:1; display:grid; grid-template-columns:repeat(2,1fr); gap:6px; }
+#track-list>div { border:1px solid #304a5b; border-radius:8px; padding:6px; }
+#track-list .current { border-color:#ffdb78; background:#293b44; }
+#track-list canvas { display:block; width:100%; height:75px; object-fit:contain; }
+#track-list small { font-size:11px; }
+#car-list { max-height:260px; overflow:auto; overscroll-behavior:contain; padding:3px; }
+#car-list canvas { display:block; width:100%; height:auto; }
+#car-list button { text-align:left; }
+#purchase-note { font-size:12px; color:#d1c19a; line-height:1.5; }
+#series-standings { grid-column:1; font-size:13px; color:#bed2df; }
+#circuit-advice { grid-column:1; font-size:12px; line-height:1.5; color:#abbcc9; }
+#garage { grid-row:1 / 11; }
+#garage { grid-row:1 / 10; }
+#performance { position:fixed;bottom:8px;left:8px;right:8px;z-index:100;background:#081923e8;color:#a7e8ff;padding:8px;font:11px monospace;pointer-events:none; }
+.menu-card h1 { font-size:clamp(28px,6vw,42px); overflow-wrap:anywhere; }
+#career-tabs { display:none; }
+.menu-card.is-career { width:min(1100px,100%); max-width:1100px; height:calc(100dvh - 24px); max-height:900px; padding:16px; display:grid; grid-template-columns:1fr auto; grid-template-rows:auto minmax(0,1fr) auto; gap:12px; overflow:hidden; }
+.is-career > :is(.eyebrow,#title,#subtitle,#settings) { display:none; }
+.is-career #career-tabs { display:flex; gap:8px; margin:0; grid-column:1; grid-row:1; }
+.is-career #career-tabs button { padding:10px 18px; border:1px solid #426075; border-radius:6px; background:#173044; color:#eef5ff; cursor:pointer; }
+.is-career #career-tabs button[aria-pressed=true] { color:#172636; background:#ffda78; }
+.is-career #title-screen { grid-column:2; grid-row:1; padding:8px; }
+.is-career #options { grid-column:1 / -1; grid-row:2; min-height:0; display:grid; grid-template-columns:1.2fr 1fr; grid-template-rows:auto minmax(0,1fr) auto auto; gap:12px; }
+.is-career #mode-note { grid-column:1 / -1; margin:0; font-size:13px; }
+.is-career #map-wrap { grid-row:2 / 4; align-self:center; width:100%; }
+.is-career #circuit-list { grid-column:2; grid-row:3; margin:0; }
+.is-career #track-list { grid-column:2; grid-row:2; align-self:center; margin:0; }
+.is-career #series-standings { grid-column:1; grid-row:4; margin:0; }
+.is-career #circuit-advice { grid-column:2; grid-row:4; margin:0; }
+.is-career #stage { grid-column:1; grid-row:3; margin:0; padding:0; border:0; }
+#overlay .is-career #start { position:static; grid-column:2; grid-row:3; width:160px; margin:0; }
+.is-career:not([data-panel=map]) #options > :not(#mode-note):not(#garage) { display:none; }
+.is-career[data-panel=map] #garage { display:none; }
+.is-career:not([data-panel=map]) #garage { display:grid; grid-column:1 / -1; grid-row:2 / -1; min-height:0; margin:0; padding:12px; grid-template-columns:1fr 1fr; grid-template-rows:auto minmax(100px,1fr) auto auto auto; gap:8px 20px; }
+.is-career #garage .garage-heading { grid-column:1; pointer-events:none; list-style:none; font-size:12px; }
+.is-career #garage-preview { grid-column:1; grid-row:2; width:100%; height:100%; max-height:none; min-height:0; }
+.is-career #career-status { grid-column:2; grid-row:1; margin:0; font-size:12px; }
+.is-career #car-list { grid-column:2; grid-row:2; min-height:0; max-height:none; overflow:hidden; margin:0; gap:6px; }
+.is-career #car-list button { min-height:0; padding:4px; font-size:12px; display:flex; flex-direction:column; }
+.is-career #car-list canvas { flex:1; min-height:0; object-fit:contain; }
+.is-career #car-pages { grid-column:2; grid-row:3; display:flex; justify-content:center; align-items:center; gap:18px; }
+#car-pages button { background:#183143; border:1px solid #426075; color:white; border-radius:6px; min-width:44px; height:32px; cursor:pointer; }
+#car-pages button:disabled { opacity:.35; }
+.is-career #car-stats { grid-column:1; grid-row:3; margin:0; font-size:13px; }
+.is-career #car-actions { grid-column:1; grid-row:4; }
+.is-career #purchase-note { grid-column:1; grid-row:5; margin:0; }
+.is-career .paint-label { grid-column:2; grid-row:4; margin:0; font-size:12px; }
+.is-career #car-paint { grid-column:2; grid-row:5; margin:0; gap:5px; }
+.is-career #car-paint button { width:32px; height:32px; padding:2px; }
+.is-career[data-panel=garage] :is(#upgrade-list,#performance-curve,#curve-caption) { display:none; }
+.is-career[data-panel=upgrades] :is(#car-list,#car-pages,.paint-label,#car-paint,#car-actions) { display:none; }
+.is-career #upgrade-list { grid-column:2; grid-row:2; align-self:center; margin:0; }
+.is-career #performance-curve { grid-column:2; grid-row:3 / 6; height:100%; max-height:200px; object-fit:contain; }
+.is-career #curve-caption { grid-column:1; grid-row:4; margin:0; font-size:12px; }
+@media(max-width:700px) {
+  .menu-card.is-career { padding:10px; gap:8px; height:calc(100dvh - 12px); }
+  .is-career #career-tabs { gap:4px; }
+  .is-career #career-tabs button { padding:10px 6px; font-size:11px; }
+  .is-career #title-screen { font-size:11px; padding:4px; }
+  .is-career #options { grid-template-columns:1fr; gap:8px; }
+  .is-career #map-wrap { grid-column:1; grid-row:2; width:min(100%,390px); justify-self:center; }
+  .is-career #track-list { grid-column:1; grid-row:3; grid-template-columns:repeat(4,1fr); }
+  .is-career #track-list canvas { height:40px; }
+  .is-career #track-list small { font-size:9px; }
+  .is-career #circuit-list { grid-column:1; grid-row:4; }
+  .is-career #series-standings { grid-column:1; grid-row:5; font-size:11px; }
+  .is-career #circuit-advice { display:none; }
+  .is-career:not([data-panel=map]) #garage { gap:6px; padding:8px; grid-template-columns:1fr; grid-template-rows:auto minmax(80px,1fr) auto auto auto auto auto; }
+  .is-career #garage .garage-heading { display:none; }
+  .is-career #career-status { grid-column:1; grid-row:1; }
+  .is-career #garage-preview { grid-column:1; grid-row:2; max-height:150px; }
+  .is-career #car-list { grid-column:1; grid-row:3; grid-template-columns:repeat(4,1fr); height:84px; }
+  .is-career #car-pages { grid-column:1; grid-row:4; }
+  .is-career #car-stats { grid-column:1; grid-row:5; }
+  .is-career #car-actions { grid-column:1; grid-row:6; }
+  .is-career #purchase-note { grid-column:1; grid-row:7; font-size:11px; }
+  .is-career .paint-label { display:none; }
+  .is-career #car-paint { grid-column:1; grid-row:8; }
+  .is-career #upgrade-list { grid-column:1; grid-row:3; }
+  .is-career #upgrade-list button { min-height:32px; padding:5px; }
+  .is-career #performance-curve { grid-column:1; grid-row:4; height:120px; }
+  .is-career[data-panel=upgrades] #car-stats { display:none; }
+  .is-career #curve-caption { grid-column:1; grid-row:5; font-size:10px; }
+  #overlay .is-career #start { width:100px; }
+  .is-career #stage strong { font-size:15px; }
+}
+#overlay { padding-bottom:90px; }
+#overlay #start { position:fixed; bottom:18px; right:24px; z-index:25; width:230px; box-shadow:0 6px 25px #0009; }
+@media(max-width:700px) {
+  #career-tabs { display:flex; gap:8px; margin:12px 0; }
+  #career-tabs button { flex:1; padding:12px; border:1px solid #426075; border-radius:8px; background:#173044; color:#eef5ff; font-weight:800; }
+  #career-tabs button[aria-pressed=true] { color:#172636; background:#ffda78; }
+  #overlay #start { right:18px; width:calc(100% - 36px); }
+}
+#overlay:has(.is-career) { padding:6px; overflow:hidden; }
+#purchase-performance { min-height:0; }
+#purchase-curve { width:100%; height:135px; display:block; background:#091621; border-radius:8px; }
+#purchase-specs { margin:4px 0; font-size:11px; line-height:1.5; }
+#purchase-specs span { display:block; color:#67deff; }
+#purchase-specs span+span { color:#ffcf64; }
+#purchase-specs span+span+span { color:#ed9eff; }
+.is-career[data-panel=upgrades] #purchase-performance { display:none; }
+.is-career[data-panel=garage] #garage { grid-template-rows:auto minmax(80px,1fr) auto auto auto auto; }
+.is-career[data-panel=garage] #purchase-performance { grid-column:1; grid-row:3; }
+.is-career[data-panel=garage] #car-stats { grid-row:4; }
+.is-career[data-panel=garage] #car-actions { grid-row:5; }
+.is-career[data-panel=garage] #purchase-note { grid-row:6; }
+.is-career[data-panel=garage] #car-list { grid-row:2 / 4; }
+.is-career[data-panel=garage] #car-pages { grid-row:4; }
+.is-career[data-panel=garage] .paint-label { grid-row:5; }
+.is-career[data-panel=garage] #car-paint { grid-row:6; }
+@media(max-width:700px) {
+  .is-career[data-panel=garage] #garage { grid-template-rows:auto minmax(55px,1fr) auto auto auto auto auto; gap:5px; }
+  .is-career[data-panel=garage] #garage-preview { max-height:95px; }
+  .is-career[data-panel=garage] #purchase-performance { grid-row:3; }
+  #purchase-curve { height:95px; }
+  #purchase-specs { font-size:10px; margin:2px 0; }
+  .is-career[data-panel=garage] #car-list { grid-row:4; height:66px; }
+  .is-career[data-panel=garage] #car-pages { grid-row:5; }
+  .is-career[data-panel=garage] #car-actions { grid-row:6; }
+  .is-career[data-panel=garage] #car-paint { grid-row:7; }
+  .is-career[data-panel=garage] :is(#purchase-note,#car-stats) { display:none; }
+}
+.track-character { color:#a6bdc9; margin-top:4px; }
+@media(max-width:700px) { .track-character { display:none; } }
+#overlay:has(.is-results) { padding:12px; }
+.menu-card.is-results { width:min(920px,100%); padding:20px; text-align:center; }
+.is-results > .eyebrow,.is-results > #settings { display:none; }
+.is-results h1 { margin:0; font-size:clamp(24px,4vw,40px); }
+.is-results #subtitle { margin:8px 0 12px; font-size:14px; }
+.is-results #result { margin:0; }
+.podium-scene { display:block; width:100%; max-height:42dvh; object-fit:contain; background:#091b2b; border:1px solid #2b5269; border-radius:12px; }
+.is-results #result > .podium-names { display:grid; grid-template-columns:repeat(3,1fr); padding:8px 12%; border:0; font-size:12px; font-weight:800; }
+.is-results #result > .result-highlights { display:grid; grid-template-columns:repeat(3,1fr); gap:10px; padding:8px 0; border:0; }
+.result-highlights > div { background:#153044; border:1px solid #35546b; border-radius:8px; padding:12px 4px; }
+.result-highlights span { display:block; color:#a5c9d6; font-size:10px; letter-spacing:1px; }
+.result-highlights strong { display:block; font-size:24px; color:#ffda78; margin-top:4px; }
+.result-breakdown { text-align:left; font-size:12px; margin:8px 0; }
+.result-breakdown summary { cursor:pointer; padding:8px; color:#b2c9d5; }
+.result-breakdown > div { display:flex; justify-content:space-between; padding:6px 8px; border-bottom:1px solid #294355; }
+#overlay .is-results #start { position:static; display:block; width:100%; margin:12px 0 0; }
+@media(max-width:700px) {
+  .menu-card.is-results { padding:12px; }
+  .result-highlights strong { font-size:19px; }
+  .is-results #subtitle { font-size:12px; }
+}
+.is-career[data-panel=map] #options { grid-template-rows:auto auto auto auto minmax(0,1fr); align-content:start; gap:16px 20px; }
+.is-career[data-panel=map] #mode-note { padding:4px 0 8px; }
+.is-career[data-panel=map] #map-wrap { grid-row:2; align-self:start; }
+.is-career[data-panel=map] #track-list { grid-row:2; align-self:stretch; grid-template-rows:1fr 1fr; }
+.is-career[data-panel=map] #track-list > div { display:flex; flex-direction:column; justify-content:center; }
+.is-career[data-panel=map] #track-list canvas { flex:1; min-height:0; max-height:110px; }
+.is-career[data-panel=map] #circuit-list { grid-row:3; align-self:start; display:grid; gap:8px; }
+.is-career[data-panel=map] #series-standings { grid-row:3; padding:14px; border:1px solid #304b5c; border-radius:8px; background:#102534; align-self:start; }
+.is-career[data-panel=map] #circuit-advice { grid-row:4; }
+@media(max-width:700px) {
+  .is-career[data-panel=map] #options { gap:8px; grid-template-rows:auto auto auto auto auto minmax(0,1fr); }
+  .is-career[data-panel=map] #map-wrap { grid-row:2; max-width:360px; }
+  .is-career[data-panel=map] #track-list { grid-row:3; grid-template-rows:1fr; }
+  .is-career[data-panel=map] #track-list canvas { height:40px; flex:none; }
+  .is-career[data-panel=map] #circuit-list { grid-row:4; }
+  .is-career[data-panel=map] #series-standings { grid-row:5; padding:8px; }
+}
+@media(max-width:700px) and (max-height:720px) {
+  .is-career[data-panel=upgrades] #garage-preview { max-height:85px; }
+  .is-career[data-panel=upgrades] #performance-curve { height:85px; }
+  .is-career[data-panel=upgrades] #purchase-note { display:none; }
+}
