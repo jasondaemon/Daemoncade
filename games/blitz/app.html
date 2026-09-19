@@ -1,0 +1,27 @@
+<!doctype html>
+<html lang="en"><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#081522">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Blitz!">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; object-src 'none'; base-uri 'self'">
+<title>Blitz!</title>
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="app-icon.png">
+<link rel="icon" href="app-icon.png">
+<link rel="stylesheet" href="../shared/game-app.css?v=1">
+<script src="../shared/game-app.js?v=1" defer></script>
+</head><body>
+<header class="app-bar"><a href="/games/" aria-label="Back to arcade">‹ Arcade</a><strong>Blitz!</strong><button id="app-help">App help</button><button id="app-fullscreen" hidden>Fullscreen</button></header>
+<main><iframe id="app-game" title="Blitz!" allow="autoplay; fullscreen" sandbox="allow-scripts allow-same-origin allow-downloads allow-modals" src="index.html"></iframe></main>
+<dialog id="app-guide" aria-labelledby="guide-title">
+<h1 id="guide-title">Blitz! on your Home Screen</h1>
+<p id="install-help">Use your browser’s <b>Share → Add to Home Screen</b>. If offered, leave <b>Open as Web App</b> enabled. Then launch the game from its new icon to play without browser toolbars.</p>
+<p>The icon uses this game’s artwork. Internet access is required. Nothing is uploaded and no account is needed.</p>
+<section id="racecar-transfer" hidden><h2>Keep your careers</h2><p>Before switching, save a backup from Chrome. In the installed app, open the game’s <b>Settings &amp; controls → Restore backup</b> on the start screen and choose that file. Restore replaces the careers in that app only; your Chrome save stays untouched.</p><button id="app-backup">Save Racecar backup</button><p id="backup-status" role="status"></p></section>
+<p id="other-transfer">Browser and Home Screen saves may be separate. If your game provides backup/restore, export before switching. Otherwise your progress may start fresh in the app; your browser save remains available in the browser.</p>
+<button id="guide-close" autofocus>Continue playing</button>
+</dialog>
+</body></html>
