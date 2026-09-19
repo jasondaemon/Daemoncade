@@ -37,6 +37,7 @@ try {
  const desktop=await browser.newPage();await desktop.goto(base+'/games/racecar/app.html');
  await desktop.locator('#app-fullscreen').click();
  await desktop.waitForFunction(()=>Boolean(document.fullscreenElement));
+ await desktop.locator('.app-bar').waitFor({state:'hidden'});
  assert.equal(await desktop.locator('.app-bar').isVisible(),false);
  assert.equal(await desktop.locator('#app-game').evaluate(e=>e.getBoundingClientRect().top),0);
  await desktop.evaluate(()=>document.exitFullscreen());
