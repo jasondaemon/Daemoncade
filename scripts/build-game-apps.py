@@ -38,7 +38,7 @@ for metadata in sorted((ROOT / 'games').glob('*/game.json')):
 <link rel="apple-touch-icon" href="app-icon.png">
 <link rel="icon" href="app-icon.png">
 <link rel="stylesheet" href="../shared/game-app.css?v=2">
-<script src="../shared/game-app.js?v=2" defer></script>
+<script src="../shared/game-app.js?v=3" defer></script>
 </head><body>
 <header class="app-bar"><a href="/games/" aria-label="Back to arcade">‹ Arcade</a><strong>{title}</strong><button id="app-help">App help</button><button id="app-fullscreen" hidden>Fullscreen</button></header>
 <main><iframe id="app-game" title="{title}" allow="autoplay; fullscreen" sandbox="allow-scripts allow-same-origin allow-downloads allow-modals" src="index.html"></iframe></main>

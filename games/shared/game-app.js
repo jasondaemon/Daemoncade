@@ -7,6 +7,9 @@
   const racecar=location.pathname.split('/').includes('racecar');
   const size=()=>document.documentElement.style.setProperty('--app-height',`${visualViewport?.height || innerHeight}px`);
   size();addEventListener('resize',size);visualViewport?.addEventListener('resize',size);
+  const suspendGame=()=>frame.contentWindow?.postMessage({type:'daemoncade:suspend'},location.origin);
+  addEventListener('pagehide',suspendGame);
+  document.addEventListener('visibilitychange',()=>{if(document.hidden)suspendGame();});
   document.querySelector('#app-help').onclick=()=>guide.showModal();
   document.querySelector('#guide-close').onclick=()=>{guide.close();frame.focus();};
   if(standalone) document.querySelector('#install-help').textContent='You’re playing from the Home Screen. Use your phone’s app switcher to leave. Career backup and restore are available in the game’s Settings.';

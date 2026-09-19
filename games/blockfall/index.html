@@ -6,7 +6,7 @@
   <meta name="theme-color" content="#07111d">
   <meta http-equiv="Content-Security-Policy" content="default-src 'self'; style-src 'self'; script-src 'self' 'unsafe-eval'; img-src 'self' data:; connect-src 'none'; media-src 'self'; object-src 'none'; base-uri 'none'; form-action 'none'; frame-ancestors 'self'">
   <title>Blockfall</title>
-  <link rel="stylesheet" href="game.css?v=1.0.0">
+  <link rel="stylesheet" href="game.css?v=1.0.1">
 </head>
 <body data-theme="modern">
   <main class="arcade-shell">
@@ -56,12 +56,14 @@
         <div class="right-rail"><div class="hud"><div><span>SCORE</span><strong id="score">0</strong></div><div><span>LINES</span><strong id="lines">0</strong></div><div><span>LEVEL</span><strong id="level">1</strong></div><div><span>TIME</span><strong id="timeLeft">0:00</strong></div></div><div id="opponents" hidden></div></div>
       </div>
       <div class="touch-controls" aria-label="Touch controls"><button data-control="hold" type="button" aria-label="Hold piece">HOLD</button><button data-control="left" type="button" aria-label="Move left">←</button><button data-control="soft" type="button" aria-label="Soft drop">↓</button><button data-control="right" type="button" aria-label="Move right">→</button><button data-control="rotate" type="button" class="primary" aria-label="Rotate clockwise">↻</button><button data-control="hard" type="button" class="drop-button" aria-label="Hard drop">DROP</button></div>
+      <p class="gesture-help">Swipe ← → to move · Tap to rotate · Swipe ↓ to drop<br>Hold ↓ for soft down</p>
       <button id="leaveGame" type="button" hidden>Leave</button><button id="closeGame" type="button" hidden>Close</button>
     </section>
     <p id="message" class="message" role="status"></p>
   </main>
   <script src="../shared/scores.js?v=1.0.0"></script>
   <script src="../vendor/pixi/pixi.min.js?v=7.4.3"></script>
-  <script src="game.js?v=1.0.0"></script>
+  <script src="gestures.js?v=1.0.1"></script>
+  <script src="game.js?v=1.0.1"></script>
 </body>
 </html>

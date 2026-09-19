@@ -1,4 +1,9 @@
 (() => {
+  const gestures=new BlockfallGestures();
+  const repeatStops=[];
+  const activeEffects=new Set();
+  let appSuspended=false;
+  const cancelInput=()=>{gestures.cancel();repeatStops.forEach(stop=>stop());};
   const COLS = 10;
   const ROWS = 20;
   const HIDDEN = 2;
@@ -143,6 +148,7 @@
     state.musicAudio.defaultPlaybackRate = 1;
     state.musicAudio.playbackRate = 1;
     state.musicAudio.preservesPitch = true;
+    state.musicAudio.addEventListener('play',()=>{if(document.hidden||appSuspended||state.paused)state.musicAudio.pause();});
     const beginMusic = () => {
       if (!state.running && state.musicChoice && state.musicAudio.paused) setMusic(state.musicChoice, true);
     };
@@ -185,12 +191,17 @@
     const src = soundEffects[name];
     if (!src) return;
     const audio = new Audio(src);
+    if(document.hidden||appSuspended)return;
+    activeEffects.add(audio);
+    audio.addEventListener('play',()=>{if(document.hidden||appSuspended)audio.pause();});
+    audio.addEventListener('ended',()=>activeEffects.delete(audio),{once:true});
+    audio.addEventListener('error',()=>activeEffects.delete(audio),{once:true});
     audio.preload = "auto";
     audio.defaultPlaybackRate = 1;
     audio.playbackRate = 1;
     audio.preservesPitch = true;
     audio.volume = volume;
-    audio.play().catch(() => {});
+    audio.play().catch(() => {activeEffects.delete(audio);});
   }
 
   function updateSoundButton() {
@@ -283,10 +294,12 @@
     if (!musicSourceMatches(src)) state.musicAudio.src = src;
     state.musicAudio.playbackRate = 1;
     state.musicAudio.volume = preview ? 0.55 : 0.28;
+    if(document.hidden||appSuspended||state.paused)return;
     state.musicAudio.play().catch(() => {});
   }
 
   function startGameplayMusic() {
+    if(document.hidden||appSuspended||state.paused)return;
     if (!state.musicAudio || !state.musicChoice) return;
     const src = musicTracks[state.musicChoice].src;
     if (!musicSourceMatches(src)) {
@@ -337,6 +350,7 @@
   }
 
   function spawn() {
+    gestures.cancel();
     state.holdUsed = false;
     state.piece = newPiece(state.nextShape);
     state.nextShape = nextFromBag();
@@ -348,6 +362,7 @@
   }
 
   function resetEngine(mode, duration = 0) {
+    cancelInput();
     state.mode = mode;
     state.board = emptyBoard();
     state.bag = [];
@@ -430,6 +445,7 @@
 
   function holdPiece() {
     if (!canAct() || state.holdUsed) return;
+    gestures.cancel();
     const current = state.piece.shape;
     if (state.holdShape) {
       state.piece = newPiece(state.holdShape);
@@ -445,6 +461,7 @@
   }
 
   function lockPiece() {
+    gestures.cancel();
     if (!state.piece || state.over) return;
     const lockedCells = pieceCells(), lockedColor = colors[state.piece.shape] || colors.G, holesBefore = countHoles();
     lockedCells.forEach(([x, y]) => {
@@ -573,6 +590,7 @@
   }
 
   function pauseGame(show = true) {
+    cancelInput();
     if (!state.running || state.over) return;
     if (show && !state.paused) state.pauseStarted = performance.now();
     if (!show && state.paused) {
@@ -583,12 +601,16 @@
       state.pauseStarted = 0;
     }
     state.paused = show;
+    if(!show)appSuspended=false;
+    if(show)state.musicAudio?.pause();
+    else if(!document.hidden)startGameplayMusic();
     if (show) showOverlay("Paused", "Resume when ready.", true);
     else $("overlay").hidden = true;
     updateStatus();
   }
 
   function endGame(reason = "Game over") {
+    cancelInput();
     if (state.over) return;
     state.over = true;
     state.running = false;
@@ -1043,6 +1065,23 @@
   }
 
   function attachControls() {
+    boardCanvas.addEventListener('pointerdown',event=>{
+      if(event.pointerType==='mouse'||!canAct())return;
+      event.preventDefault();document.body.classList.add('gesture-input');
+      if(gestures.down(event.pointerId,event.clientX,event.clientY,performance.now(),boardCanvas.getBoundingClientRect().width/COLS))boardCanvas.setPointerCapture(event.pointerId);
+    });
+    boardCanvas.addEventListener('pointermove',event=>{
+      if(event.pointerType==='mouse')return;
+      event.preventDefault();if(!canAct()){gestures.cancel();return;}
+      gestures.move(event.pointerId,event.clientX,event.clientY).forEach(handleControl);
+    });
+    boardCanvas.addEventListener('pointerup',event=>{
+      if(event.pointerType==='mouse')return;
+      event.preventDefault();if(!canAct()){gestures.cancel();return;}
+      gestures.up(event.pointerId,event.clientX,event.clientY,performance.now()).forEach(handleControl);
+    });
+    for(const type of ['pointercancel','lostpointercapture'])boardCanvas.addEventListener(type,event=>{if(gestures.pointer?.id===event.pointerId)gestures.cancel();});
+    boardCanvas.addEventListener('contextmenu',event=>event.preventDefault());
     document.querySelectorAll("[data-mode]").forEach((button) => button.addEventListener("click", () => selectMode(button.dataset.mode)));
     document.querySelectorAll("[data-theme-choice]").forEach(button => button.addEventListener("click", () => applyTheme(button.dataset.themeChoice, true)));
     $("musicSelect").addEventListener("change", () => setMusic($("musicSelect").value, true));
@@ -1064,13 +1103,14 @@
       const fire = () => handleControl(button.dataset.control);
       let repeatDelay = 0, repeatTimer = 0;
       const stopRepeat = () => { window.clearTimeout(repeatDelay); window.clearInterval(repeatTimer); repeatDelay = 0; repeatTimer = 0; };
+      repeatStops.push(stopRepeat);
       button.addEventListener("click", () => { if (button.dataset.touchHandled === "true") return; fire(); });
       button.addEventListener("pointerdown", (event) => {
         if (event.pointerType === "mouse") return;
-        event.preventDefault();button.dataset.touchHandled = "true";fire();
+        event.preventDefault();stopRepeat();button.dataset.touchHandled = "true";button.setPointerCapture(event.pointerId);fire();
         if (["left", "right", "soft"].includes(button.dataset.control)) repeatDelay = window.setTimeout(() => { repeatTimer = window.setInterval(fire, 75); }, 230);
       });
-      ["pointerup", "pointercancel", "pointerleave"].forEach(type => button.addEventListener(type, () => { stopRepeat();window.setTimeout(() => { delete button.dataset.touchHandled; }, 350); }));
+      ["pointerup", "pointercancel", "lostpointercapture"].forEach(type => button.addEventListener(type, () => { stopRepeat();window.setTimeout(() => { delete button.dataset.touchHandled; }, 350); }));
     });
     document.addEventListener("keydown", (event) => {
       const key = event.key.toLowerCase();
@@ -1085,8 +1125,17 @@
       if (key === "c" || key === "shift") holdPiece();
       if (key === "p" || key === "escape") pauseGame(!state.paused);
     });
-    window.addEventListener("resize", resizeCanvases);
-    document.addEventListener("visibilitychange", () => { if (document.hidden && state.running && !state.paused && !state.over) pauseGame(true); });
+    const suspendApp=()=>{
+      appSuspended=true;cancelInput();state.musicAudio?.pause();
+      activeEffects.forEach(audio=>audio.pause());activeEffects.clear();
+      if(state.running&&!state.paused&&!state.over)pauseGame(true);
+    };
+    window.addEventListener("resize", () => {cancelInput();resizeCanvases();});
+    window.addEventListener('blur',suspendApp);
+    window.addEventListener('pagehide',suspendApp);
+    window.addEventListener('message',event=>{if(window.parent!==window&&event.source===window.parent&&event.origin===location.origin&&event.data?.type==='daemoncade:suspend')suspendApp();});
+    document.addEventListener('pointerdown',()=>{if(appSuspended&&!document.hidden){appSuspended=false;if(!state.running&&state.musicChoice)setMusic(state.musicChoice,true);}},{capture:true});
+    document.addEventListener("visibilitychange", () => {if(document.hidden)suspendApp();});
   }
 
   async function resetBattle() {
@@ -1107,6 +1156,7 @@
   }
 
   function backToLobby() {
+    cancelInput();
     if (state.running && !state.over && !window.confirm("Leave this run and return to mode selection?")) return;
     stopBattleTimers();
     state.running = false;
