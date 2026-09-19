@@ -1,5 +1,5 @@
 {
-  "id": "./app.html",
+  "id": "/games/tic-tac-toe/app.html",
   "name": "Tic-Tac-Toe",
   "short_name": "Tic-Tac-Toe",
   "start_url": "./app.html",

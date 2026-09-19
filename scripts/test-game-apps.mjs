@@ -11,6 +11,7 @@ try {
   assert.match(response.headers.get('content-type'),/json/);
   const manifest=await response.json();
   assert.equal(manifest.name,game.title);assert.equal(manifest.display,'standalone');
+  assert.equal(manifest.id,`/games/${game.slug}/app.html`);
   assert.equal(manifest.start_url,'./app.html');assert.equal(manifest.scope,'./');
   assert.equal((await fetch(root+'app-icon.png')).status,200);
   assert.equal((await fetch(root+'app.html')).status,200);

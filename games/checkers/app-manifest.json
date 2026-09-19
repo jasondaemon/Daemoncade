@@ -1,5 +1,5 @@
 {
-  "id": "./app.html",
+  "id": "/games/checkers/app.html",
   "name": "Checkers",
   "short_name": "Checkers",
   "start_url": "./app.html",

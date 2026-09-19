@@ -15,7 +15,7 @@ for metadata in sorted((ROOT / 'games').glob('*/game.json')):
     folder = metadata.parent
     title = html.escape(game['title'], quote=True)
     manifest = {
-        'id': './app.html', 'name': game['title'], 'short_name': game['title'],
+        'id': f'/games/{game["slug"]}/app.html', 'name': game['title'], 'short_name': game['title'],
         'start_url': './app.html', 'scope': './', 'display': 'standalone',
         'background_color': '#081522', 'theme_color': '#081522',
         'icons': [{'src': 'app-icon.png', 'sizes': '512x512', 'type': 'image/png', 'purpose': 'any'}],
