@@ -38,15 +38,27 @@ try {
   const cdp=await mobile.newCDPSession(touch);
   const x=field.x+field.width*.4,y=field.y+field.height*.65;
   await cdp.send('Input.dispatchTouchEvent',{type:'touchStart',touchPoints:[{x,y,id:1}]});
+  assert.equal(await touch.locator('#steering-stick').isVisible(),true);
+  const anchor=await touch.locator('#steering-stick').evaluate(e=>[e.style.left,e.style.top]);
   await cdp.send('Input.dispatchTouchEvent',{type:'touchMove',touchPoints:[{x:x-15,y,id:1}]});
   await cdp.send('Input.dispatchTouchEvent',{type:'touchStart',touchPoints:[{x:x-15,y,id:1},{x:x+100,y,id:2}]});
   await touch.clock.runFor(2000);assert.ok(Number(await touch.locator('#speed').innerText())>0);
+  assert.equal(await touch.locator('#steering-stick').evaluate(e=>e.classList.contains('is-drifting')),true);
+  assert.deepEqual(await touch.locator('#steering-stick').evaluate(e=>[e.style.left,e.style.top]),anchor);
+  await touch.screenshot({path:out+'/mobile-steering-stick.png'});
   await cdp.send('Input.dispatchTouchEvent',{type:'touchEnd',touchPoints:[{x:x-15,y,id:1}]});
   const beforeBrake=Number(await touch.locator('#speed').innerText());
   await cdp.send('Input.dispatchTouchEvent',{type:'touchEnd',touchPoints:[]});
+  assert.equal(await touch.locator('#steering-stick').isVisible(),false);
   await touch.clock.runFor(1000);assert.ok(Number(await touch.locator('#speed').innerText())<beforeBrake,'Finger release brakes');
   assert.equal(await touch.evaluate(()=>window.scrollY),0,'Gestures do not scroll the page');
   await touch.screenshot({path:out+'/mobile-driving.png'});
+  await cdp.send('Input.dispatchTouchEvent',{type:'touchStart',touchPoints:[{x,y,id:4}]});
+  assert.equal(await touch.locator('#steering-stick').isVisible(),true);
+  await cdp.send('Input.dispatchTouchEvent',{type:'touchCancel',touchPoints:[]});
+  assert.equal(await touch.locator('#steering-stick').isVisible(),false);
+  await cdp.send('Input.dispatchTouchEvent',{type:'touchStart',touchPoints:[{x,y,id:5}]});
   await touch.locator('#pause').click();assert.equal(await touch.locator('#title').innerText(),'PAUSED');
+  assert.equal(await touch.locator('#steering-stick').isVisible(),false);
   assert.deepEqual(errors,[]);console.log('PASS: five environments, mobile garage, gesture steering/acceleration, second finger, release braking, no scrolling and pause; no browser errors.');
 } finally {await browser.close();}

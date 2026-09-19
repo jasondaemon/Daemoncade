@@ -1,7 +1,15 @@
 import test from 'node:test';import assert from 'node:assert/strict';import {TouchDrive} from './touch-drive.js';
 test('one finger accelerates and steers relatively; lifting brakes',()=>{
- const t=new TouchDrive();t.down(1,100,300,0);t.move(1,160,300,400);assert.equal(t.read(10).steer,.5);assert.equal(t.read(10).throttle,true);
+ const t=new TouchDrive();t.down(1,100,300,0);t.move(1,139,300,400);assert.equal(t.read(10).steer,.5);assert.equal(t.read(10).throttle,true);
  t.up(1,20);assert.equal(t.read(20).brake,true);assert.equal(t.read(20).steer,0);
+});
+test('floating center is fixed, with a neutral zone and bounded horizontal travel',()=>{
+ const t=new TouchDrive();t.down(1,120,400,0,400);
+ t.move(1,125,480,400);assert.equal(t.read(1).steer,0);assert.equal(t.primary.start,120);assert.equal(t.primary.startY,400);
+ t.move(1,192,200,900);assert.equal(t.read(2).steer,1);assert.equal(t.primary.range,72);
+ t.move(1,-100,400,400);assert.equal(t.read(3).steer,-1);
+ t.move(1,120,900,400);assert.equal(t.read(4).steer,0);
+ t.up(1,5);assert.equal(t.primary,null);t.down(2,300,200,6,400);assert.equal(t.primary.start,300);assert.equal(t.read(6).steer,0);
 });
 test('second finger hold drifts while a tap pulses nitro without drift',()=>{
  const t=new TouchDrive();t.down(1,100,300,0);t.down(2,250,300,10);

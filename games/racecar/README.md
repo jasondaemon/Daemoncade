@@ -1,6 +1,12 @@
 # Racecar — Career release candidate
 
-1.0.0-beta.2, build 40. Physical-device and human approval remain Stable release gates.
+1.0.0-beta.2, build 41. Physical-device and human approval remain Stable release gates.
+
+Build 41 adds a floating touch-steering ring: fixed touch-down center, 6px neutral
+zone and 56–80px horizontal travel. Vertical movement is ignored. Amber indicates
+the drift gesture; a purple pulse indicates active nitro. Releasing or cancelling
+the touch clears the visual, as do pause/background transitions. The overlay never
+intercepts input. Reduced effects disables its pulse animation.
 
 Build 40 enlarges mobile showroom previews and thumbnails. The preview camera
 fits actual vehicle geometry over a complete rotation, excluding fallback

@@ -13,7 +13,7 @@
     />
     <title>Racecar</title>
     <link rel="icon" href="icon.webp" type="image/webp" />
-    <link rel="stylesheet" href="game.css?v=40" />
+    <link rel="stylesheet" href="game.css?v=41" />
   </head>
   <body>
     <main id="cabinet">
@@ -127,7 +127,7 @@
           ><button id="menu" hidden>MAIN MENU</button>
           <details id="settings">
             <summary>Settings & controls</summary>
-            <p id="build-version">Racecar 1.0.0-beta.2 · Build 40</p>
+            <p id="build-version">Racecar 1.0.0-beta.2 · Build 41</p>
             <p>
               Steer: A / D, ← / →, or drag.<br />Brake: S / ↓. Circuit throttle:
               W / ↑.<br />Hold Shift + steer to drift (always available). Nitro: Space. Pause: P / Esc.
@@ -146,6 +146,7 @@
     </main>
     <script src="../shared/scores.js?v=39.0.0"></script>
     <output id="performance" hidden></output>
-    <script type="module" src="game.js?v=40"></script>
+    <div id="steering-stick" hidden aria-hidden="true"><span class="stick-axis"></span><span class="stick-center"></span><span class="stick-thumb"></span></div>
+    <script type="module" src="game.js?v=41"></script>
   </body>
 </html>

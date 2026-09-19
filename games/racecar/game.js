@@ -4,7 +4,7 @@ import { RoadScene } from "./view.js?v=40";
 import { FrameDiagnostics } from './performance.js?v=39';
 import { captureMotion, interpolateMotion } from './render-motion.js?v=39';
 import { Sound } from "./sound.js?v=39";
-import {TouchDrive} from './touch-drive.js?v=39';
+import {TouchDrive} from './touch-drive.js?v=41';
 const touchDrive=new TouchDrive();
 import {SecretCode} from './secret-code.js?v=39';
 const secretCode=new SecretCode();
@@ -51,6 +51,7 @@ const reduced =
 $("reduced").checked = reduced;
 function clearInput() {
   touchDrive.reset();
+  $('steering-stick').hidden=true;
   keys.clear();
   for (const name of Object.keys(touch)) touch[name] = false;
   drag = null;
@@ -362,6 +363,7 @@ function updateHUD() {
 }
 function frame(now) {
   if (!view) return;
+  drawSteeringStick(now);
   const frameStart=performance.now(), interval=now-last;
   const dt = Math.min(0.25, Math.max(0, (now - last) / 1000));
   last = now;
@@ -541,9 +543,22 @@ document.addEventListener("visibilitychange", () => {
   if (document.hidden) {pause();sound.pauseMusic();}
   else if(screen==='menu'||screen==='results')sound.resumeMusic();
 });
+function drawSteeringStick(now=performance.now()) {
+  const stick=$('steering-stick'),p=touchDrive.primary;
+  stick.hidden=screen!=='playing'||!p;
+  if(stick.hidden)return;
+  const state=touchDrive.read(now),radius=p.range+16;
+  stick.style.left=`${p.start}px`;stick.style.top=`${p.startY}px`;
+  stick.style.width=stick.style.height=`${radius*2}px`;
+  stick.style.setProperty('--thumb-x',`${clamp(p.x-p.start,-p.range,p.range)}px`);
+  stick.classList.toggle('is-neutral',state.steer===0);
+  stick.classList.toggle('is-drifting',state.drift);
+  stick.classList.toggle('is-boosting',Boolean(run.boosting));
+  stick.classList.toggle('is-reduced',reduced);
+}
 host.addEventListener("pointerdown", (e) => {
   if(screen==='playing'&&e.pointerType==='touch'){
-    e.preventDefault();touchDrive.down(e.pointerId,e.clientX,e.clientY,performance.now());host.setPointerCapture(e.pointerId);return;
+    e.preventDefault();touchDrive.down(e.pointerId,e.clientX,e.clientY,performance.now(),host.clientWidth);drawSteeringStick();host.setPointerCapture(e.pointerId);return;
   }
   if (screen !== "playing" || e.button !== 0 || drag) return;
   e.preventDefault();
@@ -557,7 +572,7 @@ host.addEventListener("pointerdown", (e) => {
   host.focus({ preventScroll: true });
 });
 host.addEventListener("pointermove", (e) => {
-  if(e.pointerType==='touch'){touchDrive.move(e.pointerId,e.clientX,e.clientY,host.clientWidth);return;}
+  if(e.pointerType==='touch'){touchDrive.move(e.pointerId,e.clientX,e.clientY,host.clientWidth);drawSteeringStick();return;}
   if (drag?.id === e.pointerId)
     drag.target = clamp(
       drag.x + ((e.clientX - drag.start) / host.clientWidth) * 2.4,
@@ -566,7 +581,7 @@ host.addEventListener("pointermove", (e) => {
     );
 });
 for (const type of ["pointerup", "pointercancel", "lostpointercapture"])
-  host.addEventListener(type, (e) => {if(e.pointerType==='touch')touchDrive.up(e.pointerId,performance.now(),type!=='pointerup');if(drag?.id===e.pointerId)drag=null;});
+  host.addEventListener(type, (e) => {if(e.pointerType==='touch'){touchDrive.up(e.pointerId,performance.now(),type!=='pointerup');drawSteeringStick();}if(drag?.id===e.pointerId)drag=null;});
 host.addEventListener('contextmenu',e=>{if(screen==='playing')e.preventDefault();});
 document.querySelectorAll("[data-drive]").forEach((b) => {
   const release = () => {
