@@ -1,6 +1,18 @@
-# Beta 2: lower playfield and phone framing
+# Playfield layout and phone framing
 
-Player feedback showed an oversized side drain, no usable return behind the slings, a floating/slow ball and a misaligned splash.
+## Beta 3 redesign
+
+Player feedback exposed a weakness in the old acceptance criteria: contact with a flipper did not prove the ball could roll onto its bat and be shot. The new test sweeps actual flip timings from return-lane feeds and requires objective coverage, not just contact. The right heel trap was reproduced locally before changing the assembly.
+
+The new layout uses two compact side ramps rather than a central enclosing loop; an open shot fan leads to a central garage bank, left mode scoop, outer orbit and right spinner. Four upper pops and three rollovers provide a separate launch area. Ramps return through constrained rail transport only after the ball physically climbs the entrance. No target-directed aiming or teleport into a ramp is used. Flipper strength is deliberately arcade-tuned, using bat contact position to vary shot angle.
+
+References: [Bally's original Attack from Mars playfield directory and photograph](https://www.planetarypinball.com/mm5/Williams/games/atmars/playfield.html), [Bally's description of concurrent objectives](https://www.planetarypinball.com/mm5/Williams/games/atmars/index.html), and [Stern's Godzilla feature description](https://shop.sternpinball.com/products/godzilla-pinball). These informed shot variety, open aiming space and distinct goals; no art or table geometry was copied.
+
+The LED panel no longer reserves gameplay space. A two-second display sequence can run only when all balls are captured/drained. Timers and pending launches wait with it. Live jackpots use a compact message instead; fixed-view and reduced-motion options remove the pan. The side scoop offers Checkpoints, Redline and Combos, while unique rollovers qualify a one-per-game two-ball mode.
+
+## Beta 2 history
+
+Earlier player feedback showed an oversized side drain, no usable return behind the slings, a floating/slow ball and a misaligned splash. The following records that earlier pass; Beta 3 supersedes its loop, side-guide and speed-cap details.
 
 ## Reference and interpretation
 

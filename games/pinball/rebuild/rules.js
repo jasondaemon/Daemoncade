@@ -3,14 +3,28 @@ export class Rules {
   reset(){
     Object.assign(this,{score:0,ballNumber:1,locks:0,lockLit:false,targets:[false,false,false],multiplier:1,
       multiball:false,jackpots:0,orbits:0,ramps:0,bumperHits:0,banks:0,bonus:0,extraAwarded:false,
-      ballsTotal:3,tilted:false,warnings:0,lastNudge:-10,missions:[false,false,false],wizard:false});
+      ballsTotal:3,tilted:false,warnings:0,lastNudge:-10,missions:[false,false,false],wizard:false,
+      rollovers:[false,false,false],mode:null,modeTime:0,modeProgress:0,lastRamp:-1,quickLit:true});
   }
+  startMode(mode){if(!['checkpoints','redline','combos'].includes(mode))return;this.mode=mode;this.modeTime=35;this.modeProgress=0;this.lastRamp=-1;this.event('mode',{title:mode.toUpperCase(),detail:'35 SECOND CHALLENGE',priority:9});}
+  tick(dt){if(this.mode){this.modeTime=Math.max(0,this.modeTime-dt);if(!this.modeTime){this.mode=null;this.event('mode-end',{title:'TIME UP',detail:'PIT STOP TO TRY AGAIN'});}}}
   award(n){if(!this.tilted)this.score+=n;}
   event(type,data={}){this.emit({type,...data});}
   hit(e){
     if(this.tilted)return;
     if(e.type==='bumper'){this.award(100);this.bumperHits++;this.bonus+=20;}
     if(e.type==='sling')this.award(25);
+    if(e.type==='spinner')this.award(this.mode==='redline'?750:150);
+    if(e.type==='rollover'){
+      this.rollovers[e.id]=true;this.award(200);
+      if(this.rollovers.every(Boolean)){this.rollovers.fill(false);this.award(1500);if(this.quickLit&&!this.multiball){this.quickLit=false;this.multiball=true;this.event('quick-multiball',{title:'TWIN TURBO',detail:'TWO BALLS / JACKPOTS',priority:8});}}
+    }
+    if(this.mode){
+      if(this.mode==='redline'&&e.type==='spinner')this.modeProgress++;
+      if(this.mode==='checkpoints'&&e.type===['orbit','ramp','target'][this.modeProgress])this.modeProgress++;
+      if(this.mode==='combos'&&e.type==='ramp'&&e.id!==this.lastRamp){this.lastRamp=e.id;this.modeProgress++;}
+      if(this.modeProgress>=(this.mode==='redline'?5:3)){this.award(8000);this.mode=null;this.event('mission',{title:'CHALLENGE COMPLETE',detail:'8,000 POINTS',priority:9});}
+    }
     if(e.type==='target'){
       this.award(250);this.targets[e.id]=true;
       if(this.targets.every(Boolean)){
@@ -46,6 +60,7 @@ export class Rules {
     this.event('warning',{title:this.warnings===2?'DANGER':'NUDGE',detail:this.warnings===2?'LET THE TABLE SETTLE':'',priority:10});return true;
   }
   endBall(){
+    this.mode=null;this.modeTime=0;
     const amount=this.tilted?0:this.bonus*this.multiplier;this.score+=amount;this.bonus=0;
     this.event('bonus',{title:'END OF BALL',detail:`BONUS ${amount.toLocaleString()}`,priority:5});
     this.ballNumber++;this.multiplier=1;this.targets.fill(false);this.tilted=false;this.warnings=0;
@@ -53,8 +68,9 @@ export class Rules {
   }
   objective(){
     if(this.tilted)return 'Tilt — flippers disabled for this ball';
-    if(this.multiball)return 'Shoot the orbit or highway for jackpots';
+    if(this.multiball)return 'Shoot either ramp or the orbit for jackpots';
+    if(this.mode){const shot=this.mode==='checkpoints'?['ORBIT','EITHER RAMP','GARAGE TARGET'][this.modeProgress]:this.mode==='redline'?'SPINNER':this.lastRamp===0?'LEFT RAMP':this.lastRamp===1?'RIGHT RAMP':'EITHER RAMP';return `${shot} · ${Math.ceil(this.modeTime)}s · ${this.modeProgress}/${this.mode==='redline'?5:3}`;}
     if(this.lockLit)return `Shoot the garage • lock ${this.locks+1} of 3`;
-    return 'Complete GEAR targets or the highway to light a lock';
+    return 'Hit garage targets or either ramp to light a lock';
   }
 }

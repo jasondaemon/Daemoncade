@@ -23,3 +23,15 @@ test('all three objectives light wizard qualification',()=>{
  const r=new Rules();for(let i=0;i<20;i++)r.hit({type:'bumper'});for(let i=0;i<3;i++)r.hit({type:'orbit'});
  for(let bank=0;bank<2;bank++)for(let i=0;i<3;i++)r.hit({type:'target',id:i});assert.ok(r.wizard);assert.equal(r.lock(),'multiball');
 });
+test('pit-stop challenges score ordered checkpoints, spinner hits and alternating ramps',()=>{
+ for(const mode of ['checkpoints','redline','combos']){const r=new Rules();r.startMode(mode);
+  if(mode==='checkpoints')for(const type of ['orbit','ramp','target'])r.hit({type,id:0});
+  if(mode==='redline')for(let i=0;i<5;i++)r.hit({type:'spinner'});
+  if(mode==='combos')for(const id of [0,0,1,0])r.hit({type:'ramp',id});
+  assert.equal(r.mode,null);assert.ok(r.score>=8000);
+ }
+ const r=new Rules();r.startMode('redline');r.tick(36);assert.equal(r.mode,null);
+});
+test('three unique rollovers qualify one two-ball mode',()=>{
+ const events=[],r=new Rules(e=>events.push(e));for(const id of [0,0,1,2])r.hit({type:'rollover',id});assert.ok(r.multiball);assert.equal(events.filter(e=>e.type==='quick-multiball').length,1);
+});

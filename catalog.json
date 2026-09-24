@@ -356,7 +356,7 @@
     {
       "title": "Pinball",
       "slug": "pinball",
-      "version": "1.0.0-beta.2",
+      "version": "1.0.0-beta.3",
       "release_stage": "beta",
       "mobile_ready": true,
       "orientation": "auto",

@@ -1,8 +1,8 @@
-import {initPhysics,PinballPhysics,STEP} from './physics.js?v=1.0.0-beta.2';
-import {Rules} from './rules.js?v=1.0.0-beta.2';
-import {TableScene} from './scene.js?v=1.0.0-beta.2';
-import {DMD} from './dmd.js?v=1.0.0-beta.2';
-import {AudioEngine} from './audio.js?v=1.0.0-beta.2';
+import {initPhysics,PinballPhysics,STEP} from './physics.js?v=1.0.0-beta.3';
+import {Rules} from './rules.js?v=1.0.0-beta.3';
+import {TableScene} from './scene.js?v=1.0.0-beta.3';
+import {DMD} from './dmd.js?v=1.0.0-beta.3';
+import {AudioEngine} from './audio.js?v=1.0.0-beta.3';
 const $=id=>document.getElementById(id);
 const BEST_KEY='pinball.midnight-run.v1.best';
 
@@ -17,14 +17,15 @@ class Game {
   this.bind();this.resize=new ResizeObserver(()=>this.scene.resize());this.resize.observe($('table'));
   $('loading').hidden=true;$('menu').hidden=false;document.body.className='menu';this.updateHud();requestAnimationFrame(t=>this.frame(t));
  }
- ruleEvent(e){this.dmd.push(e);if(['multiball','jackpot','extra','mission'].includes(e.type))this.audio.sound('jackpot');if(e.type==='tilt')this.releaseInputs();}
+ ruleEvent(e){this.dmd.push(e);if(['multiball','lock','bonus','mode'].includes(e.type))this.pendingShow=e;if(['multiball','quick-multiball','jackpot','extra','mission'].includes(e.type)){this.audio.sound('jackpot');this.notice={title:e.title,until:this.uiTime+2.5};}if(e.type==='tilt')this.releaseInputs();if(e.type==='quick-multiball'){this.saveUntil=this.physics.time+10;this.schedule(.5,()=>this.serve(true));}}
  schedule(delay,fn){this.pending.push({at:this.physics.time+delay,fn});}
  serve(auto=false){
   const b=this.physics.addBall();this.launchBall=b;
   if(auto){this.physics.launch(b,.8);this.launchBall=null;this.phase='playing';}
   else {this.phase='ready';this.dmd.push({type:'serve',title:`BALL ${this.rules.ballNumber}`,detail:'HOLD + RELEASE LAUNCH'});}
  }
- start(practice=false){
+  start(practice=false){
+  this.pendingShow=null;this.showUntil=0;this.notice=null;this.choosingMode=false;document.body.classList.remove('cinematic');$('modeChoice').hidden=true;
   this.saveFailed=false;
   this.audio.unlock().catch(()=>{});this.releaseInputs();this.physics.clear();this.rules.reset();this.dmd.clear();this.pending=[];this.practice=practice;this.paused=false;this.accumulator=0;this.saveUntil=0;this.launchBall=null;this.recorded=false;
   $('menu').hidden=true;$('overlay').hidden=true;$('rules').hidden=true;document.body.className='playing';document.activeElement?.blur();this.serve();this.updateHud();
@@ -53,7 +54,13 @@ class Game {
   if(this.physics){this.flip(0,false);this.flip(1,false);}
  }
  nudge(side){if(this.phase!=='playing'||this.paused)return;if(this.rules.nudge(this.physics.time)){this.physics.nudge(side);this.audio.sound('nudge');}this.updateHud();}
- hit(e,ball){
+  hit(e,ball){
+  if(e.type==='mode-scoop'){
+    this.physics.removeBall(ball);this.audio.sound('lock');
+    if(this.physics.balls.length||this.rules.multiball){this.rules.award(750);this.schedule(.5,()=>this.physics.addBall(-3.6,8.8,{x:3,y:0,z:-5}));}
+    else {this.choosingMode=true;this.releaseInputs();$('modeChoice').hidden=false;}
+    return;
+  }
   if(e.type==='drain'){this.drain(ball);return;}
   if(e.type==='shooter-return'){
     if(this.phase==='ready')return;
@@ -110,9 +117,9 @@ class Game {
   this.paused=true;$('overlayTitle').textContent='Paused';$('overlayText').textContent='Your table is waiting. Resume when you are ready.';$('resume').hidden=false;$('restart').textContent='NEW GAME';$('overlay').hidden=false;
  }
  resume(){if(document.hidden)return;this.paused=false;this.last=performance.now();this.accumulator=0;$('overlay').hidden=true;this.audio.unlock().catch(()=>{});}
- menu(){this.releaseInputs();this.physics.clear();this.pending=[];this.phase='menu';this.paused=false;$('overlay').hidden=true;$('menu').hidden=false;document.body.className='menu';this.dmd.clear();this.audio.suspend();this.updateHud();}
+ menu(){this.releaseInputs();this.physics.clear();this.pending=[];this.pendingShow=null;this.showUntil=0;this.choosingMode=false;$('modeChoice').hidden=true;this.phase='menu';this.paused=false;$('overlay').hidden=true;$('menu').hidden=false;document.body.className='menu';this.dmd.clear();this.audio.suspend();this.updateHud();}
  updateHud(){
-  const r=this.rules,objective=this.phase==='ready'?'Hold LAUNCH to set the plunger strength':this.practice?'PRACTICE · '+r.objective():r.objective();
+  const r=this.rules,objective=this.notice?.until>this.uiTime?this.notice.title:this.phase==='ready'?'Hold LAUNCH to set the plunger strength':this.practice?'PRACTICE · '+r.objective():r.objective();
   const key=[r.score,r.ballNumber,r.ballsTotal,this.best,objective,this.phase,r.multiball,this.paused].join(':');if(key===this.lastHud)return;this.lastHud=key;
   $('score').textContent=r.score.toLocaleString();$('ball').textContent=r.multiball?'MULTI':`${Math.min(r.ballNumber,r.ballsTotal)} / ${r.ballsTotal}`;$('best').textContent=this.best.toLocaleString();$('objective').textContent=objective;$('launch').disabled=this.phase!=='ready'||this.paused;
  }
@@ -121,10 +128,13 @@ class Game {
   if(elapsed>.5&&this.phase==='playing'&&!this.paused)this.pause();
   if(!document.hidden){
     this.uiTime+=Math.min(elapsed,.1);
-    if(!this.paused&&['ready','playing','bonus'].includes(this.phase)){
+    if(this.pendingShow&&!this.physics.balls.length&&!this.paused){this.dmd.clear();this.dmd.push(this.pendingShow);this.pendingShow=null;this.showUntil=this.uiTime+2;document.body.classList.add('cinematic');this.releaseInputs();}
+    const showing=this.uiTime<(this.showUntil||0);if(!showing)document.body.classList.remove('cinematic');
+    document.body.classList.toggle('ball-live',this.phase==='playing');document.body.classList.toggle('fixed-camera',Boolean(this.fixedCamera));
+    if(!this.paused&&!showing&&!this.choosingMode&&['ready','playing','bonus'].includes(this.phase)){
       this.accumulator+=Math.min(elapsed,.1);let steps=0;
       while(this.accumulator>=STEP&&steps++<24){
-        this.physics.tick();this.accumulator-=STEP;
+        this.physics.setGarageOpen(this.rules.lockLit||this.rules.multiball);this.physics.tick();this.rules.tick(STEP);this.accumulator-=STEP;
         const due=this.pending.filter(p=>p.at<=this.physics.time);this.pending=this.pending.filter(p=>p.at>this.physics.time);due.forEach(p=>p.fn());
       }
     }else this.accumulator=0;
@@ -134,6 +144,8 @@ class Game {
   requestAnimationFrame(t=>this.frame(t));
  }
  bind(){
+  $('camera').onclick=()=>{this.fixedCamera=!this.fixedCamera;$('camera').setAttribute('aria-pressed',String(this.fixedCamera));};
+  document.querySelectorAll('[data-mode]').forEach(button=>button.onclick=()=>{if(!this.choosingMode)return;this.releaseInputs();this.choosingMode=false;$('modeChoice').hidden=true;this.rules.startMode(button.dataset.mode);this.schedule(.2,()=>this.physics.addBall(-3.6,8.8,{x:3,y:0,z:-5}));});
   $('start').onclick=()=>this.start();$('practice').onclick=()=>this.start(true);$('restart').onclick=()=>this.start(this.practice);$('returnMenu').onclick=()=>this.menu();$('resume').onclick=()=>this.resume();$('pause').onclick=()=>this.paused?this.resume():this.pause();
   $('sound').onclick=()=>{this.audio.enabled=!this.audio.enabled;$('sound').textContent=this.audio.enabled?'SOUND ON':'SOUND OFF';$('sound').setAttribute('aria-pressed',String(this.audio.enabled));if(!this.audio.enabled)this.audio.suspend();else if(!this.paused)this.audio.unlock().catch(()=>{});};
   $('help').onclick=()=>{this.helpWasPaused=this.paused;this.pause();$('overlay').hidden=true;$('rules').hidden=false;};
