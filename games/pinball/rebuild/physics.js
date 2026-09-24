@@ -1,5 +1,5 @@
 import RAPIER from './vendor/rapier-0.17.3.js';
-import {TABLE,clamp,segments} from './table.js?v=1.0.0-beta.1';
+import {TABLE,clamp,segments} from './table.js?v=1.0.0-beta.2';
 export const STEP=1/240, RADIUS=.235;
 export async function initPhysics(){await RAPIER.init();}
 
@@ -7,7 +7,8 @@ export class PinballPhysics {
   constructor(onEvent=()=>{}) {
     this.onEvent=onEvent; this.time=0; this.nextId=0; this.balls=[];this.flippers=[];
     this.cooldowns=new Map();this.tags=new Map();this.held=[false,false];
-    this.world=new RAPIER.World({x:0,y:-22,z:-3.8});this.world.timestep=STEP;
+    // Arcade world scale: stronger surface gravity and a brisk downhill return.
+    this.world=new RAPIER.World({x:0,y:-32,z:-6.2});this.world.timestep=STEP;
     this.world.integrationParameters.numSolverIterations=8;
     this.world.integrationParameters.maxCcdSubsteps=4;
     this.queue=new RAPIER.EventQueue(true);
@@ -17,7 +18,7 @@ export class PinballPhysics {
     this.box(0,4.5,10,5.2,.1,11);
     for(const path of TABLE.rails)for(const [a,b] of segments(path))this.rail(a,b,.9,.11);
     for(let i=0;i<TABLE.slings.length;i++){
-      const path=TABLE.slings[i];for(const [a,b] of segments([...path,path[0]]))this.rail(a,b,.6,.12,{type:'sling',id:i});
+      const path=TABLE.slings[i];segments([...path,path[0]]).forEach(([a,b],edge)=>this.rail(a,b,.6,.12,edge===0?{type:'sling',id:i}:undefined));
     }
     for(let i=0;i<TABLE.bumpers.length;i++){
       const p=TABLE.bumpers[i];this.collider(RAPIER.ColliderDesc.cylinder(.42,.6).setTranslation(p.x,.42,p.z).setRestitution(.85),{type:'bumper',id:i,...p});
@@ -28,7 +29,7 @@ export class PinballPhysics {
     this.sensor(TABLE.scoop.x,TABLE.scoop.z,.48,{type:'scoop'});
     this.sensor(0,18.7,.65,{type:'skill'});
     this.sensor(-4.2,10,.26,{type:'orbit'});
-    this.sensor(-3.3,7,.34,{type:'ramp'},.35);
+    this.sensor(-2.8,7,.34,{type:'ramp'},.35);
     this.makeRamp();this.makeFlippers();
   }
   collider(desc,tag,body=this.ground){

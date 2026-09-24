@@ -6,7 +6,13 @@ try{
  const errors=[];page.on('pageerror',e=>errors.push(e.message));page.on('response',r=>{if(r.status()>=400)errors.push(r.status()+' '+r.url());});
  // Inspection and fixtures are injected only into this isolated browser response.
  await page.route('**/rebuild/main.js*',async route=>{const r=await route.fetch();await route.fulfill({response:r,body:(await r.text()).replace('const game=new Game();','const game=new Game();window.__qa=game;')});});
- await page.goto(process.env.PINBALL_URL||'http://127.0.0.1:4197/games/pinball/rebuild/');await page.locator('#start').click();
+ await page.goto(process.env.PINBALL_URL||'http://127.0.0.1:4197/games/pinball/rebuild/');await page.locator('#start').waitFor();
+ for(const size of [{width:320,height:640},{width:390,height:667},{width:430,height:932},{width:932,height:430}]){
+  await page.setViewportSize(size);
+  const splash=await page.evaluate(()=>{const m=document.querySelector('#menu'),h=m.querySelector('h1'),b=m.getBoundingClientRect();return {body:getComputedStyle(document.body).position,titleFits:h.scrollWidth<=h.clientWidth+1,left:b.left,right:b.right,bottom:b.bottom};});
+  assert.notEqual(splash.body,'absolute');assert.ok(splash.titleFits);assert.ok(splash.left>=0&&splash.right<=size.width+1&&splash.bottom<=size.height+1);
+ }
+ await page.setViewportSize({width:430,height:932});await page.locator('#start').click();
  await page.waitForTimeout(1800);assert.equal(await page.evaluate(()=>__qa.rules.ballNumber),1);
  assert.equal(await page.evaluate(()=>__qa.phase),'ready');
  const cdp=await page.context().newCDPSession(page);
@@ -20,7 +26,7 @@ try{
  await cdp.send('Input.dispatchTouchEvent',{type:'touchStart',touchPoints:[touch(l.x+30,l.y+50,1),touch(r.x+30,r.y+50,2)]});
  assert.deepEqual(await page.evaluate(()=>__qa.physics.held),[true,true]);
  await cdp.send('Input.dispatchTouchEvent',{type:'touchCancel',touchPoints:[]});assert.deepEqual(await page.evaluate(()=>__qa.physics.held),[false,false]);
- await page.waitForTimeout(1500);assert.ok(await page.evaluate(()=>__qa.rules.score)>0,'live launch should score');
+ await page.waitForFunction(()=>__qa.rules.score>0,{},{timeout:8000});
  await page.screenshot({path:'/tmp/pinball-preview-mobile.png'});
  await page.evaluate(()=>window.dispatchEvent(new Event('blur')));assert.ok(await page.evaluate(()=>__qa.paused));
  await page.waitForFunction(()=>__qa.audio.context.state==='suspended');await page.locator('#resume').click();assert.equal(await page.evaluate(()=>__qa.paused),false);

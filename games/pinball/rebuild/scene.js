@@ -1,7 +1,7 @@
 import * as THREE from '../../vendor/three/three.module.min.js';
 import {mergeGeometries} from '../../vendor/three/addons/utils/BufferGeometryUtils.js';
-import {TABLE,segments,clamp} from './table.js?v=1.0.0-beta.1';
-import {RADIUS} from './physics.js?v=1.0.0-beta.1';
+import {TABLE,segments,clamp} from './table.js?v=1.0.0-beta.2';
+import {RADIUS} from './physics.js?v=1.0.0-beta.2';
 const C={navy:0x122c39,cyan:0x49e0de,orange:0xff914d,cream:0xf7e9c7,metal:0xbac8ce};
 const v3=(x,y,z)=>new THREE.Vector3(x,y,z);
 export class TableScene{

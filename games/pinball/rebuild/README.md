@@ -1,8 +1,10 @@
-# Midnight Run — 1.0.0-beta.1
+# Midnight Run — 1.0.0-beta.2
 
 Open `/games/pinball/` through the repository's HTTP server. The Pinball entry now opens Midnight Run beta. Install using `/games/pinball/app.html?install=1`; the existing game icon and immersive Home Screen wrapper are retained. This release contains one table, not the full planned multi-table collection.
 
 ## Included
+
+Beta 2 fixes splash/body style collisions, expands the phone table, rebuilds the inlanes and slings, directs the ramp exit into the left return, and increases ball acceleration. See [layout research and rationale](LAYOUT-NOTES.md).
 
 - Three.js table hardware and reflective balls over original raster playfield art; reactive bumper lighting and animated 128×32 amber dot-matrix display.
 - Rapier 3D fixed-step physics at 240 Hz, motorized flippers, raised ramp, shooter lane, bumpers, targets, scoop and drains.

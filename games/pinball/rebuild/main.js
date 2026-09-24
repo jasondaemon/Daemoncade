@@ -1,8 +1,8 @@
-import {initPhysics,PinballPhysics,STEP} from './physics.js?v=1.0.0-beta.1';
-import {Rules} from './rules.js?v=1.0.0-beta.1';
-import {TableScene} from './scene.js?v=1.0.0-beta.1';
-import {DMD} from './dmd.js?v=1.0.0-beta.1';
-import {AudioEngine} from './audio.js?v=1.0.0-beta.1';
+import {initPhysics,PinballPhysics,STEP} from './physics.js?v=1.0.0-beta.2';
+import {Rules} from './rules.js?v=1.0.0-beta.2';
+import {TableScene} from './scene.js?v=1.0.0-beta.2';
+import {DMD} from './dmd.js?v=1.0.0-beta.2';
+import {AudioEngine} from './audio.js?v=1.0.0-beta.2';
 const $=id=>document.getElementById(id);
 const BEST_KEY='pinball.midnight-run.v1.best';
 

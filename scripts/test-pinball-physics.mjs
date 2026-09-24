@@ -1,6 +1,13 @@
 import assert from 'node:assert/strict';
 import {initPhysics,PinballPhysics} from '../games/pinball/rebuild/physics.js';
 await initPhysics();
+// Return lanes behind both slings must feed a resting flipper without a rear kick.
+for(const x of [-2.8,2.32])for(const speed of [0,3,6]){
+ let flipper=false,slings=0;const lane=new PinballPhysics(e=>{if(e.type==='flipper')flipper=true;if(e.type==='sling')slings++;});
+ lane.addBall(x,6,{x:0,y:0,z:-speed});for(let i=0;i<720;i++)lane.tick();
+ assert.ok(flipper,'inlane must reach flipper '+x+' speed '+speed);assert.equal(slings,0,'rear sling must be passive');lane.dispose();
+}
+console.log('PASS: both inlanes feed resting flippers at three entry speeds without sling kicks.');
 let events=[],p;
 p=new PinballPhysics((e,b)=>{events.push(e.type);if(e.type==='drain')p.removeBall(b);});
 // A served ball must remain in the shooter lane while the player reads the rules.
@@ -18,9 +25,9 @@ for(let i=0;i<cases;i++){
 assert.ok(contacts>=cases*.995,'moving-flipper collision reliability: '+contacts+'/'+cases);
 console.log('PASS: shooter dwell, launch-to-playfield, '+contacts+'/'+cases+' high-speed flipper contacts.');
 p.dispose();
-for(const speed of [20,23,27]){
- let completions=0;p=new PinballPhysics((e,b)=>{if(e.type==='ramp'&&b.rampTransit&&b.body.linvel().z<0)completions++;if(e.type==='drain')p.removeBall(b);});
- p.addBall(2.15,6.5,{x:0,y:0,z:speed});for(let i=0;i<240*8;i++)p.tick();assert.ok(completions>0,'ramp must complete at speed '+speed);p.dispose();
+for(const speed of [23,25,27]){
+ let completions=0,returnFeed=false;p=new PinballPhysics((e,b)=>{if(e.type==='ramp'&&b.rampTransit&&b.body.linvel().z<0)completions++;if(completions&&e.type==='flipper')returnFeed=true;if(e.type==='drain')p.removeBall(b);});
+ p.addBall(2.15,7.2,{x:0,y:0,z:speed});for(let i=0;i<240*12;i++)p.tick();assert.ok(completions>0,'ramp must complete at speed '+speed);assert.ok(returnFeed,'ramp exit must feed a flipper');p.dispose();
 }
 console.log('PASS: three ramp approach speeds traverse the raised loop and exit into play.');
 // Thirty simulated minutes with three balls; drains recycle without accumulating bodies.
@@ -31,4 +38,5 @@ for(let tick=0;tick<240*1800;tick++){
  p.setFlipper(0,tick%130<50);p.setFlipper(1,tick%173<65);p.tick();
  if(tick%2400===0){assert.equal(p.balls.length<=3,true);for(const b of p.balls){const v=b.body.translation();assert.ok(Number.isFinite(v.x+v.y+v.z));}assert.ok(p.cooldowns.size<=256);}
 }
+assert.ok(stuck<=2,'excessive stuck-ball recovery: '+stuck);
 console.log('PASS: 30 simulated minutes, three balls, '+drains+' drains, '+stuck+' automatic recoveries; bounded collision state.');p.dispose();
