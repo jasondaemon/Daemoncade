@@ -1,5 +1,5 @@
 import RAPIER from './vendor/rapier-0.17.3.js';
-import {TABLE,clamp,segments} from './table.js?v=1.0.0-beta.3';
+import {TABLE,clamp,segments} from './table.js?v=1.0.0-beta.3.1';
 export const STEP=1/240, RADIUS=.235;
 export async function initPhysics(){await RAPIER.init();}
 

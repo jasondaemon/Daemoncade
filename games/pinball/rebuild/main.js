@@ -1,8 +1,8 @@
-import {initPhysics,PinballPhysics,STEP} from './physics.js?v=1.0.0-beta.3';
-import {Rules} from './rules.js?v=1.0.0-beta.3';
-import {TableScene} from './scene.js?v=1.0.0-beta.3';
-import {DMD} from './dmd.js?v=1.0.0-beta.3';
-import {AudioEngine} from './audio.js?v=1.0.0-beta.3';
+import {initPhysics,PinballPhysics,STEP} from './physics.js?v=1.0.0-beta.3.1';
+import {Rules} from './rules.js?v=1.0.0-beta.3.1';
+import {TableScene} from './scene.js?v=1.0.0-beta.3.1';
+import {DMD} from './dmd.js?v=1.0.0-beta.3.1';
+import {AudioEngine} from './audio.js?v=1.0.0-beta.3.1';
 const $=id=>document.getElementById(id);
 const BEST_KEY='pinball.midnight-run.v1.best';
 
@@ -41,7 +41,7 @@ class Game {
  }
  flip(side,up){
   if(this.paused||!['ready','playing'].includes(this.phase)||this.rules.tilted)up=false;
-  if(this.physics.held[side]!==up){this.physics.setFlipper(side,up);if(up)this.audio.sound('flipper');}
+  if(this.physics.held[side]!==up){this.physics.setFlipper(side,up);this.audio.sound(up?'flipper':'release');}
   $(side===0?'touchLeft':'touchRight').classList.toggle('held',up);
  }
  syncFlippers(){for(let i=0;i<2;i++){const touch=[...this.pointers.values()].some(p=>p.side===i);this.flip(i,touch||(i===0?(this.keys.has('arrowleft')||this.keys.has('z')):(this.keys.has('arrowright')||this.keys.has('m'))));}}
@@ -89,7 +89,7 @@ class Game {
     ball.rampTransit=false;
   }
   if(e.type==='orbit'&&ball.body.linvel().z<0)return;
-  this.rules.hit(e);this.scene.pulse(e.type,e.id);if(['bumper','target','sling'].includes(e.type))this.audio.sound(e.type);
+  this.rules.hit(e);this.scene.pulse(e.type,e.id);if(['bumper','target','sling','spinner','rollover','ramp'].includes(e.type))this.audio.sound(e.type);
   this.updateHud();
  }
  drain(ball){
@@ -138,6 +138,7 @@ class Game {
         const due=this.pending.filter(p=>p.at<=this.physics.time);this.pending=this.pending.filter(p=>p.at>this.physics.time);due.forEach(p=>p.fn());
       }
     }else this.accumulator=0;
+    this.audio.update(this.physics.balls,!this.paused&&!showing&&!this.choosingMode&&this.phase==='playing');
     const charge=this.charging?Math.min(1,(now-this.chargeStart)/1000):0;$('charge').style.width=`${charge*100}%`;
     this.scene.render(this.uiTime,Math.min(1,this.accumulator/STEP),this.rules,charge);this.dmd.draw(this.uiTime,this.rules,this.phase);this.updateHud();
   }

@@ -29,7 +29,7 @@ This page is generated from the per-game `game.json` files by `./scripts/build-c
 | <img src="../games/racecar/icon.webp" width="48" height="48" alt=""> | [Racecar](../games/racecar/) | `1.0.0-beta.2` | — | Build a racing career across five circuits and twenty tracks. Earn cash, collect 25 vehicles, tune performance, and qualify for tougher championships. |
 | <img src="../games/sinkhole-city/icon.webp" width="48" height="48" alt=""> | [Sinkhole City](../games/sinkhole-city/) | `1.0.0-beta.1` | Yes | Start as a pothole, swallow everything small enough to fit, and grow into a world-eating sinkhole before time runs out. |
 | <img src="../games/dots-and-boxes/icon.webp" width="48" height="48" alt=""> | [Dots and Boxes](../games/dots-and-boxes/) | `1.0.0-beta.1` | Yes | Draw one line at a time, close boxes, and hold the turn long enough to own the board. |
-| <img src="../games/pinball/icon.webp" width="48" height="48" alt=""> | [Pinball](../games/pinball/) | `1.0.0-beta.3` | Yes | Midnight Run: a 3D arcade pinball table with animated dot-matrix scoring, ramps, missions, and three-ball multiball. |
+| <img src="../games/pinball/icon.webp" width="48" height="48" alt=""> | [Pinball](../games/pinball/) | `1.0.0-beta.3.1` | Yes | Midnight Run: a 3D arcade pinball table with animated dot-matrix scoring, ramps, missions, and three-ball multiball. |
 
 ## Alpha
 

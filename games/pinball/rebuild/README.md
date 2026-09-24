@@ -1,8 +1,10 @@
-# Midnight Run — 1.0.0-beta.3
+# Midnight Run — 1.0.0-beta.3.1
 
 Open `/games/pinball/` through the repository's HTTP server. The Pinball entry now opens Midnight Run beta. Install using `/games/pinball/app.html?install=1`; the existing game icon and immersive Home Screen wrapper are retained. This release contains one table, not the full planned multi-table collection.
 
 ## Included
+
+Beta 3.1 removes full-side touch illumination and replaces the basic oscillator effects with layered procedural cabinet knocks, filtered noise impacts, inharmonic metallic chimes, spring/ramp rattles and speed-dependent rolling. A shared compressor, per-event cooldowns and a 48-layer ceiling bound multiball audio. No external audio files are used; phone-speaker balance still needs listening validation.
 
 Beta 3 replaces the single loop with two shorter ramps, relocates the garage/target bank, adds a spinner, upper rollovers, four pop bumpers and a selectable challenge scoop. The LED display appears only during safe ball-held sequences. See [layout research and rationale](LAYOUT-NOTES.md).
 
