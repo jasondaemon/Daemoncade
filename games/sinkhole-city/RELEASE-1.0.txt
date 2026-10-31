@@ -33,3 +33,18 @@ Deployment uses the existing Daemoncade main-branch publisher. Rollback:
 revert this promotion commit; the next publisher restores the previous
 default. Keep RC2 and RC1 snapshots for comparison; do not delete player
 storage or reset other game progress during rollback.
+
+PUBLICATION VERIFIED -- 2026-10-31
+  Release commit: 2ab4643f18ab5bb820cca1805dec5587ede1bef2
+  Publisher: Job/daemoncade-sinkhole-v1-20261031, completed successfully;
+  the serving pod's .release matched the release commit.
+  External HTTPS verification: all 95 publicly routed game/runtime assets
+  matched the accepted package's SHA-256 inventory. Catalog/game metadata
+  reported 1.0.0 Stable. The live website showed the card with beta games off;
+  launcher play and close passed. Live default-route/save-retention checks
+  passed. Both app.html and app-expedition.html passed browser/standalone
+  identity, icon, install help, play, suspension and checkpoint smoke tests.
+  The self-only CSP deliberately blocks the website edge's injected
+  Cloudflare analytics beacon; this expected refusal is distinguished from
+  game errors by the install test. The security policy was not weakened.
+  These are external desktop Chrome checks, not physical-device testing.

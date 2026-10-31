@@ -4,7 +4,12 @@ const browser=await chromium.launch({headless:true,executablePath:'/Applications
 const base=process.env.SINKHOLE_BASE_URL||'http://127.0.0.1:4197';
 try{
  for(const entry of['app.html','app-expedition.html'])for(const standalone of[false,true]){
-  const page=await browser.newPage({viewport:{width:390,height:844},isMobile:true,hasTouch:true}),errors=[],pending=new Set();page.on('pageerror',e=>errors.push(e.message));page.on('console',m=>{if(m.type()==='error')errors.push(m.text());});page.on('request',r=>pending.add(r.url()));for(const event of['requestfinished','requestfailed'])page.on(event,r=>pending.delete(r.url()));
+  const page=await browser.newPage({viewport:{width:390,height:844},isMobile:true,hasTouch:true}),errors=[],blockedTelemetry=[],pending=new Set();page.on('pageerror',e=>errors.push(e.message));page.on('console',m=>{if(m.type()!=='error')return;const text=m.text();
+   // The website edge injects its own beacon. Our self-only game CSP must
+   // continue blocking it; distinguish that known security refusal from a
+   // missing game script, runtime error, or any other CSP violation.
+   if(text.includes('https://static.cloudflareinsights.com/beacon.min.js/')&&text.includes('Content Security Policy')&&text.includes('blocked'))blockedTelemetry.push(text);else errors.push(text);
+  });page.on('request',r=>pending.add(r.url()));for(const event of['requestfinished','requestfailed'])page.on(event,r=>pending.delete(r.url()));
   await page.addInitScript(standalone=>{localStorage.setItem('sinkhole.metro.preferences.v1',JSON.stringify({sound:false,music:false}));if(standalone){const original=window.matchMedia.bind(window);window.matchMedia=q=>q==='(display-mode: standalone)'?{matches:true,addEventListener(){},removeEventListener(){}}:original(q);}},standalone);
   await page.goto(base+'/games/sinkhole-city/'+entry+'?install=1');
   const frame=page.frameLocator('#app-game');await frame.locator('#title-play').waitFor();await page.waitForFunction(()=>!document.querySelector('#app-game').contentDocument.querySelector('#title-play').disabled).catch(async e=>{console.log('LOAD STALL',errors,[...pending],await frame.locator('#status').textContent());throw e;});
@@ -16,7 +21,7 @@ try{
   await frame.locator('#title-play').click();await frame.locator('#free').click();
   await page.evaluate(()=>document.querySelector('#app-game').contentWindow.postMessage({type:'daemoncade:suspend'},location.origin));
   await frame.locator('#resume').waitFor({state:'visible'});assert.ok(await page.evaluate(()=>Boolean(localStorage.getItem('sinkhole.metro.run.v1'))));
-  await page.screenshot({path:`/tmp/sinkhole-release48-app-${standalone?'standalone':'browser'}.png`});assert.deepEqual(errors,[]);await page.close();
+  await page.screenshot({path:`/tmp/sinkhole-release48-app-${standalone?'standalone':'browser'}.png`});assert.deepEqual(errors,[]);if(blockedTelemetry.length)console.log('EXPECTED: self-only CSP blocked edge-injected analytics',entry,blockedTelemetry.length);await page.close();
  }
- console.log('PASS: candidate wrapper loads the 3D game, own icon/manifest, install help, immersive app mode and parent suspension/checkpoint.');
+ console.log('PASS: Stable and retained app wrappers load the 3D game, preserve icon/manifest identities, install help, immersive app mode and parent suspension/checkpoint.');
 }finally{await browser.close();}
