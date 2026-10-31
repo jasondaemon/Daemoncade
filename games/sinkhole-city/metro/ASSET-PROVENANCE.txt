@@ -1,0 +1,31 @@
+SINKHOLE CITY EXPEDITION -- RC2 asset verification, 2026-10-31
+
+Original procedural geometry, shaders, rims and game code:
+  Project-specific source, covered by repository LICENSE.md / NOTICE.txt.
+  No new downloaded character art was introduced in the rim passes.
+
+Local third-party runtime/models:
+  Three.js: MIT; games/vendor/three/LICENSE.txt.
+  Kenney Car Kit: CC0; games/racecar/assets/kenney-cars/License.txt.
+  Kenney Nature Kit: CC0; games/racecar/assets/kenney-nature/License.txt.
+  Kenney City Kit Industrial: CC0;
+    games/blitz/assets/models/industrial/LICENSE.txt.
+  Exact roots, runtime dependencies, external GLB textures and hashes are
+  recorded by scripts/package-sinkhole.mjs in asset-manifest.json.
+
+Soundtrack -- OWNER CONFIRMED, 2026-10-31:
+  Legacy beta source: games/sinkhole-city/assets/sfx/background.mp3
+  SHA-256: c1b7d4d44257f58f29c97d1d9a10cd3b16be4a22751e2295a74dde1b930c4d4e
+  The source is present in Git history (555e24d, directory organization).
+  Expedition derivative: assets/sfx/background-game-quiet.mp3
+  SHA-256: d64dd22c9a2a6f9c022c36077d7b1b702d3806e3a6ba0e7a73e6b0a7c3e39c29
+  The derivative is attenuated for phone playback; changing loudness does
+  not establish source ownership or redistribution permission.
+  During this qualification pass, the owner explicitly answered:
+    "Yes--project-owned and cleared for redistribution"
+  to a question asking whether this original background music may be
+  redistributed with the open-source game. That clears the rights hold.
+  The repository's default project-specific asset license is GPL-3.0,
+  per LICENSE.md and NOTICE.txt. The package inventory records the license,
+  confirmation date and this provenance file. Prior beta use alone was not
+  treated as proof; this owner confirmation is the recorded basis.

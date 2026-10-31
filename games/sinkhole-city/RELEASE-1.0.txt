@@ -1,0 +1,35 @@
+SINKHOLE CITY 1.0.0 STABLE -- 2026-10-31
+
+The owner accepted the v1 scope and explicitly authorized pushing and
+publishing this release on 2026-10-31, following RC2 qualification.
+This approval does not retroactively claim physical Android endurance or
+uncoached user studies that were not performed.
+
+Six progressive worlds: Market District, Pinewood Basecamp, Abyssal Bay,
+Resonance Basin, Helios Reach and Infinity. Eighteen contracts, Free Roam,
+Metro AI Arena, eleven cosmetic rims and a continuous atoms-to-galaxies
+finale. Includes touch steering, pause/background audio handling, periodic
+run checkpoints, explicit resume, campaign export/import and mobile menus.
+
+Public game: /games/sinkhole-city/
+Home Screen/install: /games/sinkhole-city/app.html?install=1
+Previous candidate install identity remains valid at app-expedition.html.
+Previous beta: /games/sinkhole-city/legacy.html
+
+The default entry now opens the accepted 3D Expedition game. Existing app
+manifest IDs and icon paths are unchanged. Expedition local-storage keys
+are unchanged. Legacy beta saves/scores remain stored separately; they are
+not silently converted or erased. Campaign backups do not include active
+run checkpoints. No account, uploads, online scores or offline-play promise.
+
+Qualification: 175 unit/runtime/package checks, thirteen native Chrome
+regression suites, and 54/54 actual-model diagnostic routes (18 missions,
+3 seeds) on RC2. Stable promotion checks cover default routing, both app
+identities, catalog stage, runtime dependency inclusion and save retention.
+Music redistribution was explicitly owner-cleared on 2026-10-31; see
+metro/ASSET-PROVENANCE.txt. Detailed prior evidence remains under metro/.
+
+Deployment uses the existing Daemoncade main-branch publisher. Rollback:
+revert this promotion commit; the next publisher restores the previous
+default. Keep RC2 and RC1 snapshots for comparison; do not delete player
+storage or reset other game progress during rollback.

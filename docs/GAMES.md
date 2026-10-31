@@ -14,6 +14,7 @@ This page is generated from the per-game `game.json` files by `./scripts/build-c
 | <img src="../games/space-defender/icon.webp" width="48" height="48" alt=""> | [Space Defender](../games/space-defender/) | `1.0.0` | — | Hold the line against marching alien formations, protect your shields, and survive escalating attack waves. |
 | <img src="../games/maze-defense/icon.png" width="48" height="48" alt=""> | [Maze Defense](../games/maze-defense/) | `1.0.0` | Yes | Build the maze as you defend it. Place and upgrade towers, reshape enemy routes, and survive increasingly devious waves. |
 | <img src="../games/mines/icon.webp" width="48" height="48" alt=""> | [iMines](../games/mines/) | `1.0.0` | Yes | Clear classic minefields for faster times or expand an endless world of connected sectors. |
+| <img src="../games/sinkhole-city/icon.webp" width="48" height="48" alt=""> | [Sinkhole City](../games/sinkhole-city/) | `1.0.0` | Yes | Swallow six living worlds, collect creature rims, challenge AI rivals, and grow from atoms to galaxies in a continuous cosmic finale. |
 | <img src="../games/blockfall/icon.webp" width="48" height="48" alt=""> | [Blockfall](../games/blockfall/) | `1.0.2` | Yes | Stack falling pieces in endless or timed play and chase a high score saved on this device. |
 | <img src="../games/chess/icon.webp" width="48" height="48" alt=""> | [Chess](../games/chess/) | `1.0.0` | Yes | Play a complete chess game against a local computer opponent or someone sharing the board. |
 | <img src="../games/checkers/icon.webp" width="48" height="48" alt=""> | [Checkers](../games/checkers/) | `1.0.0` | Yes | Play classic checkers against the computer or share the board with someone beside you. |
@@ -27,7 +28,6 @@ This page is generated from the per-game `game.json` files by `./scripts/build-c
 | Icon | Game | Version | Mobile | About |
 | --- | --- | --- | --- | --- |
 | <img src="../games/racecar/icon.webp" width="48" height="48" alt=""> | [Racecar](../games/racecar/) | `1.0.0-beta.2` | — | Build a racing career across five circuits and twenty tracks. Earn cash, collect 25 vehicles, tune performance, and qualify for tougher championships. |
-| <img src="../games/sinkhole-city/icon.webp" width="48" height="48" alt=""> | [Sinkhole City](../games/sinkhole-city/) | `1.0.0-beta.1` | Yes | Start as a pothole, swallow everything small enough to fit, and grow into a world-eating sinkhole before time runs out. |
 | <img src="../games/dots-and-boxes/icon.webp" width="48" height="48" alt=""> | [Dots and Boxes](../games/dots-and-boxes/) | `1.0.0-beta.1` | Yes | Draw one line at a time, close boxes, and hold the turn long enough to own the board. |
 | <img src="../games/pinball/icon.webp" width="48" height="48" alt=""> | [Pinball](../games/pinball/) | `1.0.0-beta.3.1` | Yes | Midnight Run: a 3D arcade pinball table with animated dot-matrix scoring, ramps, missions, and three-ball multiball. |
 

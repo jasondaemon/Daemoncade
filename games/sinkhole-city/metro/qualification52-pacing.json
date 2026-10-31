@@ -1,0 +1,1385 @@
+{
+  "build": "qualification52",
+  "method": "Actual loaded model contacts; nearest eligible objective, otherwise nearest eligible growth; full directional input; fixed 60 Hz; seeds 1/7/23. Not a human playtest.",
+  "worlds": [
+    {
+      "world": "metro",
+      "view": 1.2,
+      "objects": 240,
+      "geometries": 51,
+      "textures": 11,
+      "radius": 1.2,
+      "scaleProgress": 0,
+      "calls": 84,
+      "triangles": 424524
+    },
+    {
+      "world": "metro",
+      "view": 4,
+      "objects": 240,
+      "geometries": 51,
+      "textures": 11,
+      "radius": 4,
+      "scaleProgress": 0,
+      "calls": 84,
+      "triangles": 424524
+    },
+    {
+      "world": "metro",
+      "view": 8.5,
+      "objects": 240,
+      "geometries": 51,
+      "textures": 11,
+      "radius": 8.5,
+      "scaleProgress": 0,
+      "calls": 85,
+      "triangles": 424692
+    },
+    {
+      "world": "basecamp",
+      "view": 1.2,
+      "objects": 241,
+      "geometries": 33,
+      "textures": 3,
+      "radius": 1.2,
+      "scaleProgress": 0,
+      "calls": 56,
+      "triangles": 189504
+    },
+    {
+      "world": "basecamp",
+      "view": 4,
+      "objects": 241,
+      "geometries": 33,
+      "textures": 3,
+      "radius": 4,
+      "scaleProgress": 0,
+      "calls": 56,
+      "triangles": 189504
+    },
+    {
+      "world": "basecamp",
+      "view": 8.5,
+      "objects": 241,
+      "geometries": 33,
+      "textures": 3,
+      "radius": 8.5,
+      "scaleProgress": 0,
+      "calls": 56,
+      "triangles": 189504
+    },
+    {
+      "world": "deep",
+      "view": 1.2,
+      "objects": 294,
+      "geometries": 29,
+      "textures": 3,
+      "radius": 1.2,
+      "scaleProgress": 0,
+      "calls": 50,
+      "triangles": 577908
+    },
+    {
+      "world": "deep",
+      "view": 4,
+      "objects": 294,
+      "geometries": 29,
+      "textures": 3,
+      "radius": 4,
+      "scaleProgress": 0,
+      "calls": 50,
+      "triangles": 577908
+    },
+    {
+      "world": "deep",
+      "view": 8.5,
+      "objects": 294,
+      "geometries": 29,
+      "textures": 3,
+      "radius": 8.5,
+      "scaleProgress": 0,
+      "calls": 50,
+      "triangles": 577908
+    },
+    {
+      "world": "alien",
+      "view": 1.2,
+      "objects": 237,
+      "geometries": 20,
+      "textures": 3,
+      "radius": 1.2,
+      "scaleProgress": 0,
+      "calls": 31,
+      "triangles": 337908
+    },
+    {
+      "world": "alien",
+      "view": 4,
+      "objects": 237,
+      "geometries": 20,
+      "textures": 3,
+      "radius": 4,
+      "scaleProgress": 0,
+      "calls": 31,
+      "triangles": 337908
+    },
+    {
+      "world": "alien",
+      "view": 8.5,
+      "objects": 237,
+      "geometries": 20,
+      "textures": 3,
+      "radius": 8.5,
+      "scaleProgress": 0,
+      "calls": 31,
+      "triangles": 337908
+    },
+    {
+      "world": "orbit",
+      "view": 1.2,
+      "objects": 173,
+      "geometries": 5,
+      "textures": 3,
+      "radius": 1.2,
+      "scaleProgress": 0,
+      "calls": 19,
+      "triangles": 76132
+    },
+    {
+      "world": "orbit",
+      "view": 4,
+      "objects": 173,
+      "geometries": 5,
+      "textures": 3,
+      "radius": 4,
+      "scaleProgress": 0,
+      "calls": 19,
+      "triangles": 76132
+    },
+    {
+      "world": "orbit",
+      "view": 8.5,
+      "objects": 173,
+      "geometries": 5,
+      "textures": 3,
+      "radius": 8.5,
+      "scaleProgress": 0,
+      "calls": 19,
+      "triangles": 76132
+    },
+    {
+      "world": "ascension",
+      "view": 0,
+      "objects": 1224,
+      "geometries": 14,
+      "textures": 3,
+      "radius": 1.2,
+      "scaleProgress": 0,
+      "calls": 14,
+      "triangles": 224728
+    },
+    {
+      "world": "ascension",
+      "view": 8.5,
+      "objects": 1224,
+      "geometries": 14,
+      "textures": 3,
+      "radius": 39514.0951146032,
+      "scaleProgress": 8.5,
+      "calls": 22,
+      "triangles": 184220
+    },
+    {
+      "world": "ascension",
+      "view": 17.5,
+      "objects": 1224,
+      "geometries": 14,
+      "textures": 3,
+      "radius": 2399177027.2467327,
+      "scaleProgress": 17.5,
+      "calls": 15,
+      "triangles": 473408
+    }
+  ],
+  "routes": [
+    {
+      "contract": "cleanup",
+      "world": "metro",
+      "seed": 1,
+      "won": true,
+      "time": 67.1,
+      "firstIntake": 0.95,
+      "longestCollectionGap": 3,
+      "eaten": 88,
+      "goal": 72,
+      "target": 72,
+      "limit": 200,
+      "medal": 3,
+      "milestones": []
+    },
+    {
+      "contract": "cleanup",
+      "world": "metro",
+      "seed": 7,
+      "won": true,
+      "time": 60.5,
+      "firstIntake": 0.95,
+      "longestCollectionGap": 3.1,
+      "eaten": 80,
+      "goal": 72,
+      "target": 72,
+      "limit": 200,
+      "medal": 3,
+      "milestones": []
+    },
+    {
+      "contract": "cleanup",
+      "world": "metro",
+      "seed": 23,
+      "won": true,
+      "time": 66.9,
+      "firstIntake": 0.95,
+      "longestCollectionGap": 4.2,
+      "eaten": 86,
+      "goal": 72,
+      "target": 72,
+      "limit": 200,
+      "medal": 3,
+      "milestones": []
+    },
+    {
+      "contract": "traffic",
+      "world": "metro",
+      "seed": 1,
+      "won": true,
+      "time": 62.7,
+      "firstIntake": 0.95,
+      "longestCollectionGap": 5.8,
+      "eaten": 68,
+      "goal": 24,
+      "target": 24,
+      "limit": 240,
+      "medal": 3,
+      "milestones": []
+    },
+    {
+      "contract": "traffic",
+      "world": "metro",
+      "seed": 7,
+      "won": true,
+      "time": 57.9,
+      "firstIntake": 0.95,
+      "longestCollectionGap": 3,
+      "eaten": 63,
+      "goal": 24,
+      "target": 24,
+      "limit": 240,
+      "medal": 3,
+      "milestones": []
+    },
+    {
+      "contract": "traffic",
+      "world": "metro",
+      "seed": 23,
+      "won": true,
+      "time": 68.1,
+      "firstIntake": 0.95,
+      "longestCollectionGap": 4.8,
+      "eaten": 70,
+      "goal": 24,
+      "target": 24,
+      "limit": 240,
+      "medal": 3,
+      "milestones": []
+    },
+    {
+      "contract": "tower",
+      "world": "metro",
+      "seed": 1,
+      "won": true,
+      "time": 151.7,
+      "firstIntake": 0.95,
+      "longestCollectionGap": 7.8,
+      "eaten": 186,
+      "goal": 1,
+      "target": 1,
+      "limit": 300,
+      "medal": 3,
+      "milestones": []
+    },
+    {
+      "contract": "tower",
+      "world": "metro",
+      "seed": 7,
+      "won": true,
+      "time": 139.5,
+      "firstIntake": 0.95,
+      "longestCollectionGap": 9.1,
+      "eaten": 192,
+      "goal": 1,
+      "target": 1,
+      "limit": 300,
+      "medal": 3,
+      "milestones": []
+    },
+    {
+      "contract": "tower",
+      "world": "metro",
+      "seed": 23,
+      "won": true,
+      "time": 154.2,
+      "firstIntake": 0.95,
+      "longestCollectionGap": 7.9,
+      "eaten": 178,
+      "goal": 1,
+      "target": 1,
+      "limit": 300,
+      "medal": 3,
+      "milestones": []
+    },
+    {
+      "contract": "camp-cleanup",
+      "world": "basecamp",
+      "seed": 1,
+      "won": true,
+      "time": 52.4,
+      "firstIntake": 0.23,
+      "longestCollectionGap": 3.5,
+      "eaten": 105,
+      "goal": 90,
+      "target": 90,
+      "limit": 200,
+      "medal": 3,
+      "milestones": []
+    },
+    {
+      "contract": "camp-cleanup",
+      "world": "basecamp",
+      "seed": 7,
+      "won": true,
+      "time": 55.9,
+      "firstIntake": 0.23,
+      "longestCollectionGap": 3.1,
+      "eaten": 106,
+      "goal": 90,
+      "target": 90,
+      "limit": 200,
+      "medal": 3,
+      "milestones": []
+    },
+    {
+      "contract": "camp-cleanup",
+      "world": "basecamp",
+      "seed": 23,
+      "won": true,
+      "time": 60.6,
+      "firstIntake": 0.23,
+      "longestCollectionGap": 3.1,
+      "eaten": 111,
+      "goal": 90,
+      "target": 90,
+      "limit": 200,
+      "medal": 3,
+      "milestones": []
+    },
+    {
+      "contract": "camp-packup",
+      "world": "basecamp",
+      "seed": 1,
+      "won": true,
+      "time": 43.2,
+      "firstIntake": 0.23,
+      "longestCollectionGap": 2.7,
+      "eaten": 65,
+      "goal": 20,
+      "target": 20,
+      "limit": 260,
+      "medal": 3,
+      "milestones": []
+    },
+    {
+      "contract": "camp-packup",
+      "world": "basecamp",
+      "seed": 7,
+      "won": true,
+      "time": 42.1,
+      "firstIntake": 0.23,
+      "longestCollectionGap": 6.1,
+      "eaten": 54,
+      "goal": 20,
+      "target": 20,
+      "limit": 260,
+      "medal": 3,
+      "milestones": []
+    },
+    {
+      "contract": "camp-packup",
+      "world": "basecamp",
+      "seed": 23,
+      "won": true,
+      "time": 43.6,
+      "firstIntake": 0.23,
+      "longestCollectionGap": 4.4,
+      "eaten": 63,
+      "goal": 20,
+      "target": 20,
+      "limit": 260,
+      "medal": 3,
+      "milestones": []
+    },
+    {
+      "contract": "camp-lodge",
+      "world": "basecamp",
+      "seed": 1,
+      "won": true,
+      "time": 94.1,
+      "firstIntake": 0.23,
+      "longestCollectionGap": 3.7,
+      "eaten": 164,
+      "goal": 1,
+      "target": 1,
+      "limit": 300,
+      "medal": 3,
+      "milestones": []
+    },
+    {
+      "contract": "camp-lodge",
+      "world": "basecamp",
+      "seed": 7,
+      "won": true,
+      "time": 80.8,
+      "firstIntake": 0.23,
+      "longestCollectionGap": 2.8,
+      "eaten": 183,
+      "goal": 1,
+      "target": 1,
+      "limit": 300,
+      "medal": 3,
+      "milestones": []
+    },
+    {
+      "contract": "camp-lodge",
+      "world": "basecamp",
+      "seed": 23,
+      "won": true,
+      "time": 94.4,
+      "firstIntake": 0.23,
+      "longestCollectionGap": 2.8,
+      "eaten": 184,
+      "goal": 1,
+      "target": 1,
+      "limit": 300,
+      "medal": 3,
+      "milestones": []
+    },
+    {
+      "contract": "deep-cleanup",
+      "world": "deep",
+      "seed": 1,
+      "won": true,
+      "time": 59.9,
+      "firstIntake": 0.83,
+      "longestCollectionGap": 4.5,
+      "eaten": 121,
+      "goal": 86,
+      "target": 85,
+      "limit": 220,
+      "medal": 3,
+      "milestones": []
+    },
+    {
+      "contract": "deep-cleanup",
+      "world": "deep",
+      "seed": 7,
+      "won": true,
+      "time": 50.2,
+      "firstIntake": 0.55,
+      "longestCollectionGap": 3.4,
+      "eaten": 111,
+      "goal": 85,
+      "target": 85,
+      "limit": 220,
+      "medal": 3,
+      "milestones": []
+    },
+    {
+      "contract": "deep-cleanup",
+      "world": "deep",
+      "seed": 23,
+      "won": true,
+      "time": 51.2,
+      "firstIntake": 0.9,
+      "longestCollectionGap": 2.2,
+      "eaten": 124,
+      "goal": 86,
+      "target": 85,
+      "limit": 220,
+      "medal": 3,
+      "milestones": []
+    },
+    {
+      "contract": "deep-salvage",
+      "world": "deep",
+      "seed": 1,
+      "won": true,
+      "time": 53.4,
+      "firstIntake": 0.6,
+      "longestCollectionGap": 2.2,
+      "eaten": 134,
+      "goal": 6,
+      "target": 6,
+      "limit": 300,
+      "medal": 3,
+      "milestones": []
+    },
+    {
+      "contract": "deep-salvage",
+      "world": "deep",
+      "seed": 7,
+      "won": true,
+      "time": 42.1,
+      "firstIntake": 0.25,
+      "longestCollectionGap": 1.6,
+      "eaten": 119,
+      "goal": 6,
+      "target": 6,
+      "limit": 300,
+      "medal": 3,
+      "milestones": []
+    },
+    {
+      "contract": "deep-salvage",
+      "world": "deep",
+      "seed": 23,
+      "won": true,
+      "time": 49.9,
+      "firstIntake": 0.9,
+      "longestCollectionGap": 2.8,
+      "eaten": 137,
+      "goal": 6,
+      "target": 6,
+      "limit": 300,
+      "medal": 3,
+      "milestones": []
+    },
+    {
+      "contract": "deep-station",
+      "world": "deep",
+      "seed": 1,
+      "won": true,
+      "time": 92.4,
+      "firstIntake": 0.6,
+      "longestCollectionGap": 2.4,
+      "eaten": 220,
+      "goal": 2,
+      "target": 2,
+      "limit": 330,
+      "medal": 3,
+      "milestones": []
+    },
+    {
+      "contract": "deep-station",
+      "world": "deep",
+      "seed": 7,
+      "won": true,
+      "time": 84.4,
+      "firstIntake": 0.25,
+      "longestCollectionGap": 3.4,
+      "eaten": 216,
+      "goal": 2,
+      "target": 2,
+      "limit": 330,
+      "medal": 3,
+      "milestones": []
+    },
+    {
+      "contract": "deep-station",
+      "world": "deep",
+      "seed": 23,
+      "won": true,
+      "time": 77.3,
+      "firstIntake": 0.9,
+      "longestCollectionGap": 2.9,
+      "eaten": 220,
+      "goal": 2,
+      "target": 2,
+      "limit": 330,
+      "medal": 3,
+      "milestones": []
+    },
+    {
+      "contract": "alien-forage",
+      "world": "alien",
+      "seed": 1,
+      "won": true,
+      "time": 55,
+      "firstIntake": 0.77,
+      "longestCollectionGap": 3.8,
+      "eaten": 114,
+      "goal": 110,
+      "target": 110,
+      "limit": 220,
+      "medal": 3,
+      "milestones": []
+    },
+    {
+      "contract": "alien-forage",
+      "world": "alien",
+      "seed": 7,
+      "won": true,
+      "time": 52.6,
+      "firstIntake": 0.82,
+      "longestCollectionGap": 4,
+      "eaten": 115,
+      "goal": 110,
+      "target": 110,
+      "limit": 220,
+      "medal": 3,
+      "milestones": []
+    },
+    {
+      "contract": "alien-forage",
+      "world": "alien",
+      "seed": 23,
+      "won": true,
+      "time": 57,
+      "firstIntake": 0.78,
+      "longestCollectionGap": 5,
+      "eaten": 116,
+      "goal": 111,
+      "target": 110,
+      "limit": 220,
+      "medal": 3,
+      "milestones": []
+    },
+    {
+      "contract": "alien-cores",
+      "world": "alien",
+      "seed": 1,
+      "won": true,
+      "time": 56.3,
+      "firstIntake": 0.77,
+      "longestCollectionGap": 3.8,
+      "eaten": 77,
+      "goal": 18,
+      "target": 18,
+      "limit": 300,
+      "medal": 3,
+      "milestones": []
+    },
+    {
+      "contract": "alien-cores",
+      "world": "alien",
+      "seed": 7,
+      "won": true,
+      "time": 56.1,
+      "firstIntake": 0.82,
+      "longestCollectionGap": 3.8,
+      "eaten": 79,
+      "goal": 18,
+      "target": 18,
+      "limit": 300,
+      "medal": 3,
+      "milestones": []
+    },
+    {
+      "contract": "alien-cores",
+      "world": "alien",
+      "seed": 23,
+      "won": true,
+      "time": 56.7,
+      "firstIntake": 0.78,
+      "longestCollectionGap": 3.8,
+      "eaten": 81,
+      "goal": 18,
+      "target": 18,
+      "limit": 300,
+      "medal": 3,
+      "milestones": []
+    },
+    {
+      "contract": "alien-portal",
+      "world": "alien",
+      "seed": 1,
+      "won": true,
+      "time": 91,
+      "firstIntake": 0.77,
+      "longestCollectionGap": 5.7,
+      "eaten": 139,
+      "goal": 1,
+      "target": 1,
+      "limit": 330,
+      "medal": 3,
+      "milestones": []
+    },
+    {
+      "contract": "alien-portal",
+      "world": "alien",
+      "seed": 7,
+      "won": true,
+      "time": 89.4,
+      "firstIntake": 0.82,
+      "longestCollectionGap": 4.5,
+      "eaten": 150,
+      "goal": 1,
+      "target": 1,
+      "limit": 330,
+      "medal": 3,
+      "milestones": []
+    },
+    {
+      "contract": "alien-portal",
+      "world": "alien",
+      "seed": 23,
+      "won": true,
+      "time": 88.5,
+      "firstIntake": 0.78,
+      "longestCollectionGap": 4.5,
+      "eaten": 143,
+      "goal": 1,
+      "target": 1,
+      "limit": 330,
+      "medal": 3,
+      "milestones": []
+    },
+    {
+      "contract": "orbit-debris",
+      "world": "orbit",
+      "seed": 1,
+      "won": true,
+      "time": 71.3,
+      "firstIntake": 0.55,
+      "longestCollectionGap": 1.6,
+      "eaten": 123,
+      "goal": 115,
+      "target": 115,
+      "limit": 240,
+      "medal": 3,
+      "milestones": []
+    },
+    {
+      "contract": "orbit-debris",
+      "world": "orbit",
+      "seed": 7,
+      "won": true,
+      "time": 76.7,
+      "firstIntake": 0.68,
+      "longestCollectionGap": 2.1,
+      "eaten": 121,
+      "goal": 115,
+      "target": 115,
+      "limit": 240,
+      "medal": 3,
+      "milestones": []
+    },
+    {
+      "contract": "orbit-debris",
+      "world": "orbit",
+      "seed": 23,
+      "won": true,
+      "time": 70.3,
+      "firstIntake": 0.95,
+      "longestCollectionGap": 2,
+      "eaten": 126,
+      "goal": 115,
+      "target": 115,
+      "limit": 240,
+      "medal": 3,
+      "milestones": []
+    },
+    {
+      "contract": "orbit-fleet",
+      "world": "orbit",
+      "seed": 1,
+      "won": true,
+      "time": 56,
+      "firstIntake": 2.25,
+      "longestCollectionGap": 4.1,
+      "eaten": 62,
+      "goal": 21,
+      "target": 21,
+      "limit": 300,
+      "medal": 3,
+      "milestones": []
+    },
+    {
+      "contract": "orbit-fleet",
+      "world": "orbit",
+      "seed": 7,
+      "won": true,
+      "time": 52.5,
+      "firstIntake": 3.03,
+      "longestCollectionGap": 4.2,
+      "eaten": 59,
+      "goal": 21,
+      "target": 21,
+      "limit": 300,
+      "medal": 3,
+      "milestones": []
+    },
+    {
+      "contract": "orbit-fleet",
+      "world": "orbit",
+      "seed": 23,
+      "won": true,
+      "time": 53,
+      "firstIntake": 0.87,
+      "longestCollectionGap": 4,
+      "eaten": 66,
+      "goal": 21,
+      "target": 21,
+      "limit": 300,
+      "medal": 3,
+      "milestones": []
+    },
+    {
+      "contract": "orbit-sun",
+      "world": "orbit",
+      "seed": 1,
+      "won": true,
+      "time": 101.3,
+      "firstIntake": 0.55,
+      "longestCollectionGap": 6.6,
+      "eaten": 147,
+      "goal": 1,
+      "target": 1,
+      "limit": 330,
+      "medal": 3,
+      "milestones": []
+    },
+    {
+      "contract": "orbit-sun",
+      "world": "orbit",
+      "seed": 7,
+      "won": true,
+      "time": 110.7,
+      "firstIntake": 0.68,
+      "longestCollectionGap": 4.9,
+      "eaten": 159,
+      "goal": 1,
+      "target": 1,
+      "limit": 330,
+      "medal": 3,
+      "milestones": []
+    },
+    {
+      "contract": "orbit-sun",
+      "world": "orbit",
+      "seed": 23,
+      "won": true,
+      "time": 111,
+      "firstIntake": 0.87,
+      "longestCollectionGap": 6.5,
+      "eaten": 155,
+      "goal": 1,
+      "target": 1,
+      "limit": 330,
+      "medal": 3,
+      "milestones": []
+    },
+    {
+      "contract": "infinity-matter",
+      "world": "ascension",
+      "seed": 1,
+      "won": true,
+      "time": 83.4,
+      "firstIntake": 1.4,
+      "longestCollectionGap": 1.9,
+      "eaten": 106,
+      "goal": 2,
+      "target": 2,
+      "limit": 300,
+      "medal": 3,
+      "milestones": [
+        {
+          "scale": 1,
+          "time": 36.7
+        },
+        {
+          "scale": 2,
+          "time": 83.4
+        }
+      ]
+    },
+    {
+      "contract": "infinity-matter",
+      "world": "ascension",
+      "seed": 7,
+      "won": true,
+      "time": 82.9,
+      "firstIntake": 1.35,
+      "longestCollectionGap": 2.5,
+      "eaten": 89,
+      "goal": 2,
+      "target": 2,
+      "limit": 300,
+      "medal": 3,
+      "milestones": [
+        {
+          "scale": 1,
+          "time": 47.2
+        },
+        {
+          "scale": 2,
+          "time": 82.9
+        }
+      ]
+    },
+    {
+      "contract": "infinity-matter",
+      "world": "ascension",
+      "seed": 23,
+      "won": true,
+      "time": 90.8,
+      "firstIntake": 1.17,
+      "longestCollectionGap": 4.1,
+      "eaten": 108,
+      "goal": 2,
+      "target": 2,
+      "limit": 300,
+      "medal": 3,
+      "milestones": [
+        {
+          "scale": 1,
+          "time": 43.9
+        },
+        {
+          "scale": 2,
+          "time": 90.8
+        }
+      ]
+    },
+    {
+      "contract": "infinity-life",
+      "world": "ascension",
+      "seed": 1,
+      "won": true,
+      "time": 522,
+      "firstIntake": 1.4,
+      "longestCollectionGap": 3.1,
+      "eaten": 720,
+      "goal": 11,
+      "target": 11,
+      "limit": 1000,
+      "medal": 3,
+      "milestones": [
+        {
+          "scale": 1,
+          "time": 36.7
+        },
+        {
+          "scale": 2,
+          "time": 83.4
+        },
+        {
+          "scale": 3,
+          "time": 147.6
+        },
+        {
+          "scale": 4,
+          "time": 191.5
+        },
+        {
+          "scale": 5,
+          "time": 238.3
+        },
+        {
+          "scale": 6,
+          "time": 276.8
+        },
+        {
+          "scale": 7,
+          "time": 336.9
+        },
+        {
+          "scale": 8,
+          "time": 384.3
+        },
+        {
+          "scale": 9,
+          "time": 429
+        },
+        {
+          "scale": 10,
+          "time": 471.7
+        },
+        {
+          "scale": 11,
+          "time": 522
+        }
+      ]
+    },
+    {
+      "contract": "infinity-life",
+      "world": "ascension",
+      "seed": 7,
+      "won": true,
+      "time": 474,
+      "firstIntake": 1.35,
+      "longestCollectionGap": 3.3,
+      "eaten": 718,
+      "goal": 11,
+      "target": 11,
+      "limit": 1000,
+      "medal": 3,
+      "milestones": [
+        {
+          "scale": 1,
+          "time": 47.2
+        },
+        {
+          "scale": 2,
+          "time": 82.9
+        },
+        {
+          "scale": 3,
+          "time": 130.8
+        },
+        {
+          "scale": 4,
+          "time": 177.7
+        },
+        {
+          "scale": 5,
+          "time": 220.5
+        },
+        {
+          "scale": 6,
+          "time": 269.1
+        },
+        {
+          "scale": 7,
+          "time": 306.3
+        },
+        {
+          "scale": 8,
+          "time": 350.6
+        },
+        {
+          "scale": 9,
+          "time": 388.1
+        },
+        {
+          "scale": 10,
+          "time": 431.7
+        },
+        {
+          "scale": 11,
+          "time": 474
+        }
+      ]
+    },
+    {
+      "contract": "infinity-life",
+      "world": "ascension",
+      "seed": 23,
+      "won": true,
+      "time": 539.8,
+      "firstIntake": 1.17,
+      "longestCollectionGap": 4.1,
+      "eaten": 727,
+      "goal": 11,
+      "target": 11,
+      "limit": 1000,
+      "medal": 3,
+      "milestones": [
+        {
+          "scale": 1,
+          "time": 43.9
+        },
+        {
+          "scale": 2,
+          "time": 90.8
+        },
+        {
+          "scale": 3,
+          "time": 142.2
+        },
+        {
+          "scale": 4,
+          "time": 193.8
+        },
+        {
+          "scale": 5,
+          "time": 236.7
+        },
+        {
+          "scale": 6,
+          "time": 291.9
+        },
+        {
+          "scale": 7,
+          "time": 349.2
+        },
+        {
+          "scale": 8,
+          "time": 399.1
+        },
+        {
+          "scale": 9,
+          "time": 451.1
+        },
+        {
+          "scale": 10,
+          "time": 492.1
+        },
+        {
+          "scale": 11,
+          "time": 539.8
+        }
+      ]
+    },
+    {
+      "contract": "infinity-galaxies",
+      "world": "ascension",
+      "seed": 1,
+      "won": true,
+      "time": 870.7,
+      "firstIntake": 1.4,
+      "longestCollectionGap": 3.7,
+      "eaten": 1224,
+      "goal": 18,
+      "target": 18,
+      "limit": 1500,
+      "medal": 2,
+      "milestones": [
+        {
+          "scale": 1,
+          "time": 36.7
+        },
+        {
+          "scale": 2,
+          "time": 83.4
+        },
+        {
+          "scale": 3,
+          "time": 147.6
+        },
+        {
+          "scale": 4,
+          "time": 191.5
+        },
+        {
+          "scale": 5,
+          "time": 238.3
+        },
+        {
+          "scale": 6,
+          "time": 276.8
+        },
+        {
+          "scale": 7,
+          "time": 336.9
+        },
+        {
+          "scale": 8,
+          "time": 384.3
+        },
+        {
+          "scale": 9,
+          "time": 429
+        },
+        {
+          "scale": 10,
+          "time": 471.7
+        },
+        {
+          "scale": 11,
+          "time": 522
+        },
+        {
+          "scale": 12,
+          "time": 576.1
+        },
+        {
+          "scale": 13,
+          "time": 617
+        },
+        {
+          "scale": 14,
+          "time": 668.6
+        },
+        {
+          "scale": 15,
+          "time": 710.7
+        },
+        {
+          "scale": 16,
+          "time": 762.6
+        },
+        {
+          "scale": 17,
+          "time": 797.1
+        }
+      ]
+    },
+    {
+      "contract": "infinity-galaxies",
+      "world": "ascension",
+      "seed": 7,
+      "won": true,
+      "time": 825.8,
+      "firstIntake": 1.35,
+      "longestCollectionGap": 3.3,
+      "eaten": 1224,
+      "goal": 18,
+      "target": 18,
+      "limit": 1500,
+      "medal": 3,
+      "milestones": [
+        {
+          "scale": 1,
+          "time": 47.2
+        },
+        {
+          "scale": 2,
+          "time": 82.9
+        },
+        {
+          "scale": 3,
+          "time": 130.8
+        },
+        {
+          "scale": 4,
+          "time": 177.7
+        },
+        {
+          "scale": 5,
+          "time": 220.5
+        },
+        {
+          "scale": 6,
+          "time": 269.1
+        },
+        {
+          "scale": 7,
+          "time": 306.3
+        },
+        {
+          "scale": 8,
+          "time": 350.6
+        },
+        {
+          "scale": 9,
+          "time": 388.1
+        },
+        {
+          "scale": 10,
+          "time": 431.7
+        },
+        {
+          "scale": 11,
+          "time": 474
+        },
+        {
+          "scale": 12,
+          "time": 522.5
+        },
+        {
+          "scale": 13,
+          "time": 567.8
+        },
+        {
+          "scale": 14,
+          "time": 613.2
+        },
+        {
+          "scale": 15,
+          "time": 663.6
+        },
+        {
+          "scale": 16,
+          "time": 708.9
+        },
+        {
+          "scale": 17,
+          "time": 757.3
+        }
+      ]
+    },
+    {
+      "contract": "infinity-galaxies",
+      "world": "ascension",
+      "seed": 23,
+      "won": true,
+      "time": 893.9,
+      "firstIntake": 1.17,
+      "longestCollectionGap": 4.1,
+      "eaten": 1224,
+      "goal": 18,
+      "target": 18,
+      "limit": 1500,
+      "medal": 2,
+      "milestones": [
+        {
+          "scale": 1,
+          "time": 43.9
+        },
+        {
+          "scale": 2,
+          "time": 90.8
+        },
+        {
+          "scale": 3,
+          "time": 142.2
+        },
+        {
+          "scale": 4,
+          "time": 193.8
+        },
+        {
+          "scale": 5,
+          "time": 236.7
+        },
+        {
+          "scale": 6,
+          "time": 291.9
+        },
+        {
+          "scale": 7,
+          "time": 349.2
+        },
+        {
+          "scale": 8,
+          "time": 399.1
+        },
+        {
+          "scale": 9,
+          "time": 451.1
+        },
+        {
+          "scale": 10,
+          "time": 492.1
+        },
+        {
+          "scale": 11,
+          "time": 539.8
+        },
+        {
+          "scale": 12,
+          "time": 591.3
+        },
+        {
+          "scale": 13,
+          "time": 633.2
+        },
+        {
+          "scale": 14,
+          "time": 681.7
+        },
+        {
+          "scale": 15,
+          "time": 727.7
+        },
+        {
+          "scale": 16,
+          "time": 776.3
+        },
+        {
+          "scale": 17,
+          "time": 817.8
+        }
+      ]
+    }
+  ]
+}

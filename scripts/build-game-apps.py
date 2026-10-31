@@ -14,6 +14,10 @@ for metadata in sorted((ROOT / 'games').glob('*/game.json')):
     game = json.loads(metadata.read_text())
     folder = metadata.parent
     title = html.escape(game['title'], quote=True)
+    sinkhole = game['slug'] == 'sinkhole-city'
+    entry = 'metro/index.html?revision=stable-1.0.0' if sinkhole else 'index.html'
+    back_link = '<a href="app.html" aria-label="Return to game title">‹ Title</a>' if sinkhole else '<a href="/games/" aria-label="Back to arcade">‹ Arcade</a>'
+    transfer = ('Browser and Home Screen saves may be separate. Use <b>Collection → Save backup &amp; restore</b> to transfer campaign medals and records. Unfinished runs stay in their original storage. Previous beta saves remain stored separately and are not converted into this campaign.' if sinkhole else 'Browser and Home Screen saves may be separate. If your game provides backup/restore, export before switching. Otherwise your progress may start fresh in the app; your browser save remains available in the browser.')
     manifest = {
         'id': f'/games/{game["slug"]}/app.html', 'name': game['title'], 'short_name': game['title'],
         'start_url': './app.html', 'scope': './', 'display': 'standalone',
@@ -40,14 +44,14 @@ for metadata in sorted((ROOT / 'games').glob('*/game.json')):
 <link rel="stylesheet" href="../shared/game-app.css?v=2">
 <script src="../shared/game-app.js?v=3" defer></script>
 </head><body>
-<header class="app-bar"><a href="/games/" aria-label="Back to arcade">‹ Arcade</a><strong>{title}</strong><button id="app-help">App help</button><button id="app-fullscreen" hidden>Fullscreen</button></header>
-<main><iframe id="app-game" title="{title}" allow="autoplay; fullscreen" sandbox="allow-scripts allow-same-origin allow-downloads allow-modals" src="index.html"></iframe></main>
+<header class="app-bar">{back_link}<strong>{title}</strong><button id="app-help">App help</button><button id="app-fullscreen" hidden>Fullscreen</button></header>
+<main><iframe id="app-game" title="{title}" allow="autoplay; fullscreen" sandbox="allow-scripts allow-same-origin allow-downloads allow-modals" src="{entry}"></iframe></main>
 <dialog id="app-guide" aria-labelledby="guide-title">
 <h1 id="guide-title">{title} on your Home Screen</h1>
 <p id="install-help">Use your browser’s <b>Share → Add to Home Screen</b>. If offered, leave <b>Open as Web App</b> enabled. Then launch the game from its new icon to play without browser toolbars.</p>
 <p>The icon uses this game’s artwork. Internet access is required. Nothing is uploaded and no account is needed.</p>
 <section id="racecar-transfer" hidden><h2>Keep your careers</h2><p>Before switching, save a backup from Chrome. In the installed app, open the game’s <b>Settings &amp; controls → Restore backup</b> on the start screen and choose that file. Restore replaces the careers in that app only; your Chrome save stays untouched.</p><button id="app-backup">Save Racecar backup</button><p id="backup-status" role="status"></p></section>
-<p id="other-transfer">Browser and Home Screen saves may be separate. If your game provides backup/restore, export before switching. Otherwise your progress may start fresh in the app; your browser save remains available in the browser.</p>
+<p id="other-transfer">{transfer}</p>
 <button id="guide-close" autofocus>Continue playing</button>
 </dialog>
 </body></html>

@@ -87,6 +87,17 @@ Kenney Racing Pack
 The public editions use no external runtime services or remotely loaded
 libraries.
 
+Sinkhole City Expedition (release candidate)
+  Uses the local MIT-licensed Three.js distribution and selected CC0 models
+  from the Kenney Car Kit, Nature Kit, and City Kit Industrial packs credited
+  above. Exact model roots and retained license files are listed in
+  games/sinkhole-city/metro/assets.js and the standalone asset inventory.
+  Original procedural models and rim designs are project-specific code/art.
+  The owner confirmed on 2026-10-31 that the background track is project-owned
+  and cleared for redistribution with this open-source game. It follows the
+  project's default asset license above. Track hashes and confirmation are
+  recorded in games/sinkhole-city/metro/ASSET-PROVENANCE.txt.
+
 Rapier 3D 0.17.3 (Pinball / Midnight Run)
   Dimforge and contributors, Apache License 2.0.
   Source: https://github.com/dimforge/rapier.js

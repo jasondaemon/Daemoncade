@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#112d34"><meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data: blob:; connect-src 'self'; object-src 'none'"><title>Sinkhole City · 1.0.0</title><link rel="stylesheet" href="style.css?v=perf17"></head>
+<body>
+ <section id="title-screen" aria-labelledby="game-logo">
+  <div class="title-art" aria-hidden="true"><i></i><i></i><i></i><i></i><div class="title-hole"></div></div>
+  <div class="title-content"><p class="title-kicker">EXPEDITION</p><h1 id="game-logo">SINKHOLE<span>CITY</span></h1><p id="title-progress">Campaign · 6 worlds</p>
+   <button id="title-play" disabled>Loading…</button><button id="title-browse" hidden>Worlds &amp; missions</button><p id="title-loading" role="status">Preparing your world</p>
+   <nav class="title-options" aria-label="Title options"><button id="title-settings">Options</button><button id="title-collection">Collection</button></nav>
+  </div><span class="title-edition">EXPEDITION · 1.0.0</span>
+ </section>
+ <main id="world" aria-label="Market District playfield"></main>
+ <div id="rival-tags" hidden></div>
+ <div id="pickups" aria-hidden="true"></div>
+ <header><div><span id="district">METRO SINK · PREVIEW</span><strong id="objective">Take the water tower</strong></div><button id="pause" aria-label="Pause">Ⅱ</button></header>
+ <aside id="hud" hidden><div><span id="time">2:00</span><strong id="score">0</strong><span id="combo"></span><span id="coverage">WORLD 0%</span></div><div><span id="stage">Street clutter</span><strong id="progress">0 / 0</strong><meter id="growth" min="0" max="1" value="0" aria-label="Growth to the next size class"></meter><span id="growthlabel">Next: vehicles</span></div></aside>
+ <section id="panel" hidden><div class="card">
+  <nav class="menu-nav" aria-label="Menu navigation"><button id="back-title">← Title</button><span>CHOOSE YOUR WORLD</span><button id="settings-open" aria-label="Options">Options</button></nav>
+  <p class="eyebrow" id="world-kicker">SINKHOLE CITY · METRO</p><div id="worlds" aria-label="Campaign worlds"></div><h1 id="title">Market District</h1>
+  <p id="description">Clear the sidewalks, grow through the parked cars, and bring down the water tower.</p>
+  <p id="status" role="status">Preparing the district…</p>
+  <p id="world-best" hidden></p>
+  <section id="run-results" aria-label="Run results" hidden>
+   <div class="clear-ring"><div><strong id="result-coverage">0%</strong><span>WORLD CLEARED</span></div></div>
+   <div class="result-details"><div><span>BIGGEST CATCH</span><strong id="result-catch">—</strong></div><div><span>BEST FEEDING CHAIN</span><strong id="result-chain">0</strong></div><div><span>EXPLORATION RECORD</span><strong id="result-best">0%</strong></div></div>
+   <p id="result-remaining"></p>
+  </section>
+  <div id="contracts" aria-label="District contracts"></div><details id="medal-details"><summary>Medal targets</summary><p id="pace"></p></details><ol id="standings" aria-label="Arena results" hidden></ol>
+  <div id="choices"><button id="start" disabled>Start run</button><button id="keep-clearing" hidden>Keep clearing</button><button id="free" disabled>Free roam</button><button id="arena" disabled>Arena</button></div>
+  <button id="return-menu" hidden>Worlds &amp; missions</button>
+  <button id="resume" hidden>Resume</button><button id="leave" hidden>End run</button>
+  <footer class="menu-footer"><button id="customize">Collection</button><p class="hint">Drag to steer · WASD / arrows</p></footer>
+ </div></section>
+ <dialog id="options-menu" aria-labelledby="options-title">
+  <div class="locker-head"><h2 id="options-title">Options</h2><button id="close-options" aria-label="Close options">✕</button></div>
+  <h3>Sound &amp; display</h3><div class="settings"><button id="music" aria-pressed="true">Music on</button><button id="sound" aria-pressed="true">Effects on</button><button id="ambience" aria-pressed="true">Ambience on</button><button id="quality" aria-pressed="false">Low effects</button><button id="frame-rate">60 FPS</button></div>
+  <h3>Controls</h3><p>Touch: hold and drag to steer. Lift to stop.</p><p>Keyboard: WASD or arrows. Esc to pause.</p><p class="options-note">Audio stops when you pause or leave the app.</p>
+ </dialog>
+ <dialog id="replace-run" aria-labelledby="replace-title"><h2 id="replace-title">Replace saved run?</h2><p>Starting a new run replaces your unfinished run. Earned medals and records are kept.</p><div class="backup-actions"><button id="cancel-replace" autofocus>Keep saved run</button><button id="confirm-replace">Start new run</button></div></dialog>
+ <dialog id="arena-menu" aria-labelledby="arena-title">
+  <div class="locker-head"><h2 id="arena-title">Metro Arena</h2><button id="close-arena" aria-label="Close Arena">✕</button></div>
+  <p>Two minutes. Three AI rivals. Shared city. Highest score wins.</p><p>Same movement and growth rules for everyone. Collect objects; holes do not attack each other in this mode.</p>
+  <div id="arena-difficulties" aria-label="Arena difficulty"></div><p id="arena-description"></p><p id="arena-record"></p>
+  <button id="play-arena">Start match</button>
+ </dialog>
+ <dialog id="locker" aria-labelledby="locker-title">
+  <div class="locker-head"><h2 id="locker-title">Your collection</h2><button id="close-locker" aria-label="Close collection">✕</button></div>
+  <p>Earn medals to collect rim designs. Cosmetic only: every design plays identically.</p><p id="collection-progress" role="status"></p><div id="rims" aria-label="Rim designs"></div>
+  <details id="save-tools"><summary>Save backup &amp; restore</summary><p>Keep a copy of your campaign medals and Arena records, or move them to another device.</p>
+  <div class="backup-actions"><button id="export-save">Export save</button><button id="pick-save">Choose save file</button><input id="import-save" type="file" accept="application/json,.json" hidden></div>
+  <p id="backup-status" role="status">Importing replaces this device’s campaign progress. Your five-world beta save is never changed.</p>
+  <button id="apply-save" disabled>Replace campaign progress</button></details>
+ </dialog>
+ <canvas id="map" width="160" height="160" aria-label="District map: yellow is you, cyan is collectible, orange is the tower" hidden></canvas>
+ <div id="stick" hidden><div></div></div><p id="notice" role="status" hidden></p>
+ <link rel="stylesheet" href="contracts.css?v=qualification52">
+ <link rel="stylesheet" href="arcade.css?v=qualification52">
+ <link rel="stylesheet" href="infinity.css?v=qualification52">
+ <script src="boot.js?v=qualification52" defer></script>
+ <script id="game-module" type="module" src="main.js?v=qualification52"></script>
+</body></html>

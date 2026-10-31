@@ -1,0 +1,37 @@
+RC2 INDEPENDENT SNAPSHOT RESULTS -- 2026-10-31
+
+Artifact: /tmp/sinkhole-city-1.0.0-rc2-qualification52
+Version/build: 1.0.0-rc.2 / qualification52
+Inventory: 95 files, 8,207,701 bytes. All inventory SHA-256 hashes verified.
+asset-manifest.json SHA-256:
+  d8a7f3c35a5ac41380318516fe2238bfa9facb9e4a23d71c3adea45af35bddde
+Served independently over HTTP/1.1 at http://127.0.0.1:4302
+App: /games/sinkhole-city/app-expedition.html?install=1
+Source preview remains at 4197; this new origin does not share its saves.
+Earlier RC1 package/preview retained. No public beta cutover or push.
+
+PASS: 175 unit/runtime/package checks (final source after owner clearance).
+  /tmp/sinkhole-qualification52-unit-final.log
+PASS: actual-model diagnostic routes, 18 contracts x 3 seeds = 54/54.
+  qualification52-pacing.json; /tmp/sinkhole-qualification52-pacing.log
+
+All thirteen native browser suites passed AGAINST THE PACKAGED SNAPSHOT:
+  release-gates, performance, art, menu, character-rims, mastery, contact,
+  continuum, checkpoint, music, install, touch-release, boot.
+Logs: /tmp/sinkhole-rc2-package-<suite>.log
+The same suites also passed against the source qualification server.
+The isolated touch test initially assumed synchronous resize delivery; it
+was corrected to await the browser's event, then passed in both runs.
+
+Music: owner explicitly confirmed project-owned redistribution permission
+on 2026-10-31. Confirmation and hashes in ASSET-PROVENANCE.txt and inventory.
+
+Stable = FALSE. These results do not satisfy physical iPhone/Android
+endurance, human art/pacing/new-player acceptance, or actual deployed-origin
+install/update/rollback verification. Desktop Chrome phone viewports and
+software WebGL are not physical-device performance evidence. No quotas or
+gameplay rules were changed from the omniscient diagnostic routes.
+
+This record was written AFTER validation. It is intentionally outside the
+immutable package's inventory; the artifact itself was not modified after
+its hashes and independent runtime checks were completed.

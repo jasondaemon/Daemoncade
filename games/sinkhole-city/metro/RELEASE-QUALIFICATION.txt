@@ -1,0 +1,73 @@
+SINKHOLE CITY EXPEDITION -- 1.0.0-rc.2 / qualification52
+Feature freeze and qualification pass, 2026-10-31
+
+STATUS: LOCAL RELEASE CANDIDATE. NOT V1 STABLE. NOT PUBLICLY DEPLOYED.
+
+Changes under the freeze
+  * No worlds, modes, currencies or new rewards added. Saves, checkpoint
+    schema, reward IDs, growth and capture rules are preserved.
+  * Eleven rim previews no longer run on boot, ordinary world menus or
+    results. Collection renders one missing preview per frame, cancels
+    obsolete work, reuses its cache and degrades to icons on failure.
+  * HUD text updates at 10 Hz instead of every rendered frame; simulation
+    remains fixed at 60 Hz. Existing render-rate choices are preserved.
+    Fresh primary-touch devices default to 30 FPS; 60 FPS stays selectable.
+  * Alien terrain uses one blended surface instead of overlapping raised
+    patches and a hard-edged basin. Source-material ownership survives
+    ground batching, so world switches actually dispose the cloned material.
+  * RC2 wrapper/version and package inventory match the current build.
+    Music provenance records the owner's explicit redistribution clearance
+    on 2026-10-31, alongside source and derivative hashes.
+
+Pacing evidence (diagnostic, not human acceptance)
+  All 18 contracts run across seeds 1, 7 and 23, using dimensions measured
+  from loaded models and normal movement/capture. All 54 routes completed.
+  Non-Infinity routes: approximately 42-154 seconds. Complete Infinity:
+  approximately 826-894 seconds (14-15 minutes), with every object consumed.
+  First intake: approximately 0.23-3.03 seconds. Longest observed gap between
+  collections: 9.1 seconds. Detailed summary: qualification52-pacing.json.
+  The driver knows every object's position and chooses eligible goals. These
+  times do NOT prove new-player difficulty, enjoyment or recommended quotas.
+  Quotas/growth/medal targets were deliberately not changed from this data.
+
+Reproducible automated checks
+  node --test games/sinkhole-city/runtime.test.mjs
+    games/sinkhole-city/metro/*.test.mjs scripts/package-sinkhole.test.mjs
+  Native browser scripts (SINKHOLE_BASE_URL can target a separate package):
+    test-sinkhole-release-gates.mjs, test-sinkhole-performance.mjs,
+    test-sinkhole-art.mjs, test-sinkhole-menu.mjs,
+    test-sinkhole-character-rims.mjs, test-sinkhole-mastery.mjs,
+    test-sinkhole-contact.mjs, test-sinkhole-continuum.mjs,
+    test-sinkhole-checkpoint.mjs, test-sinkhole-music.mjs,
+    test-sinkhole-install.mjs, test-sinkhole-boot.mjs,
+    test-sinkhole-touch-release.mjs.
+  Completed locally: 175 unit/runtime/package checks; all thirteen native
+  regressions listed above; and 54/54 diagnostic routes. Native touch tests
+  await actual event delivery on resize rather than assuming synchronous
+  delivery from the browser-automation viewport call.
+  Pacing/screenshots: scripts/audit-sinkhole-pacing.mjs.
+  These use desktop Chrome and phone viewports, sometimes software WebGL.
+  They must NOT be presented as physical mobile FPS or endurance results.
+
+Human acceptance still required before Stable
+  1. iPhone browser AND Home Screen: at least 15 minutes, world switching,
+     portrait/landscape, lock/unlock, background interruption, force-close,
+     paused checkpoint restoration, music/effects mute and save export/import.
+  2. One mid-range Android device and Safari/Firefox desktop smoke checks.
+     No Android device was available to this local agent.
+  3. Five uncoached new-player observations, plus a complete Infinity run.
+     Record confusion, dull travel, voluntary replay, model recognition and
+     whether the final empty ending feels earned. Human art/pacing approval
+     remains open; automated route completion cannot supply it.
+  4. On the actual deployed origin: install/update, preserved saves, backup
+     restore, suspension, network failure/retry and verified rollback build.
+  Soundtrack rights hold is CLOSED by the owner's 2026-10-31 confirmation.
+
+Release procedure
+  Do not overwrite the public beta or mark Stable from test counts. Keep
+  the previous RC1 snapshot. Build RC2 into a fresh directory, independently
+  serve it, run the qualification scripts, obtain the above sign-offs, then
+  make a deliberate catalog/app cutover with the old build retained.
+  Offline play is not promised. Portable exports contain campaign medals,
+  Arena/exploration records, not an in-progress run. A new local port has a
+  separate storage origin; it does not inherit the 4197 preview's progress.

@@ -1,0 +1,21 @@
+import assert from 'node:assert/strict';
+const {chromium}=await import(process.env.PLAYWRIGHT_MODULE||'/Users/jasondaemon/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/node_modules/playwright/index.mjs');
+const browser=await chromium.launch({headless:true,executablePath:'/Applications/Google Chrome.app/Contents/MacOS/Google Chrome',args:['--enable-unsafe-swiftshader']});
+try{
+ const page=await browser.newPage({viewport:{width:430,height:932},isMobile:true,hasTouch:true}),errors=[],tracks=[];
+ page.on('pageerror',e=>errors.push(e.message));page.on('request',r=>{if(r.url().endsWith('background-game-quiet.mp3'))tracks.push(r.url());});
+ await page.route('**/metro/main.js*',async route=>{const response=await route.fetch();await route.fulfill({response,body:(await response.text()).replaceAll('freshSeed()', '0')+'\nwindow.__qa={soundtrack,get phase(){return phase}};'});});
+ await page.goto(`${process.env.SINKHOLE_BASE_URL||'http://127.0.0.1:4197'}/games/sinkhole-city/metro/?revision=music39`);await page.waitForFunction(()=>!document.querySelector('#title-play').disabled);
+ assert.equal(tracks.length,0,'no title-screen music download');
+ await page.locator('#title-settings').click();await page.locator('#sound').click();await page.locator('#ambience').click();assert.equal(await page.locator('#music').getAttribute('aria-pressed'),'true');await page.locator('#close-options').click();
+ await page.locator('#title-play').click();assert.equal(tracks.length,0,'no world-menu music download');await page.locator('#free').click();await page.waitForFunction(()=>__qa.soundtrack.media&&!__qa.soundtrack.media.paused&&__qa.soundtrack.media.currentTime>0);
+ assert.ok(tracks.length>0);assert.match(await page.evaluate(()=>__qa.soundtrack.media.currentSrc),/assets\/sfx\/background-game-quiet.mp3$/);
+ await page.locator('#pause').click();assert.equal(await page.evaluate(()=>__qa.soundtrack.media.paused),true);const time=await page.evaluate(()=>__qa.soundtrack.media.currentTime);await page.waitForTimeout(150);assert.equal(await page.evaluate(()=>__qa.soundtrack.media.currentTime),time);
+ await page.locator('#settings-open').click();await page.locator('#music').click();await page.locator('#close-options').click();await page.locator('#resume').click();await page.waitForTimeout(150);assert.equal(await page.evaluate(()=>__qa.soundtrack.media.paused),true);
+ await page.locator('#pause').click();await page.locator('#settings-open').click();await page.locator('#music').click();assert.equal(await page.evaluate(()=>__qa.soundtrack.media.paused),true,'enabling in pause does not play');await page.locator('#close-options').click();await page.locator('#resume').click();await page.waitForFunction(()=>!__qa.soundtrack.media.paused);
+ await page.evaluate(()=>{Object.defineProperty(document,'hidden',{configurable:true,value:true});document.dispatchEvent(new Event('visibilitychange'));});assert.equal(await page.evaluate(()=>__qa.soundtrack.media.paused),true);
+ await page.evaluate(()=>{Object.defineProperty(document,'hidden',{configurable:true,value:false});document.dispatchEvent(new Event('visibilitychange'));});assert.equal(await page.evaluate(()=>__qa.soundtrack.media.paused),true,'foreground never auto-resumes');
+ await page.locator('#resume').click();await page.waitForFunction(()=>!__qa.soundtrack.media.paused);await page.evaluate(()=>window.postMessage({type:'daemoncade:suspend'},location.origin));await page.waitForFunction(()=>__qa.phase==='paused');assert.equal(await page.evaluate(()=>__qa.soundtrack.media.paused),true);
+ await page.locator('#leave').click();await page.locator('#settings-open').click();await page.locator('#music').click();await page.locator('#close-options').click();await page.reload();await page.waitForFunction(()=>!document.querySelector('#title-play').disabled);assert.equal(await page.locator('#music').getAttribute('aria-pressed'),'false');assert.equal(await page.evaluate(()=>__qa.soundtrack.media),null);assert.deepEqual(errors,[]);
+ console.log('PASS: real beta MP3 playback, lazy loading, independent mute/persistence, pause-position resume, hidden/wrapper silence and no foreground/menu autoplay.');
+}finally{await browser.close();}

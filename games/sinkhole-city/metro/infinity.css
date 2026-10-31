@@ -1,0 +1,5 @@
+/* Six worlds remain touch-readable without turning the menu into a dashboard. */
+#worlds{grid-template-columns:repeat(6,minmax(0,1fr))}
+#worlds button[data-world=ascension]{background:linear-gradient(140deg,#5a446f,#172f49);color:#d4c2ee}
+@media(max-width:640px){#worlds{grid-template-columns:repeat(3,minmax(0,1fr));gap:5px;margin-bottom:14px}#worlds button{min-height:56px;font-size:11px;padding:9px}#worlds button[aria-pressed=true]{padding:8px}#worlds button:before{font-size:43px}#worlds small{font-size:8px}}
+@media(max-height:740px) and (max-width:640px){#worlds{margin-bottom:8px}#worlds button{min-height:44px;padding:6px 8px}#worlds button[aria-pressed=true]{padding:5px 7px}#world-kicker{display:none}#description{margin-bottom:3px}#contracts{margin-top:7px}#medal-details summary{min-height:28px;padding:5px 0}.menu-footer{margin-top:4px}#choices>button{min-height:42px}}
