@@ -2,7 +2,7 @@
 
 ## Status
 
-Version `0.5.0-alpha.4` is a visual-course alpha candidate. The previously verified flat-course
+Version `0.5.0-alpha.5` is a visual-course alpha candidate. The previously verified flat-course
 beta remains available in Git history at `16a26e5`; its player-lap result must not be treated as
 validation of this materially different spline layout. The game is an original single-player
 stadium time attack inspired by the broad genre, not a Trackmania clone, formula-equivalent
@@ -30,16 +30,22 @@ Then open `http://127.0.0.1:4173/games/apex-run/`.
 ## Verified scope
 
 - The visual alpha uses one shared indexed spline mesh for rendering and collision. Automated
-  geometry checks cover non-degenerate triangles, bounded sample seams, banking, road occupancy,
-  spline-derived recovery poses, and more than 18 metres of elevation.
-- A 26 m/s west-straight crest test becomes fully airborne and lands on the spline collider;
+  geometry checks cover non-degenerate triangles, non-crossing edges, bounded tangent changes,
+  banking, altitude-aware road occupancy/checkpoints, full surface-frame recovery poses, and
+  more than 22 metres of elevation.
+- A 34 m/s west-straight crest test becomes fully airborne and establishes sustained landing
+  contact on the spline collider;
   the opening curve remains on the modeled road across a 0.6-second launch-timing window.
-- Browser inspection at 1280x720 confirms the new curved ribbon, curbs, elevated supports,
+- Browser inspection of alpha 4 at 1280x720 confirmed the new curved ribbon, curbs, elevated supports,
   continuous stadium tiers, hills and reshaped vehicle render without console-visible startup
-  failure. Real production W/A key input was exercised through the opening curve.
+  failure, but also exposed an elevated-road camera clip. Alpha 5 adds obstruction-aware camera
+  placement and smoother joins; those changes require a fresh visual inspection before acceptance.
+- A reactive keyboard-like source fixture now completes all six ordered gates in 47.53 seconds
+  without recovery at 30/60/144 render schedules. This is collision/determinism coverage, not a
+  substitute for a screen-driven player lap.
 
 The following evidence describes the prior `0.4.0-beta.1` geometry and is retained as history,
-not as a readiness claim for visual alpha 4:
+not as a readiness claim for visual alpha 5:
 
 - Independent production-page player QA completed a clean `1:54.342` Rookie-medal lap using
   ordinary keyboard controls and screen-visible navigation. It used no reset, Backspace,

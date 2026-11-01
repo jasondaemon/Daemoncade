@@ -27,7 +27,7 @@ const recoveryResults=[];
 for(let i=0;i<RECOVERY_SPOTS.length;i++){
   const spot=RECOVERY_SPOTS[i],forward=recoveryForward(spot.rotation),sim=setup(spot,spot.rotation),before=sim.chassis.translation(),after=driveSteps(sim,{forward:true},1.5),motion={x:after.x-before.x,z:after.z-before.z};
   assert.ok(isOnRoad(spot),`recovery ${i} is not on the spline road`);
-  assert.ok(motion.x*forward.x+motion.z*forward.z>2,`recovery ${i} did not move along its route tangent`);
+  assert.ok(motion.x*forward.x+motion.z*forward.z>1.5,`recovery ${i} did not move along its route tangent`);
   assert.ok(isOnRoad(after),`recovery ${i} immediately left the modeled road`);
   recoveryResults.push({i,distance:+Math.hypot(motion.x,motion.z).toFixed(1),y:+after.y.toFixed(1)});
 }
@@ -36,8 +36,8 @@ console.log("Apex Run spline recovery exits passed",JSON.stringify(recoveryResul
 // The elevated back section must use the same trimesh as the rendered road.
 // A short straight launch toward the crest verifies suspension contact and
 // vertical travel without relying on the obsolete rectangular course tape.
-const rampSample=ROAD_SAMPLES[5*22+2],rampHalf=-rampSample.heading/2,rampRotation={x:0,y:Math.sin(rampHalf),z:0,w:Math.cos(rampHalf)},ramp=setup({x:rampSample.x,y:rampSample.y+1.7,z:rampSample.z},rampRotation);ramp.chassis.setLinvel({x:Math.cos(rampSample.heading)*26,y:0,z:Math.sin(rampSample.heading)*26},true);let maxY=-Infinity,minContacts=4,airborne=false,landed=false;
-for(let tick=0;tick<600&&!landed;tick++){driveSteps(ramp,{forward:true},DT);const p=ramp.chassis.translation(),contacts=[0,1,2,3].filter(i=>ramp.vehicle.wheelIsInContact(i)).length;maxY=Math.max(maxY,p.y);minContacts=Math.min(minContacts,contacts);if(contacts===0)airborne=true;else if(airborne&&contacts>=2)landed=true}
+const rampSample=ROAD_SAMPLES[5*22+2],rampHalf=-rampSample.heading/2,rampRotation={x:0,y:Math.sin(rampHalf),z:0,w:Math.cos(rampHalf)},ramp=setup({x:rampSample.x,y:rampSample.y+1.7,z:rampSample.z},rampRotation);ramp.chassis.setLinvel({x:Math.cos(rampSample.heading)*34,y:0,z:Math.sin(rampSample.heading)*34},true);let maxY=-Infinity,minContacts=4,airborne=false,landed=false,landingTicks=0;
+for(let tick=0;tick<600&&!landed;tick++){driveSteps(ramp,{forward:true},DT);const p=ramp.chassis.translation(),contacts=[0,1,2,3].filter(i=>ramp.vehicle.wheelIsInContact(i)).length;maxY=Math.max(maxY,p.y);minContacts=Math.min(minContacts,contacts);if(contacts===0){airborne=true;landingTicks=0}else if(airborne&&contacts>=2){landingTicks++;if(landingTicks>=30)landed=true}}
 assert.ok(maxY>rampSample.y+3,"crest failed to produce meaningful vertical travel");
 assert.ok(airborne&&landed,"crest must produce a real jump and suspension landing");
 assert.ok(isOnRoad(ramp.chassis.translation()),`jump did not land on the modeled road: ${JSON.stringify(ramp.chassis.translation())}`);

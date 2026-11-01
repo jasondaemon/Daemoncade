@@ -118,30 +118,37 @@ The finish remains narrow and digital steering still benefits from frequent corr
 course and car are original procedural geometry, not production photoreal assets. Lower-end
 laptop, software-renderer, and Windows performance remain uncharacterized.
 
-## Visual alpha 4: spline stadium proof
+## Visual alpha 5: spline continuity hardening
 
 This milestone intentionally returns the release label to alpha while the new course earns
 fresh player validation. It replaces the slab course rather than claiming the previous beta
 evidence automatically applies to different geometry.
 
-- One Catmull-Rom route definition produces the centerline, variable road width, elevation,
+- One C1 Hermite route definition produces the centerline, variable road width, elevation,
   banking, minimap, route guidance and recovery tangents. `buildRoadMesh()` emits the indexed
   positions consumed by both Three.js and Rapier; there is no hidden flat road collider.
 - The course has six visual beats: opening sweeper, banked climb, elevated technical section,
   west-straight crest jump, high return, and downhill finish. The current 243-sample mesh has
-  1,936 triangles and approximately 18 metres of vertical range.
+  1,936 triangles and approximately 22 metres of vertical range. A C2 crest profile and
+  tangent-continuity regression replace the sharp Gaussian join in the first spline version.
 - Alternating inset curbs, luminous rails, structural columns and footings make elevation and
   road edges readable. Continuous elliptical stadium tiers, banners, light masts and low-poly
   hills replace the previous horizon of repeated cuboids.
 - The vehicle shell now uses a rounded capsule fuselage, tapered nose, rounded side pods and
   rear haunches while retaining the verified steering/rolling wheel hierarchy.
-- At a 26 m/s approach, the crest regression records zero wheel contacts, then a multi-wheel
+- At a 34 m/s approach, the crest regression records zero wheel contacts, then a sustained multi-wheel
   suspension landing on the same spline road. Recovery height and heading are sampled from the
-  authored road rather than copied from the former flat layout.
+  authored road, including pitch and bank, rather than copied from the former flat layout.
+- Guidance arrows, minimap, ordered route projection, road occupancy and recovery poses all use
+  the same sampled ribbon as rendering and collision. Altitude checks prevent the grass beneath
+  an elevated section from inheriting road traction or satisfying an elevated checkpoint.
+- A chase-camera obstruction ray shortens the camera boom before it enters the road or a support;
+  road pitch contributes gently to look-ahead while the horizon remains mostly world-up.
 
-Current visual-alpha limits: the route still needs a fresh complete player lap and lifecycle
-fixture on this geometry. The environment remains original procedural art rather than authored
-photogrammetry, and lower-end GPU performance remains unmeasured.
+Current visual-alpha limits: source tests now include a 47.53-second no-recovery ordered finish,
+but that reactive input fixture is not player proof. Camera clearance and the revised joins still
+need fresh pixel inspection and a normal-keyboard player lap. The environment remains original
+procedural art rather than authored photogrammetry, and lower-end GPU performance remains unmeasured.
 
 ## Beta browser integration
 

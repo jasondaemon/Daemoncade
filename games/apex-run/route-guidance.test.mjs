@@ -1,10 +1,10 @@
 import assert from "node:assert/strict";
-import {CHECKPOINTS,RECOVERY_SPOTS,ROUTE_PATH,ROUTE_STAGE_RANGES,recoveryForward,routeGuides,routeStage,routeTarget} from "./track-model.js";
+import {CHECKPOINTS,RECOVERY_SPOTS,ROAD_SAMPLES,ROUTE_PATH,ROUTE_STAGE_RANGES,recoveryForward,routeGuides,routeStage,routeTarget} from "./track-model.js";
 
 const guides=routeGuides(27);
 assert.ok(guides.length>=20,"route needs frequent visible arrows");
 for(const guide of guides){
-  const a=ROUTE_PATH[guide.segment],b=ROUTE_PATH[guide.segment+1],length=Math.hypot(b.x-a.x,b.z-a.z);
+  const a=ROAD_SAMPLES[guide.segment],b=ROAD_SAMPLES[guide.segment+1],length=Math.hypot(b.x-a.x,b.z-a.z);
   const tangent={x:(b.x-a.x)/length,z:(b.z-a.z)/length};
   // Three.js rotates a +X ground arrow with rotation.y = -heading.
   const renderedForward={x:Math.cos(-guide.heading),z:-Math.sin(-guide.heading)};
@@ -17,7 +17,7 @@ const probes=[
   [{x:-82,z:-103},{x:-82,z:90}], [{x:-82,z:125},{x:60,z:140}], [{x:135,z:140},{x:150,z:50}],
 ];
 for(let checkpoint=0;checkpoint<CHECKPOINTS.length;checkpoint++){
-  const stage=routeStage(checkpoint),[start,end]=ROUTE_STAGE_RANGES[checkpoint];assert.deepEqual(stage[0],ROUTE_PATH[start]);assert.deepEqual(stage.at(-2),ROUTE_PATH[end]);
+  const stage=routeStage(checkpoint),[start,end]=ROUTE_STAGE_RANGES[checkpoint];assert.ok(Math.hypot(stage[0].x-ROUTE_PATH[start].x,stage[0].z-ROUTE_PATH[start].z)<1e-6);assert.ok(Math.hypot(stage.at(-2).x-ROUTE_PATH[end].x,stage.at(-2).z-ROUTE_PATH[end].z)<1e-6);
   for(const position of [...probes[checkpoint],RECOVERY_SPOTS[checkpoint],{x:150,z:8}]){const target=routeTarget(checkpoint,position);assert.equal(target.stage,checkpoint);assert.ok(distanceToStage(target,stage)<1e-6,`stage ${checkpoint} target skipped its corridor: ${JSON.stringify({position,target})}`)}
   const recovery=RECOVERY_SPOTS[checkpoint],target=routeTarget(checkpoint,recovery),forward=recoveryForward(recovery.rotation),to={x:target.x-recovery.x,z:target.z-recovery.z};assert.ok(forward.x*to.x+forward.z*to.z>=-1e-6,`recovery ${checkpoint} guidance points behind the car`);
 }

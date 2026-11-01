@@ -1,14 +1,20 @@
 import assert from "node:assert/strict";
-import {CHECKPOINTS,RECOVERY_SPOTS,ROUTE_PATH,TRACK_BOXES,buildRoadMesh,isOnRoad} from "./track-model.js";
+import {CHECKPOINTS,RECOVERY_SPOTS,ROAD_SAMPLES,ROUTE_PATH,TRACK_BOXES,buildRoadMesh,checkpointAdvance,isOnRoad,nearestRoadSample,routeGuides} from "./track-model.js";
 const road=buildRoadMesh(22),{samples,positions,indices}=road;
 assert.equal(TRACK_BOXES.filter(box=>box.surface!=="grass").length,0,"road collision must not fall back to hidden boxes");
 assert.ok(samples.length>200&&indices.length>2000,"road ribbon resolution is too low");
 const elevations=samples.map(sample=>sample.y),banks=samples.map(sample=>Math.abs(sample.left.y-sample.right.y));
 assert.ok(Math.max(...elevations)-Math.min(...elevations)>18,"course needs genuine hills and jump elevation");
 assert.ok(Math.max(...banks)>3,"course needs visible banked corners");
-for(let i=1;i<samples.length;i++){const a=samples[i-1],b=samples[i];assert.ok(Math.hypot(b.x-a.x,b.y-a.y,b.z-a.z)<15,`road seam too large at ${i}`)}
+let maxTangentAngle=0;
+for(let i=1;i<samples.length;i++){const a=samples[i-1],b=samples[i];assert.ok(Math.hypot(b.x-a.x,b.y-a.y,b.z-a.z)<15,`road seam too large at ${i}`);if(i<samples.length-1){const c=samples[i+1],u={x:b.x-a.x,y:b.y-a.y,z:b.z-a.z},v={x:c.x-b.x,y:c.y-b.y,z:c.z-b.z},cos=(u.x*v.x+u.y*v.y+u.z*v.z)/(Math.hypot(u.x,u.y,u.z)*Math.hypot(v.x,v.y,v.z)),angle=Math.acos(Math.max(-1,Math.min(1,cos)))*180/Math.PI;maxTangentAngle=Math.max(maxTangentAngle,angle);assert.ok(angle<13,`road tangent kink ${angle.toFixed(2)} degrees at ${i}`)}}
 for(let i=0;i<indices.length;i+=3){const ia=indices[i]*3,ib=indices[i+1]*3,ic=indices[i+2]*3,ab=[positions[ib]-positions[ia],positions[ib+1]-positions[ia+1],positions[ib+2]-positions[ia+2]],ac=[positions[ic]-positions[ia],positions[ic+1]-positions[ia+1],positions[ic+2]-positions[ia+2]],area=Math.hypot(ab[1]*ac[2]-ab[2]*ac[1],ab[2]*ac[0]-ab[0]*ac[2],ab[0]*ac[1]-ab[1]*ac[0]);assert.ok(area>.0001,`degenerate road triangle ${i/3}`)}
+const orientation=(a,b,c)=>(b.x-a.x)*(c.z-a.z)-(b.z-a.z)*(c.x-a.x),crosses=(a,b,c,d)=>orientation(a,b,c)*orientation(a,b,d)<0&&orientation(c,d,a)*orientation(c,d,b)<0;for(const side of["left","right"])for(let i=0;i<samples.length-1;i++)for(let j=i+2;j<samples.length-1;j++)assert.equal(crosses(samples[i][side],samples[i+1][side],samples[j][side],samples[j+1][side]),false,`${side} road edge crosses itself at ${i}/${j}`);
 for(const [index,spot] of RECOVERY_SPOTS.entries())assert.ok(isOnRoad(spot),`recovery ${index} is off spline road`);
+const rotate=(axis,q)=>({x:axis.x*(1-2*(q.y*q.y+q.z*q.z))+axis.y*2*(q.x*q.y-q.w*q.z)+axis.z*2*(q.x*q.z+q.w*q.y),y:axis.x*2*(q.x*q.y+q.w*q.z)+axis.y*(1-2*(q.x*q.x+q.z*q.z))+axis.z*2*(q.y*q.z-q.w*q.x),z:axis.x*2*(q.x*q.z-q.w*q.y)+axis.y*2*(q.y*q.z+q.w*q.x)+axis.z*(1-2*(q.x*q.x+q.y*q.y))});assert.ok(RECOVERY_SPOTS.some(spot=>{const up=rotate({x:0,y:1,z:0},spot.rotation);return Math.abs(up.x)+Math.abs(up.z)>.05}),"recovery rotations discarded road pitch/bank");for(const [index,spot] of RECOVERY_SPOTS.entries()){const up=rotate({x:0,y:1,z:0},spot.rotation);assert.ok(up.y>.9,`recovery ${index} is not upright on its surface frame`)}
 for(const [index,gate] of CHECKPOINTS.entries())assert.ok(isOnRoad(gate),`gate ${index} is off spline road`);
+for(const guide of routeGuides(27)){const sample=nearestRoadSample(guide);assert.ok(Math.hypot(guide.x-sample.x,guide.y-sample.y,guide.z-sample.z)<6.5,"guide diverged from spline road")}
+const elevated=ROAD_SAMPLES.reduce((best,sample)=>sample.y>best.y?sample:best,ROAD_SAMPLES[0]);assert.equal(isOnRoad({x:elevated.x,y:elevated.y+1.5,z:elevated.z}),true);assert.equal(isOnRoad({x:elevated.x,y:0,z:elevated.z}),false,"ground below elevated road must not inherit asphalt traction");
+const elevatedGate=CHECKPOINTS.findIndex(gate=>gate.y>10);assert.equal(checkpointAdvance(elevatedGate,{x:CHECKPOINTS[elevatedGate].x,y:0,z:CHECKPOINTS[elevatedGate].z}),elevatedGate,"ground below an elevated gate must not count");assert.equal(checkpointAdvance(elevatedGate,{x:CHECKPOINTS[elevatedGate].x,y:CHECKPOINTS[elevatedGate].y+1.5,z:CHECKPOINTS[elevatedGate].z}),elevatedGate+1);
 assert.equal(ROUTE_PATH.length,12);
-console.log("Apex Run spline geometry passed",JSON.stringify({samples:samples.length,triangles:indices.length/3,elevation:[+Math.min(...elevations).toFixed(1),+Math.max(...elevations).toFixed(1)],maxBankRise:+Math.max(...banks).toFixed(1)}));
+console.log("Apex Run spline geometry passed",JSON.stringify({samples:samples.length,triangles:indices.length/3,elevation:[+Math.min(...elevations).toFixed(1),+Math.max(...elevations).toFixed(1)],maxBankRise:+Math.max(...banks).toFixed(1),maxTangentAngle:+maxTangentAngle.toFixed(2)}));
