@@ -10,8 +10,9 @@ export function createVehicle(RAPIER,world,start={x:-2,y:2.2,z:0}){
 }
 export function driveVehicle(vehicle,state,input,dt,onRoad=true){
   const speed=Math.abs(vehicle.currentVehicleSpeed?.()||0),target=(input.left?1:0)-(input.right?1:0);state.steer+=clampVehicle(target-state.steer,-dt*VEHICLE.steerRate,dt*VEHICLE.steerRate);
-  const steerLimit=VEHICLE.steerLow+(VEHICLE.steerHigh-VEHICLE.steerLow)*clampVehicle(speed/VEHICLE.maxSpeed,0,1),throttle=input.forward?1:input.reverse?VEHICLE.reverseScale:0,engine=throttle*(speed>VEHICLE.maxSpeed&&throttle>0?0:VEHICLE.engine)*(onRoad?1:.42),service=input.reverse&&speed>1?VEHICLE.serviceBrake:0;
-  for(let i=0;i<4;i++){vehicle.setWheelEngineForce(i,engine*(i<2?1:.55));vehicle.setWheelBrake(i,service+(speed>VEHICLE.maxSpeed?700:0)+(input.handbrake?(i<2?VEHICLE.handbrakeFront:VEHICLE.handbrakeRear):0));vehicle.setWheelSteering(i,i<2?state.steer*steerLimit:0);vehicle.setWheelFrictionSlip(i,onRoad?(input.handbrake&&i>=2?VEHICLE.driftGrip:VEHICLE.roadGrip):VEHICLE.offroadGrip)}
-  return{speed,steer:state.steer,steerLimit,engine};
+  if(!Number.isFinite(state.surfaceBlend))state.surfaceBlend=onRoad?1:0;state.surfaceBlend+=clampVehicle((onRoad?1:0)-state.surfaceBlend,-dt*4,dt*4);
+  const steerLimit=VEHICLE.steerLow+(VEHICLE.steerHigh-VEHICLE.steerLow)*clampVehicle(speed/VEHICLE.maxSpeed,0,1),throttle=input.forward?1:input.reverse?VEHICLE.reverseScale:0,surfacePower=.42+.58*state.surfaceBlend,engine=throttle*(speed>VEHICLE.maxSpeed&&throttle>0?0:VEHICLE.engine)*surfacePower,service=input.reverse&&speed>1?VEHICLE.serviceBrake:0,surfaceGrip=VEHICLE.offroadGrip+(VEHICLE.roadGrip-VEHICLE.offroadGrip)*state.surfaceBlend;
+  for(let i=0;i<4;i++){vehicle.setWheelEngineForce(i,engine*(i<2?1:.55));vehicle.setWheelBrake(i,service+(speed>VEHICLE.maxSpeed?700:0)+(input.handbrake?(i<2?VEHICLE.handbrakeFront:VEHICLE.handbrakeRear):0));vehicle.setWheelSteering(i,i<2?state.steer*steerLimit:0);vehicle.setWheelFrictionSlip(i,input.handbrake&&i>=2?VEHICLE.driftGrip:surfaceGrip)}
+  return{speed,steer:state.steer,steerLimit,engine,surfaceBlend:state.surfaceBlend};
 }
 export function stabilizeChassis(chassis,grounded){if(!grounded)return;const q=chassis.rotation(),up={x:2*(q.x*q.y-q.w*q.z),z:2*(q.y*q.z+q.w*q.x)},w=chassis.angvel();chassis.addTorque({x:up.z*180-w.x*90,y:-w.y*25,z:-up.x*180-w.z*90},true)}

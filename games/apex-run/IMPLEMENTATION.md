@@ -90,3 +90,30 @@ Primary references:
   (2.1 seconds throttle, release, 0.9 seconds full right) remains upright and on the shoulder.
 - The 60 FPS clean reference records every fixed-tick input and replays that identical tape at
   30, 60, and 144 FPS, so render-rate checks no longer use separate reactive driving runs.
+
+## Beta 1 acceptance
+
+- Track collider dimensions, checkpoint order, recovery transforms, and road classification
+  now come from `track-model.js` in both the browser and trajectory tests.
+- Focus loss and tab hiding pause the timer, stop the car, and clear held keys. P/Escape and
+  visible Pause/Resume controls use the same path, while rapid restart resets the fixed stepper.
+- Sound can be muted with M or the HUD button. The preference is storage-safe and applies to
+  an already-running audio graph without recreating oscillators.
+- Drift smoke remains capped and now disposes geometry/material resources as particles expire.
+- Shared-vehicle tests measure the 58% off-road engine penalty, reduced grass grip, service
+  braking, and rear handbrake grip/brake behavior.
+- Road-to-grass power and grip now blend over a quarter-second instead of switching the whole
+  car instantly at an axis-aligned boundary. A boundary regression caps the per-tick force step.
+- Any recovery marks the attempt as a practice run, so a teleport can never create a PB or a
+  desynchronized ghost. The finish dialog states this explicitly.
+- Replay validation now requires normalized quaternions, tick zero, and a final tick matching
+  the stored time. Finish persistence is exercised through save/read/reload and denied storage.
+- Long animation-frame gaps pause and invalidate the competitive attempt instead of silently
+  undercounting elapsed time. Five- and thirty-second gap classification is covered by tests.
+- HUD writes occur at render cadence only when displayed values change. Camera smoothing,
+  shake, and smoke use render delta; smoke is a fixed 28-mesh pool with no per-puff allocation.
+
+Known beta limitations: keyboard is the supported control mode; no touch/gamepad UI is shown.
+The course and car are original procedural geometry, not production photoreal assets. Browser
+automation cannot substitute for a human handling evaluation, so a real keyboard playtest is
+still required before promoting beyond beta.

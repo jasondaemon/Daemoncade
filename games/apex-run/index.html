@@ -5,11 +5,11 @@
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
   <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'wasm-unsafe-eval'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; connect-src 'none'; object-src 'none'; base-uri 'none'">
   <title>Apex Run</title>
-  <link rel="stylesheet" href="game.css?v=0.2.0-a2">
+  <link rel="stylesheet" href="game.css?v=0.3.0-beta1">
 </head>
 <body>
   <main id="game">
-    <canvas id="view" aria-label="Apex Run 3D race"></canvas>
+    <canvas id="view" tabindex="0" aria-label="Apex Run 3D race"></canvas>
     <section id="loading"><strong>APEX RUN</strong><span>Building the stadium…</span></section>
     <header class="hud">
       <div><span class="label">TIME</span><strong id="time">00:00.000</strong><small id="delta">PERSONAL BEST —</small></div>
@@ -17,12 +17,14 @@
       <div class="speed"><strong id="speed">000</strong><span>KM/H</span></div>
     </header>
     <div id="countdown" aria-live="polite"></div>
+    <nav class="quick-actions" aria-label="Game controls"><button id="pause" type="button" aria-pressed="false">PAUSE</button><button id="mute" type="button" aria-pressed="false">SOUND ON</button></nav>
     <aside class="controls"><b>W / UP</b> throttle · <b>S / DOWN</b> brake &amp; reverse · <b>A/D</b> steer · <b>SPACE</b> drift / handbrake · <b>BACKSPACE</b> recover · <b>R</b> restart</aside>
-    <section id="result" hidden>
-      <span>RUN COMPLETE</span><strong id="result-time">00:00.000</strong><p id="result-pb"></p>
+    <section id="pause-card" role="dialog" aria-modal="true" aria-labelledby="pause-title" hidden><span>RACE PAUSED</span><strong id="pause-title">Take a breath.</strong><p>Press <b>P</b>, <b>Escape</b>, or Resume. The timer is stopped and held keys are cleared.</p><button id="resume" type="button">Resume</button></section>
+    <section id="result" role="dialog" aria-modal="true" aria-labelledby="result-title" aria-live="polite" hidden>
+      <span id="result-title">RUN COMPLETE</span><strong id="result-time">00:00.000</strong><p id="result-pb"></p>
       <button id="again" type="button">Race again</button>
     </section>
   </main>
-  <script type="module" src="game.js?v=0.2.0-a2"></script>
+  <script type="module" src="game.js?v=0.3.0-beta1"></script>
 </body>
 </html>

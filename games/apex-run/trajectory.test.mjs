@@ -2,14 +2,10 @@ import assert from "node:assert/strict";
 import RAPIER from "./vendor/rapier-0.17.3.js";
 import {FixedStepper,checkpointAdvance,clamp} from "./simulation.js";
 import {createVehicle,driveVehicle,stabilizeChassis} from "./vehicle-model.js";
+import {TRACK_BOXES} from "./track-model.js";
 
 await RAPIER.init();
-const road=[
-  [47,0,0,58,.45,13,0,0,0],[101,0,-18,20,.45,22,0,0,0],[101,0,-61,13,.45,38,0,0,0],
-  [91,0,-103,27,.45,13,.035,0,0],[48,0,-103,28,.45,13,.035,0,0],[8,.45,-103,16,.45,18,0,0,-.028],
-  [-35,0,-103,20,.45,20,0,0,0],[-75,0,-103,20,.45,20,0,0,0],
-  [-82,0,9,22,.45,116,0,0,0],[22,0,140,120,.45,16,0,0,0],[150,0,72,18,.45,68,0,0,0],
-];
+const road=TRACK_BOXES.filter(box=>box.surface!=="grass").map(({x,y,z,hx,hy,hz,rx=0,ry=0,rz=0})=>[x,y,z,hx,hy,hz,rx,ry,rz]);
 function makeRun(fps,recordedInputs=null){
   const world=new RAPIER.World({x:0,y:-24,z:0});world.integrationParameters.dt=1/120;
   world.createCollider(RAPIER.ColliderDesc.cuboid(190,1,150).setTranslation(0,-1.2,-50).setFriction(1.1));
