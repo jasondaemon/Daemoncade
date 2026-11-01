@@ -1,10 +1,10 @@
-import * as THREE from "../vendor/three/three.module.min.js?v=0.4.0-alpha11";
-import RAPIER from "./vendor/rapier-0.17.3.js?v=0.4.0-alpha11";
-import {FixedStepper,MEDALS,clamp,commitResult,formatTime,frameGapInvalidates,isOnRoad,medalFor,persistenceNote,readBest,readReplay,reconcileBest,replayFrameAt} from "./simulation.js?v=0.4.0-alpha11";
-import {VEHICLE,applySurfaceDrag,createVehicle,driveVehicle,stabilizeChassis} from "./vehicle-model.js?v=0.4.0-alpha11";
-import {makeWheelVisual,setWheelVisualPose} from "./wheel-visual.js?v=0.4.0-alpha11";
-import {TRACK_BOXES,CHECKPOINTS,RECOVERY_SPOTS} from "./track-model.js?v=0.4.0-alpha11";
-import {RaceController} from "./race-controller.js?v=0.4.0-alpha11";
+import * as THREE from "../vendor/three/three.module.min.js?v=0.4.0-alpha12";
+import RAPIER from "./vendor/rapier-0.17.3.js?v=0.4.0-alpha12";
+import {FixedStepper,MEDALS,clamp,commitResult,formatTime,frameGapInvalidates,isOnRoad,medalFor,persistenceNote,readBest,readReplay,reconcileBest,replayFrameAt} from "./simulation.js?v=0.4.0-alpha12";
+import {VEHICLE,applySurfaceDrag,createVehicle,driveVehicle,stabilizeChassis} from "./vehicle-model.js?v=0.4.0-alpha12";
+import {makeWheelVisual,setWheelVisualPose} from "./wheel-visual.js?v=0.4.0-alpha12";
+import {TRACK_BOXES,CHECKPOINTS,RECOVERY_SPOTS,ROUTE_PATH,routeGuides} from "./track-model.js?v=0.4.0-alpha12";
+import {RaceController} from "./race-controller.js?v=0.4.0-alpha12";
 
 const $=id=>document.getElementById(id),canvas=$("view"),scene=new THREE.Scene();
 const reducedMotion=matchMedia("(prefers-reduced-motion: reduce)").matches;
@@ -19,7 +19,7 @@ const rim=new THREE.DirectionalLight(0x4bdcff,1.3);rim.position.set(90,35,-130);
 await RAPIER.init();
 const world=new RAPIER.World({x:0,y:VEHICLE.gravity,z:0});world.integrationParameters.dt=1/120;
 const meshes=[],keys=new Set(),course=[],roadColliders=new Set();
-const materials={road:new THREE.MeshStandardMaterial({color:0xdbe1e5,roughness:.78,metalness:.02}),bank:new THREE.MeshStandardMaterial({color:0x303945,roughness:.67}),edge:new THREE.MeshStandardMaterial({color:0x12cde8,emissive:0x057389,emissiveIntensity:.45}),grass:new THREE.MeshStandardMaterial({color:0x43752c,roughness:1}),stadium:new THREE.MeshStandardMaterial({color:0x182533,roughness:.8})};
+const materials={road:new THREE.MeshStandardMaterial({color:0x313d48,roughness:.82,metalness:.02}),bank:new THREE.MeshStandardMaterial({color:0x202b36,roughness:.72}),runoff:new THREE.MeshStandardMaterial({color:0x89949b,roughness:.9}),edge:new THREE.MeshStandardMaterial({color:0x12cde8,emissive:0x057389,emissiveIntensity:.75}),grass:new THREE.MeshStandardMaterial({color:0x43752c,roughness:1}),stadium:new THREE.MeshStandardMaterial({color:0x182533,roughness:.8})};
 
 function addBox({x,y,z,hx,hy,hz,rx=0,ry=0,rz=0,material=materials.road,collider=true,surface="road"}){
   const mesh=new THREE.Mesh(new THREE.BoxGeometry(hx*2,hy*2,hz*2),material);mesh.position.set(x,y,z);mesh.rotation.set(rx,ry,rz);mesh.castShadow=true;mesh.receiveShadow=true;scene.add(mesh);
@@ -37,20 +37,17 @@ for(let z=12;z<140;z+=14){addBox({x:133.5,y:.65,z,hx:.25,hy:.25,hz:5,material:ma
 const stripeMat=new THREE.MeshStandardMaterial({color:0xffffff,emissive:0x132a33,roughness:.55});for(let x=4;x<110;x+=18)addBox({x,y:.49,z:0,hx:5,hy:.025,hz:.14,material:stripeMat,collider:false});for(let z=-86;z<118;z+=20)addBox({x:-82,y:.49,z,hx:.14,hy:.025,hz:5,material:stripeMat,collider:false});for(let x=-70;x<95;x+=18)addBox({x,y:.49,z:-103,hx:5,hy:.025,hz:.14,material:stripeMat,collider:false});for(let x=-66;x<132;x+=20)addBox({x,y:.49,z:140,hx:5,hy:.025,hz:.14,material:stripeMat,collider:false});for(let z=20;z<130;z+=20)addBox({x:150,y:.49,z,hx:.14,hy:.025,hz:5,material:stripeMat,collider:false});
 for(let z=-7;z<=7;z+=2)addBox({x:2,y:.5,z,hx:.35,hy:.03,hz:.75,material:z%4?materials.stadium:stripeMat,collider:false});
 
-function gate(x,z,rotation=0,color=0x5eeaff){
+function gate(x,z,rotation=0,color=0x5eeaff,number=1){
   const group=new THREE.Group(),mat=new THREE.MeshStandardMaterial({color,emissive:color,emissiveIntensity:1.6,metalness:.35,roughness:.25});
   for(const side of[-1,1]){const post=new THREE.Mesh(new THREE.BoxGeometry(.7,8,.7),mat);post.position.set(0,4,side*11);post.castShadow=true;group.add(post)}
-  const top=new THREE.Mesh(new THREE.BoxGeometry(.8,.7,23),mat);top.position.y=8;group.add(top);group.position.set(x,.45,z);group.rotation.y=rotation;group.userData.material=mat;scene.add(group);return group;
+  const top=new THREE.Mesh(new THREE.BoxGeometry(.8,.7,23),mat),beam=new THREE.Mesh(new THREE.BoxGeometry(.28,18,.28),mat);top.position.y=8;beam.position.y=17;group.add(top,beam);const c=document.createElement("canvas");c.width=128;c.height=128;const cx=c.getContext("2d");cx.fillStyle="#071521";cx.beginPath();cx.arc(64,64,54,0,Math.PI*2);cx.fill();cx.strokeStyle=`#${color.toString(16).padStart(6,"0")}`;cx.lineWidth=10;cx.stroke();cx.fillStyle="#fff";cx.font="900 72px system-ui";cx.textAlign="center";cx.textBaseline="middle";cx.fillText(String(number),64,68);const badge=new THREE.Sprite(new THREE.SpriteMaterial({map:new THREE.CanvasTexture(c),depthTest:false}));badge.position.y=25;badge.scale.set(8,8,1);group.add(badge);group.position.set(x,.45,z);group.rotation.y=rotation;group.userData.material=mat;scene.add(group);return group;
 }
-const gates=CHECKPOINTS.map(cp=>gate(cp.x,cp.z,cp.rotation,cp.finish?0xffd044:0x5eeaff));
+const gates=CHECKPOINTS.map((cp,i)=>gate(cp.x,cp.z,cp.rotation,cp.finish?0xffd044:0x5eeaff,i+1));
 // One repeated ground-chevron language traces the racing line. Unlike the old
 // compass-text boards, every arrow points in the direction the approaching car
 // must travel and cannot be mistaken for a checkpoint arch.
-function routeArrow(x,z,ry){const group=new THREE.Group(),shape=new THREE.Shape();shape.moveTo(-1.5,-1.4);shape.lineTo(2,0);shape.lineTo(-1.5,1.4);shape.closePath();const head=new THREE.Mesh(new THREE.ShapeGeometry(shape),materials.edge),stem=new THREE.Mesh(new THREE.BoxGeometry(3.2,.06,.65),materials.edge);head.rotation.x=-Math.PI/2;head.position.x=2.1;stem.position.x=-.4;group.add(head,stem);group.position.set(x,.54,z);group.rotation.y=ry;scene.add(group)}
-for(const arrow of[
-  [32,0,0],[70,0,0],[96,-25,-Math.PI/2],[96,-58,-Math.PI/2],[92,-86,-2.25],[68,-103,Math.PI],[30,-103,Math.PI],[-10,-103,Math.PI],[-50,-103,Math.PI],
-  [-82,-76,Math.PI/2],[-82,-30,Math.PI/2],[-82,20,Math.PI/2],[-82,72,Math.PI/2],[-72,128,.65],[-30,140,0],[20,140,0],[72,140,0],[116,140,0],[145,120,-Math.PI/2],[150,78,-Math.PI/2],[150,35,-Math.PI/2]
-])routeArrow(...arrow);
+function routeArrow(x,z,heading){const group=new THREE.Group(),shape=new THREE.Shape();shape.moveTo(-1.5,-1.4);shape.lineTo(2,0);shape.lineTo(-1.5,1.4);shape.closePath();const head=new THREE.Mesh(new THREE.ShapeGeometry(shape),materials.edge),stem=new THREE.Mesh(new THREE.BoxGeometry(3.2,.06,.65),materials.edge);head.rotation.x=-Math.PI/2;head.position.x=2.1;stem.position.x=-.4;group.add(head,stem);group.position.set(x,.54,z);group.rotation.y=-heading;scene.add(group)}
+for(const arrow of routeGuides(27))routeArrow(arrow.x,arrow.z,arrow.heading);
 
 const grid=new THREE.GridHelper(320,32,0xffffff,0xffffff);grid.position.y=-.15;grid.material.opacity=.08;grid.material.transparent=true;scene.add(grid);
 
@@ -71,6 +68,8 @@ const ghostBody=new THREE.Mesh(new THREE.BoxGeometry(4.5,.65,2),ghostMat);ghostB
 const smokeGeometry=new THREE.SphereGeometry(.25,8,5),smoke=Array.from({length:28},()=>{const s=new THREE.Mesh(smokeGeometry,new THREE.MeshBasicMaterial({color:0xd8e2e8,transparent:true,opacity:0,depthWrite:false}));s.visible=false;s.userData.life=0;scene.add(s);return s});let smokeCursor=0;function puff(p){const s=smoke[smokeCursor++%smoke.length];s.position.set(p.x,p.y+.25,p.z);s.scale.setScalar(1);s.userData.life=1;s.material.opacity=.22;s.visible=true}
 
 const race=new RaceController(),vehicleState={steer:0,surfaceBlend:1};let best=readBest(localStorage),bestReplay=readReplay(localStorage),lastPosition=new THREE.Vector3(),lastRotation=new THREE.Quaternion(),cameraReady=false,replayFrames=[],wasGrounded=true,cameraShake=0,testInput=null;
+const minimap=$("minimap"),map=minimap.getContext("2d"),MAP={minX:-112,maxX:185,minZ:-155,maxZ:175},mapPoint=({x,z})=>({x:8+(x-MAP.minX)/(MAP.maxX-MAP.minX)*(minimap.width-16),y:8+(z-MAP.minZ)/(MAP.maxZ-MAP.minZ)*(minimap.height-16)});
+function updateNavigation(position,rotation){map.clearRect(0,0,minimap.width,minimap.height);map.lineJoin="round";map.lineCap="round";map.strokeStyle="#153848";map.lineWidth=12;map.beginPath();ROUTE_PATH.forEach((point,i)=>{const p=mapPoint(point);i?map.lineTo(p.x,p.y):map.moveTo(p.x,p.y)});map.stroke();map.strokeStyle="#68efff";map.lineWidth=4;map.stroke();CHECKPOINTS.forEach((cp,i)=>{const p=mapPoint(cp);map.beginPath();map.arc(p.x,p.y,i===race.checkpoint?7:5,0,Math.PI*2);map.fillStyle=i<race.checkpoint?"#4f6875":i===race.checkpoint?"#ffd34f":"#a4d9df";map.fill();map.fillStyle="#071521";map.font="900 8px system-ui";map.textAlign="center";map.textBaseline="middle";map.fillText(String(i+1),p.x,p.y+.5)});const car=mapPoint(position),heading=Math.atan2(2*(rotation.x*rotation.z-rotation.w*rotation.y),1-2*(rotation.y*rotation.y+rotation.z*rotation.z));map.save();map.translate(car.x,car.y);map.rotate(heading);map.fillStyle="#fff";map.beginPath();map.moveTo(7,0);map.lineTo(-5,-4);map.lineTo(-5,4);map.closePath();map.fill();map.restore();const next=CHECKPOINTS[race.checkpoint];if(next){const bearing=Math.atan2(next.z-position.z,next.x-position.x)-heading;$("bearing-arrow").style.transform=`rotate(${bearing*180/Math.PI}deg)`;$("bearing-label").textContent=next.finish?"FINISH":`GATE ${race.checkpoint+1}`}}
 best=reconcileBest(best,bestReplay);
 function readMuted(){try{return localStorage.getItem("apex-run:muted:v1")==="1"}catch{return false}}function storeMuted(){try{localStorage.setItem("apex-run:muted:v1",muted?"1":"0")}catch{}}
 let audio=null,muted=readMuted();function startAudio(){if(audio)return;try{const Audio=globalThis.AudioContext||globalThis.webkitAudioContext;if(!Audio)return;const context=new Audio(),master=context.createGain(),engine=context.createOscillator(),engineGain=context.createGain(),wind=context.createOscillator(),windGain=context.createGain();master.gain.value=muted?0:.16;master.connect(context.destination);engine.type="sawtooth";engineGain.gain.value=0;engine.connect(engineGain).connect(master);engine.start();wind.type="triangle";wind.frequency.value=80;windGain.gain.value=0;wind.connect(windGain).connect(master);wind.start();audio={context,master,engine,engineGain,wind,windGain};context.resume?.()}catch{audio=null}}
@@ -104,6 +103,7 @@ function render(alpha,renderDt=1/60){
   const forward=new THREE.Vector3(1,0,0).applyQuaternion(rotation),flatForward=forward.clone().setY(0).normalize(),up=new THREE.Vector3(0,1,0),speed=Math.abs(vehicle.currentVehicleSpeed?.()||0),desired=position.clone().addScaledVector(flatForward,-11.5-speed*.04).addScaledVector(up,5.2),look=position.clone().addScaledVector(flatForward,14+speed*.14).addScaledVector(up,1.1);desired.y=Math.max(desired.y,3.2);look.y=Math.max(look.y,1.25);
   const lateral=new THREE.Vector3(0,0,1).applyQuaternion(rotation),velocity=chassis.linvel(),slip=clamp((velocity.x*lateral.x+velocity.z*lateral.z)*.08,-2.2,2.2);look.addScaledVector(lateral,slip);if(!cameraReady){camera.position.copy(desired);cameraReady=true}else camera.position.lerp(desired,1-Math.exp(-8*renderDt));if(!reducedMotion&&cameraShake>.002){camera.position.x+=(Math.random()-.5)*cameraShake;camera.position.y+=(Math.random()-.5)*cameraShake;cameraShake*=Math.pow(.88,renderDt*60)}camera.fov=reducedMotion?68:68+clamp(speed*.11,0,8);camera.updateProjectionMatrix();camera.lookAt(look);
   for(const s of smoke){if(!s.visible)continue;s.userData.life-=1.08*renderDt;s.scale.addScalar(1.5*renderDt);s.position.y+=.6*renderDt;s.material.opacity=Math.max(0,s.userData.life*.2);if(s.userData.life<=0)s.visible=false}
+  updateNavigation(position,rotation);
   updateHud();
   $("countdown").textContent=race.state==="countdown"?(race.countdown>.7?String(Math.ceil(race.countdown)):"GO!"):"";renderer.render(scene,camera)
 }

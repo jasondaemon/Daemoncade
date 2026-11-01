@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
   <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'wasm-unsafe-eval'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; connect-src 'none'; object-src 'none'; base-uri 'none'">
   <title>Apex Run</title>
-  <link rel="stylesheet" href="game.css?v=0.4.0-alpha11">
+  <link rel="stylesheet" href="game.css?v=0.4.0-alpha12">
 </head>
 <body>
   <main id="game">
@@ -16,6 +16,7 @@
       <div class="checkpoint"><span class="label">GATE</span><strong id="checkpoint">0 / 5</strong><small id="next-gate">NEXT 1</small></div>
       <div class="speed"><strong id="speed">000</strong><span>KM/H</span></div>
     </header>
+    <aside id="nav-guide" aria-label="Course navigation"><canvas id="minimap" width="180" height="150"></canvas><div class="bearing"><span id="bearing-arrow">↑</span><b id="bearing-label">GATE 1</b></div></aside>
     <div id="countdown" aria-live="polite"></div>
     <nav class="quick-actions" aria-label="Game controls"><button id="pause" type="button" aria-pressed="false">PAUSE</button><button id="mute" type="button" aria-pressed="false">SOUND ON</button></nav>
     <aside class="controls"><b>W / UP</b> throttle · <b>S / DOWN</b> brake · release and press again at a stop to reverse · <b>A/D</b> steer · <b>SPACE</b> drift / handbrake · <b>BACKSPACE</b> recover · <b>R</b> restart</aside>
@@ -25,6 +26,6 @@
       <button id="again" type="button">Race again</button>
     </section>
   </main>
-  <script type="module" src="game.js?v=0.4.0-alpha11"></script>
+  <script type="module" src="game.js?v=0.4.0-alpha12"></script>
 </body>
 </html>
