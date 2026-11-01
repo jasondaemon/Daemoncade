@@ -9,7 +9,7 @@ const state={steer:0},road=mockVehicle(),grass=mockVehicle();
 driveVehicle(road,state,{forward:true,right:true},1/120,true);
 driveVehicle(grass,{steer:0},{forward:true,right:true},1/120,false);
 assert.equal(road.calls.engine[0],VEHICLE.engine);
-assert.equal(grass.calls.engine[0],VEHICLE.engine*.68);
+assert.equal(grass.calls.engine[0],VEHICLE.engine*.8);
 assert.equal(road.calls.grip[0],VEHICLE.roadGrip);
 assert.equal(grass.calls.grip[0],VEHICLE.offroadGrip);
 assert.ok(Math.abs(grass.calls.engine[0])<Math.abs(road.calls.engine[0]));

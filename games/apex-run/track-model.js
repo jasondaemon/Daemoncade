@@ -12,7 +12,10 @@ export const TRACK_BOXES=Object.freeze([
   // Visible outside runoff catches an imperfect first turn and leaves room to
   // add steering, rather than dropping the car directly onto slow grass.
   {x:20,y:-.02,z:-140,hx:105,hy:.45,hz:17},
-  {x:-82,y:0,z:9,hx:22,hy:.45,hz:116,surface:"bank"},{x:22,y:0,z:140,hx:120,hy:.45,hz:16},{x:135,y:-.02,z:125,hx:55,hy:.45,hz:45},{x:150,y:0,z:72,hx:18,hy:.45,hz:68,surface:"bank"},
+  {x:-82,y:0,z:9,hx:22,hy:.45,hz:116,surface:"bank"},
+  // The north straight visibly overlaps the vertical lane by a full car width.
+  // Its former -98 m edge left one tire on the lower grass at the corner seam.
+  {x:18,y:0,z:140,hx:124,hy:.45,hz:16},{x:135,y:-.02,z:125,hx:55,hy:.45,hz:45},{x:150,y:0,z:72,hx:18,hy:.45,hz:68,surface:"bank"},
 ]);
 export const CHECKPOINTS=Object.freeze([
   {x:99,z:-12,hx:18,hz:18,rotation:Math.PI/2},{x:96,z:-72,hx:28,hz:26,rotation:Math.PI/2},

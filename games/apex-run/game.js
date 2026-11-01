@@ -1,10 +1,10 @@
-import * as THREE from "../vendor/three/three.module.min.js?v=0.4.0-alpha7";
-import RAPIER from "./vendor/rapier-0.17.3.js?v=0.4.0-alpha7";
-import {FixedStepper,MEDALS,clamp,commitResult,formatTime,frameGapInvalidates,isOnRoad,medalFor,persistenceNote,readBest,readReplay,reconcileBest,replayFrameAt} from "./simulation.js?v=0.4.0-alpha7";
-import {VEHICLE,createVehicle,driveVehicle,stabilizeChassis} from "./vehicle-model.js?v=0.4.0-alpha7";
-import {makeWheelVisual,setWheelVisualPose} from "./wheel-visual.js?v=0.4.0-alpha7";
-import {TRACK_BOXES,CHECKPOINTS,RECOVERY_SPOTS} from "./track-model.js?v=0.4.0-alpha7";
-import {RaceController} from "./race-controller.js?v=0.4.0-alpha7";
+import * as THREE from "../vendor/three/three.module.min.js?v=0.4.0-alpha8";
+import RAPIER from "./vendor/rapier-0.17.3.js?v=0.4.0-alpha8";
+import {FixedStepper,MEDALS,clamp,commitResult,formatTime,frameGapInvalidates,isOnRoad,medalFor,persistenceNote,readBest,readReplay,reconcileBest,replayFrameAt} from "./simulation.js?v=0.4.0-alpha8";
+import {VEHICLE,applySurfaceDrag,createVehicle,driveVehicle,stabilizeChassis} from "./vehicle-model.js?v=0.4.0-alpha8";
+import {makeWheelVisual,setWheelVisualPose} from "./wheel-visual.js?v=0.4.0-alpha8";
+import {TRACK_BOXES,CHECKPOINTS,RECOVERY_SPOTS} from "./track-model.js?v=0.4.0-alpha8";
+import {RaceController} from "./race-controller.js?v=0.4.0-alpha8";
 
 const $=id=>document.getElementById(id),canvas=$("view"),scene=new THREE.Scene();
 const reducedMotion=matchMedia("(prefers-reduced-motion: reduce)").matches;
@@ -85,7 +85,7 @@ function physicsStep(dt){
   race.advance(dt);const position=chassis.translation(),wheelRoad=[0,1,2,3].map(i=>{const ground=vehicle.wheelGroundObject(i);return ground?roadColliders.has(ground.handle):isOnRoad(position)}),rawInput=testInput||{forward:keys.has("ArrowUp")||keys.has("KeyW"),reverse:keys.has("ArrowDown")||keys.has("KeyS"),left:keys.has("ArrowLeft")||keys.has("KeyA"),right:keys.has("ArrowRight")||keys.has("KeyD"),handbrake:keys.has("Space")},input={...rawInput,forward:race.state==="racing"&&rawInput.forward,reverse:race.state==="racing"&&rawInput.reverse},drive=driveVehicle(vehicle,vehicleState,input,dt,wheelRoad),speed=drive.speed,handbrake=input.handbrake;
   if(race.state!=="racing")for(let i=0;i<4;i++)vehicle.setWheelBrake(i,6000);
   if(audio){const now=audio.context.currentTime,throttle=input.forward||input.reverse?1:0;audio.engine.frequency.setTargetAtTime(54+speed*7+throttle*45,now,.04);audio.engineGain.gain.setTargetAtTime(race.state==="racing"?.035+throttle*.055:0,now,.05);audio.wind.frequency.setTargetAtTime(70+speed*3,now,.08);audio.windGain.gain.setTargetAtTime(clamp((speed-8)/80,0,.06),now,.1)}
-  if(drive.surfaceBlend<1){const v=chassis.linvel(),drag=(1-drive.surfaceBlend)*125;chassis.addForce({x:-v.x*drag,y:0,z:-v.z*drag},true)}
+  applySurfaceDrag(chassis,drive.surfaceBlend,dt);
   stabilizeChassis(chassis,vehicle);vehicle.updateVehicle(dt,RAPIER.QueryFilterFlags.EXCLUDE_DYNAMIC);world.step();
   const grounded=[0,1,2,3].some(i=>vehicle.wheelIsInContact(i));if(grounded&&!wasGrounded&&chassis.linvel().y<0)cameraShake=Math.min(.45,Math.abs(chassis.linvel().y)*.025);wasGrounded=grounded;if(race.state==="racing"&&handbrake&&speed>12&&race.tick%8===0)puff(chassis.translation());
   if(race.state==="racing"){if(race.tick===1||race.tick%4===0)captureReplay();const p=chassis.translation(),result=race.observe(p);if(result.finished)finish();else if(p.y<-12||Math.abs(p.x)>300||Math.abs(p.z)>260)recover()}
