@@ -1,10 +1,10 @@
-import * as THREE from "../vendor/three/three.module.min.js?v=0.4.0-alpha2";
-import RAPIER from "./vendor/rapier-0.17.3.js?v=0.4.0-alpha2";
-import {FixedStepper,MEDALS,clamp,commitResult,formatTime,frameGapInvalidates,isOnRoad,medalFor,persistenceNote,readBest,readReplay,reconcileBest,replayFrameAt} from "./simulation.js?v=0.4.0-alpha2";
-import {VEHICLE,createVehicle,driveVehicle,stabilizeChassis} from "./vehicle-model.js?v=0.4.0-alpha2";
-import {makeWheelVisual,setWheelVisualPose} from "./wheel-visual.js?v=0.4.0-alpha2";
-import {TRACK_BOXES,CHECKPOINTS,RECOVERY_SPOTS} from "./track-model.js?v=0.4.0-alpha2";
-import {RaceController} from "./race-controller.js?v=0.4.0-alpha2";
+import * as THREE from "../vendor/three/three.module.min.js?v=0.4.0-alpha3";
+import RAPIER from "./vendor/rapier-0.17.3.js?v=0.4.0-alpha3";
+import {FixedStepper,MEDALS,clamp,commitResult,formatTime,frameGapInvalidates,isOnRoad,medalFor,persistenceNote,readBest,readReplay,reconcileBest,replayFrameAt} from "./simulation.js?v=0.4.0-alpha3";
+import {VEHICLE,createVehicle,driveVehicle,stabilizeChassis} from "./vehicle-model.js?v=0.4.0-alpha3";
+import {makeWheelVisual,setWheelVisualPose} from "./wheel-visual.js?v=0.4.0-alpha3";
+import {TRACK_BOXES,CHECKPOINTS,RECOVERY_SPOTS} from "./track-model.js?v=0.4.0-alpha3";
+import {RaceController} from "./race-controller.js?v=0.4.0-alpha3";
 
 const $=id=>document.getElementById(id),canvas=$("view"),scene=new THREE.Scene();
 const reducedMotion=matchMedia("(prefers-reduced-motion: reduce)").matches;
@@ -44,7 +44,7 @@ function gate(x,z,rotation=0,color=0x5eeaff){
 }
 const gates=CHECKPOINTS.map(cp=>gate(cp.x,cp.z,cp.rotation,cp.finish?0xffd044:0x5eeaff));
 function sign(text,x,z,ry=0,color="#68efff"){const c=document.createElement("canvas");c.width=512;c.height=128;const g=c.getContext("2d");g.fillStyle="#071521";g.fillRect(0,0,512,128);g.strokeStyle=color;g.lineWidth=10;g.strokeRect(5,5,502,118);g.fillStyle="#fff";g.font="900 52px system-ui";g.textAlign="center";g.textBaseline="middle";g.fillText(text,256,66);const geometry=new THREE.PlaneGeometry(12,3),material=new THREE.MeshBasicMaterial({map:new THREE.CanvasTexture(c),side:THREE.FrontSide});for(const flip of[0,Math.PI]){const m=new THREE.Mesh(geometry,material);m.position.set(x,4,z);m.rotation.y=ry+flip;scene.add(m)}}
-sign("BRAKE  ›",112,-72,Math.PI/2,"#ffd34f");sign("‹  HAIRPIN",38,-116,0,"#ff6c4c");sign("CLIMB  ›",-95,72,Math.PI/2);sign("FULL SEND  ›",45,123,0);sign("FINISH  ↓",166,36,Math.PI/2,"#ffd34f");
+sign("BRAKE NOW",112,-72,Math.PI/2,"#ffd34f");sign("HAIRPIN",38,-116,0,"#ff6c4c");sign("CLIMB  ›",-95,72,Math.PI/2);sign("FULL SEND  ›",45,123,0);sign("FINISH  ↓",166,36,Math.PI/2,"#ffd34f");
 
 const grid=new THREE.GridHelper(320,32,0xffffff,0xffffff);grid.position.y=-.15;grid.material.opacity=.08;grid.material.transparent=true;scene.add(grid);
 

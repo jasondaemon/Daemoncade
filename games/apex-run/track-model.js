@@ -1,5 +1,6 @@
 export const TRACK_BOXES=Object.freeze([
-  {x:0,y:-1.2,z:-50,hx:190,hy:1,hz:150,surface:"grass"},
+  // Grass is a forgiving 10 cm shoulder below the road, not a wheel-high curb.
+  {x:0,y:-.65,z:-20,hx:220,hy:1,hz:220,surface:"grass"},
   {x:47,y:0,z:0,hx:58,hy:.45,hz:13},{x:101,y:0,z:-18,hx:20,hy:.45,hz:22},{x:101,y:0,z:-61,hx:13,hy:.45,hz:38},
   // Keep the hairpin exit coplanar: overlapping rotated box colliders exposed a
   // hard seam that could catch the chassis during an otherwise ordinary turn.
@@ -13,10 +14,11 @@ export const CHECKPOINTS=Object.freeze([
   {x:135,z:140,hx:18,hz:16,rotation:0},{x:150,z:8,hx:16,hz:12,rotation:Math.PI/2,finish:true},
 ]);
 export const RECOVERY_SPOTS=Object.freeze([
-  {x:-2,y:2.2,z:0,rotation:{x:0,y:0,z:0,w:1}},{x:93,y:1.8,z:-20,rotation:{x:0,y:-.707,z:0,w:.707}},
-  {x:82,y:1.9,z:-103,rotation:{x:0,y:1,z:0,w:0}},{x:-82,y:1.8,z:-80,rotation:{x:0,y:.707,z:0,w:.707}},
-  {x:-82,y:1.8,z:115,rotation:{x:0,y:.707,z:0,w:.707}},{x:125,y:1.8,z:140,rotation:{x:0,y:0,z:0,w:1}},
+  {x:-2,y:2.2,z:0,rotation:{x:0,y:0,z:0,w:1}},{x:93,y:1.8,z:-20,rotation:{x:0,y:.7071068,z:0,w:.7071068}},
+  {x:82,y:1.9,z:-103,rotation:{x:0,y:1,z:0,w:0}},{x:-82,y:1.8,z:-80,rotation:{x:0,y:-.7071068,z:0,w:.7071068}},
+  {x:-82,y:1.8,z:115,rotation:{x:0,y:0,z:0,w:1}},{x:125,y:1.8,z:140,rotation:{x:0,y:.7071068,z:0,w:.7071068}},
 ]);
+export function recoveryForward(rotation){return{x:1-2*(rotation.y*rotation.y+rotation.z*rotation.z),z:2*(rotation.x*rotation.z-rotation.w*rotation.y)}}
 const ROAD_BOUNDS=Object.freeze([
   [-11,121,-14,14],[81,121,-121,4],[-104,121,-123,-84],[-104,-60,-121,141],[-104,151,123,157],[132,168,-5,157],
 ]);
