@@ -2,7 +2,7 @@
 
 ## Status
 
-Version `0.4.0-alpha.14` is an early desktop-keyboard alpha under active handling revision. It
+Version `0.4.0-alpha.15` is an early desktop-keyboard alpha under active handling revision. It
 is an original single-player stadium time attack inspired by the broad genre, not a Trackmania
 clone or formula-equivalent simulation. Earlier automated beta gates are retained below as
 regression receipts; they did not establish human playability and no longer justify a beta label.

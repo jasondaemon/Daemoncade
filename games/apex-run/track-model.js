@@ -15,7 +15,7 @@ export const TRACK_BOXES=Object.freeze([
   {x:-82,y:0,z:9,hx:22,hy:.45,hz:116,surface:"bank"},
   // The north straight visibly overlaps the vertical lane by a full car width.
   // Its former -98 m edge left one tire on the lower grass at the corner seam.
-  {x:18,y:0,z:140,hx:124,hy:.45,hz:16},{x:135,y:-.02,z:125,hx:55,hy:.45,hz:45,surface:"runoff"},{x:150,y:0,z:72,hx:18,hy:.45,hz:68,surface:"bank"},
+  {x:18,y:0,z:140,hx:124,hy:.45,hz:16},{x:149,y:-.02,z:125,hx:69,hy:.45,hz:45,surface:"runoff"},{x:150,y:0,z:72,hx:18,hy:.45,hz:68,surface:"bank"},
 ]);
 // The grass slab is the final physical support surface. Keep gameplay recovery
 // slightly inside its vertical edges so a chassis cannot settle unsupported in
@@ -29,6 +29,17 @@ export const ROUTE_PATH=Object.freeze([
   {x:-2,z:0},{x:72,z:0},{x:96,z:-20},{x:96,z:-72},{x:88,z:-92},{x:58,z:-103},{x:-82,z:-103},
   {x:-82,z:120},{x:-62,z:140},{x:130,z:140},{x:150,z:116},{x:150,z:8},
 ]);
+// Each checkpoint may only navigate along its own ordered route stage. This
+// prevents a nearby later straight (especially the finish) from becoming a
+// tempting but invalid cross-grass shortcut.
+export const ROUTE_STAGE_RANGES=Object.freeze([[0,2],[2,3],[3,6],[6,7],[7,9],[9,11]].map(Object.freeze));
+export function routeStage(checkpoint){const range=ROUTE_STAGE_RANGES[Math.max(0,Math.min(checkpoint,ROUTE_STAGE_RANGES.length-1))],points=ROUTE_PATH.slice(range[0],range[1]+1);const gate=CHECKPOINTS[Math.max(0,Math.min(checkpoint,CHECKPOINTS.length-1))];return points.concat(gate?{x:gate.x,z:gate.z}:[])}
+export function routeTarget(checkpoint,position,lookahead=28){
+  const points=routeStage(checkpoint),segments=[];let total=0,best={distance:Infinity,along:0};
+  for(let i=0;i<points.length-1;i++){const a=points[i],b=points[i+1],dx=b.x-a.x,dz=b.z-a.z,length=Math.hypot(dx,dz);if(length<.001)continue;segments.push({a,b,dx,dz,length,start:total});const t=Math.max(0,Math.min(1,((position.x-a.x)*dx+(position.z-a.z)*dz)/(length*length))),x=a.x+dx*t,z=a.z+dz*t,distance=Math.hypot(position.x-x,position.z-z);if(distance<best.distance)best={distance,along:total+length*t};total+=length}
+  const wanted=Math.min(total,best.along+lookahead);for(const segment of segments)if(wanted<=segment.start+segment.length){const t=(wanted-segment.start)/segment.length;return{x:segment.a.x+segment.dx*t,z:segment.a.z+segment.dz*t,stage:checkpoint}}
+  const last=points.at(-1);return{x:last.x,z:last.z,stage:checkpoint}
+}
 export function routeGuides(spacing=32){const guides=[];for(let i=0;i<ROUTE_PATH.length-1;i++){const a=ROUTE_PATH[i],b=ROUTE_PATH[i+1],dx=b.x-a.x,dz=b.z-a.z,length=Math.hypot(dx,dz),steps=Math.max(1,Math.floor(length/spacing));for(let step=0;step<steps;step++){const t=(step+.5)/steps;guides.push({x:a.x+dx*t,z:a.z+dz*t,heading:Math.atan2(dz,dx),segment:i})}}return guides}
 export const CHECKPOINTS=Object.freeze([
   {x:99,z:-12,hx:18,hz:18,rotation:Math.PI/2},{x:96,z:-72,hx:28,hz:26,rotation:Math.PI/2},
