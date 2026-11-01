@@ -3,7 +3,7 @@ export {checkpointAdvance,isOnRoad} from "./track-model.js";
 export const REPLAY_VERSION=3;
 export const REPLAY_KEY="apex-run:replay:v3";
 export const REPLAY_HZ=30;
-export const MEDALS=Object.freeze([{name:"APEX",time:34,color:0x55efff},{name:"GOLD",time:39,color:0xffd454},{name:"SILVER",time:46,color:0xd6e2ec},{name:"BRONZE",time:58,color:0xd58b55}]);
+export const MEDALS=Object.freeze([{name:"APEX",time:43,color:0x55efff},{name:"GOLD",time:47,color:0xffd454},{name:"SILVER",time:52,color:0xd6e2ec},{name:"BRONZE",time:60,color:0xd58b55}]);
 export function clamp(v,min,max){return Math.max(min,Math.min(max,v))}
 export function frameGapInvalidates(elapsed){return Number.isFinite(elapsed)&&elapsed>.25}
 export function formatTime(seconds){

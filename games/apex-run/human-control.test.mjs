@@ -14,7 +14,7 @@ function setup(){
   return{world,...result,state,roadHandles};
 }
 function run(segments){const sim=setup(),trace=[];let checkpoint=0,tick=0,offroadTicks=0;
-  for(const segment of segments){for(let n=0;n<Math.round(segment.seconds/DT);n++){const p=sim.chassis.translation(),wheelRoad=[0,1,2,3].map(i=>{const c=sim.vehicle.wheelGroundObject(i);return c?sim.roadHandles.has(c.handle):isOnRoad(p)});driveVehicle(sim.vehicle,sim.state,segment.input,DT,wheelRoad);stabilizeChassis(sim.chassis,sim.vehicle);sim.vehicle.updateVehicle(DT,RAPIER.QueryFilterFlags.EXCLUDE_DYNAMIC);sim.world.step();checkpoint=checkpointAdvance(checkpoint,sim.chassis.translation());if(!isOnRoad(sim.chassis.translation()))offroadTicks++;tick++}const p=sim.chassis.translation(),q=sim.chassis.rotation();trace.push({label:segment.label,t:+(tick*DT).toFixed(2),x:+p.x.toFixed(1),y:+p.y.toFixed(1),z:+p.z.toFixed(1),heading:+Math.atan2(2*(q.x*q.z-q.w*q.y),1-2*(q.y*q.y+q.z*q.z)).toFixed(2),speed:+Math.abs(sim.vehicle.currentVehicleSpeed()).toFixed(1),checkpoint,onRoad:isOnRoad(p)})}
+  for(const segment of segments){for(let n=0;n<Math.round(segment.seconds/DT);n++){const p=sim.chassis.translation(),wheelRoad=[0,1,2,3].map(i=>{const c=sim.vehicle.wheelGroundObject(i);return c?sim.roadHandles.has(c.handle):isOnRoad(p)});driveVehicle(sim.vehicle,sim.state,segment.input,DT,wheelRoad);stabilizeChassis(sim.chassis,sim.vehicle);sim.vehicle.updateVehicle(DT,RAPIER.QueryFilterFlags.EXCLUDE_DYNAMIC);sim.world.step();checkpoint=checkpointAdvance(checkpoint,sim.chassis.translation());if(!isOnRoad(sim.chassis.translation()))offroadTicks++;tick++;if(checkpoint===6)break}const p=sim.chassis.translation(),q=sim.chassis.rotation(),v=sim.chassis.linvel(),w=sim.chassis.angvel(),heading=Math.atan2(2*(q.x*q.z-q.w*q.y),1-2*(q.y*q.y+q.z*q.z)),travel=Math.atan2(v.z,v.x),slip=Math.atan2(Math.sin(travel-heading),Math.cos(travel-heading));trace.push({label:segment.label,t:+(tick*DT).toFixed(2),x:+p.x.toFixed(1),y:+p.y.toFixed(1),z:+p.z.toFixed(1),heading:+heading.toFixed(2),slip:+slip.toFixed(2),yawRate:+w.y.toFixed(2),steer:+sim.state.steer.toFixed(2),contacts:[0,1,2,3].filter(i=>sim.vehicle.wheelIsInContact(i)).length,sideImpulse:+[0,1,2,3].reduce((sum,i)=>sum+Math.abs(sim.vehicle.wheelSideImpulse(i)||0),0).toFixed(1),speed:+Math.abs(sim.vehicle.currentVehicleSpeed()).toFixed(1),checkpoint,onRoad:isOnRoad(p)});if(checkpoint===6)break}
   return{trace,checkpoint,offroadSeconds:offroadTicks*DT,sim};
 }
 const I={forward:{forward:true},right:{forward:true,right:true},left:{forward:true,left:true},brake:{reverse:true},brakeRight:{reverse:true,right:true},brakeLeft:{reverse:true,left:true},coast:{}};
@@ -23,7 +23,12 @@ for(const timing of[7.5,7.7,7.9,8.1]){const result=opening(timing);console.log("
 console.log("Apex Run human-scale opening timing tolerance passed");
 const route=run([
   {label:"launch",seconds:7.7,input:I.forward},{label:"corner 1",seconds:1.2,input:I.left},{label:"south",seconds:3.3,input:I.forward},
-  {label:"brake corner 2",seconds:1.25,input:I.brakeLeft},{label:"settle 2",seconds:.65,input:I.brake},{label:"west",seconds:6,input:I.forward},
-  {label:"correct west",seconds:.35,input:I.left},{label:"west gate",seconds:1.4,input:I.forward},{label:"brake corner 3",seconds:1.45,input:I.brakeLeft},{label:"north",seconds:12,input:I.forward},
+  {label:"brake corner 2",seconds:1.25,input:I.brakeLeft},{label:"settle 2",seconds:1,input:I.brake},{label:"align west",seconds:.3,input:I.right},{label:"west",seconds:6,input:I.forward},
+  {label:"west gate",seconds:.25,input:I.forward},{label:"brake corner 3",seconds:1.45,input:I.brakeLeft},{label:"settle 3",seconds:.8,input:I.brake},{label:"align north",seconds:.45,input:I.right},{label:"north",seconds:8,input:I.forward},
+  {label:"brake corner 4",seconds:1.25,input:I.brakeLeft},{label:"settle 4",seconds:.8,input:I.brake},{label:"east",seconds:6.7,input:I.forward},
+  {label:"brake corner 5",seconds:1.3,input:I.brakeLeft},{label:"settle 5",seconds:.8,input:I.brake},{label:"align south",seconds:.2,input:I.right},{label:"south finish",seconds:6,input:I.forward},
 ]);
 console.log("route development",JSON.stringify(route.trace));
+assert.equal(route.checkpoint,6,"low-frequency fixed input route must complete all gates");
+assert.equal(route.offroadSeconds,0,"reference route must remain on the modeled road until finish");
+console.log("Apex Run low-frequency full route passed",JSON.stringify({time:route.trace.at(-1).t,segments:route.trace.length,offroadSeconds:route.offroadSeconds}));

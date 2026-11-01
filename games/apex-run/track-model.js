@@ -4,7 +4,7 @@ export const TRACK_BOXES=Object.freeze([
   // Keep the hairpin exit coplanar: overlapping rotated box colliders exposed a
   // hard seam that could catch the chassis during an otherwise ordinary turn.
   {x:91,y:0,z:-103,hx:27,hy:.45,hz:13,surface:"bank"},{x:48,y:0,z:-103,hx:28,hy:.45,hz:13,surface:"bank"},
-  {x:8,y:.45,z:-103,hx:16,hy:.45,hz:18,rz:-.028},{x:-35,y:0,z:-103,hx:20,hy:.45,hz:20},{x:-75,y:0,z:-103,hx:20,hy:.45,hz:20},
+  {x:8,y:0,z:-103,hx:21,hy:.45,hz:18},{x:-35,y:0,z:-103,hx:24,hy:.45,hz:20},{x:-75,y:0,z:-103,hx:22,hy:.45,hz:20},
   {x:-82,y:0,z:9,hx:22,hy:.45,hz:116,surface:"bank"},{x:22,y:0,z:140,hx:120,hy:.45,hz:16},{x:150,y:0,z:72,hx:18,hy:.45,hz:68,surface:"bank"},
 ]);
 export const CHECKPOINTS=Object.freeze([
