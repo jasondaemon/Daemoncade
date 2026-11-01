@@ -118,7 +118,7 @@ The finish remains narrow and digital steering still benefits from frequent corr
 course and car are original procedural geometry, not production photoreal assets. Lower-end
 laptop, software-renderer, and Windows performance remain uncharacterized.
 
-## Visual alpha 11: spline, recovery and rail hardening
+## Visual alpha 13: spline, recovery and rail hardening
 
 This milestone intentionally returns the release label to alpha while the new course earns
 fresh player validation. It replaces the slab course rather than claiming the previous beta
@@ -157,6 +157,11 @@ evidence automatically applies to different geometry.
   rays, so a wheel cannot reinterpret a rail top as paved ground. Both inner surfaces have
   consistent track-facing winding, explicit minimum-friction combination, and a rendered wall
   that exposes the collider's full profile instead of leaving an invisible wedge.
+- The chassis collider keeps its original mass and outer envelope but now has rounded corners,
+  so a glancing nose contact presents a separating normal instead of a square edge that can lock
+  against the rail. Below 22 km/h, grounded throttle-plus-steer also applies local-axis tire scrub
+  and yaw impulses; this models parking-speed steering that Rapier's rolling-only wheel rays do
+  not generate, without reading track coordinates or changing the car pose.
 Current visual-alpha limits: source tests now include a 44.26-second no-recovery ordered finish,
 but that reactive input fixture is not player proof. Camera clearance and the revised joins still
 need fresh pixel inspection and a normal-keyboard player lap. The environment remains original

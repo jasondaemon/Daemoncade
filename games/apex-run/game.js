@@ -1,10 +1,10 @@
-import * as THREE from "../vendor/three/three.module.min.js?v=0.5.0-alpha11";
-import RAPIER from "./vendor/rapier-0.17.3.js?v=0.5.0-alpha11";
-import {FixedStepper,MEDALS,clamp,commitResult,formatTime,frameGapInvalidates,isOnRoad,medalFor,persistenceNote,readBest,readReplay,reconcileBest,replayFrameAt} from "./simulation.js?v=0.5.0-alpha11";
-import {RAIL_COLLISION_GROUPS,SUSPENSION_QUERY_GROUPS,VEHICLE,applySurfaceDrag,createVehicle,driveVehicle,stabilizeChassis} from "./vehicle-model.js?v=0.5.0-alpha11";
-import {makeWheelVisual,setWheelVisualPose} from "./wheel-visual.js?v=0.5.0-alpha11";
-import {TRACK_BOXES,CHECKPOINTS,RECOVERY_SPOTS,ROAD_SAMPLES,PLAY_AREA,RAIL_PROFILE,advanceOutsidePlayTime,advanceUnderRoadTime,buildLaneRibbon,buildRailColliderMesh,buildRoadMesh,routeGuides,routeStage,routeTarget} from "./track-model.js?v=0.5.0-alpha11";
-import {RaceController} from "./race-controller.js?v=0.5.0-alpha11";
+import * as THREE from "../vendor/three/three.module.min.js?v=0.5.0-alpha13";
+import RAPIER from "./vendor/rapier-0.17.3.js?v=0.5.0-alpha13";
+import {FixedStepper,MEDALS,clamp,commitResult,formatTime,frameGapInvalidates,isOnRoad,medalFor,persistenceNote,readBest,readReplay,reconcileBest,replayFrameAt} from "./simulation.js?v=0.5.0-alpha13";
+import {RAIL_COLLISION_GROUPS,SUSPENSION_QUERY_GROUPS,VEHICLE,applyLowSpeedSteering,applySurfaceDrag,createVehicle,driveVehicle,stabilizeChassis} from "./vehicle-model.js?v=0.5.0-alpha13";
+import {makeWheelVisual,setWheelVisualPose} from "./wheel-visual.js?v=0.5.0-alpha13";
+import {TRACK_BOXES,CHECKPOINTS,RECOVERY_SPOTS,ROAD_SAMPLES,PLAY_AREA,RAIL_PROFILE,advanceOutsidePlayTime,advanceUnderRoadTime,buildLaneRibbon,buildRailColliderMesh,buildRoadMesh,routeGuides,routeStage,routeTarget} from "./track-model.js?v=0.5.0-alpha13";
+import {RaceController} from "./race-controller.js?v=0.5.0-alpha13";
 
 const $=id=>document.getElementById(id),canvas=$("view"),scene=new THREE.Scene();
 const reducedMotion=matchMedia("(prefers-reduced-motion: reduce)").matches;
@@ -104,6 +104,7 @@ function physicsStep(dt){
   if(race.state!=="racing")for(let i=0;i<4;i++)vehicle.setWheelBrake(i,6000);
   if(audio){const now=audio.context.currentTime,throttle=input.forward||input.reverse?1:0;audio.engine.frequency.setTargetAtTime(54+speed*7+throttle*45,now,.04);audio.engineGain.gain.setTargetAtTime(race.state==="racing"?.035+throttle*.055:0,now,.05);audio.wind.frequency.setTargetAtTime(70+speed*3,now,.08);audio.windGain.gain.setTargetAtTime(clamp((speed-8)/80,0,.06),now,.1)}
   applySurfaceDrag(chassis,drive.surfaceBlend,dt);
+  applyLowSpeedSteering(chassis,vehicle,input,dt);
   stabilizeChassis(chassis,vehicle,dt);vehicle.updateVehicle(dt,RAPIER.QueryFilterFlags.EXCLUDE_DYNAMIC,SUSPENSION_QUERY_GROUPS);world.step();
   const grounded=[0,1,2,3].some(i=>vehicle.wheelIsInContact(i));if(grounded&&!wasGrounded&&chassis.linvel().y<0)cameraShake=Math.min(.45,Math.abs(chassis.linvel().y)*.025);wasGrounded=grounded;if(race.state==="racing"&&handbrake&&speed>12&&race.tick%8===0)puff(chassis.translation());
   if(race.state==="racing"){if(race.tick===1||race.tick%4===0)captureReplay();const p=chassis.translation(),result=race.observe(p);outsidePlayTime=advanceOutsidePlayTime(outsidePlayTime,p,dt);underRoadTime=wheelRoad.some(Boolean)?0:advanceUnderRoadTime(underRoadTime,p,dt);if(result.finished)finish();else if(p.y<-5||outsidePlayTime>=PLAY_AREA.grace||underRoadTime>=.55)recover()}

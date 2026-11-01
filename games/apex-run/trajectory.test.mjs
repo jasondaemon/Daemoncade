@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import RAPIER from "./vendor/rapier-0.17.3.js";
 import {FixedStepper,checkpointAdvance,clamp,isOnRoad} from "./simulation.js";
-import {RAIL_COLLISION_GROUPS,SUSPENSION_QUERY_GROUPS,applySurfaceDrag,createVehicle,driveVehicle,stabilizeChassis} from "./vehicle-model.js";
+import {RAIL_COLLISION_GROUPS,SUSPENSION_QUERY_GROUPS,applyLowSpeedSteering,applySurfaceDrag,createVehicle,driveVehicle,stabilizeChassis} from "./vehicle-model.js";
 import {ROAD_SAMPLES,TRACK_BOXES,buildRailColliderMesh,buildRoadMesh} from "./track-model.js";
 
 await RAPIER.init();
@@ -17,7 +17,7 @@ function makeRun(fps,recordedInputs=null){
     if(checkpoint>=6||recoveries>0)return;
     const p=chassis.translation(),q=chassis.rotation(),goal=targets[target],distance=Math.hypot(goal[0]-p.x,goal[1]-p.z),threshold=10;if(distance<threshold&&target<targets.length-1)target++;
     const desired=Math.atan2(targets[target][1]-p.z,targets[target][0]-p.x),forward=Math.atan2(2*(q.x*q.z-q.w*q.y),1-2*(q.y*q.y+q.z*q.z));let angle=desired-forward;angle=Math.atan2(Math.sin(angle),Math.cos(angle));
-    const desiredSteer=clamp(-angle*1.8,-1,1),speed=Math.abs(vehicle.currentVehicleSpeed?.()||0),turning=Math.abs(angle)>.12,braking=turning&&speed>24,steerOn=Math.abs(desiredSteer)>.1&&(ticks%12)<Math.ceil(Math.abs(desiredSteer)*12),generated={forward:!braking,reverse:braking,left:steerOn&&desiredSteer>0,right:steerOn&&desiredSteer<0,handbrake:false},input=recordedInputs?(recordedInputs[ticks]||recordedInputs.at(-1)):generated;if(!recordedInputs)inputTape.push({...input});const drive=driveVehicle(vehicle,controlState,input,1/120,isOnRoad(p));applySurfaceDrag(chassis,drive.surfaceBlend,1/120);maxSpeed=Math.max(maxSpeed,speed);
+    const desiredSteer=clamp(-angle*1.8,-1,1),speed=Math.abs(vehicle.currentVehicleSpeed?.()||0),turning=Math.abs(angle)>.12,braking=turning&&speed>24,steerOn=Math.abs(desiredSteer)>.1&&(ticks%12)<Math.ceil(Math.abs(desiredSteer)*12),generated={forward:!braking,reverse:braking,left:steerOn&&desiredSteer>0,right:steerOn&&desiredSteer<0,handbrake:false},input=recordedInputs?(recordedInputs[ticks]||recordedInputs.at(-1)):generated;if(!recordedInputs)inputTape.push({...input});const drive=driveVehicle(vehicle,controlState,input,1/120,isOnRoad(p));applySurfaceDrag(chassis,drive.surfaceBlend,1/120);applyLowSpeedSteering(chassis,vehicle,input,1/120);maxSpeed=Math.max(maxSpeed,speed);
     const grounded=[0,1,2,3].some(i=>vehicle.wheelIsInContact(i));if(!grounded&&p.y>1.5)airborne=true;if(airborne&&grounded){landed=true;minLandingY=Math.min(minLandingY,p.y)}stabilizeChassis(chassis,vehicle,1/120);
     vehicle.updateVehicle(1/120,RAPIER.QueryFilterFlags.EXCLUDE_DYNAMIC,SUSPENSION_QUERY_GROUPS);world.step();ticks++;if(ticks%120===0&&ticks<=1800)trace.push([ticks,+p.x.toFixed(1),+p.y.toFixed(1),+p.z.toFixed(1),+forward.toFixed(2),+angle.toFixed(2),target,+speed.toFixed(1)]);maxY=Math.max(maxY,p.y);const nextCheckpoint=checkpointAdvance(checkpoint,p);stuckTicks=nextCheckpoint!==checkpoint?0:speed<.5?stuckTicks+1:0;checkpoint=nextCheckpoint;
     if(p.y<-5||Math.abs(p.z)>240||Math.abs(p.x)>220||stuckTicks>600){recoveries++}

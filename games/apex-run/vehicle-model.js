@@ -12,12 +12,23 @@ export function clampVehicle(v,min,max){return Math.max(min,Math.min(max,v))}
 // dt: Rapier's addForce is persistent, so adding it every physics tick silently
 // accumulated an ever-growing force that eventually overcame full throttle.
 export function applySurfaceDrag(chassis,surfaceBlend,dt){const v=chassis.linvel(),speed=Math.hypot(v.x,v.z),magnitude=Math.min(280,(1-clampVehicle(surfaceBlend,0,1))*24*Math.max(0,speed-6));if(magnitude>0)chassis.applyImpulse({x:-v.x/speed*magnitude*dt,y:0,z:-v.z/speed*magnitude*dt},true);return magnitude}
+// Rapier's ray-cast tires only create lateral steering force while rolling.
+// At parking speed a wall contact can therefore hold the chassis when the
+// suspension unloads. Apply a small local-axis
+// tire scrub and yaw impulse while throttle+steer are deliberate. This is
+// ordinary physical force (never a pose change) and does not depend on track
+// coordinates, rail proximity, or recovery state.
+export function applyLowSpeedSteering(chassis,vehicle,input,dt){const velocity=chassis.linvel(),speed=Math.hypot(velocity.x,velocity.z),direction=(input.left?1:0)-(input.right?1:0),contacts=[0,1,2,3].filter(i=>vehicle.wheelIsInContact(i)).length,q=chassis.rotation(),up={x:2*(q.x*q.y-q.w*q.z),y:1-2*(q.x*q.x+q.z*q.z),z:2*(q.y*q.z+q.w*q.x)},settledOnChassis=contacts<2&&Math.abs(velocity.y)<1&&up.y>.7;if(speed>6||!input.forward||!direction||(contacts<2&&!settledOnChassis))return 0;const lateral={x:2*(q.x*q.z+q.w*q.y),y:2*(q.y*q.z-q.w*q.x),z:1-2*(q.x*q.x+q.y*q.y)},scrub=-direction*9000*dt,yaw=direction*14000*dt;chassis.applyImpulse({x:lateral.x*scrub,y:lateral.y*scrub,z:lateral.z*scrub},true);chassis.applyTorqueImpulse({x:up.x*yaw,y:up.y*yaw,z:up.z*yaw},true);return Math.abs(scrub)}
 export function createVehicle(RAPIER,world,start={x:-2,y:2.2,z:0}){
   const chassis=world.createRigidBody(RAPIER.RigidBodyDesc.dynamic().setTranslation(start.x,start.y,start.z).setCanSleep(false).setCcdEnabled(true).setLinearDamping(.08).setAngularDamping(.55));
-  world.createCollider(RAPIER.ColliderDesc.cuboid(2.3,.24,1.02).setTranslation(0,-.08,0).setDensity(240).setFriction(.62),chassis);
+  // Keep the same outer envelope as the old box, but round its sharp corners.
+  // A square nose could lock against the continuous rail wall with no tangent
+  // for the contact solver to deflect along, even while all four tires remained
+  // on asphalt. The 22 cm radius gives glancing contacts a separating normal.
+  const chassisCollider=world.createCollider(RAPIER.ColliderDesc.roundCuboid(2.08,.02,.8,.22).setTranslation(0,-.08,0).setMass(1080).setFriction(.62),chassis);
   const vehicle=world.createVehicleController(chassis);
   for(const p of WHEEL_OFFSETS){vehicle.addWheel(p,{x:0,y:-1,z:0},{x:0,y:0,z:1},.42,.48);const i=vehicle.numWheels()-1;vehicle.setWheelSuspensionStiffness(i,72);vehicle.setWheelSuspensionCompression(i,5.2);vehicle.setWheelSuspensionRelaxation(i,6.4);vehicle.setWheelMaxSuspensionTravel(i,.38);vehicle.setWheelMaxSuspensionForce(i,18000);vehicle.setWheelSideFrictionStiffness(i,1.35);vehicle.setWheelFrictionSlip(i,VEHICLE.roadGrip)}
-  return{chassis,vehicle,wheelOffsets:WHEEL_OFFSETS};
+  return{chassis,chassisCollider,vehicle,wheelOffsets:WHEEL_OFFSETS};
 }
 export function driveVehicle(vehicle,state,input,dt,onRoad=true){
   const speed=Math.abs(vehicle.currentVehicleSpeed?.()||0),target=(input.left?1:0)-(input.right?1:0),opposing=target&&state.steer&&Math.sign(target)!==Math.sign(state.steer),rate=target?(opposing?VEHICLE.steerCounter:VEHICLE.steerRise):VEHICLE.steerRelease;state.steer+=clampVehicle(target-state.steer,-dt*rate,dt*rate);

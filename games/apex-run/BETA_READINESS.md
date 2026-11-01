@@ -2,7 +2,7 @@
 
 ## Status
 
-Version `0.5.0-alpha.11` is a visual-course alpha candidate. The previously verified flat-course
+Version `0.5.0-alpha.13` is a visual-course alpha candidate. The previously verified flat-course
 beta remains available in Git history at `16a26e5`; its player-lap result must not be treated as
 validation of this materially different spline layout. The game is an original single-player
 stadium time attack inspired by the broad genre, not a Trackmania clone, formula-equivalent
@@ -48,6 +48,10 @@ Then open `http://127.0.0.1:4173/games/apex-run/`.
   every probe records zero rail-as-ground ticks, no sustained perch, continued route progress,
   and more than 5 m/s during the two-second throttle/countersteer phase. A sufficiently direct
   chassis impact can still stop the car and requires the documented brake/reverse lifecycle.
+- Four additional pinned-contact probes force the rounded chassis into both rails on flat and
+  elevated samples, record real chassis/rail manifolds while confirming zero rail wheel contacts,
+  then exercise brake, release, reverse and forward steer-away. All regain more than 5 m/s and
+  remain upright; this directly covers the prior 0-4 km/h asphalt immobilization.
 - A reactive keyboard-like source fixture now completes all six ordered gates in 44.26 seconds
   without recovery at 30/60/144 render schedules. This is collision/determinism coverage, not a
   substitute for a screen-driven player lap.
