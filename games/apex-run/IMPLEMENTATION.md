@@ -117,3 +117,20 @@ Known beta limitations: keyboard is the supported control mode; no touch/gamepad
 The course and car are original procedural geometry, not production photoreal assets. Browser
 automation cannot substitute for a human handling evaluation, so a real keyboard playtest is
 still required before promoting beyond beta.
+
+## Beta browser integration
+
+- `RaceController` is the single countdown, timer, ordered-checkpoint, pause, recovery-eligibility,
+  and finish state machine used by the production game and tests.
+- `test.html` is a separate, unlinked test entry. It enables a fixed-tick input provider only by
+  setting `data-apex-test`; the production page has no query-string win or teleport shortcut.
+- Playwright drives the exact browser Rapier world with the recorded binary keyboard tape, checks
+  a 34.825-second clean finish, PB storage, tick-zero replay, reload-visible ghost, velocity-safe
+  pause/resume, visibility-handler pause, and a real checkpoint-five recovery followed by normal
+  steering/throttle to the finish. The practice result cannot replace the clean PB.
+- The same Chrome test runs 600 simulated seconds of repeated full-throttle handbrake drift and
+  restart cycles. On the measured Apple M1 Max ANGLE Metal renderer it took 57.243 wall seconds,
+  held at 289 geometries and 9 textures after warm-up, kept smoke at or below the 28-object pool,
+  and produced no JavaScript, WebGL, console, or non-favicon HTTP errors.
+- These are accelerated simulated-time metrics, not a claim of 60 FPS over ten real minutes. The
+  result is hardware/driver-specific; software-renderer performance remains unmeasured.

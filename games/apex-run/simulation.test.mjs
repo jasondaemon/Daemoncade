@@ -1,5 +1,6 @@
 import assert from "node:assert/strict";
 import {FixedStepper,REPLAY_KEY,checkpointAdvance,commitResult,formatTime,frameGapInvalidates,isOnRoad,medalFor,readBest,readReplay,reconcileBest,replayFrameAt,saveBest,saveReplay} from "./simulation.js";
+import {RaceController} from "./race-controller.js";
 assert.equal(formatTime(65.4321),"01:05.432");
 const storage={getItem:()=>"not-a-time"};assert.equal(readBest(storage),null);
 assert.equal(checkpointAdvance(0,{x:99,z:-12}),1);assert.equal(checkpointAdvance(0,{x:-18,z:-105}),0);
@@ -22,4 +23,5 @@ assert.equal(formatTime(59.9996),"01:00.000");assert.equal(formatTime(3599.9996)
 assert.equal(readReplay({getItem:()=>JSON.stringify({version:3,time:20,hz:30,frames:[[0,0,2,0,0,0,0,0],[600,0,2,0,0,0,0,0]]})}),null);
 assert.equal(isOnRoad({x:50,z:0}),true);assert.equal(isOnRoad({x:101,z:-60}),true);assert.equal(isOnRoad({x:0,z:-103}),true);assert.equal(isOnRoad({x:50,z:40}),false);
 let cp=0;cp=checkpointAdvance(cp,{x:-82,z:125});assert.equal(cp,0);cp=checkpointAdvance(cp,{x:99,z:-12});assert.equal(cp,1);cp=checkpointAdvance(cp,{x:150,z:8});assert.equal(cp,1);
+const race=new RaceController();for(let i=0;i<361;i++)race.step(1/120,{x:-2,z:0});assert.equal(race.state,"racing");race.pause();const pausedTime=race.time;race.step(10,{x:99,z:-12});assert.equal(race.time,pausedTime);race.resume();race.recover();assert.equal(race.eligible,false);assert.equal(race.time,pausedTime+1.5);
 console.log("Apex Run simulation tests passed");
