@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
   <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'wasm-unsafe-eval'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; connect-src 'none'; object-src 'none'; base-uri 'none'">
   <title>Apex Run</title>
-  <link rel="stylesheet" href="game.css?v=0.4.0-alpha8">
+  <link rel="stylesheet" href="game.css?v=0.4.0-alpha11">
 </head>
 <body>
   <main id="game">
@@ -13,7 +13,7 @@
     <section id="loading"><strong>APEX RUN</strong><span>Building the stadium…</span></section>
     <header class="hud">
       <div><span class="label">TIME</span><strong id="time">00:00.000</strong><small id="delta">PERSONAL BEST —</small></div>
-      <div class="checkpoint"><span class="label">GATE</span><strong id="checkpoint">0 / 3</strong></div>
+      <div class="checkpoint"><span class="label">GATE</span><strong id="checkpoint">0 / 5</strong><small id="next-gate">NEXT 1</small></div>
       <div class="speed"><strong id="speed">000</strong><span>KM/H</span></div>
     </header>
     <div id="countdown" aria-live="polite"></div>
@@ -25,6 +25,6 @@
       <button id="again" type="button">Race again</button>
     </section>
   </main>
-  <script type="module" src="game.js?v=0.4.0-alpha8"></script>
+  <script type="module" src="game.js?v=0.4.0-alpha11"></script>
 </body>
 </html>

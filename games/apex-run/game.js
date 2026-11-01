@@ -1,10 +1,10 @@
-import * as THREE from "../vendor/three/three.module.min.js?v=0.4.0-alpha8";
-import RAPIER from "./vendor/rapier-0.17.3.js?v=0.4.0-alpha8";
-import {FixedStepper,MEDALS,clamp,commitResult,formatTime,frameGapInvalidates,isOnRoad,medalFor,persistenceNote,readBest,readReplay,reconcileBest,replayFrameAt} from "./simulation.js?v=0.4.0-alpha8";
-import {VEHICLE,applySurfaceDrag,createVehicle,driveVehicle,stabilizeChassis} from "./vehicle-model.js?v=0.4.0-alpha8";
-import {makeWheelVisual,setWheelVisualPose} from "./wheel-visual.js?v=0.4.0-alpha8";
-import {TRACK_BOXES,CHECKPOINTS,RECOVERY_SPOTS} from "./track-model.js?v=0.4.0-alpha8";
-import {RaceController} from "./race-controller.js?v=0.4.0-alpha8";
+import * as THREE from "../vendor/three/three.module.min.js?v=0.4.0-alpha11";
+import RAPIER from "./vendor/rapier-0.17.3.js?v=0.4.0-alpha11";
+import {FixedStepper,MEDALS,clamp,commitResult,formatTime,frameGapInvalidates,isOnRoad,medalFor,persistenceNote,readBest,readReplay,reconcileBest,replayFrameAt} from "./simulation.js?v=0.4.0-alpha11";
+import {VEHICLE,applySurfaceDrag,createVehicle,driveVehicle,stabilizeChassis} from "./vehicle-model.js?v=0.4.0-alpha11";
+import {makeWheelVisual,setWheelVisualPose} from "./wheel-visual.js?v=0.4.0-alpha11";
+import {TRACK_BOXES,CHECKPOINTS,RECOVERY_SPOTS} from "./track-model.js?v=0.4.0-alpha11";
+import {RaceController} from "./race-controller.js?v=0.4.0-alpha11";
 
 const $=id=>document.getElementById(id),canvas=$("view"),scene=new THREE.Scene();
 const reducedMotion=matchMedia("(prefers-reduced-motion: reduce)").matches;
@@ -29,12 +29,12 @@ function addBox({x,y,z,hx,hy,hz,rx=0,ry=0,rz=0,material=materials.road,collider=
 for(const box of TRACK_BOXES)addBox({...box,material:materials[box.surface||"road"]});
 
 // Stadium bowl and lane-edge rhythm markers are purely procedural art.
-for(let i=0;i<40;i++){const a=i/40*Math.PI*2,r=215;addBox({x:35+Math.cos(a)*r,y:7,z:-15+Math.sin(a)*r,hx:15,hy:8,hz:5,ry:-a,material:materials.stadium,collider:false});addBox({x:35+Math.cos(a)*r*1.07,y:18,z:-15+Math.sin(a)*r*1.07,hx:15,hy:3,hz:5,ry:-a,material:i%2?materials.stadium:materials.edge,collider:false})}
+for(let i=0;i<40;i++){const a=i/40*Math.PI*2,r=270;addBox({x:35+Math.cos(a)*r,y:7,z:-15+Math.sin(a)*r,hx:15,hy:8,hz:5,ry:-a,material:materials.stadium,collider:false});addBox({x:35+Math.cos(a)*r*1.07,y:18,z:-15+Math.sin(a)*r*1.07,hx:15,hy:3,hz:5,ry:-a,material:i%2?materials.stadium:materials.edge,collider:false})}
 for(let x=-8;x<105;x+=12){addBox({x,y:.55,z:13.5,hx:4,hy:.15,hz:.22,material:materials.edge,collider:false});addBox({x,y:.55,z:-13.5,hx:4,hy:.15,hz:.22,material:materials.edge,collider:false})}
 for(let z=-88;z<140;z+=14){addBox({x:-98.5,y:.65,z,hx:.25,hy:.25,hz:5,material:materials.edge,collider:false});addBox({x:-65.5,y:.65,z,hx:.25,hy:.25,hz:5,material:materials.edge,collider:false})}
 for(let x=-78;x<145;x+=14){addBox({x,y:.65,z:123.5,hx:5,hy:.25,hz:.25,material:materials.edge,collider:false});addBox({x,y:.65,z:156.5,hx:5,hy:.25,hz:.25,material:materials.edge,collider:false})}
 for(let z=12;z<140;z+=14){addBox({x:133.5,y:.65,z,hx:.25,hy:.25,hz:5,material:materials.edge,collider:false});addBox({x:166.5,y:.65,z,hx:.25,hy:.25,hz:5,material:materials.edge,collider:false})}
-const stripeMat=new THREE.MeshStandardMaterial({color:0xffffff,emissive:0x132a33,roughness:.55});for(let x=4;x<110;x+=18)addBox({x,y:.49,z:0,hx:5,hy:.025,hz:.14,material:stripeMat,collider:false});for(let z=-86;z<118;z+=20)addBox({x:-82,y:.49,z,hx:.14,hy:.025,hz:5,material:stripeMat,collider:false});for(let x=-66;x<132;x+=20)addBox({x,y:.49,z:140,hx:5,hy:.025,hz:.14,material:stripeMat,collider:false});for(let z=20;z<130;z+=20)addBox({x:150,y:.49,z,hx:.14,hy:.025,hz:5,material:stripeMat,collider:false});
+const stripeMat=new THREE.MeshStandardMaterial({color:0xffffff,emissive:0x132a33,roughness:.55});for(let x=4;x<110;x+=18)addBox({x,y:.49,z:0,hx:5,hy:.025,hz:.14,material:stripeMat,collider:false});for(let z=-86;z<118;z+=20)addBox({x:-82,y:.49,z,hx:.14,hy:.025,hz:5,material:stripeMat,collider:false});for(let x=-70;x<95;x+=18)addBox({x,y:.49,z:-103,hx:5,hy:.025,hz:.14,material:stripeMat,collider:false});for(let x=-66;x<132;x+=20)addBox({x,y:.49,z:140,hx:5,hy:.025,hz:.14,material:stripeMat,collider:false});for(let z=20;z<130;z+=20)addBox({x:150,y:.49,z,hx:.14,hy:.025,hz:5,material:stripeMat,collider:false});
 for(let z=-7;z<=7;z+=2)addBox({x:2,y:.5,z,hx:.35,hy:.03,hz:.75,material:z%4?materials.stadium:stripeMat,collider:false});
 
 function gate(x,z,rotation=0,color=0x5eeaff){
@@ -43,9 +43,14 @@ function gate(x,z,rotation=0,color=0x5eeaff){
   const top=new THREE.Mesh(new THREE.BoxGeometry(.8,.7,23),mat);top.position.y=8;group.add(top);group.position.set(x,.45,z);group.rotation.y=rotation;group.userData.material=mat;scene.add(group);return group;
 }
 const gates=CHECKPOINTS.map(cp=>gate(cp.x,cp.z,cp.rotation,cp.finish?0xffd044:0x5eeaff));
-function sign(text,x,z,ry=0,color="#68efff"){const c=document.createElement("canvas");c.width=512;c.height=128;const g=c.getContext("2d");g.fillStyle="#071521";g.fillRect(0,0,512,128);g.strokeStyle=color;g.lineWidth=10;g.strokeRect(5,5,502,118);g.fillStyle="#fff";g.font="900 52px system-ui";g.textAlign="center";g.textBaseline="middle";g.fillText(text,256,66);const geometry=new THREE.PlaneGeometry(12,3),material=new THREE.MeshBasicMaterial({map:new THREE.CanvasTexture(c),side:THREE.FrontSide});for(const flip of[0,Math.PI]){const m=new THREE.Mesh(geometry,material);m.position.set(x,4,z);m.rotation.y=ry+flip;scene.add(m)}}
-sign("EASY LEFT  ›",116,-55,Math.PI/2,"#ffd34f");sign("WEST  →",48,-116,0,"#68efff");sign("CLIMB  ›",-95,72,Math.PI/2);sign("FULL SEND  ›",45,123,0);sign("FINISH  ↓",166,36,Math.PI/2,"#ffd34f");
-for(const marker of[{x:104,z:-54,ry:Math.PI/2},{x:102,z:-73,ry:1.8},{x:92,z:-90,ry:2.35},{x:75,z:-100,ry:2.85},{x:54,z:-103,ry:Math.PI}])addBox({...marker,y:.51,hx:5,hy:.03,hz:.18,material:materials.edge,collider:false});
+// One repeated ground-chevron language traces the racing line. Unlike the old
+// compass-text boards, every arrow points in the direction the approaching car
+// must travel and cannot be mistaken for a checkpoint arch.
+function routeArrow(x,z,ry){const group=new THREE.Group(),shape=new THREE.Shape();shape.moveTo(-1.5,-1.4);shape.lineTo(2,0);shape.lineTo(-1.5,1.4);shape.closePath();const head=new THREE.Mesh(new THREE.ShapeGeometry(shape),materials.edge),stem=new THREE.Mesh(new THREE.BoxGeometry(3.2,.06,.65),materials.edge);head.rotation.x=-Math.PI/2;head.position.x=2.1;stem.position.x=-.4;group.add(head,stem);group.position.set(x,.54,z);group.rotation.y=ry;scene.add(group)}
+for(const arrow of[
+  [32,0,0],[70,0,0],[96,-25,-Math.PI/2],[96,-58,-Math.PI/2],[92,-86,-2.25],[68,-103,Math.PI],[30,-103,Math.PI],[-10,-103,Math.PI],[-50,-103,Math.PI],
+  [-82,-76,Math.PI/2],[-82,-30,Math.PI/2],[-82,20,Math.PI/2],[-82,72,Math.PI/2],[-72,128,.65],[-30,140,0],[20,140,0],[72,140,0],[116,140,0],[145,120,-Math.PI/2],[150,78,-Math.PI/2],[150,35,-Math.PI/2]
+])routeArrow(...arrow);
 
 const grid=new THREE.GridHelper(320,32,0xffffff,0xffffff);grid.position.y=-.15;grid.material.opacity=.08;grid.material.transparent=true;scene.add(grid);
 
@@ -78,7 +83,7 @@ function restart(){race.reset();resetControls();replayFrames=[];place(start,star
 function setPaused(value,reason="manual"){if(value&&race.pause({invalidate:reason==="timing"})){keys.clear();if(audio){audio.engineGain.gain.setTargetAtTime(0,audio.context.currentTime,.02);audio.windGain.gain.setTargetAtTime(0,audio.context.currentTime,.02)}}else if(!value&&race.resume()){previous=performance.now();stepper.reset()}$("pause-card").hidden=race.state!=="paused";$("pause").textContent=race.state==="paused"?"RESUME":"PAUSE";$("pause").setAttribute("aria-pressed",String(race.state==="paused"));$("pause-card").querySelector("p").innerHTML=reason==="timing"?"A timing interruption was detected. This run cannot save a PB; restart with <b>R</b> for a clean attempt.":"Press <b>P</b>, <b>Escape</b>, or Resume. The timer is stopped and held keys are cleared.";if(race.state==="paused")$("resume").focus();else canvas.focus();updateHud()}
 function resetControls(){vehicleState.steer=0;vehicleState.surfaceBlend=1;vehicleState.reversePressed=false;vehicleState.reverseIntent=false}function recover(){const spot=RECOVERY_SPOTS[Math.min(race.checkpoint,RECOVERY_SPOTS.length-1)];resetControls();place(spot,spot.rotation);race.recover()}
 function finish(){captureReplay();const result=commitResult(localStorage,best,race.time,replayFrames,{eligible:race.eligible});best=result.best;if(result.isBest)bestReplay=result.replay;const medal=race.eligible?medalFor(race.time):null;$("result-time").textContent=formatTime(race.time);$("result-pb").textContent=race.eligible?`${medal?medal.name+" MEDAL · ":""}${result.isBest?"NEW PERSONAL BEST":best?`Personal best ${formatTime(best)}`:"CLEAN RUN REQUIRED"}${persistenceNote(result)}`:"PRACTICE RUN · RECOVERY USED · PB NOT SAVED";$("result").hidden=false;clearVehicle();$("again").focus()}
-let hudSignature="",lastGate=-1;function updateHud(){const speed=race.state==="countdown"?0:Math.abs(vehicle.currentVehicleSpeed?.()||0)*3.6,target=MEDALS.find(m=>!best||best>m.time)||MEDALS[0],delta=best?`PB ${formatTime(best)} · ${target.name} ${formatTime(target.time)}`:`${target.name} TARGET ${formatTime(target.time)}`,time=formatTime(race.time),roundedSpeed=String(Math.round(speed)).padStart(3,"0"),signature=`${race.state}|${time}|${roundedSpeed}|${race.checkpoint}|${delta}`;if(signature!==hudSignature){hudSignature=signature;document.body.classList.toggle("racing",race.state==="racing");$("time").textContent=time;$("speed").textContent=roundedSpeed;$("checkpoint").textContent=`${Math.min(race.checkpoint,5)} / 5`;$("delta").textContent=delta}if(race.checkpoint!==lastGate){lastGate=race.checkpoint;gates.forEach((g,i)=>{g.userData.material.emissiveIntensity=i===race.checkpoint?4:.55;g.scale.setScalar(i===race.checkpoint?1.06:1)})}}
+let hudSignature="",lastGate=-1;function updateHud(){const position=chassis.translation(),next=CHECKPOINTS[race.checkpoint],distance=next?Math.round(Math.hypot(next.x-position.x,next.z-position.z)):0,speed=race.state==="countdown"?0:Math.abs(vehicle.currentVehicleSpeed?.()||0)*3.6,target=MEDALS.find(m=>!best||best>m.time)||MEDALS[0],delta=best?`PB ${formatTime(best)} · ${target.name} ${formatTime(target.time)}`:`${target.name} TARGET ${formatTime(target.time)}`,time=formatTime(race.time),roundedSpeed=String(Math.round(speed)).padStart(3,"0"),nextText=next?`${next.finish?"FINISH":"NEXT "+(race.checkpoint+1)} · ${distance} M`:"FINISHED",signature=`${race.state}|${time}|${roundedSpeed}|${race.checkpoint}|${distance}|${delta}`;if(signature!==hudSignature){hudSignature=signature;document.body.classList.toggle("racing",race.state==="racing");$("time").textContent=time;$("speed").textContent=roundedSpeed;$("checkpoint").textContent=`${Math.min(race.checkpoint,5)} / 5`;$("next-gate").textContent=nextText;$("delta").textContent=delta}if(race.checkpoint!==lastGate){lastGate=race.checkpoint;gates.forEach((g,i)=>{g.visible=i===race.checkpoint;g.userData.material.emissiveIntensity=4;g.scale.setScalar(1.06)})}}
 
 function physicsStep(dt){
   const before=chassis.translation();lastPosition.set(before.x,before.y,before.z);const br=chassis.rotation();lastRotation.set(br.x,br.y,br.z,br.w);
@@ -86,7 +91,7 @@ function physicsStep(dt){
   if(race.state!=="racing")for(let i=0;i<4;i++)vehicle.setWheelBrake(i,6000);
   if(audio){const now=audio.context.currentTime,throttle=input.forward||input.reverse?1:0;audio.engine.frequency.setTargetAtTime(54+speed*7+throttle*45,now,.04);audio.engineGain.gain.setTargetAtTime(race.state==="racing"?.035+throttle*.055:0,now,.05);audio.wind.frequency.setTargetAtTime(70+speed*3,now,.08);audio.windGain.gain.setTargetAtTime(clamp((speed-8)/80,0,.06),now,.1)}
   applySurfaceDrag(chassis,drive.surfaceBlend,dt);
-  stabilizeChassis(chassis,vehicle);vehicle.updateVehicle(dt,RAPIER.QueryFilterFlags.EXCLUDE_DYNAMIC);world.step();
+  stabilizeChassis(chassis,vehicle,dt);vehicle.updateVehicle(dt,RAPIER.QueryFilterFlags.EXCLUDE_DYNAMIC);world.step();
   const grounded=[0,1,2,3].some(i=>vehicle.wheelIsInContact(i));if(grounded&&!wasGrounded&&chassis.linvel().y<0)cameraShake=Math.min(.45,Math.abs(chassis.linvel().y)*.025);wasGrounded=grounded;if(race.state==="racing"&&handbrake&&speed>12&&race.tick%8===0)puff(chassis.translation());
   if(race.state==="racing"){if(race.tick===1||race.tick%4===0)captureReplay();const p=chassis.translation(),result=race.observe(p);if(result.finished)finish();else if(p.y<-12||Math.abs(p.x)>300||Math.abs(p.z)>260)recover()}
 }
@@ -96,7 +101,7 @@ function render(alpha,renderDt=1/60){
   const p=chassis.translation(),q=chassis.rotation(),position=lastPosition.clone().lerp(new THREE.Vector3(p.x,p.y,p.z),alpha),rotation=lastRotation.clone().slerp(new THREE.Quaternion(q.x,q.y,q.z,q.w),alpha);car.position.copy(position);car.quaternion.copy(rotation);
   for(let i=0;i<4;i++){const wp=vehicle.wheelChassisConnectionPointCs(i),suspension=vehicle.wheelSuspensionLength(i),local=new THREE.Vector3(wp.x,wp.y-suspension,wp.z).applyQuaternion(rotation).add(position);setWheelVisualPose(THREE,wheelMeshes[i],local,rotation,i<2?vehicle.wheelSteering(i):0,vehicle.wheelRotation(i))}
   if(bestReplay&&race.state!=="finished"){const f=replayFrameAt(bestReplay,race.time);if(f){ghost.visible=true;ghost.position.set(f[1],f[2],f[3]);ghost.quaternion.set(f[4],f[5],f[6],f[7]).normalize()}}else ghost.visible=false;
-  const forward=new THREE.Vector3(1,0,0).applyQuaternion(rotation),flatForward=forward.clone().setY(0).normalize(),up=new THREE.Vector3(0,1,0),speed=Math.abs(vehicle.currentVehicleSpeed?.()||0),desired=position.clone().addScaledVector(flatForward,-11.5-speed*.04).addScaledVector(up,5.2),look=position.clone().addScaledVector(flatForward,14+speed*.14).addScaledVector(up,1.1);
+  const forward=new THREE.Vector3(1,0,0).applyQuaternion(rotation),flatForward=forward.clone().setY(0).normalize(),up=new THREE.Vector3(0,1,0),speed=Math.abs(vehicle.currentVehicleSpeed?.()||0),desired=position.clone().addScaledVector(flatForward,-11.5-speed*.04).addScaledVector(up,5.2),look=position.clone().addScaledVector(flatForward,14+speed*.14).addScaledVector(up,1.1);desired.y=Math.max(desired.y,3.2);look.y=Math.max(look.y,1.25);
   const lateral=new THREE.Vector3(0,0,1).applyQuaternion(rotation),velocity=chassis.linvel(),slip=clamp((velocity.x*lateral.x+velocity.z*lateral.z)*.08,-2.2,2.2);look.addScaledVector(lateral,slip);if(!cameraReady){camera.position.copy(desired);cameraReady=true}else camera.position.lerp(desired,1-Math.exp(-8*renderDt));if(!reducedMotion&&cameraShake>.002){camera.position.x+=(Math.random()-.5)*cameraShake;camera.position.y+=(Math.random()-.5)*cameraShake;cameraShake*=Math.pow(.88,renderDt*60)}camera.fov=reducedMotion?68:68+clamp(speed*.11,0,8);camera.updateProjectionMatrix();camera.lookAt(look);
   for(const s of smoke){if(!s.visible)continue;s.userData.life-=1.08*renderDt;s.scale.addScalar(1.5*renderDt);s.position.y+=.6*renderDt;s.material.opacity=Math.max(0,s.userData.life*.2);if(s.userData.life<=0)s.visible=false}
   updateHud();
