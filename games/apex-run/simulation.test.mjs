@@ -12,7 +12,7 @@ const memory=new Map(),store={getItem:key=>memory.get(key)??null,setItem:(key,va
 const frames=[[0,0,2,0,0,0,0,1],[30,30,3,-4,0,.2,0,.98],[600,30,3,-4,0,.2,0,.98]];
 assert.equal(saveReplay(store,20,frames),true);assert.ok(memory.has(REPLAY_KEY));const replay=readReplay(store);assert.equal(replay.time,20);assert.deepEqual(replayFrameAt(replay,.5).slice(1,4),[15,2.5,-2]);
 store.setItem(REPLAY_KEY,JSON.stringify({...replay,frames:[[0,999,2,0,0,0,0,1],[1,0,2,0,0,0,0,1]]}));assert.equal(readReplay(store),null);
-assert.equal(medalFor(42).name,"APEX");assert.equal(medalFor(46).name,"GOLD");assert.equal(medalFor(51).name,"SILVER");assert.equal(medalFor(59).name,"BRONZE");assert.equal(medalFor(61),null);
+assert.equal(medalFor(47).name,"APEX");assert.equal(medalFor(59).name,"GOLD");assert.equal(medalFor(74).name,"SILVER");assert.equal(medalFor(94).name,"BRONZE");assert.equal(medalFor(119).name,"ROOKIE");assert.equal(medalFor(121),null);
 assert.equal(reconcileBest(18,{time:20}),18);assert.equal(reconcileBest(22,{time:20}),20);
 const committed=commitResult(store,22,20,frames);assert.equal(committed.isBest,true);assert.equal(committed.best,20);assert.equal(readBest(store),20);assert.equal(readReplay(store).time,20);
 const slower=commitResult(store,20,25,frames);assert.equal(slower.isBest,false);assert.equal(readBest(store),20);

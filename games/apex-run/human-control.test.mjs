@@ -27,11 +27,11 @@ const reportedMixed=run([{label:"W6",seconds:6,input:I.forward},{label:"W1.1",se
 console.log("reported mixed-surface sequence",JSON.stringify(reportedMixed.trace));
 assert.ok(reportedMixed.trace.at(-1).speed>5,"held throttle must not decay to walking speed on a flat mixed surface");
 const route=run([
-  {label:"launch",seconds:7.7,input:I.forward},{label:"corner 1",seconds:1,input:I.left},{label:"south",seconds:3.3,input:I.forward},
-  {label:"brake 2",seconds:.9,input:I.brake},{label:"wide corner 2",seconds:1.18,input:I.left},{label:"west",seconds:9,input:I.forward},
-  {label:"corner 3",seconds:1.23,input:I.left},{label:"north",seconds:8.3,input:I.forward},
-  {label:"corner 4",seconds:1.47,input:I.left},{label:"east",seconds:6.9,input:I.forward},
-  {label:"corner 5",seconds:1.25,input:I.left},{label:"south finish",seconds:6,input:I.forward},
+  {label:"launch",seconds:7.7,input:I.forward},{label:"corner 1",seconds:1.12,input:I.left},{label:"south",seconds:3.3,input:I.forward},
+  {label:"brake 2",seconds:.9,input:I.brake},{label:"wide corner 2",seconds:1.35,input:I.left},{label:"west",seconds:8.2,input:I.forward},
+  {label:"corner 3",seconds:1.3,input:I.left},{label:"north",seconds:7.7,input:I.forward},
+  {label:"corner 4",seconds:1.65,input:I.left},{label:"east",seconds:5.9,input:I.forward},
+  {label:"corner 5",seconds:1.4,input:I.left},{label:"south finish",seconds:6,input:I.forward},
 ]);
 console.log("route development",JSON.stringify(route.trace));
 assert.equal(route.checkpoint,6,"low-frequency fixed input route must complete all gates");
