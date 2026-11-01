@@ -1,6 +1,6 @@
 // Rapier's vehicle axes are local +X forward, +Y up and +Z axle. The forces
 // below target a ~900 kg arcade car: about 0.4 g drive and 0.8 g service brake.
-export const VEHICLE={gravity:-16,maxSpeed:38,engine:900,reverseScale:-.55,serviceBrake:1800,handbrakeFront:250,handbrakeRear:1900,roadGrip:2.35,driftGrip:1.05,offroadGrip:1.12,steerLow:.4,steerHigh:.055,steerRise:1.65,steerRelease:5.2,steerCounter:3.8};
+export const VEHICLE={gravity:-16,maxSpeed:38,engine:900,reverseScale:-.55,serviceBrake:35,handbrakeFront:250,handbrakeRear:1900,roadGrip:2.35,driftGrip:1.05,offroadGrip:1.55,steerLow:.6,steerHigh:.07,steerRise:1.65,steerRelease:5.2,steerCounter:3.8};
 export const WHEEL_OFFSETS=[{x:1.55,y:.08,z:1.02},{x:1.55,y:.08,z:-1.02},{x:-1.45,y:.08,z:1.02},{x:-1.45,y:.08,z:-1.02}];
 export function clampVehicle(v,min,max){return Math.max(min,Math.min(max,v))}
 export function createVehicle(RAPIER,world,start={x:-2,y:2.2,z:0}){
