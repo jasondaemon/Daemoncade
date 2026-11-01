@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import RAPIER from "./vendor/rapier-0.17.3.js";
 import {VEHICLE,applySurfaceDrag,createVehicle,driveVehicle,stabilizeChassis} from "./vehicle-model.js";
-import {TRACK_BOXES,RECOVERY_SPOTS,ROAD_SAMPLES,buildRoadMesh,isOnRoad,checkpointAdvance,recoveryForward} from "./track-model.js";
+import {TRACK_BOXES,RECOVERY_SPOTS,ROAD_SAMPLES,buildRailColliderMesh,buildRoadMesh,isOnRoad,checkpointAdvance,recoveryForward} from "./track-model.js";
 
 await RAPIER.init();
 const DT=1/120;
@@ -9,7 +9,7 @@ function setup(start={x:-2,y:2.2,z:0},rotation=null){
   const world=new RAPIER.World({x:0,y:VEHICLE.gravity,z:0});world.integrationParameters.dt=DT;
   const roadHandles=new Set();
   for(const {x,y,z,hx,hy,hz,rx=0,rz=0,surface="road"} of TRACK_BOXES){const q={x:Math.sin(rx/2),y:0,z:Math.sin(rz/2),w:Math.cos(rx/2)*Math.cos(rz/2)},c=world.createCollider(RAPIER.ColliderDesc.cuboid(hx,hy,hz).setTranslation(x,y,z).setRotation(q).setFriction(1.1));if(surface!=="grass")roadHandles.add(c.handle)}
-  const road=buildRoadMesh(22),roadCollider=world.createCollider(RAPIER.ColliderDesc.trimesh(new Float32Array(road.positions),new Uint32Array(road.indices)).setFriction(1.1));roadHandles.add(roadCollider.handle);
+  const road=buildRoadMesh(22),roadCollider=world.createCollider(RAPIER.ColliderDesc.trimesh(new Float32Array(road.positions),new Uint32Array(road.indices)).setFriction(1.1));roadHandles.add(roadCollider.handle);const rails=buildRailColliderMesh(road.samples),railCollider=world.createCollider(RAPIER.ColliderDesc.trimesh(new Float32Array(rails.positions),new Uint32Array(rails.indices)).setFriction(.65));roadHandles.add(railCollider.handle);
   const result=createVehicle(RAPIER,world,start),state={steer:0,surfaceBlend:1};if(rotation)result.chassis.setRotation(rotation,true);
   for(let t=0;t<360;t++){driveVehicle(result.vehicle,state,{},DT,true);for(let i=0;i<4;i++)result.vehicle.setWheelBrake(i,5000);result.vehicle.updateVehicle(DT,RAPIER.QueryFilterFlags.EXCLUDE_DYNAMIC);world.step()}
   return{world,...result,state,roadHandles};
@@ -21,7 +21,7 @@ function run(segments){const sim=setup(),trace=[];let checkpoint=0,tick=0,offroa
 }
 const I={forward:{forward:true},right:{forward:true,right:true},left:{forward:true,left:true},brake:{reverse:true},brakeRight:{reverse:true,right:true},brakeLeft:{reverse:true,left:true},coast:{}};
 const opening=startTurn=>run([{label:"launch",seconds:startTurn,input:I.forward},{label:"turn",seconds:.65,input:I.left},{label:"release",seconds:1.2,input:I.forward}]);
-for(const timing of[7.3,7.5,7.7,7.9]){const result=opening(timing);console.log("opening",timing,JSON.stringify(result.trace));const p=result.sim.chassis.translation(),q=result.sim.chassis.rotation(),upY=1-2*(q.x*q.x+q.z*q.z);assert.ok(isOnRoad(p),`opening timing ${timing} left road`);assert.ok(upY>.8,`opening timing ${timing} rolled car`)}
+for(const timing of[5.7,5.9,6.1,6.3]){const result=opening(timing);console.log("opening",timing,JSON.stringify(result.trace));const p=result.sim.chassis.translation(),q=result.sim.chassis.rotation(),upY=1-2*(q.x*q.x+q.z*q.z);assert.ok(isOnRoad(p),`opening timing ${timing} left road`);assert.ok(upY>.8,`opening timing ${timing} rolled car`)}
 console.log("Apex Run human-scale opening timing tolerance passed");
 const recoveryResults=[];
 for(let i=0;i<RECOVERY_SPOTS.length;i++){
@@ -32,6 +32,13 @@ for(let i=0;i<RECOVERY_SPOTS.length;i++){
   recoveryResults.push({i,distance:+Math.hypot(motion.x,motion.z).toFixed(1),y:+after.y.toFixed(1)});
 }
 console.log("Apex Run spline recovery exits passed",JSON.stringify(recoveryResults));
+
+// A player who recovers before the crest must be able to launch from rest and
+// climb under held throttle. The previous 22-degree grade required more force
+// than the drivetrain could produce, leaving the car stranded around 21 km/h.
+const climb=setup(RECOVERY_SPOTS[2],RECOVERY_SPOTS[2].rotation),climbTrace=[];let climbMaxY=climb.chassis.translation().y,climbAirborne=false,climbLanded=false;
+for(let halfSecond=0;halfSecond<20;halfSecond++){driveSteps(climb,halfSecond===8?{forward:true,left:true}:{forward:true},.5);const p=climb.chassis.translation(),contacts=[0,1,2,3].filter(i=>climb.vehicle.wheelIsInContact(i)).length;climbMaxY=Math.max(climbMaxY,p.y);if(contacts===0)climbAirborne=true;else if(climbAirborne&&contacts>=2)climbLanded=true;climbTrace.push({t:(halfSecond+1)*.5,x:+p.x.toFixed(1),y:+p.y.toFixed(1),z:+p.z.toFixed(1),kmh:+(Math.abs(climb.vehicle.currentVehicleSpeed())*3.6).toFixed(1),contacts})}
+console.log("Apex Run recovery-to-crest probe",JSON.stringify({maxY:+climbMaxY.toFixed(1),final:climbTrace.at(-1),trace:climbTrace}));assert.ok(climbMaxY>19,"recovery launch could not climb the crest");assert.ok(climbTrace.some(sample=>sample.kmh>35),"recovery launch never developed useful uphill speed");assert.ok(climb.chassis.translation().x<-45,"recovery launch did not traverse the crest");assert.ok(isOnRoad(climb.chassis.translation()),"recovery launch did not remain on the modeled road");
 
 // The elevated back section must use the same trimesh as the rendered road.
 // A short straight launch toward the crest verifies suspension contact and

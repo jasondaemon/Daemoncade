@@ -1,5 +1,5 @@
 import assert from "node:assert/strict";
-import {PLAY_AREA,TRACK_BOXES,advanceOutsidePlayTime,isInPlayArea} from "./track-model.js";
+import {PLAY_AREA,ROAD_SAMPLES,TRACK_BOXES,advanceOutsidePlayTime,advanceUnderRoadTime,isInPlayArea,isUnderRoad} from "./track-model.js";
 
 const grass=TRACK_BOXES.find(box=>box.surface==="grass");
 assert.ok(grass,"physical terrain support is missing");
@@ -20,5 +20,6 @@ assert.ok(elapsed>=PLAY_AREA.grace,"stationary unsupported chassis must reach au
 assert.equal(advanceOutsidePlayTime(elapsed,inside,dt),0,"returning to supported terrain must cancel the grace timer");
 let fast=0;for(let i=0;i<18;i++)fast=advanceOutsidePlayTime(fast,outside,dt);
 assert.ok(fast<PLAY_AREA.grace,"a brief edge crossing must not recover immediately");
+const elevated=ROAD_SAMPLES.reduce((best,sample)=>sample.y>best.y?sample:best,ROAD_SAMPLES[0]),under={x:elevated.x,y:elevated.y-4,z:elevated.z},onDeck={x:elevated.x,y:elevated.y+1,z:elevated.z};assert.equal(isUnderRoad(under),true);assert.equal(isUnderRoad(onDeck),false);let underElapsed=0;for(let i=0;i<66;i++)underElapsed=advanceUnderRoadTime(underElapsed,under,dt);assert.ok(underElapsed>=.55,"stranded chassis beneath elevated road must recover promptly");assert.equal(advanceUnderRoadTime(underElapsed,onDeck,dt),0,"valid road height must clear under-road recovery timer");let jumpGap=0;for(let i=0;i<30;i++)jumpGap=advanceUnderRoadTime(jumpGap,under,dt);assert.ok(jumpGap<.55,"brief vertical excursion must retain recovery grace");
 
 console.log("Apex Run playable terrain/recovery envelope passed",JSON.stringify({support,playArea:PLAY_AREA}));

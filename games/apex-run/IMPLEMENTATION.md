@@ -118,7 +118,7 @@ The finish remains narrow and digital steering still benefits from frequent corr
 course and car are original procedural geometry, not production photoreal assets. Lower-end
 laptop, software-renderer, and Windows performance remain uncharacterized.
 
-## Visual alpha 5: spline continuity hardening
+## Visual alpha 6: spline and recovery hardening
 
 This milestone intentionally returns the release label to alpha while the new course earns
 fresh player validation. It replaces the slab course rather than claiming the previous beta
@@ -129,7 +129,7 @@ evidence automatically applies to different geometry.
   positions consumed by both Three.js and Rapier; there is no hidden flat road collider.
 - The course has six visual beats: opening sweeper, banked climb, elevated technical section,
   west-straight crest jump, high return, and downhill finish. The current 243-sample mesh has
-  1,936 triangles and approximately 22 metres of vertical range. A C2 crest profile and
+  1,936 triangles and approximately 19 metres of vertical range. A C2 crest profile and
   tangent-continuity regression replace the sharp Gaussian join in the first spline version.
 - Alternating inset curbs, luminous rails, structural columns and footings make elevation and
   road edges readable. Continuous elliptical stadium tiers, banners, light masts and low-poly
@@ -144,8 +144,14 @@ evidence automatically applies to different geometry.
   an elevated section from inheriting road traction or satisfying an elevated checkpoint.
 - A chase-camera obstruction ray shortens the camera boom before it enters the road or a support;
   road pitch contributes gently to look-ahead while the horizon remains mostly world-up.
+- The center stripe is a welded ribbon sampled from the same cross-sections, not a second curve
+  interpolation. Continuous rail collision follows both visible edges. The steepest crest grade
+  is 17.5 degrees rather than 22.4, and drivetrain force rises from 3.6 to 4.8 kN so a recovery
+  launch can climb from rest instead of stalling below the crest.
+- Falling beneath an elevated deck while no wheel has valid road contact starts a 0.55-second
+  recovery grace. Legitimate jumps and supported lower surfaces do not trigger it.
 
-Current visual-alpha limits: source tests now include a 47.53-second no-recovery ordered finish,
+Current visual-alpha limits: source tests now include a 44.26-second no-recovery ordered finish,
 but that reactive input fixture is not player proof. Camera clearance and the revised joins still
 need fresh pixel inspection and a normal-keyboard player lap. The environment remains original
 procedural art rather than authored photogrammetry, and lower-end GPU performance remains unmeasured.

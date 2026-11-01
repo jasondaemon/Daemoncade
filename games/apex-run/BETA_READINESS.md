@@ -2,7 +2,7 @@
 
 ## Status
 
-Version `0.5.0-alpha.5` is a visual-course alpha candidate. The previously verified flat-course
+Version `0.5.0-alpha.6` is a visual-course alpha candidate. The previously verified flat-course
 beta remains available in Git history at `16a26e5`; its player-lap result must not be treated as
 validation of this materially different spline layout. The game is an original single-player
 stadium time attack inspired by the broad genre, not a Trackmania clone, formula-equivalent
@@ -32,7 +32,7 @@ Then open `http://127.0.0.1:4173/games/apex-run/`.
 - The visual alpha uses one shared indexed spline mesh for rendering and collision. Automated
   geometry checks cover non-degenerate triangles, non-crossing edges, bounded tangent changes,
   banking, altitude-aware road occupancy/checkpoints, full surface-frame recovery poses, and
-  more than 22 metres of elevation.
+  approximately 19 metres of elevation.
 - A 34 m/s west-straight crest test becomes fully airborne and establishes sustained landing
   contact on the spline collider;
   the opening curve remains on the modeled road across a 0.6-second launch-timing window.
@@ -40,7 +40,10 @@ Then open `http://127.0.0.1:4173/games/apex-run/`.
   continuous stadium tiers, hills and reshaped vehicle render without console-visible startup
   failure, but also exposed an elevated-road camera clip. Alpha 5 adds obstruction-aware camera
   placement and smoother joins; those changes require a fresh visual inspection before acceptance.
-- A reactive keyboard-like source fixture now completes all six ordered gates in 47.53 seconds
+- A recovery-to-crest probe starts from rest on the sloped CP2 recovery pose, uses held throttle
+  plus one 0.5-second steering correction, reaches 20.2 metres elevation and 82.8 km/h, crosses
+  the crest and remains on the road. Visible rails now have continuous collision geometry.
+- A reactive keyboard-like source fixture now completes all six ordered gates in 44.26 seconds
   without recovery at 30/60/144 render schedules. This is collision/determinism coverage, not a
   substitute for a screen-driven player lap.
 
