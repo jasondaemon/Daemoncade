@@ -1,10 +1,10 @@
-import * as THREE from "../vendor/three/three.module.min.js?v=0.4.0-alpha3";
-import RAPIER from "./vendor/rapier-0.17.3.js?v=0.4.0-alpha3";
-import {FixedStepper,MEDALS,clamp,commitResult,formatTime,frameGapInvalidates,isOnRoad,medalFor,persistenceNote,readBest,readReplay,reconcileBest,replayFrameAt} from "./simulation.js?v=0.4.0-alpha3";
-import {VEHICLE,createVehicle,driveVehicle,stabilizeChassis} from "./vehicle-model.js?v=0.4.0-alpha3";
-import {makeWheelVisual,setWheelVisualPose} from "./wheel-visual.js?v=0.4.0-alpha3";
-import {TRACK_BOXES,CHECKPOINTS,RECOVERY_SPOTS} from "./track-model.js?v=0.4.0-alpha3";
-import {RaceController} from "./race-controller.js?v=0.4.0-alpha3";
+import * as THREE from "../vendor/three/three.module.min.js?v=0.4.0-alpha4";
+import RAPIER from "./vendor/rapier-0.17.3.js?v=0.4.0-alpha4";
+import {FixedStepper,MEDALS,clamp,commitResult,formatTime,frameGapInvalidates,isOnRoad,medalFor,persistenceNote,readBest,readReplay,reconcileBest,replayFrameAt} from "./simulation.js?v=0.4.0-alpha4";
+import {VEHICLE,createVehicle,driveVehicle,stabilizeChassis} from "./vehicle-model.js?v=0.4.0-alpha4";
+import {makeWheelVisual,setWheelVisualPose} from "./wheel-visual.js?v=0.4.0-alpha4";
+import {TRACK_BOXES,CHECKPOINTS,RECOVERY_SPOTS} from "./track-model.js?v=0.4.0-alpha4";
+import {RaceController} from "./race-controller.js?v=0.4.0-alpha4";
 
 const $=id=>document.getElementById(id),canvas=$("view"),scene=new THREE.Scene();
 const reducedMotion=matchMedia("(prefers-reduced-motion: reduce)").matches;
@@ -71,11 +71,11 @@ let audio=null,muted=readMuted();function startAudio(){if(audio)return;try{const
 function updateMute(){if(audio)audio.master.gain.setTargetAtTime(muted?0:.16,audio.context.currentTime,.03);$("mute").textContent=muted?"SOUND OFF":"SOUND ON";$("mute").setAttribute("aria-pressed",String(muted))}function toggleMute(){muted=!muted;storeMuted();updateMute()}
 const start={x:-2,y:2.2,z:0,rotation:{x:0,y:0,z:0,w:1}};
 function clearVehicle(){for(let i=0;i<4;i++){vehicle.setWheelEngineForce(i,0);vehicle.setWheelBrake(i,0);vehicle.setWheelSteering(i,0)}chassis.resetForces(true);chassis.resetTorques(true);chassis.setLinvel({x:0,y:0,z:0},true);chassis.setAngvel({x:0,y:0,z:0},true)}
-function place(position,rotation={x:0,y:0,z:0,w:1}){clearVehicle();chassis.setTranslation(position,true);chassis.setRotation(rotation,true);lastPosition.set(position.x,position.y,position.z);lastRotation.set(rotation.x,rotation.y,rotation.z,rotation.w);cameraReady=false}
+function place(position,rotation=position.rotation||{x:0,y:0,z:0,w:1}){clearVehicle();chassis.setTranslation(position,true);chassis.setRotation(rotation,true);lastPosition.set(position.x,position.y,position.z);lastRotation.set(rotation.x,rotation.y,rotation.z,rotation.w);cameraReady=false}
 function captureReplay(){const replayTick=Math.floor(race.tick/4);if(replayFrames.at(-1)?.[0]>=replayTick)return;const p=chassis.translation(),q=chassis.rotation();replayFrames.push([replayTick,+p.x.toFixed(3),+p.y.toFixed(3),+p.z.toFixed(3),+q.x.toFixed(5),+q.y.toFixed(5),+q.z.toFixed(5),+q.w.toFixed(5)])}
 function restart(){race.reset();vehicleState.steer=0;vehicleState.surfaceBlend=1;replayFrames=[];place(start,start.rotation);$("result").hidden=true;$("pause-card").hidden=true;stepper.reset();updateHud()}
 function setPaused(value,reason="manual"){if(value&&race.pause({invalidate:reason==="timing"})){keys.clear();if(audio){audio.engineGain.gain.setTargetAtTime(0,audio.context.currentTime,.02);audio.windGain.gain.setTargetAtTime(0,audio.context.currentTime,.02)}}else if(!value&&race.resume()){previous=performance.now();stepper.reset()}$("pause-card").hidden=race.state!=="paused";$("pause").textContent=race.state==="paused"?"RESUME":"PAUSE";$("pause").setAttribute("aria-pressed",String(race.state==="paused"));$("pause-card").querySelector("p").innerHTML=reason==="timing"?"A timing interruption was detected. This run cannot save a PB; restart with <b>R</b> for a clean attempt.":"Press <b>P</b>, <b>Escape</b>, or Resume. The timer is stopped and held keys are cleared.";if(race.state==="paused")$("resume").focus();else canvas.focus();updateHud()}
-function recover(){place(RECOVERY_SPOTS[Math.min(race.checkpoint,RECOVERY_SPOTS.length-1)]);race.recover()}
+function recover(){const spot=RECOVERY_SPOTS[Math.min(race.checkpoint,RECOVERY_SPOTS.length-1)];vehicleState.steer=0;vehicleState.surfaceBlend=1;place(spot,spot.rotation);race.recover()}
 function finish(){captureReplay();const result=commitResult(localStorage,best,race.time,replayFrames,{eligible:race.eligible});best=result.best;if(result.isBest)bestReplay=result.replay;const medal=race.eligible?medalFor(race.time):null;$("result-time").textContent=formatTime(race.time);$("result-pb").textContent=race.eligible?`${medal?medal.name+" MEDAL · ":""}${result.isBest?"NEW PERSONAL BEST":best?`Personal best ${formatTime(best)}`:"CLEAN RUN REQUIRED"}${persistenceNote(result)}`:"PRACTICE RUN · RECOVERY USED · PB NOT SAVED";$("result").hidden=false;clearVehicle();$("again").focus()}
 let hudSignature="",lastGate=-1;function updateHud(){const speed=race.state==="countdown"?0:Math.abs(vehicle.currentVehicleSpeed?.()||0)*3.6,target=MEDALS.find(m=>!best||best>m.time)||MEDALS[0],delta=best?`PB ${formatTime(best)} · ${target.name} ${formatTime(target.time)}`:`${target.name} TARGET ${formatTime(target.time)}`,time=formatTime(race.time),roundedSpeed=String(Math.round(speed)).padStart(3,"0"),signature=`${race.state}|${time}|${roundedSpeed}|${race.checkpoint}|${delta}`;if(signature!==hudSignature){hudSignature=signature;document.body.classList.toggle("racing",race.state==="racing");$("time").textContent=time;$("speed").textContent=roundedSpeed;$("checkpoint").textContent=`${Math.min(race.checkpoint,5)} / 5`;$("delta").textContent=delta}if(race.checkpoint!==lastGate){lastGate=race.checkpoint;gates.forEach((g,i)=>{g.userData.material.emissiveIntensity=i===race.checkpoint?4:.55;g.scale.setScalar(i===race.checkpoint?1.06:1)})}}
 

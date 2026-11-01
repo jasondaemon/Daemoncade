@@ -42,6 +42,15 @@ for(let i=0;i<RECOVERY_SPOTS.length;i++){
 }
 console.log("Apex Run recovery headings and driven exits passed");
 
+// Recovery must also work after the controller has accumulated wheel/contact
+// state. This mirrors game.js clearVehicle/place on the same chassis/controller.
+const reused=setup();driveSteps(reused,{forward:true},7.7);driveSteps(reused,{forward:true,left:true},1.2);driveSteps(reused,{forward:true},1.2);
+const reusedSpot=RECOVERY_SPOTS[1],reusedTarget=CHECKPOINTS[1];
+for(let i=0;i<4;i++){reused.vehicle.setWheelEngineForce(i,0);reused.vehicle.setWheelBrake(i,0);reused.vehicle.setWheelSteering(i,0)}
+reused.chassis.resetForces(true);reused.chassis.resetTorques(true);reused.chassis.setLinvel({x:0,y:0,z:0},true);reused.chassis.setAngvel({x:0,y:0,z:0},true);reused.chassis.setTranslation(reusedSpot,true);reused.chassis.setRotation(reusedSpot.rotation,true);reused.state.steer=0;reused.state.surfaceBlend=1;
+const reusedBefore=Math.hypot(reusedTarget.x-reusedSpot.x,reusedTarget.z-reusedSpot.z),reusedAfterPosition=driveSteps(reused,{forward:true},2),reusedAfter=Math.hypot(reusedTarget.x-reusedAfterPosition.x,reusedTarget.z-reusedAfterPosition.z);
+console.log("Apex Run reused-controller recovery",JSON.stringify({before:reusedBefore,after:reusedAfter,position:reusedAfterPosition}));assert.ok(reusedAfter<reusedBefore-2,`reused controller drove away after recovery: ${reusedBefore} -> ${reusedAfter}`);
+
 const edgeScenarios=[
   {name:"opening north shoulder",start:{x:50,y:2,z:15},rotation:{x:0,y:.7071068,z:0,w:.7071068},input:{forward:true}},
   {name:"east vertical shoulder",start:{x:116,y:2,z:-60},rotation:{x:0,y:1,z:0,w:0},input:{forward:true}},
