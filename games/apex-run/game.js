@@ -1,10 +1,10 @@
-import * as THREE from "../vendor/three/three.module.min.js?v=0.5.0-alpha15";
-import RAPIER from "./vendor/rapier-0.17.3.js?v=0.5.0-alpha15";
-import {FixedStepper,MEDALS,clamp,commitResult,formatTime,frameGapInvalidates,isOnRoad,medalFor,persistenceNote,readBest,readReplay,reconcileBest,replayFrameAt} from "./simulation.js?v=0.5.0-alpha15";
-import {RAIL_COLLISION_GROUPS,SUSPENSION_QUERY_GROUPS,VEHICLE,applyLowSpeedSteering,applySurfaceDrag,createVehicle,driveVehicle,hasSupportingContact,stabilizeChassis} from "./vehicle-model.js?v=0.5.0-alpha15";
-import {makeWheelVisual,setWheelVisualPose} from "./wheel-visual.js?v=0.5.0-alpha15";
-import {TRACK_BOXES,CHECKPOINTS,RECOVERY_SPOTS,ROAD_SAMPLES,PLAY_AREA,RAIL_PROFILE,advanceOutsidePlayTime,advanceUnderRoadTime,buildLaneRibbon,buildRailColliderMesh,buildRoadColliderMesh,buildRoadMesh,routeGuides,routeStage,routeTarget} from "./track-model.js?v=0.5.0-alpha15";
-import {RaceController} from "./race-controller.js?v=0.5.0-alpha15";
+import * as THREE from "../vendor/three/three.module.min.js?v=0.5.0-alpha16";
+import RAPIER from "./vendor/rapier-0.17.3.js?v=0.5.0-alpha16";
+import {FixedStepper,MEDALS,clamp,commitResult,formatTime,frameGapInvalidates,isOnRoad,medalFor,persistenceNote,readBest,readReplay,reconcileBest,replayFrameAt} from "./simulation.js?v=0.5.0-alpha16";
+import {RAIL_COLLISION_GROUPS,SUSPENSION_QUERY_GROUPS,VEHICLE,applyLowSpeedSteering,applySurfaceDrag,createVehicle,driveVehicle,hasSupportingContact,stabilizeChassis} from "./vehicle-model.js?v=0.5.0-alpha16";
+import {makeWheelVisual,setWheelVisualPose} from "./wheel-visual.js?v=0.5.0-alpha16";
+import {TRACK_BOXES,CHECKPOINTS,RECOVERY_SPOTS,ROAD_SAMPLES,PLAY_AREA,RAIL_PROFILE,advanceOutsidePlayTime,advanceUnderRoadTime,buildLaneRibbon,buildRailColliderMesh,buildRoadColliderMesh,buildRoadMesh,routeGuides,routeStage,routeTarget} from "./track-model.js?v=0.5.0-alpha16";
+import {RaceController} from "./race-controller.js?v=0.5.0-alpha16";
 
 const $=id=>document.getElementById(id),canvas=$("view"),scene=new THREE.Scene();
 const reducedMotion=matchMedia("(prefers-reduced-motion: reduce)").matches;

@@ -8,11 +8,13 @@ function mockVehicle(speed=20){
 const state={steer:0},road=mockVehicle(),grass=mockVehicle();
 driveVehicle(road,state,{forward:true,right:true},1/120,true);
 driveVehicle(grass,{steer:0},{forward:true,right:true},1/120,false);
-assert.equal(road.calls.engine[0],VEHICLE.engine);
-assert.equal(grass.calls.engine[0],VEHICLE.engine*.8);
+const expectedRoadEngine=VEHICLE.engine+(VEHICLE.launchEngine-VEHICLE.engine)*(1-20/VEHICLE.launchFadeSpeed);
+assert.equal(road.calls.engine[0],expectedRoadEngine);
+assert.equal(grass.calls.engine[0],expectedRoadEngine*.8);
 assert.equal(road.calls.grip[0],VEHICLE.roadGrip);
 assert.equal(grass.calls.grip[0],VEHICLE.offroadGrip);
 assert.ok(Math.abs(grass.calls.engine[0])<Math.abs(road.calls.engine[0]));
+const launch=mockVehicle(0),cruise=mockVehicle(VEHICLE.launchFadeSpeed);driveVehicle(launch,{steer:0},{forward:true},1/120,true,0);driveVehicle(cruise,{steer:0},{forward:true},1/120,true,VEHICLE.launchFadeSpeed);assert.equal(launch.calls.engine[0],VEHICLE.launchEngine);assert.equal(cruise.calls.engine[0],VEHICLE.engine);
 const drift=mockVehicle();driveVehicle(drift,{steer:0},{forward:true,handbrake:true},1/120,true);
 assert.equal(drift.calls.grip[2],VEHICLE.driftGrip);assert.equal(drift.calls.brake[2],VEHICLE.handbrakeRear);
 const braking=mockVehicle(),brakeState={steer:0};driveVehicle(braking,brakeState,{reverse:true},1/120,true);assert.equal(braking.calls.brake[0],VEHICLE.serviceBrake);assert.equal(braking.calls.engine[0],0);braking.currentVehicleSpeed=()=>0;for(let i=0;i<120;i++)driveVehicle(braking,brakeState,{reverse:true},1/120,true);assert.equal(braking.calls.engine[0],0,"holding service brake through zero must not reverse");driveVehicle(braking,brakeState,{},1/120,true);driveVehicle(braking,brakeState,{reverse:true},1/120,true);assert.ok(braking.calls.engine[0]<0,"release and repress at rest must select reverse");

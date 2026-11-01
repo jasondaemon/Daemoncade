@@ -167,11 +167,13 @@ evidence automatically applies to different geometry.
   assistance requires wheel support or a measured upward road/terrain manifold, so it cannot fire
   at an unsupported jump apex. Reverse uses actual chassis speed for gear selection and a capped
   10 m/s gear with enough low-speed torque to retreat from the final rail.
-Current visual-alpha evidence includes a 44.07-second no-recovery source fixture and a screen-driven
-`1:42.583` no-recovery Rookie lap in the production page. The player lap required several physical
-reverse-and-steer rail escapes, so glancing-contact momentum loss remains a dynamics-polish target
-rather than a solved racing-feel claim. The environment remains original procedural art rather than
-authored photogrammetry, and lower-end GPU performance remains unmeasured.
+Current visual-alpha evidence includes a 42.29-second no-recovery source fixture and screen-driven
+no-recovery production-page laps. Alpha 16 adds a `2:22.725` PB-eligible run after a separate
+recovery/practice finish; both disclose observation pauses and are not uninterrupted performance
+claims. Incidence-aware probes show that genuinely shallow rail contact preserves tangential speed,
+while direct impacts still require a physical stop/release/reverse escape. The environment remains
+original procedural art rather than authored photogrammetry, and lower-end GPU performance remains
+unmeasured.
 
 ## Beta browser integration
 

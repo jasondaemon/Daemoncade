@@ -2,7 +2,7 @@
 
 ## Status
 
-Version `0.5.0-alpha.15` is a visual-course alpha candidate. The previously verified flat-course
+Version `0.5.0-alpha.16` is a visual-course alpha candidate. The previously verified flat-course
 beta remains available in Git history at `16a26e5`; its player-lap result must not be treated as
 validation of this materially different spline layout. The game is an original single-player
 stadium time attack inspired by the broad genre, not a Trackmania clone, formula-equivalent
@@ -53,7 +53,7 @@ Then open `http://127.0.0.1:4173/games/apex-run/`.
   then brake to a measured stop, release, reverse at least 0.5 metres and steer forward away.
   All regain more than 5 m/s and remain upright; this directly covers the prior 0-4 km/h asphalt
   immobilization without relying on a fixed-timing gear-change assumption.
-- A reactive keyboard-like source fixture completes all six ordered gates in 44.07 seconds
+- A reactive keyboard-like source fixture completes all six ordered gates in 42.29 seconds
   without recovery at 30/60/144 render schedules. This is collision/determinism coverage, not a
   substitute for a screen-driven player lap. A separate held-input crest probe, rather than this
   route fixture, proves the airborne and landing phases.
@@ -61,6 +61,16 @@ Then open `http://127.0.0.1:4173/games/apex-run/`.
   `1:57.500` recovery/practice lap. Restart, recovery eligibility, checkpoint order, finish and PB
   save all behaved correctly. The clean lap needed several deliberate reverse-and-steer escapes;
   direct rail contact still removes too much momentum even though it no longer traps the car.
+- Low-speed launch torque now tapers from 1550 to the original 1200 per wheel by 90 km/h:
+  flat-road speed at five seconds improves from 65.9 to 75.7 km/h while the unchanged 35-unit
+  service brake stops from 80 km/h in 1.34 seconds / 14.68 metres. Incidence-aware rail probes
+  show nine shallow 3–15 degree contacts retain 97–111% of tangential speed after 0.35 seconds;
+  the old near-zero minima occur only after sustained input turns a scrape into a nose-first impact.
+- Production-page alpha 16 keyboard QA completed a `2:54.167` recovery/practice lap that correctly
+  left the PB unchanged, then a no-recovery `2:22.725` run that remained PB-eligible. Both used
+  visible chase-view feedback with disclosed observation pauses, so neither is represented as an
+  uninterrupted performance lap. The clean run physically reversed away from several hard rail
+  contacts and finished with no browser warnings or errors; the existing `00:48.700` PB persisted.
 
 The following evidence describes the prior `0.4.0-beta.1` geometry and is retained as history,
 not as a readiness claim for visual alpha 5:
