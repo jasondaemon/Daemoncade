@@ -47,7 +47,23 @@ Primary references:
 5. Personal best persists locally; stored values are validated before use.
 6. No runtime network requests; all engine and physics files are vendored in Daemoncade.
 
+## Alpha 2 playable milestone
+
+- Reworked the chassis ray origins, suspension travel, collision envelope, and braking split so the
+  car can restart from rest, rotate through the technical corner, and recover cleanly.
+- Removed a discontinuous elevated-road seam, retained a shallow physical bank, and rebuilt
+  the jump as a continuous ramp with a suspension landing.
+- Added four medal targets tuned to the current 12-second clean reference run and a
+  non-colliding 30 Hz PB transform ghost. Replay JSON is versioned, bounds checked, length
+  limited, and ignored when malformed. A newer scalar PB wins over an older replay, and
+  storage denial cannot interrupt the finish screen.
+- Added a real Rapier trajectory test that completes the ordered course at 30, 60, and 144
+  render schedules without recovery, including airborne/landing and sub-0.1-second,
+  sub-0.5-metre equivalence assertions. The reactive driver executes only on fixed ticks.
+- Grass now cuts engine output, reduces wheel grip, and applies velocity-proportional drag so
+  leaving the road has an immediate, measurable cost.
+
 ## Later milestones
 
-- PB ghost replay, medal targets, gamepad/touch controls, audio, particles, and two more tracks.
+- Gamepad/touch controls, audio, particles, and two more tracks.
 - Loops or wall rides only after a dedicated contact/adhesion prototype proves predictable.

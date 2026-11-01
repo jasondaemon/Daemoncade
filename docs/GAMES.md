@@ -35,7 +35,7 @@ This page is generated from the per-game `game.json` files by `./scripts/build-c
 
 | Icon | Game | Version | Mobile | About |
 | --- | --- | --- | --- | --- |
-| <img src="../games/apex-run/app-icon.png" width="48" height="48" alt=""> | [Apex Run](../games/apex-run/) | `0.1.0-alpha.1` | — | Attack a gravity-bending 3D stadium course, master momentum, and chase your personal best. |
+| <img src="../games/apex-run/app-icon.png" width="48" height="48" alt=""> | [Apex Run](../games/apex-run/) | `0.1.0-alpha.2` | — | Attack a gravity-bending 3D stadium course, master momentum, and chase your personal best. |
 | <img src="../games/spacefighter/icon.webp" width="48" height="48" alt=""> | [Spacefighter](../games/spacefighter/) | `0.1.0-alpha.1` | — | Thread a nimble fighter through dense enemy patterns, collect weapon upgrades, and unleash missiles and bombs. |
 | <img src="../games/canyon-crawler/icon.webp" width="48" height="48" alt=""> | [Canyon Crawler](../games/canyon-crawler/) | `0.1.0-alpha.1` | — | Defend your rover from segmented trail worms and the hazards filling the canyon wash. |
 | <img src="../games/orbit-run/icon.webp" width="48" height="48" alt=""> | [Orbit Run](../games/orbit-run/) | `0.1.0-alpha.1` | — | Circle the tunnel, fire inward, and survive enemies spiraling out from its center. |
