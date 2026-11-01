@@ -1,7 +1,8 @@
 import * as THREE from "../vendor/three/three.module.min.js";
 import RAPIER from "./vendor/rapier-0.17.3.js?v=init2";
 import {FixedStepper,MEDALS,clamp,commitResult,formatTime,frameGapInvalidates,isOnRoad,medalFor,persistenceNote,readBest,readReplay,reconcileBest,replayFrameAt} from "./simulation.js";
-import {createVehicle,driveVehicle,stabilizeChassis} from "./vehicle-model.js";
+import {VEHICLE,createVehicle,driveVehicle,stabilizeChassis} from "./vehicle-model.js";
+import {makeWheelVisual,setWheelVisualPose} from "./wheel-visual.js";
 import {TRACK_BOXES,CHECKPOINTS,RECOVERY_SPOTS} from "./track-model.js";
 import {RaceController} from "./race-controller.js";
 
@@ -16,13 +17,13 @@ scene.add(new THREE.HemisphereLight(0xcceaff,0x34451e,2.1));const sun=new THREE.
 const rim=new THREE.DirectionalLight(0x4bdcff,1.3);rim.position.set(90,35,-130);scene.add(rim);
 
 await RAPIER.init();
-const world=new RAPIER.World({x:0,y:-24,z:0});world.integrationParameters.dt=1/120;
-const meshes=[],keys=new Set(),course=[];
+const world=new RAPIER.World({x:0,y:VEHICLE.gravity,z:0});world.integrationParameters.dt=1/120;
+const meshes=[],keys=new Set(),course=[],roadColliders=new Set();
 const materials={road:new THREE.MeshStandardMaterial({color:0xdbe1e5,roughness:.78,metalness:.02}),bank:new THREE.MeshStandardMaterial({color:0x303945,roughness:.67}),edge:new THREE.MeshStandardMaterial({color:0x12cde8,emissive:0x057389,emissiveIntensity:.45}),grass:new THREE.MeshStandardMaterial({color:0x43752c,roughness:1}),stadium:new THREE.MeshStandardMaterial({color:0x182533,roughness:.8})};
 
-function addBox({x,y,z,hx,hy,hz,rx=0,ry=0,rz=0,material=materials.road,collider=true}){
+function addBox({x,y,z,hx,hy,hz,rx=0,ry=0,rz=0,material=materials.road,collider=true,surface="road"}){
   const mesh=new THREE.Mesh(new THREE.BoxGeometry(hx*2,hy*2,hz*2),material);mesh.position.set(x,y,z);mesh.rotation.set(rx,ry,rz);mesh.castShadow=true;mesh.receiveShadow=true;scene.add(mesh);
-  if(collider){const rotation=new THREE.Quaternion().setFromEuler(mesh.rotation),desc=RAPIER.ColliderDesc.cuboid(hx,hy,hz).setTranslation(x,y,z).setRotation(rotation).setFriction(1.1);world.createCollider(desc)}
+  if(collider){const rotation=new THREE.Quaternion().setFromEuler(mesh.rotation),desc=RAPIER.ColliderDesc.cuboid(hx,hy,hz).setTranslation(x,y,z).setRotation(rotation).setFriction(1.1),created=world.createCollider(desc);if(surface!=="grass")roadColliders.add(created.handle)}
   course.push(mesh);return mesh;
 }
 for(const box of TRACK_BOXES)addBox({...box,material:materials[box.surface||"road"]});
@@ -58,7 +59,7 @@ const carbon=new THREE.MeshStandardMaterial({color:0x111820,metalness:.7,roughne
 for(const side of[-1,1]){const pod=new THREE.Mesh(new THREE.BoxGeometry(2.8,.38,.5),bodyMat);pod.position.set(-.05,-.05,side*1.12);pod.castShadow=true;car.add(pod);const light=new THREE.Mesh(new THREE.BoxGeometry(.32,.18,.16),lamp);light.position.set(2.55,.08,side*.58);car.add(light)}
 const splitter=new THREE.Mesh(new THREE.BoxGeometry(1.5,.08,2.4),carbon);splitter.position.set(2.65,-.35,0);car.add(splitter);const floor=new THREE.Mesh(new THREE.BoxGeometry(4.6,.08,1.8),carbon);floor.position.y=-.32;car.add(floor);const fin=new THREE.Mesh(new THREE.BoxGeometry(1.5,.55,.08),carbon);fin.position.set(-1.1,.55,0);car.add(fin);cockpit.material=glass;
 const rearDeck=new THREE.Mesh(new THREE.BoxGeometry(1.15,.32,2.2),bodyMat);rearDeck.position.set(-1.85,.08,0);rearDeck.castShadow=true;car.add(rearDeck);const tailMat=new THREE.MeshStandardMaterial({color:0xff3b2f,emissive:0xff1200,emissiveIntensity:3});for(const side of[-1,1]){const tail=new THREE.Mesh(new THREE.CylinderGeometry(.17,.17,.08,16),tailMat);tail.rotation.z=Math.PI/2;tail.position.set(-2.44,.13,side*.63);car.add(tail)}const diffuser=new THREE.Mesh(new THREE.BoxGeometry(.45,.22,1.8),carbon);diffuser.position.set(-2.38,-.27,0);car.add(diffuser);
-const wheelMeshes=[];for(const p of wheelOffsets){const wheel=new THREE.Mesh(new THREE.CylinderGeometry(.43,.43,.38,24),dark);wheel.rotation.x=Math.PI/2;wheel.castShadow=true;const rim=new THREE.Mesh(new THREE.CylinderGeometry(.24,.24,.4,12),new THREE.MeshStandardMaterial({color:0xa8bac5,metalness:.9,roughness:.2}));wheel.add(rim);scene.add(wheel);wheelMeshes.push(wheel)}
+const rimMaterial=new THREE.MeshStandardMaterial({color:0xa8bac5,metalness:.9,roughness:.2}),wheelMeshes=[];for(const p of wheelOffsets){const wheel=makeWheelVisual(THREE,dark,rimMaterial);scene.add(wheel.root);wheelMeshes.push(wheel)}
 const ghostMat=new THREE.MeshStandardMaterial({color:0xbef8ff,emissive:0x30d7ff,emissiveIntensity:1,transparent:true,opacity:.28,depthWrite:false}),ghost=new THREE.Group();
 const ghostBody=new THREE.Mesh(new THREE.BoxGeometry(4.5,.65,2),ghostMat);ghostBody.position.y=.15;ghost.add(ghostBody);const ghostNose=new THREE.Mesh(new THREE.BoxGeometry(1.5,.28,1.55),ghostMat);ghostNose.position.set(2.5,-.03,0);ghost.add(ghostNose);ghost.visible=false;scene.add(ghost);
 const smokeGeometry=new THREE.SphereGeometry(.25,8,5),smoke=Array.from({length:28},()=>{const s=new THREE.Mesh(smokeGeometry,new THREE.MeshBasicMaterial({color:0xd8e2e8,transparent:true,opacity:0,depthWrite:false}));s.visible=false;s.userData.life=0;scene.add(s);return s});let smokeCursor=0;function puff(p){const s=smoke[smokeCursor++%smoke.length];s.position.set(p.x,p.y+.25,p.z);s.scale.setScalar(1);s.userData.life=1;s.material.opacity=.22;s.visible=true}
@@ -80,11 +81,11 @@ let hudSignature="",lastGate=-1;function updateHud(){const speed=race.state==="c
 
 function physicsStep(dt){
   const before=chassis.translation();lastPosition.set(before.x,before.y,before.z);const br=chassis.rotation();lastRotation.set(br.x,br.y,br.z,br.w);
-  race.advance(dt);const position=chassis.translation(),onRoad=isOnRoad(position),rawInput=testInput||{forward:keys.has("ArrowUp")||keys.has("KeyW"),reverse:keys.has("ArrowDown")||keys.has("KeyS"),left:keys.has("ArrowLeft")||keys.has("KeyA"),right:keys.has("ArrowRight")||keys.has("KeyD"),handbrake:keys.has("Space")},input={...rawInput,forward:race.state==="racing"&&rawInput.forward,reverse:race.state==="racing"&&rawInput.reverse},drive=driveVehicle(vehicle,vehicleState,input,dt,onRoad),speed=drive.speed,handbrake=input.handbrake;
+  race.advance(dt);const position=chassis.translation(),wheelRoad=[0,1,2,3].map(i=>{const ground=vehicle.wheelGroundObject(i);return ground?roadColliders.has(ground.handle):isOnRoad(position)}),rawInput=testInput||{forward:keys.has("ArrowUp")||keys.has("KeyW"),reverse:keys.has("ArrowDown")||keys.has("KeyS"),left:keys.has("ArrowLeft")||keys.has("KeyA"),right:keys.has("ArrowRight")||keys.has("KeyD"),handbrake:keys.has("Space")},input={...rawInput,forward:race.state==="racing"&&rawInput.forward,reverse:race.state==="racing"&&rawInput.reverse},drive=driveVehicle(vehicle,vehicleState,input,dt,wheelRoad),speed=drive.speed,handbrake=input.handbrake;
   if(race.state!=="racing")for(let i=0;i<4;i++)vehicle.setWheelBrake(i,6000);
   if(audio){const now=audio.context.currentTime,throttle=input.forward||input.reverse?1:0;audio.engine.frequency.setTargetAtTime(54+speed*7+throttle*45,now,.04);audio.engineGain.gain.setTargetAtTime(race.state==="racing"?.035+throttle*.055:0,now,.05);audio.wind.frequency.setTargetAtTime(70+speed*3,now,.08);audio.windGain.gain.setTargetAtTime(clamp((speed-8)/80,0,.06),now,.1)}
   if(drive.surfaceBlend<1){const v=chassis.linvel(),drag=(1-drive.surfaceBlend)*125;chassis.addForce({x:-v.x*drag,y:0,z:-v.z*drag},true)}
-  const preGrounded=[0,1,2,3].some(i=>vehicle.wheelIsInContact(i));stabilizeChassis(chassis,preGrounded);vehicle.updateVehicle(dt,RAPIER.QueryFilterFlags.EXCLUDE_DYNAMIC);world.step();
+  stabilizeChassis(chassis,vehicle);vehicle.updateVehicle(dt,RAPIER.QueryFilterFlags.EXCLUDE_DYNAMIC);world.step();
   const grounded=[0,1,2,3].some(i=>vehicle.wheelIsInContact(i));if(grounded&&!wasGrounded&&chassis.linvel().y<0)cameraShake=Math.min(.45,Math.abs(chassis.linvel().y)*.025);wasGrounded=grounded;if(race.state==="racing"&&handbrake&&speed>12&&race.tick%8===0)puff(chassis.translation());
   if(race.state==="racing"){if(race.tick===1||race.tick%4===0)captureReplay();const p=chassis.translation(),result=race.observe(p);if(result.finished)finish();else if(p.y<-12||Math.abs(p.x)>300||Math.abs(p.z)>260)recover()}
 }
@@ -92,7 +93,7 @@ const stepper=new FixedStepper(physicsStep);
 
 function render(alpha,renderDt=1/60){
   const p=chassis.translation(),q=chassis.rotation(),position=lastPosition.clone().lerp(new THREE.Vector3(p.x,p.y,p.z),alpha),rotation=lastRotation.clone().slerp(new THREE.Quaternion(q.x,q.y,q.z,q.w),alpha);car.position.copy(position);car.quaternion.copy(rotation);
-  for(let i=0;i<4;i++){const wp=vehicle.wheelChassisConnectionPointCs(i),suspension=vehicle.wheelSuspensionLength(i),local=new THREE.Vector3(wp.x,wp.y-suspension,wp.z).applyQuaternion(rotation).add(position);wheelMeshes[i].position.copy(local);wheelMeshes[i].quaternion.copy(rotation);if(i<2)wheelMeshes[i].rotateY(vehicle.wheelSteering(i));wheelMeshes[i].rotateX(Math.PI/2);wheelMeshes[i].rotateZ(vehicle.wheelRotation(i))}
+  for(let i=0;i<4;i++){const wp=vehicle.wheelChassisConnectionPointCs(i),suspension=vehicle.wheelSuspensionLength(i),local=new THREE.Vector3(wp.x,wp.y-suspension,wp.z).applyQuaternion(rotation).add(position);setWheelVisualPose(THREE,wheelMeshes[i],local,rotation,i<2?vehicle.wheelSteering(i):0,vehicle.wheelRotation(i))}
   if(bestReplay&&race.state!=="finished"){const f=replayFrameAt(bestReplay,race.time);if(f){ghost.visible=true;ghost.position.set(f[1],f[2],f[3]);ghost.quaternion.set(f[4],f[5],f[6],f[7]).normalize()}}else ghost.visible=false;
   const forward=new THREE.Vector3(1,0,0).applyQuaternion(rotation),flatForward=forward.clone().setY(0).normalize(),up=new THREE.Vector3(0,1,0),speed=Math.abs(vehicle.currentVehicleSpeed?.()||0),desired=position.clone().addScaledVector(flatForward,-10.5-speed*.035).addScaledVector(up,4.9),look=position.clone().addScaledVector(flatForward,8+speed*.08).addScaledVector(up,1.1);
   const lateral=new THREE.Vector3(0,0,1).applyQuaternion(rotation),velocity=chassis.linvel(),slip=clamp((velocity.x*lateral.x+velocity.z*lateral.z)*.08,-2.2,2.2);look.addScaledVector(lateral,slip);if(!cameraReady){camera.position.copy(desired);cameraReady=true}else camera.position.lerp(desired,1-Math.exp(-8*renderDt));if(!reducedMotion&&cameraShake>.002){camera.position.x+=(Math.random()-.5)*cameraShake;camera.position.y+=(Math.random()-.5)*cameraShake;cameraShake*=Math.pow(.88,renderDt*60)}camera.fov=reducedMotion?68:68+clamp(speed*.11,0,8);camera.updateProjectionMatrix();camera.lookAt(look);
