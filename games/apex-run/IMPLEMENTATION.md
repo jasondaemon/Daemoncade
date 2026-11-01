@@ -81,3 +81,12 @@ Primary references:
   wind audio. Audio starts only after a driving input to respect browser autoplay policy.
 - Versioned PB/replay storage again so ghosts from the shorter course cannot appear on the
   rebuilt layout. Fixed the vendored Rapier initialization wrapper's deprecation warning.
+- Alpha 3.2 moved chassis creation, suspension, engine, braking, handbrake, grip, digital
+  steering response, speed limiting, and grounded stability into `vehicle-model.js`, shared
+  verbatim by runtime and trajectory tests. The reference lap now uses recorded keyboard-like
+  on/off throttle, reverse/brake and tapped steering rather than easier harness-only forces.
+- Lowered the physical center of mass, softened high-speed steering, added mild grounded roll
+  damping and forgiving physical shoulders, and removed raised slab seams. The exact QA probe
+  (2.1 seconds throttle, release, 0.9 seconds full right) remains upright and on the shoulder.
+- The 60 FPS clean reference records every fixed-tick input and replays that identical tape at
+  30, 60, and 144 FPS, so render-rate checks no longer use separate reactive driving runs.

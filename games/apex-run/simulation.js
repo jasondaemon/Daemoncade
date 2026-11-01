@@ -28,7 +28,7 @@ export function replayFrameAt(replay,seconds){
   const a=frames[lo],b=frames[Math.min(lo+1,frames.length-1)],span=Math.max(1,b[0]-a[0]),t=clamp((tick-a[0])/span,0,1),out=new Array(8);out[0]=tick;for(let i=1;i<8;i++)out[i]=a[i]+(b[i]-a[i])*t;return out;
 }
 export function medalFor(seconds){return MEDALS.find(m=>seconds<=m.time)||null}
-export function isOnRoad(position){const{x,z}=position;return(x>=-11&&x<=121&&Math.abs(z)<=14)||(x>=81&&x<=121&&z>=-121&&z<=4)||(x>=-99&&x<=121&&z>=-121&&z<=-84)||(x>=-99&&x<=-65&&z>=-121&&z<=141)||(x>=-99&&x<=151&&z>=123&&z<=157)||(x>=133&&x<=167&&z>=-5&&z<=157)}
+export function isOnRoad(position){const{x,z}=position;return(x>=-11&&x<=121&&Math.abs(z)<=14)||(x>=81&&x<=121&&z>=-121&&z<=4)||(x>=-104&&x<=121&&z>=-123&&z<=-84)||(x>=-104&&x<=-60&&z>=-121&&z<=141)||(x>=-104&&x<=151&&z>=123&&z<=157)||(x>=132&&x<=168&&z>=-5&&z<=157)}
 export function checkpointAdvance(current,position){
   const zones=[{x:99,z:-12,hx:18,hz:18},{x:101,z:-103,hx:18,hz:12},{x:-82,z:-103,hx:16,hz:16},{x:-82,z:125,hx:16,hz:18},{x:135,z:140,hx:18,hz:16},{x:150,z:8,hx:16,hz:12}];
   const zone=zones[current];if(!zone)return current;

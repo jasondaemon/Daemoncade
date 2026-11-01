@@ -1,6 +1,7 @@
 import * as THREE from "../vendor/three/three.module.min.js";
 import RAPIER from "./vendor/rapier-0.17.3.js?v=init2";
 import {FixedStepper,MEDALS,checkpointAdvance,clamp,formatTime,isOnRoad,medalFor,readBest,readReplay,reconcileBest,replayFrameAt,saveBest,saveReplay} from "./simulation.js";
+import {createVehicle,driveVehicle,stabilizeChassis} from "./vehicle-model.js";
 
 const $=id=>document.getElementById(id),canvas=$("view"),scene=new THREE.Scene();
 scene.background=new THREE.Color(0x8dc9ed);scene.fog=new THREE.Fog(0x8dc9ed,160,430);
@@ -25,14 +26,14 @@ addBox({x:0,y:-1.2,z:-50,hx:190,hy:1,hz:150,material:materials.grass});
 addBox({x:47,y:0,z:0,hx:58,hy:.45,hz:13});
 addBox({x:101,y:0,z:-18,hx:20,hy:.45,hz:22});
 addBox({x:101,y:0,z:-61,hx:13,hy:.45,hz:38});
-addBox({x:91,y:1,z:-103,hx:27,hy:.45,hz:13,rx:.035,material:materials.bank});
-addBox({x:48,y:1,z:-103,hx:28,hy:.45,hz:13,rx:.035,material:materials.bank});
-addBox({x:8,y:1.4,z:-103,hx:16,hy:.45,hz:13,rz:-.035,material:materials.road});
-addBox({x:-28,y:1,z:-103,hx:22,hy:.45,hz:14});
-addBox({x:-67,y:.3,z:-103,hx:23,hy:.45,hz:14});
-addBox({x:-82,y:0,z:9,hx:14,hy:.45,hz:116,material:materials.bank});
+addBox({x:91,y:0,z:-103,hx:27,hy:.45,hz:13,rx:.035,material:materials.bank});
+addBox({x:48,y:0,z:-103,hx:28,hy:.45,hz:13,rx:.035,material:materials.bank});
+addBox({x:8,y:.45,z:-103,hx:16,hy:.45,hz:18,rz:-.028,material:materials.road});
+addBox({x:-35,y:0,z:-103,hx:20,hy:.45,hz:20});
+addBox({x:-75,y:0,z:-103,hx:20,hy:.45,hz:20});
+addBox({x:-82,y:0,z:9,hx:22,hy:.45,hz:116,material:materials.bank});
 addBox({x:22,y:0,z:140,hx:120,hy:.45,hz:16});
-addBox({x:150,y:0,z:72,hx:14,hy:.45,hz:68,material:materials.bank});
+addBox({x:150,y:0,z:72,hx:18,hy:.45,hz:68,material:materials.bank});
 
 // Stadium bowl and lane-edge rhythm markers are purely procedural art.
 for(let i=0;i<40;i++){const a=i/40*Math.PI*2,r=215;addBox({x:35+Math.cos(a)*r,y:7,z:-15+Math.sin(a)*r,hx:15,hy:8,hz:5,ry:-a,material:materials.stadium,collider:false});addBox({x:35+Math.cos(a)*r*1.07,y:18,z:-15+Math.sin(a)*r*1.07,hx:15,hy:3,hz:5,ry:-a,material:i%2?materials.stadium:materials.edge,collider:false})}
@@ -46,18 +47,15 @@ for(let z=-7;z<=7;z+=2)addBox({x:2,y:.5,z,hx:.35,hy:.03,hz:.75,material:z%4?mate
 function gate(x,z,rotation=0,color=0x5eeaff){
   const group=new THREE.Group(),mat=new THREE.MeshStandardMaterial({color,emissive:color,emissiveIntensity:1.6,metalness:.35,roughness:.25});
   for(const side of[-1,1]){const post=new THREE.Mesh(new THREE.BoxGeometry(.7,8,.7),mat);post.position.set(0,4,side*11);post.castShadow=true;group.add(post)}
-  const top=new THREE.Mesh(new THREE.BoxGeometry(.8,.7,23),mat);top.position.y=8;group.add(top);group.position.set(x,.45,z);group.rotation.y=rotation;scene.add(group);return group;
+  const top=new THREE.Mesh(new THREE.BoxGeometry(.8,.7,23),mat);top.position.y=8;group.add(top);group.position.set(x,.45,z);group.rotation.y=rotation;group.userData.material=mat;scene.add(group);return group;
 }
-gate(99,-12,Math.PI/2);gate(101,-103,Math.PI/2);gate(-82,-103,0);gate(-82,125,Math.PI/2);gate(135,140,0);gate(150,8,Math.PI/2,0xffd044);
-function sign(text,x,z,ry=0,color="#68efff"){const c=document.createElement("canvas");c.width=512;c.height=128;const g=c.getContext("2d");g.fillStyle="#071521";g.fillRect(0,0,512,128);g.strokeStyle=color;g.lineWidth=10;g.strokeRect(5,5,502,118);g.fillStyle="#fff";g.font="900 52px system-ui";g.textAlign="center";g.textBaseline="middle";g.fillText(text,256,66);const m=new THREE.Mesh(new THREE.PlaneGeometry(12,3),new THREE.MeshBasicMaterial({map:new THREE.CanvasTexture(c),side:THREE.DoubleSide}));m.position.set(x,4,z);m.rotation.y=ry;scene.add(m)}
+const gates=[gate(99,-12,Math.PI/2),gate(101,-103,Math.PI/2),gate(-82,-103,0),gate(-82,125,Math.PI/2),gate(135,140,0),gate(150,8,Math.PI/2,0xffd044)];
+function sign(text,x,z,ry=0,color="#68efff"){const c=document.createElement("canvas");c.width=512;c.height=128;const g=c.getContext("2d");g.fillStyle="#071521";g.fillRect(0,0,512,128);g.strokeStyle=color;g.lineWidth=10;g.strokeRect(5,5,502,118);g.fillStyle="#fff";g.font="900 52px system-ui";g.textAlign="center";g.textBaseline="middle";g.fillText(text,256,66);const geometry=new THREE.PlaneGeometry(12,3),material=new THREE.MeshBasicMaterial({map:new THREE.CanvasTexture(c),side:THREE.FrontSide});for(const flip of[0,Math.PI]){const m=new THREE.Mesh(geometry,material);m.position.set(x,4,z);m.rotation.y=ry+flip;scene.add(m)}}
 sign("BRAKE  ›",112,-72,Math.PI/2,"#ffd34f");sign("‹  HAIRPIN",38,-116,0,"#ff6c4c");sign("CLIMB  ›",-95,72,Math.PI/2);sign("FULL SEND  ›",45,123,0);sign("FINISH  ↓",166,36,Math.PI/2,"#ffd34f");
 
 const grid=new THREE.GridHelper(320,32,0xffffff,0xffffff);grid.position.y=-.15;grid.material.opacity=.08;grid.material.transparent=true;scene.add(grid);
 
-const chassis=world.createRigidBody(RAPIER.RigidBodyDesc.dynamic().setTranslation(-2,2.2,0).setCanSleep(false).setCcdEnabled(true).setLinearDamping(.08).setAngularDamping(.65));
-world.createCollider(RAPIER.ColliderDesc.cuboid(2.35,.2,1.05).setTranslation(0,.22,0).setDensity(70).setFriction(.72),chassis);
-const vehicle=world.createVehicleController(chassis),wheelOffsets=[{x:1.55,y:.35,z:1.02},{x:1.55,y:.35,z:-1.02},{x:-1.45,y:.35,z:1.02},{x:-1.45,y:.35,z:-1.02}];
-for(const p of wheelOffsets){vehicle.addWheel(p,{x:0,y:-1,z:0},{x:0,y:0,z:1},.42,.65);const i=vehicle.numWheels()-1;vehicle.setWheelSuspensionStiffness(i,180);vehicle.setWheelSuspensionCompression(i,7);vehicle.setWheelSuspensionRelaxation(i,9);vehicle.setWheelMaxSuspensionTravel(i,.55);vehicle.setWheelMaxSuspensionForce(i,60000);vehicle.setWheelSideFrictionStiffness(i,1.35);vehicle.setWheelFrictionSlip(i,2.55)}
+const{chassis,vehicle,wheelOffsets}=createVehicle(RAPIER,world);
 
 const car=new THREE.Group(),bodyMat=new THREE.MeshStandardMaterial({color:0x12d9ef,metalness:.55,roughness:.24}),dark=new THREE.MeshStandardMaterial({color:0x07131c,metalness:.25,roughness:.38});
 const body=new THREE.Mesh(new THREE.BoxGeometry(4.5,.65,2),bodyMat);body.position.y=.15;body.castShadow=true;car.add(body);
@@ -83,18 +81,16 @@ function captureReplay(){const replayTick=Math.floor(raceTick/4);if(replayFrames
 function restart(){raceState="countdown";raceTime=0;countdown=3;checkpoint=0;steer=0;raceTick=0;replayFrames=[];place(start,start.rotation);$("result").hidden=true;stepper.reset();updateHud()}
 function recover(){const spots=[start,{x:93,y:1.8,z:-20,rotation:{x:0,y:-.707,z:0,w:.707}},{x:82,y:1.9,z:-103,rotation:{x:0,y:1,z:0,w:0}},{x:-82,y:1.8,z:-80,rotation:{x:0,y:.707,z:0,w:.707}},{x:-82,y:1.8,z:115,rotation:{x:0,y:.707,z:0,w:.707}},{x:125,y:1.8,z:140,rotation:{x:0,y:0,z:0,w:1}}];place(spots[Math.min(checkpoint,spots.length-1)]);if(raceState==="racing")raceTime+=1.5}
 function finish(){raceState="finished";captureReplay();const isBest=!best||raceTime<best;if(isBest){best=raceTime;saveBest(localStorage,best);if(saveReplay(localStorage,best,replayFrames))bestReplay=readReplay(localStorage)}const medal=medalFor(raceTime);$("result-time").textContent=formatTime(raceTime);$("result-pb").textContent=`${medal?medal.name+" MEDAL · ":""}${isBest?"NEW PERSONAL BEST":`Personal best ${formatTime(best)}`}`;$("result").hidden=false;clearVehicle()}
-function updateHud(){const speed=raceState==="countdown"?0:Math.abs(vehicle.currentVehicleSpeed?.()||0)*3.6;$("time").textContent=formatTime(raceTime);$("speed").textContent=String(Math.round(speed)).padStart(3,"0");$("checkpoint").textContent=`${Math.min(checkpoint,5)} / 5`;const target=MEDALS.find(m=>!best||best>m.time)||MEDALS[0];$("delta").textContent=best?`PB ${formatTime(best)} · ${target.name} ${formatTime(target.time)}`:`${target.name} TARGET ${formatTime(target.time)}`}
+function updateHud(){document.body.classList.toggle("racing",raceState==="racing");const speed=raceState==="countdown"?0:Math.abs(vehicle.currentVehicleSpeed?.()||0)*3.6;$("time").textContent=formatTime(raceTime);$("speed").textContent=String(Math.round(speed)).padStart(3,"0");$("checkpoint").textContent=`${Math.min(checkpoint,5)} / 5`;const target=MEDALS.find(m=>!best||best>m.time)||MEDALS[0];$("delta").textContent=best?`PB ${formatTime(best)} · ${target.name} ${formatTime(target.time)}`:`${target.name} TARGET ${formatTime(target.time)}`;gates.forEach((g,i)=>{g.userData.material.emissiveIntensity=i===checkpoint?4:.55;g.scale.setScalar(i===checkpoint?1.06:1)})}
 
 function physicsStep(dt){
   const before=chassis.translation();lastPosition.set(before.x,before.y,before.z);const br=chassis.rotation();lastRotation.set(br.x,br.y,br.z,br.w);
   if(raceState==="countdown"){countdown-=dt;if(countdown<=0){raceState="racing";countdown=0}}
-  const throttle=raceState==="racing"?(keys.has("ArrowUp")||keys.has("KeyW")?1:keys.has("ArrowDown")||keys.has("KeyS")?-.65:0):0;
-  const targetSteer=(keys.has("ArrowLeft")||keys.has("KeyA")?1:0)-(keys.has("ArrowRight")||keys.has("KeyD")?1:0);steer+=clamp(targetSteer-steer,-dt*5,dt*5);
-  const position=chassis.translation(),onRoad=isOnRoad(position),speed=Math.abs(vehicle.currentVehicleSpeed?.()||0),handbrake=keys.has("Space"),steerLimit=THREE.MathUtils.lerp(.5,.18,clamp(speed/70,0,1)),engine=throttle*(speed>76&&throttle>0?0:15200)*(onRoad?1:.42),serviceBrake=throttle<0&&speed>1?4200:0;
-  if(audio){const now=audio.context.currentTime;audio.engine.frequency.setTargetAtTime(54+speed*7+Math.abs(throttle)*45,now,.04);audio.engineGain.gain.setTargetAtTime(raceState==="racing"?.035+Math.abs(throttle)*.055:0,now,.05);audio.wind.frequency.setTargetAtTime(70+speed*3,now,.08);audio.windGain.gain.setTargetAtTime(clamp((speed-8)/80,0,.06),now,.1)}
-  for(let i=0;i<4;i++){vehicle.setWheelEngineForce(i,engine*(i<2?1:.55));vehicle.setWheelBrake(i,raceState!=="racing"?6000:serviceBrake+(handbrake?(i<2?900:5200):0));vehicle.setWheelSteering(i,i<2?steer*steerLimit:0);vehicle.setWheelFrictionSlip(i,onRoad?(handbrake&&i>=2?1.05:2.55):.82)}
+  const position=chassis.translation(),onRoad=isOnRoad(position),input={forward:raceState==="racing"&&(keys.has("ArrowUp")||keys.has("KeyW")),reverse:raceState==="racing"&&(keys.has("ArrowDown")||keys.has("KeyS")),left:keys.has("ArrowLeft")||keys.has("KeyA"),right:keys.has("ArrowRight")||keys.has("KeyD"),handbrake:keys.has("Space")},drive=driveVehicle(vehicle,{get steer(){return steer},set steer(v){steer=v}},input,dt,onRoad),speed=drive.speed,handbrake=input.handbrake;
+  if(raceState!=="racing")for(let i=0;i<4;i++)vehicle.setWheelBrake(i,6000);
+  if(audio){const now=audio.context.currentTime,throttle=input.forward||input.reverse?1:0;audio.engine.frequency.setTargetAtTime(54+speed*7+throttle*45,now,.04);audio.engineGain.gain.setTargetAtTime(raceState==="racing"?.035+throttle*.055:0,now,.05);audio.wind.frequency.setTargetAtTime(70+speed*3,now,.08);audio.windGain.gain.setTargetAtTime(clamp((speed-8)/80,0,.06),now,.1)}
   if(!onRoad){const v=chassis.linvel();chassis.addForce({x:-v.x*125,y:0,z:-v.z*125},true)}
-  vehicle.updateVehicle(dt,RAPIER.QueryFilterFlags.EXCLUDE_DYNAMIC);world.step();
+  const preGrounded=[0,1,2,3].some(i=>vehicle.wheelIsInContact(i));stabilizeChassis(chassis,preGrounded);vehicle.updateVehicle(dt,RAPIER.QueryFilterFlags.EXCLUDE_DYNAMIC);world.step();
   const grounded=[0,1,2,3].some(i=>vehicle.wheelIsInContact(i));if(grounded&&!wasGrounded&&chassis.linvel().y<0)cameraShake=Math.min(.45,Math.abs(chassis.linvel().y)*.025);wasGrounded=grounded;if(raceState==="racing"&&handbrake&&speed>12&&raceTick%8===0)puff(chassis.translation());
   if(raceState==="racing"){raceTime+=dt;raceTick++;if(raceTick%4===0)captureReplay();const p=chassis.translation(),next=checkpointAdvance(checkpoint,p);if(next!==checkpoint){checkpoint=next;if(checkpoint===6)finish()}if(p.y<-12||Math.abs(p.x)>300||Math.abs(p.z)>260)recover()}
   updateHud();
