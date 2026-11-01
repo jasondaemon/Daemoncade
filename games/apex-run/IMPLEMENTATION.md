@@ -118,7 +118,7 @@ The finish remains narrow and digital steering still benefits from frequent corr
 course and car are original procedural geometry, not production photoreal assets. Lower-end
 laptop, software-renderer, and Windows performance remain uncharacterized.
 
-## Visual alpha 6: spline and recovery hardening
+## Visual alpha 8: spline, recovery and rail hardening
 
 This milestone intentionally returns the release label to alpha while the new course earns
 fresh player validation. It replaces the slab course rather than claiming the previous beta
@@ -150,6 +150,10 @@ evidence automatically applies to different geometry.
   launch can climb from rest instead of stalling below the crest.
 - Falling beneath an elevated deck while no wheel has valid road contact starts a 0.55-second
   recovery grace. Legitimate jumps and supported lower surfaces do not trigger it.
+- Rail collision uses one continuous low-friction closed shell per side. Its inner face has no
+  per-segment endcaps, while modest thickness and a chassis-height top prevent the car floor
+  from climbing onto a coplanar barrier. This removes doubled contacts without weakening the
+  visible physical boundary.
 
 Current visual-alpha limits: source tests now include a 44.26-second no-recovery ordered finish,
 but that reactive input fixture is not player proof. Camera clearance and the revised joins still
