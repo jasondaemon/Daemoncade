@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import RAPIER from "./vendor/rapier-0.17.3.js";
 import {FixedStepper,checkpointAdvance,clamp,isOnRoad} from "./simulation.js";
-import {applySurfaceDrag,createVehicle,driveVehicle,stabilizeChassis} from "./vehicle-model.js";
+import {RAIL_COLLISION_GROUPS,SUSPENSION_QUERY_GROUPS,applySurfaceDrag,createVehicle,driveVehicle,stabilizeChassis} from "./vehicle-model.js";
 import {ROAD_SAMPLES,TRACK_BOXES,buildRailColliderMesh,buildRoadMesh} from "./track-model.js";
 
 await RAPIER.init();
@@ -9,9 +9,9 @@ const road=TRACK_BOXES.filter(box=>box.surface!=="grass").map(({x,y,z,hx,hy,hz,r
 function makeRun(fps,recordedInputs=null){
   const world=new RAPIER.World({x:0,y:-16,z:0});world.integrationParameters.dt=1/120;
   world.createCollider(RAPIER.ColliderDesc.cuboid(220,1,220).setTranslation(0,-.65,-20).setFriction(1.1));
-  for(const[x,y,z,hx,hy,hz,rx,ry,rz]of road){const half=Math.sin(rx/2),q={x:half,y:0,z:Math.sin(rz/2),w:Math.cos(rx/2)*Math.cos(rz/2)};world.createCollider(RAPIER.ColliderDesc.cuboid(hx,hy,hz).setTranslation(x,y,z).setRotation(q).setFriction(1.1))}const mesh=buildRoadMesh(22);world.createCollider(RAPIER.ColliderDesc.trimesh(new Float32Array(mesh.positions),new Uint32Array(mesh.indices)).setFriction(1.1));const rails=buildRailColliderMesh(mesh.samples);world.createCollider(RAPIER.ColliderDesc.trimesh(new Float32Array(rails.positions),new Uint32Array(rails.indices)).setFriction(.08).setRestitution(.08));
+  for(const[x,y,z,hx,hy,hz,rx,ry,rz]of road){const half=Math.sin(rx/2),q={x:half,y:0,z:Math.sin(rz/2),w:Math.cos(rx/2)*Math.cos(rz/2)};world.createCollider(RAPIER.ColliderDesc.cuboid(hx,hy,hz).setTranslation(x,y,z).setRotation(q).setFriction(1.1))}const mesh=buildRoadMesh(22);world.createCollider(RAPIER.ColliderDesc.trimesh(new Float32Array(mesh.positions),new Uint32Array(mesh.indices)).setFriction(1.1));const rails=buildRailColliderMesh(mesh.samples);world.createCollider(RAPIER.ColliderDesc.trimesh(new Float32Array(rails.positions),new Uint32Array(rails.indices)).setFriction(.08).setFrictionCombineRule(RAPIER.CoefficientCombineRule.Min).setRestitution(.08).setCollisionGroups(RAIL_COLLISION_GROUPS));
   const{chassis,vehicle}=createVehicle(RAPIER,world),controlState={steer:0,surfaceBlend:1};
-  for(let i=0;i<361;i++){driveVehicle(vehicle,controlState,{},1/120,true);for(let wheel=0;wheel<4;wheel++)vehicle.setWheelBrake(wheel,6000);stabilizeChassis(chassis,vehicle,1/120);vehicle.updateVehicle(1/120,RAPIER.QueryFilterFlags.EXCLUDE_DYNAMIC);world.step()}
+  for(let i=0;i<361;i++){driveVehicle(vehicle,controlState,{},1/120,true);for(let wheel=0;wheel<4;wheel++)vehicle.setWheelBrake(wheel,6000);stabilizeChassis(chassis,vehicle,1/120);vehicle.updateVehicle(1/120,RAPIER.QueryFilterFlags.EXCLUDE_DYNAMIC,SUSPENSION_QUERY_GROUPS);world.step()}
   const targets=ROAD_SAMPLES.filter((_,index)=>index%6===0).map(({x,z})=>[x,z]);targets.push([ROAD_SAMPLES.at(-1).x,ROAD_SAMPLES.at(-1).z]);const trace=[],inputTape=[];let target=1,checkpoint=0,ticks=0,maxY=0,maxSpeed=0,minLandingY=99,airborne=false,landed=false,stuckTicks=0,recoveries=0;
   const step=()=>{
     if(checkpoint>=6||recoveries>0)return;
@@ -19,7 +19,7 @@ function makeRun(fps,recordedInputs=null){
     const desired=Math.atan2(targets[target][1]-p.z,targets[target][0]-p.x),forward=Math.atan2(2*(q.x*q.z-q.w*q.y),1-2*(q.y*q.y+q.z*q.z));let angle=desired-forward;angle=Math.atan2(Math.sin(angle),Math.cos(angle));
     const desiredSteer=clamp(-angle*1.8,-1,1),speed=Math.abs(vehicle.currentVehicleSpeed?.()||0),turning=Math.abs(angle)>.12,braking=turning&&speed>24,steerOn=Math.abs(desiredSteer)>.1&&(ticks%12)<Math.ceil(Math.abs(desiredSteer)*12),generated={forward:!braking,reverse:braking,left:steerOn&&desiredSteer>0,right:steerOn&&desiredSteer<0,handbrake:false},input=recordedInputs?(recordedInputs[ticks]||recordedInputs.at(-1)):generated;if(!recordedInputs)inputTape.push({...input});const drive=driveVehicle(vehicle,controlState,input,1/120,isOnRoad(p));applySurfaceDrag(chassis,drive.surfaceBlend,1/120);maxSpeed=Math.max(maxSpeed,speed);
     const grounded=[0,1,2,3].some(i=>vehicle.wheelIsInContact(i));if(!grounded&&p.y>1.5)airborne=true;if(airborne&&grounded){landed=true;minLandingY=Math.min(minLandingY,p.y)}stabilizeChassis(chassis,vehicle,1/120);
-    vehicle.updateVehicle(1/120,RAPIER.QueryFilterFlags.EXCLUDE_DYNAMIC);world.step();ticks++;if(ticks%120===0&&ticks<=1800)trace.push([ticks,+p.x.toFixed(1),+p.y.toFixed(1),+p.z.toFixed(1),+forward.toFixed(2),+angle.toFixed(2),target,+speed.toFixed(1)]);maxY=Math.max(maxY,p.y);const nextCheckpoint=checkpointAdvance(checkpoint,p);stuckTicks=nextCheckpoint!==checkpoint?0:speed<.5?stuckTicks+1:0;checkpoint=nextCheckpoint;
+    vehicle.updateVehicle(1/120,RAPIER.QueryFilterFlags.EXCLUDE_DYNAMIC,SUSPENSION_QUERY_GROUPS);world.step();ticks++;if(ticks%120===0&&ticks<=1800)trace.push([ticks,+p.x.toFixed(1),+p.y.toFixed(1),+p.z.toFixed(1),+forward.toFixed(2),+angle.toFixed(2),target,+speed.toFixed(1)]);maxY=Math.max(maxY,p.y);const nextCheckpoint=checkpointAdvance(checkpoint,p);stuckTicks=nextCheckpoint!==checkpoint?0:speed<.5?stuckTicks+1:0;checkpoint=nextCheckpoint;
     if(p.y<-5||Math.abs(p.z)>240||Math.abs(p.x)>220||stuckTicks>600){recoveries++}
   };
   const stepper=new FixedStepper(step);for(let frame=0;frame<fps*70&&checkpoint<6&&recoveries===0;frame++)stepper.advance(1/fps);

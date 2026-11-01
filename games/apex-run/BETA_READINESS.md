@@ -2,7 +2,7 @@
 
 ## Status
 
-Version `0.5.0-alpha.8` is a visual-course alpha candidate. The previously verified flat-course
+Version `0.5.0-alpha.11` is a visual-course alpha candidate. The previously verified flat-course
 beta remains available in Git history at `16a26e5`; its player-lap result must not be treated as
 validation of this materially different spline layout. The game is an original single-player
 stadium time attack inspired by the broad genre, not a Trackmania clone, formula-equivalent
@@ -43,10 +43,11 @@ Then open `http://127.0.0.1:4173/games/apex-run/`.
 - A recovery-to-crest probe starts from rest on the sloped CP2 recovery pose, uses held throttle
   plus one 0.5-second steering correction, reaches 20.2 metres elevation and 82.8 km/h, crosses
   the crest and remains on the road. Visible rails now have continuous collision geometry.
-- Ten chassis-and-wheel scrape probes cover both rails at 43-79 km/h across straight and curved
-  joins. The rails use one continuous, low-friction closed shell rather than overlapping planes;
-  steering away retains at least 12 km/h, forward travel and upright attitude without climbing
-  through the visible barrier.
+- Ten four-second chassis-and-wheel scrape probes cover both rails at 43-79 km/h across straight
+  and curved joins. Suspension query groups exclude the physical rail while retaining road contact;
+  every probe records zero rail-as-ground ticks, no sustained perch, continued route progress,
+  and more than 5 m/s during the two-second throttle/countersteer phase. A sufficiently direct
+  chassis impact can still stop the car and requires the documented brake/reverse lifecycle.
 - A reactive keyboard-like source fixture now completes all six ordered gates in 44.26 seconds
   without recovery at 30/60/144 render schedules. This is collision/determinism coverage, not a
   substitute for a screen-driven player lap.
