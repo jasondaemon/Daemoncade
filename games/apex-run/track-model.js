@@ -34,11 +34,15 @@ export const ROUTE_PATH=Object.freeze([
 // tempting but invalid cross-grass shortcut.
 export const ROUTE_STAGE_RANGES=Object.freeze([[0,2],[2,3],[3,6],[6,7],[7,9],[9,11]].map(Object.freeze));
 export function routeStage(checkpoint){const range=ROUTE_STAGE_RANGES[Math.max(0,Math.min(checkpoint,ROUTE_STAGE_RANGES.length-1))],points=ROUTE_PATH.slice(range[0],range[1]+1);const gate=CHECKPOINTS[Math.max(0,Math.min(checkpoint,CHECKPOINTS.length-1))];return points.concat(gate?{x:gate.x,z:gate.z}:[])}
-export function routeTarget(checkpoint,position,lookahead=28){
-  const points=routeStage(checkpoint),segments=[];let total=0,best={distance:Infinity,along:0};
-  for(let i=0;i<points.length-1;i++){const a=points[i],b=points[i+1],dx=b.x-a.x,dz=b.z-a.z,length=Math.hypot(dx,dz);if(length<.001)continue;segments.push({a,b,dx,dz,length,start:total});const t=Math.max(0,Math.min(1,((position.x-a.x)*dx+(position.z-a.z)*dz)/(length*length))),x=a.x+dx*t,z=a.z+dz*t,distance=Math.hypot(position.x-x,position.z-z);if(distance<best.distance)best={distance,along:total+length*t};total+=length}
-  const wanted=Math.min(total,best.along+lookahead);for(const segment of segments)if(wanted<=segment.start+segment.length){const t=(wanted-segment.start)/segment.length;return{x:segment.a.x+segment.dx*t,z:segment.a.z+segment.dz*t,stage:checkpoint}}
-  const last=points.at(-1);return{x:last.x,z:last.z,stage:checkpoint}
+function stageGeometry(checkpoint){const points=routeStage(checkpoint),segments=[];let total=0;for(let i=0;i<points.length-1;i++){const a=points[i],b=points[i+1],dx=b.x-a.x,dz=b.z-a.z,length=Math.hypot(dx,dz);if(length<.001)continue;segments.push({a,b,dx,dz,length,start:total});total+=length}return{segments,total}}
+function pointAt(geometry,along){const wanted=Math.max(0,Math.min(geometry.total,along));for(const segment of geometry.segments)if(wanted<=segment.start+segment.length){const t=(wanted-segment.start)/segment.length;return{x:segment.a.x+segment.dx*t,z:segment.a.z+segment.dz*t}}const last=geometry.segments.at(-1)?.b||{x:0,z:0};return{x:last.x,z:last.z}}
+export function routeTarget(checkpoint,position,lookahead=28,minimumProgress=0){
+  const geometry=stageGeometry(checkpoint),floor=Math.max(0,minimumProgress-5);let best={distance:Infinity,along:Math.max(0,minimumProgress)};
+  for(const segment of geometry.segments){const t=Math.max(0,Math.min(1,((position.x-segment.a.x)*segment.dx+(position.z-segment.a.z)*segment.dz)/(segment.length*segment.length))),along=segment.start+segment.length*t;if(along<floor)continue;const projected=pointAt(geometry,along),distance=Math.hypot(position.x-projected.x,position.z-projected.z);if(distance<best.distance)best={distance,along}}
+  // Progress is monotonic within the checkpoint stage. The small projection
+  // floor tolerates corner cutting while hysteresis prevents a passed helper
+  // point from ever commanding a U-turn.
+  const progress=Math.max(minimumProgress,best.along),distances=[lookahead*.45,lookahead,lookahead*1.55],breadcrumbs=distances.map(distance=>pointAt(geometry,progress+distance)),target=breadcrumbs[1];return{...target,stage:checkpoint,progress,total:geometry.total,breadcrumbs}
 }
 export function routeGuides(spacing=32){const guides=[];for(let i=0;i<ROUTE_PATH.length-1;i++){const a=ROUTE_PATH[i],b=ROUTE_PATH[i+1],dx=b.x-a.x,dz=b.z-a.z,length=Math.hypot(dx,dz),steps=Math.max(1,Math.floor(length/spacing));for(let step=0;step<steps;step++){const t=(step+.5)/steps;guides.push({x:a.x+dx*t,z:a.z+dz*t,heading:Math.atan2(dz,dx),segment:i})}}return guides}
 export const CHECKPOINTS=Object.freeze([

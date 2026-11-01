@@ -25,4 +25,13 @@ for(let checkpoint=0;checkpoint<CHECKPOINTS.length;checkpoint++){
 // Even when physically near the finish, stage four must still point to the
 // eastbound z=140 corridor and gate five rather than across the infield.
 const gate4Trap=routeTarget(4,{x:150,z:20});assert.ok(gate4Trap.z>130&&gate4Trap.stage===4,JSON.stringify(gate4Trap));
+for(const [checkpoint,positions] of [
+  [4,[{x:-82,z:125},{x:-65,z:137},{x:-5,z:146},{x:55,z:134},{x:105,z:145},{x:132,z:138}]],
+  [5,[{x:135,z:140},{x:144,z:128},{x:156,z:108},{x:146,z:82},{x:154,z:45},{x:149,z:14}]],
+]){
+  let progress=0,previousTarget=null;for(const position of positions){const target=routeTarget(checkpoint,position,34,progress);assert.ok(target.progress>=progress,`stage ${checkpoint} guidance regressed ${progress} -> ${target.progress}`);assert.equal(target.breadcrumbs.length,3);if(previousTarget&&target.total-target.progress>17)assert.ok(Math.hypot(target.x-position.x,target.z-position.z)>8,"lookahead collapsed onto an invisible helper point");progress=target.progress;previousTarget=target}
+  // Small timing/line offsets after a passed helper cannot swing the target
+  // backward. This models a player cutting a visible paved corner.
+  const late=routeTarget(checkpoint,positions.at(-2),34,progress),jittered=routeTarget(checkpoint,{x:positions.at(-2).x-6,z:positions.at(-2).z+5},34,late.progress);assert.ok(jittered.progress>=late.progress);assert.equal(jittered.stage,checkpoint);
+}
 console.log("Apex Run ordered route guidance passed",JSON.stringify({points:ROUTE_PATH.length,guides:guides.length,stages:ROUTE_STAGE_RANGES.length}));
