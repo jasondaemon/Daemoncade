@@ -2,7 +2,7 @@
 
 ## Status
 
-Version `0.5.0-alpha.13` is a visual-course alpha candidate. The previously verified flat-course
+Version `0.5.0-alpha.15` is a visual-course alpha candidate. The previously verified flat-course
 beta remains available in Git history at `16a26e5`; its player-lap result must not be treated as
 validation of this materially different spline layout. The game is an original single-player
 stadium time attack inspired by the broad genre, not a Trackmania clone, formula-equivalent
@@ -36,10 +36,10 @@ Then open `http://127.0.0.1:4173/games/apex-run/`.
 - A 34 m/s west-straight crest test becomes fully airborne and establishes sustained landing
   contact on the spline collider;
   the opening curve remains on the modeled road across a 0.6-second launch-timing window.
-- Browser inspection of alpha 4 at 1280x720 confirmed the new curved ribbon, curbs, elevated supports,
-  continuous stadium tiers, hills and reshaped vehicle render without console-visible startup
-  failure, but also exposed an elevated-road camera clip. Alpha 5 adds obstruction-aware camera
-  placement and smoother joins; those changes require a fresh visual inspection before acceptance.
+- Browser inspection at 1280x720 confirms the curved ribbon, curbs, elevated supports,
+  continuous stadium tiers, hills, reshaped vehicle, smoother joins and obstruction-aware camera.
+  A startup integration fault found during this inspection was corrected before the alpha 15 lap;
+  alpha 15 completed with no warning or error attributed to its module graph.
 - A recovery-to-crest probe starts from rest on the sloped CP2 recovery pose, uses held throttle
   plus one 0.5-second steering correction, reaches 20.2 metres elevation and 82.8 km/h, crosses
   the crest and remains on the road. Visible rails now have continuous collision geometry.
@@ -48,13 +48,19 @@ Then open `http://127.0.0.1:4173/games/apex-run/`.
   every probe records zero rail-as-ground ticks, no sustained perch, continued route progress,
   and more than 5 m/s during the two-second throttle/countersteer phase. A sufficiently direct
   chassis impact can still stop the car and requires the documented brake/reverse lifecycle.
-- Four additional pinned-contact probes force the rounded chassis into both rails on flat and
-  elevated samples, record real chassis/rail manifolds while confirming zero rail wheel contacts,
-  then exercise brake, release, reverse and forward steer-away. All regain more than 5 m/s and
-  remain upright; this directly covers the prior 0-4 km/h asphalt immobilization.
-- A reactive keyboard-like source fixture now completes all six ordered gates in 44.26 seconds
+- Ten pinned-contact probes force the rounded chassis into both rails on flat, elevated and final
+  curve samples, record real chassis/rail manifolds while confirming zero rail wheel contacts,
+  then brake to a measured stop, release, reverse at least 0.5 metres and steer forward away.
+  All regain more than 5 m/s and remain upright; this directly covers the prior 0-4 km/h asphalt
+  immobilization without relying on a fixed-timing gear-change assumption.
+- A reactive keyboard-like source fixture completes all six ordered gates in 44.07 seconds
   without recovery at 30/60/144 render schedules. This is collision/determinism coverage, not a
-  substitute for a screen-driven player lap.
+  substitute for a screen-driven player lap. A separate held-input crest probe, rather than this
+  route fixture, proves the airborne and landing phases.
+- Production-page keyboard QA completed a no-recovery `1:42.583` Rookie-medal lap after a separate
+  `1:57.500` recovery/practice lap. Restart, recovery eligibility, checkpoint order, finish and PB
+  save all behaved correctly. The clean lap needed several deliberate reverse-and-steer escapes;
+  direct rail contact still removes too much momentum even though it no longer traps the car.
 
 The following evidence describes the prior `0.4.0-beta.1` geometry and is retained as history,
 not as a readiness claim for visual alpha 5:

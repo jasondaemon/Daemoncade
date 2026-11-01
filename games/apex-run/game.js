@@ -1,10 +1,10 @@
-import * as THREE from "../vendor/three/three.module.min.js?v=0.5.0-alpha13";
-import RAPIER from "./vendor/rapier-0.17.3.js?v=0.5.0-alpha13";
-import {FixedStepper,MEDALS,clamp,commitResult,formatTime,frameGapInvalidates,isOnRoad,medalFor,persistenceNote,readBest,readReplay,reconcileBest,replayFrameAt} from "./simulation.js?v=0.5.0-alpha13";
-import {RAIL_COLLISION_GROUPS,SUSPENSION_QUERY_GROUPS,VEHICLE,applyLowSpeedSteering,applySurfaceDrag,createVehicle,driveVehicle,stabilizeChassis} from "./vehicle-model.js?v=0.5.0-alpha13";
-import {makeWheelVisual,setWheelVisualPose} from "./wheel-visual.js?v=0.5.0-alpha13";
-import {TRACK_BOXES,CHECKPOINTS,RECOVERY_SPOTS,ROAD_SAMPLES,PLAY_AREA,RAIL_PROFILE,advanceOutsidePlayTime,advanceUnderRoadTime,buildLaneRibbon,buildRailColliderMesh,buildRoadMesh,routeGuides,routeStage,routeTarget} from "./track-model.js?v=0.5.0-alpha13";
-import {RaceController} from "./race-controller.js?v=0.5.0-alpha13";
+import * as THREE from "../vendor/three/three.module.min.js?v=0.5.0-alpha15";
+import RAPIER from "./vendor/rapier-0.17.3.js?v=0.5.0-alpha15";
+import {FixedStepper,MEDALS,clamp,commitResult,formatTime,frameGapInvalidates,isOnRoad,medalFor,persistenceNote,readBest,readReplay,reconcileBest,replayFrameAt} from "./simulation.js?v=0.5.0-alpha15";
+import {RAIL_COLLISION_GROUPS,SUSPENSION_QUERY_GROUPS,VEHICLE,applyLowSpeedSteering,applySurfaceDrag,createVehicle,driveVehicle,hasSupportingContact,stabilizeChassis} from "./vehicle-model.js?v=0.5.0-alpha15";
+import {makeWheelVisual,setWheelVisualPose} from "./wheel-visual.js?v=0.5.0-alpha15";
+import {TRACK_BOXES,CHECKPOINTS,RECOVERY_SPOTS,ROAD_SAMPLES,PLAY_AREA,RAIL_PROFILE,advanceOutsidePlayTime,advanceUnderRoadTime,buildLaneRibbon,buildRailColliderMesh,buildRoadColliderMesh,buildRoadMesh,routeGuides,routeStage,routeTarget} from "./track-model.js?v=0.5.0-alpha15";
+import {RaceController} from "./race-controller.js?v=0.5.0-alpha15";
 
 const $=id=>document.getElementById(id),canvas=$("view"),scene=new THREE.Scene();
 const reducedMotion=matchMedia("(prefers-reduced-motion: reduce)").matches;
@@ -18,16 +18,16 @@ const rim=new THREE.DirectionalLight(0x4bdcff,1.3);rim.position.set(90,35,-130);
 
 await RAPIER.init();
 const world=new RAPIER.World({x:0,y:VEHICLE.gravity,z:0});world.integrationParameters.dt=1/120;
-const meshes=[],keys=new Set(),course=[],roadColliders=new Set();
+const meshes=[],keys=new Set(),course=[],roadColliders=new Set(),supportColliders=[];
 const materials={road:new THREE.MeshStandardMaterial({color:0x313d48,roughness:.82,metalness:.02}),bank:new THREE.MeshStandardMaterial({color:0x202b36,roughness:.72}),runoff:new THREE.MeshStandardMaterial({color:0x89949b,roughness:.9}),edge:new THREE.MeshStandardMaterial({color:0x12cde8,emissive:0x057389,emissiveIntensity:.75}),grass:new THREE.MeshStandardMaterial({color:0x43752c,roughness:1}),stadium:new THREE.MeshStandardMaterial({color:0x182533,roughness:.8})};
 
 function addBox({x,y,z,hx,hy,hz,rx=0,ry=0,rz=0,material=materials.road,collider=true,surface="road"}){
   const mesh=new THREE.Mesh(new THREE.BoxGeometry(hx*2,hy*2,hz*2),material);mesh.position.set(x,y,z);mesh.rotation.set(rx,ry,rz);mesh.castShadow=true;mesh.receiveShadow=true;scene.add(mesh);
-  if(collider){const rotation=new THREE.Quaternion().setFromEuler(mesh.rotation),desc=RAPIER.ColliderDesc.cuboid(hx,hy,hz).setTranslation(x,y,z).setRotation(rotation).setFriction(1.1),created=world.createCollider(desc);if(surface!=="grass")roadColliders.add(created.handle)}
+  if(collider){const rotation=new THREE.Quaternion().setFromEuler(mesh.rotation),desc=RAPIER.ColliderDesc.cuboid(hx,hy,hz).setTranslation(x,y,z).setRotation(rotation).setFriction(1.1),created=world.createCollider(desc);supportColliders.push(created);if(surface!=="grass")roadColliders.add(created.handle)}
   course.push(mesh);return mesh;
 }
 for(const box of TRACK_BOXES)addBox({...box,material:materials[box.surface||"road"]});
-const roadData=buildRoadMesh(22),roadGeometry=new THREE.BufferGeometry();roadGeometry.setAttribute("position",new THREE.Float32BufferAttribute(roadData.positions,3));roadGeometry.setIndex(roadData.indices);roadGeometry.computeVertexNormals();const roadMesh=new THREE.Mesh(roadGeometry,materials.road);roadMesh.castShadow=true;roadMesh.receiveShadow=true;scene.add(roadMesh);course.push(roadMesh);const roadCollider=world.createCollider(RAPIER.ColliderDesc.trimesh(new Float32Array(roadData.positions),new Uint32Array(roadData.indices)).setFriction(1.1));roadColliders.add(roadCollider.handle);
+const roadData=buildRoadMesh(22),roadGeometry=new THREE.BufferGeometry();roadGeometry.setAttribute("position",new THREE.Float32BufferAttribute(roadData.positions,3));roadGeometry.setIndex(roadData.indices);roadGeometry.computeVertexNormals();const roadMesh=new THREE.Mesh(roadGeometry,materials.road);roadMesh.castShadow=true;roadMesh.receiveShadow=true;scene.add(roadMesh);course.push(roadMesh);const roadSurface=buildRoadColliderMesh(roadData.samples),roadCollider=world.createCollider(RAPIER.ColliderDesc.trimesh(new Float32Array(roadSurface.positions),new Uint32Array(roadSurface.indices)).setFriction(1.1));roadColliders.add(roadCollider.handle);supportColliders.push(roadCollider);
 const laneData=buildLaneRibbon(roadData.samples),laneGeometry=new THREE.BufferGeometry();laneGeometry.setAttribute("position",new THREE.Float32BufferAttribute(laneData.positions,3));laneGeometry.setIndex(laneData.indices);laneGeometry.computeVertexNormals();const laneMat=new THREE.MeshStandardMaterial({color:0xf5fbff,emissive:0x29404c,roughness:.5,side:THREE.DoubleSide}),laneMesh=new THREE.Mesh(laneGeometry,laneMat);laneMesh.receiveShadow=true;scene.add(laneMesh);
 const curveFrom=selector=>new THREE.CatmullRomCurve3(roadData.samples.map(sample=>{const p=selector(sample);return new THREE.Vector3(p.x,p.y,p.z)}),false,"centripetal"),railCenter=RAIL_PROFILE.height,leftCurve=curveFrom(sample=>({x:sample.left.x,y:sample.left.y+railCenter,z:sample.left.z})),rightCurve=curveFrom(sample=>({x:sample.right.x,y:sample.right.y+railCenter,z:sample.right.z}));
 const railMat=new THREE.MeshStandardMaterial({color:0x38d9ef,emissive:0x07667a,emissiveIntensity:1.1,metalness:.55,roughness:.28}),railWallMat=new THREE.MeshStandardMaterial({color:0x126579,emissive:0x063743,emissiveIntensity:.55,metalness:.3,roughness:.42,side:THREE.DoubleSide});for(const curve of[leftCurve,rightCurve]){const mesh=new THREE.Mesh(new THREE.TubeGeometry(curve,roadData.samples.length*2,.24,7,false),railMat);mesh.castShadow=true;scene.add(mesh)}const railData=buildRailColliderMesh(roadData.samples),railGeometry=new THREE.BufferGeometry();railGeometry.setAttribute("position",new THREE.Float32BufferAttribute(railData.positions,3));railGeometry.setIndex(railData.indices);railGeometry.computeVertexNormals();const railWall=new THREE.Mesh(railGeometry,railWallMat);railWall.castShadow=true;railWall.receiveShadow=true;scene.add(railWall);course.push(railWall);const railCollider=world.createCollider(RAPIER.ColliderDesc.trimesh(new Float32Array(railData.positions),new Uint32Array(railData.indices)).setFriction(.08).setFrictionCombineRule(RAPIER.CoefficientCombineRule.Min).setRestitution(.08).setCollisionGroups(RAIL_COLLISION_GROUPS));
@@ -65,7 +65,7 @@ const guideCrumbs=Array.from({length:3},(_,index)=>{const mesh=new THREE.Mesh(ne
 
 const grid=new THREE.GridHelper(320,32,0xffffff,0xffffff);grid.position.y=-.15;grid.material.opacity=.08;grid.material.transparent=true;scene.add(grid);
 
-const{chassis,vehicle,wheelOffsets}=createVehicle(RAPIER,world);
+const{chassis,chassisCollider,vehicle,wheelOffsets}=createVehicle(RAPIER,world);
 
 const car=new THREE.Group(),bodyMat=new THREE.MeshStandardMaterial({color:0x12d9ef,metalness:.55,roughness:.24}),dark=new THREE.MeshStandardMaterial({color:0x07131c,metalness:.25,roughness:.38});
 const body=new THREE.Mesh(new THREE.CapsuleGeometry(.72,2.8,6,16),bodyMat);body.rotation.z=Math.PI/2;body.scale.set(1,.68,1.38);body.position.set(-.15,.12,0);body.castShadow=true;car.add(body);
@@ -100,11 +100,11 @@ let hudSignature="",lastGate=-1;function updateHud(){const position=chassis.tran
 
 function physicsStep(dt){
   const before=chassis.translation();lastPosition.set(before.x,before.y,before.z);const br=chassis.rotation();lastRotation.set(br.x,br.y,br.z,br.w);
-  race.advance(dt);const position=chassis.translation(),wheelRoad=[0,1,2,3].map(i=>{const ground=vehicle.wheelGroundObject(i);return ground?roadColliders.has(ground.handle):isOnRoad(position)}),rawInput=testInput||{forward:keys.has("ArrowUp")||keys.has("KeyW"),reverse:keys.has("ArrowDown")||keys.has("KeyS"),left:keys.has("ArrowLeft")||keys.has("KeyA"),right:keys.has("ArrowRight")||keys.has("KeyD"),handbrake:keys.has("Space")},input={...rawInput,forward:race.state==="racing"&&rawInput.forward,reverse:race.state==="racing"&&rawInput.reverse},drive=driveVehicle(vehicle,vehicleState,input,dt,wheelRoad),speed=drive.speed,handbrake=input.handbrake;
+  race.advance(dt);const position=chassis.translation(),velocity=chassis.linvel(),motionSpeed=Math.hypot(velocity.x,velocity.z),wheelRoad=[0,1,2,3].map(i=>{const ground=vehicle.wheelGroundObject(i);return ground?roadColliders.has(ground.handle):isOnRoad(position)}),rawInput=testInput||{forward:keys.has("ArrowUp")||keys.has("KeyW"),reverse:keys.has("ArrowDown")||keys.has("KeyS"),left:keys.has("ArrowLeft")||keys.has("KeyA"),right:keys.has("ArrowRight")||keys.has("KeyD"),handbrake:keys.has("Space")},input={...rawInput,forward:race.state==="racing"&&rawInput.forward,reverse:race.state==="racing"&&rawInput.reverse},drive=driveVehicle(vehicle,vehicleState,input,dt,wheelRoad,motionSpeed),speed=drive.speed,handbrake=input.handbrake;
   if(race.state!=="racing")for(let i=0;i<4;i++)vehicle.setWheelBrake(i,6000);
   if(audio){const now=audio.context.currentTime,throttle=input.forward||input.reverse?1:0;audio.engine.frequency.setTargetAtTime(54+speed*7+throttle*45,now,.04);audio.engineGain.gain.setTargetAtTime(race.state==="racing"?.035+throttle*.055:0,now,.05);audio.wind.frequency.setTargetAtTime(70+speed*3,now,.08);audio.windGain.gain.setTargetAtTime(clamp((speed-8)/80,0,.06),now,.1)}
   applySurfaceDrag(chassis,drive.surfaceBlend,dt);
-  applyLowSpeedSteering(chassis,vehicle,input,dt);
+  applyLowSpeedSteering(chassis,vehicle,input,dt,hasSupportingContact(world,chassisCollider,supportColliders));
   stabilizeChassis(chassis,vehicle,dt);vehicle.updateVehicle(dt,RAPIER.QueryFilterFlags.EXCLUDE_DYNAMIC,SUSPENSION_QUERY_GROUPS);world.step();
   const grounded=[0,1,2,3].some(i=>vehicle.wheelIsInContact(i));if(grounded&&!wasGrounded&&chassis.linvel().y<0)cameraShake=Math.min(.45,Math.abs(chassis.linvel().y)*.025);wasGrounded=grounded;if(race.state==="racing"&&handbrake&&speed>12&&race.tick%8===0)puff(chassis.translation());
   if(race.state==="racing"){if(race.tick===1||race.tick%4===0)captureReplay();const p=chassis.translation(),result=race.observe(p);outsidePlayTime=advanceOutsidePlayTime(outsidePlayTime,p,dt);underRoadTime=wheelRoad.some(Boolean)?0:advanceUnderRoadTime(underRoadTime,p,dt);if(result.finished)finish();else if(p.y<-5||outsidePlayTime>=PLAY_AREA.grace||underRoadTime>=.55)recover()}

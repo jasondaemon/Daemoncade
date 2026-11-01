@@ -118,7 +118,7 @@ The finish remains narrow and digital steering still benefits from frequent corr
 course and car are original procedural geometry, not production photoreal assets. Lower-end
 laptop, software-renderer, and Windows performance remain uncharacterized.
 
-## Visual alpha 13: spline, recovery and rail hardening
+## Visual alpha 14: spline, recovery and rail hardening
 
 This milestone intentionally returns the release label to alpha while the new course earns
 fresh player validation. It replaces the slab course rather than claiming the previous beta
@@ -162,10 +162,16 @@ evidence automatically applies to different geometry.
   against the rail. Below 22 km/h, grounded throttle-plus-steer also applies local-axis tire scrub
   and yaw impulses; this models parking-speed steering that Rapier's rolling-only wheel rays do
   not generate, without reading track coordinates or changing the car pose.
-Current visual-alpha limits: source tests now include a 44.26-second no-recovery ordered finish,
-but that reactive input fixture is not player proof. Camera clearance and the revised joins still
-need fresh pixel inspection and a normal-keyboard player lap. The environment remains original
-procedural art rather than authored photogrammetry, and lower-end GPU performance remains unmeasured.
+- The rendered road keeps visible thickness, while Rapier suspension and chassis contact use its
+  top ribbon only; vertical shoulder triangles can no longer masquerade as ground. Low-speed
+  assistance requires wheel support or a measured upward road/terrain manifold, so it cannot fire
+  at an unsupported jump apex. Reverse uses actual chassis speed for gear selection and a capped
+  10 m/s gear with enough low-speed torque to retreat from the final rail.
+Current visual-alpha evidence includes a 44.07-second no-recovery source fixture and a screen-driven
+`1:42.583` no-recovery Rookie lap in the production page. The player lap required several physical
+reverse-and-steer rail escapes, so glancing-contact momentum loss remains a dynamics-polish target
+rather than a solved racing-feel claim. The environment remains original procedural art rather than
+authored photogrammetry, and lower-end GPU performance remains unmeasured.
 
 ## Beta browser integration
 
