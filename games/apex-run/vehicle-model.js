@@ -1,6 +1,6 @@
 // Rapier's vehicle axes are local +X forward, +Y up and +Z axle. The forces
 // below target a ~900 kg arcade car: about 0.4 g drive and 0.8 g service brake.
-export const VEHICLE={gravity:-16,maxSpeed:38,engine:900,reverseScale:-.55,serviceBrake:1800,handbrakeFront:250,handbrakeRear:1900,roadGrip:2.35,driftGrip:1.05,offroadGrip:.72,steerLow:.4,steerHigh:.055,steerRise:1.65,steerRelease:5.2,steerCounter:3.8};
+export const VEHICLE={gravity:-16,maxSpeed:38,engine:900,reverseScale:-.55,serviceBrake:1800,handbrakeFront:250,handbrakeRear:1900,roadGrip:2.35,driftGrip:1.05,offroadGrip:1.12,steerLow:.4,steerHigh:.055,steerRise:1.65,steerRelease:5.2,steerCounter:3.8};
 export const WHEEL_OFFSETS=[{x:1.55,y:.08,z:1.02},{x:1.55,y:.08,z:-1.02},{x:-1.45,y:.08,z:1.02},{x:-1.45,y:.08,z:-1.02}];
 export function clampVehicle(v,min,max){return Math.max(min,Math.min(max,v))}
 export function createVehicle(RAPIER,world,start={x:-2,y:2.2,z:0}){
@@ -13,7 +13,7 @@ export function createVehicle(RAPIER,world,start={x:-2,y:2.2,z:0}){
 export function driveVehicle(vehicle,state,input,dt,onRoad=true){
   const speed=Math.abs(vehicle.currentVehicleSpeed?.()||0),target=(input.left?1:0)-(input.right?1:0),opposing=target&&state.steer&&Math.sign(target)!==Math.sign(state.steer),rate=target?(opposing?VEHICLE.steerCounter:VEHICLE.steerRise):VEHICLE.steerRelease;state.steer+=clampVehicle(target-state.steer,-dt*rate,dt*rate);
   const roadFraction=Array.isArray(onRoad)?onRoad.filter(Boolean).length/onRoad.length:(onRoad?1:0);if(!Number.isFinite(state.surfaceBlend))state.surfaceBlend=roadFraction;state.surfaceBlend+=clampVehicle(roadFraction-state.surfaceBlend,-dt*3.2,dt*5.5);
-  const speedRatio=clampVehicle(speed/VEHICLE.maxSpeed,0,1),curve=speedRatio*speedRatio,steerLimit=VEHICLE.steerLow+(VEHICLE.steerHigh-VEHICLE.steerLow)*curve,throttle=input.forward?1:input.reverse?VEHICLE.reverseScale:0,surfacePower=.4+.6*state.surfaceBlend,engine=throttle*(speed>VEHICLE.maxSpeed&&throttle>0?0:VEHICLE.engine)*surfacePower,service=input.reverse&&speed>1?VEHICLE.serviceBrake:0,surfaceGrip=VEHICLE.offroadGrip+(VEHICLE.roadGrip-VEHICLE.offroadGrip)*state.surfaceBlend;
+  const speedRatio=clampVehicle(speed/VEHICLE.maxSpeed,0,1),curve=speedRatio*speedRatio,steerLimit=VEHICLE.steerLow+(VEHICLE.steerHigh-VEHICLE.steerLow)*curve,throttle=input.forward?1:input.reverse?VEHICLE.reverseScale:0,surfacePower=.58+.42*state.surfaceBlend,engine=throttle*(speed>VEHICLE.maxSpeed&&throttle>0?0:VEHICLE.engine)*surfacePower,service=input.reverse&&speed>1?VEHICLE.serviceBrake:0,surfaceGrip=VEHICLE.offroadGrip+(VEHICLE.roadGrip-VEHICLE.offroadGrip)*state.surfaceBlend;
   for(let i=0;i<4;i++){const wheelRoad=Array.isArray(onRoad)?(onRoad[i]?1:0):state.surfaceBlend,wheelGrip=input.handbrake&&i>=2?VEHICLE.driftGrip:VEHICLE.offroadGrip+(surfaceGrip-VEHICLE.offroadGrip)*(.35+.65*wheelRoad);vehicle.setWheelEngineForce(i,engine);vehicle.setWheelBrake(i,service+(speed>VEHICLE.maxSpeed?450:0)+(input.handbrake?(i<2?VEHICLE.handbrakeFront:VEHICLE.handbrakeRear):0));vehicle.setWheelSteering(i,i<2?state.steer*steerLimit:0);vehicle.setWheelFrictionSlip(i,wheelGrip)}
   return{speed,steer:state.steer,steerLimit,engine,surfaceBlend:state.surfaceBlend};
 }

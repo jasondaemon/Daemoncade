@@ -16,7 +16,7 @@ export const CHECKPOINTS=Object.freeze([
 export const RECOVERY_SPOTS=Object.freeze([
   {x:-2,y:2.2,z:0,rotation:{x:0,y:0,z:0,w:1}},{x:93,y:1.8,z:-20,rotation:{x:0,y:.7071068,z:0,w:.7071068}},
   {x:82,y:1.9,z:-103,rotation:{x:0,y:1,z:0,w:0}},{x:-82,y:1.8,z:-80,rotation:{x:0,y:-.7071068,z:0,w:.7071068}},
-  {x:-82,y:1.8,z:115,rotation:{x:0,y:0,z:0,w:1}},{x:125,y:1.8,z:140,rotation:{x:0,y:.7071068,z:0,w:.7071068}},
+  {x:-82,y:1.8,z:140,rotation:{x:0,y:0,z:0,w:1}},{x:150,y:1.8,z:125,rotation:{x:0,y:.7071068,z:0,w:.7071068}},
 ]);
 export function recoveryForward(rotation){return{x:1-2*(rotation.y*rotation.y+rotation.z*rotation.z),z:2*(rotation.x*rotation.z-rotation.w*rotation.y)}}
 const ROAD_BOUNDS=Object.freeze([

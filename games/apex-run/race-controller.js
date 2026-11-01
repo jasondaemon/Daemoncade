@@ -1,4 +1,4 @@
-import {checkpointAdvance} from "./track-model.js?v=0.4.0-alpha4";
+import {checkpointAdvance} from "./track-model.js?v=0.4.0-alpha5";
 
 export class RaceController{
   constructor(){this.reset()}

@@ -51,6 +51,13 @@ reused.chassis.resetForces(true);reused.chassis.resetTorques(true);reused.chassi
 const reusedBefore=Math.hypot(reusedTarget.x-reusedSpot.x,reusedTarget.z-reusedSpot.z),reusedAfterPosition=driveSteps(reused,{forward:true},2),reusedAfter=Math.hypot(reusedTarget.x-reusedAfterPosition.x,reusedTarget.z-reusedAfterPosition.z);
 console.log("Apex Run reused-controller recovery",JSON.stringify({before:reusedBefore,after:reusedAfter,position:reusedAfterPosition}));assert.ok(reusedAfter<reusedBefore-2,`reused controller drove away after recovery: ${reusedBefore} -> ${reusedAfter}`);
 
+const repeated=setup(),repeatedResults=[];
+for(let recoveryIndex=0;recoveryIndex<RECOVERY_SPOTS.length;recoveryIndex++){
+  const spot=RECOVERY_SPOTS[recoveryIndex];for(let wheel=0;wheel<4;wheel++){repeated.vehicle.setWheelEngineForce(wheel,0);repeated.vehicle.setWheelBrake(wheel,0);repeated.vehicle.setWheelSteering(wheel,0)}repeated.chassis.resetForces(true);repeated.chassis.resetTorques(true);repeated.chassis.setLinvel({x:0,y:0,z:0},true);repeated.chassis.setAngvel({x:0,y:0,z:0},true);repeated.chassis.setTranslation(spot,true);repeated.chassis.setRotation(spot.rotation,true);repeated.state.steer=0;repeated.state.surfaceBlend=1;
+  assert.ok(isOnRoad(spot),`recovery ${recoveryIndex} is not on the modeled road`);let crossed=false,elapsed=0;for(;elapsed<20&&!crossed;elapsed+=.25){const position=driveSteps(repeated,{forward:true},.25);assert.ok(isOnRoad(position),`recovery ${recoveryIndex} left road before its gate at ${JSON.stringify(position)}`);crossed=checkpointAdvance(recoveryIndex,position)===recoveryIndex+1}assert.ok(crossed,`reused recovery ${recoveryIndex} never entered gate ${recoveryIndex}`);repeatedResults.push({recoveryIndex,time:+elapsed.toFixed(2)});
+}
+console.log("Apex Run repeated reused-controller gate entries passed",JSON.stringify(repeatedResults));
+
 const edgeScenarios=[
   {name:"opening north shoulder",start:{x:50,y:2,z:15},rotation:{x:0,y:.7071068,z:0,w:.7071068},input:{forward:true}},
   {name:"east vertical shoulder",start:{x:116,y:2,z:-60},rotation:{x:0,y:1,z:0,w:0},input:{forward:true}},
@@ -61,3 +68,6 @@ const edgeScenarios=[
 ];
 for(const scenario of edgeScenarios){const sim=setup(scenario.start,scenario.rotation),after=driveSteps(sim,scenario.input,2.5),speed=Math.abs(sim.vehicle.currentVehicleSpeed());assert.ok(isOnRoad(after),`${scenario.name} failed to re-enter: ${JSON.stringify(after)}`);assert.ok(speed>1,`${scenario.name} remained trapped at ${speed}`)}
 console.log("Apex Run road/grass re-entry and reverse escape passed");
+const grassMerge=setup({x:-82,y:2,z:115},{x:0,y:0,z:0,w:1}),grassMergePosition=driveSteps(grassMerge,{forward:true,right:true},4),grassMergeSpeed=Math.abs(grassMerge.vehicle.currentVehicleSpeed());
+assert.ok(isOnRoad(grassMergePosition),`parallel grass steering failed to merge onto east road: ${JSON.stringify(grassMergePosition)}`);assert.ok(grassMergeSpeed>5,`parallel grass merge remained too slow: ${grassMergeSpeed}`);
+console.log("Apex Run parallel grass steering merge passed",JSON.stringify({position:grassMergePosition,speed:+grassMergeSpeed.toFixed(2)}));
