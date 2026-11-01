@@ -29,9 +29,9 @@ export function commitResult(storage,currentBest,time,frames,{eligible=true}={})
   if(!eligible)return{best:currentBest,replay:readReplay(storage),isBest:false,eligible:false,replaySaved:false,bestSaved:false};
   const isBest=!currentBest||time<currentBest;if(!isBest)return{best:currentBest,replay:readReplay(storage),isBest:false,replaySaved:false};
   const bestSaved=saveBest(storage,time),replaySaved=saveReplay(storage,time,frames),replay=replaySaved?readReplay(storage):null;
-  return{best:time,replay,isBest:true,bestSaved,replaySaved,ghostUnavailable:!replaySaved};
+  return{best:time,replay,isBest:true,bestSaved,replaySaved,ghostUnavailable:bestSaved&&!replaySaved,storageUnavailable:!bestSaved&&!replaySaved};
 }
-export function ghostAvailabilityNote(result){return result?.ghostUnavailable?" · PB SAVED; GHOST UNAVAILABLE":""}
+export function persistenceNote(result){if(result?.storageUnavailable)return" · RESULT NOT SAVED; STORAGE UNAVAILABLE";return result?.ghostUnavailable?" · PB SAVED; GHOST UNAVAILABLE":""}
 export function replayFrameAt(replay,seconds){
   if(!replay)return null;const tick=Math.max(0,seconds*replay.hz),frames=replay.frames;let lo=0,hi=frames.length-1;
   while(lo<hi){const mid=Math.ceil((lo+hi)/2);if(frames[mid][0]<=tick)lo=mid;else hi=mid-1}

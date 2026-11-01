@@ -1,5 +1,5 @@
 import assert from "node:assert/strict";
-import {FixedStepper,REPLAY_KEY,checkpointAdvance,commitResult,formatTime,frameGapInvalidates,ghostAvailabilityNote,isOnRoad,medalFor,readBest,readReplay,reconcileBest,replayFrameAt,saveBest,saveReplay} from "./simulation.js";
+import {FixedStepper,REPLAY_KEY,checkpointAdvance,commitResult,formatTime,frameGapInvalidates,isOnRoad,medalFor,persistenceNote,readBest,readReplay,reconcileBest,replayFrameAt,saveBest,saveReplay} from "./simulation.js";
 import {RaceController} from "./race-controller.js";
 assert.equal(formatTime(65.4321),"01:05.432");
 const storage={getItem:()=>"not-a-time"};assert.equal(readBest(storage),null);
@@ -17,8 +17,8 @@ assert.equal(reconcileBest(18,{time:20}),18);assert.equal(reconcileBest(22,{time
 const committed=commitResult(store,22,20,frames);assert.equal(committed.isBest,true);assert.equal(committed.best,20);assert.equal(readBest(store),20);assert.equal(readReplay(store).time,20);
 const slower=commitResult(store,20,25,frames);assert.equal(slower.isBest,false);assert.equal(readBest(store),20);
 const denied={getItem(){throw Error("denied")},setItem(){throw Error("quota")}};assert.equal(readBest(denied),null);assert.equal(readReplay(denied),null);assert.equal(saveBest(denied,12),false);assert.equal(saveReplay(denied,20,frames),false);
-const deniedFinish=commitResult(denied,22,19,frames);assert.equal(deniedFinish.best,19);assert.equal(deniedFinish.bestSaved,false);assert.equal(deniedFinish.replaySaved,false);
-const partialMemory=new Map([[REPLAY_KEY,JSON.stringify({...replay,time:20,frames})]]),partial={getItem:key=>partialMemory.get(key)??null,setItem(key,value){if(key===REPLAY_KEY)throw Error("replay quota");partialMemory.set(key,value)}};const partialFinish=commitResult(partial,20,19,frames);assert.equal(partialFinish.bestSaved,true);assert.equal(partialFinish.replaySaved,false);assert.equal(partialFinish.ghostUnavailable,true);assert.equal(partialFinish.replay,null);assert.equal(ghostAvailabilityNote(partialFinish)," · PB SAVED; GHOST UNAVAILABLE");assert.equal(readBest(partial),19);assert.equal(readReplay(partial).time,20);
+const deniedFinish=commitResult(denied,22,19,frames);assert.equal(deniedFinish.best,19);assert.equal(deniedFinish.bestSaved,false);assert.equal(deniedFinish.replaySaved,false);assert.equal(deniedFinish.storageUnavailable,true);assert.equal(deniedFinish.ghostUnavailable,false);assert.equal(persistenceNote(deniedFinish)," · RESULT NOT SAVED; STORAGE UNAVAILABLE");
+const partialMemory=new Map([[REPLAY_KEY,JSON.stringify({...replay,time:20,frames})]]),partial={getItem:key=>partialMemory.get(key)??null,setItem(key,value){if(key===REPLAY_KEY)throw Error("replay quota");partialMemory.set(key,value)}};const partialFinish=commitResult(partial,20,19,frames);assert.equal(partialFinish.bestSaved,true);assert.equal(partialFinish.replaySaved,false);assert.equal(partialFinish.ghostUnavailable,true);assert.equal(partialFinish.replay,null);assert.equal(persistenceNote(partialFinish)," · PB SAVED; GHOST UNAVAILABLE");assert.equal(readBest(partial),19);assert.equal(readReplay(partial).time,20);assert.equal(persistenceNote(committed),"");
 const practice=commitResult(store,20,18,frames,{eligible:false});assert.equal(practice.eligible,false);assert.equal(practice.best,20);assert.equal(readBest(store),20);
 assert.equal(formatTime(59.9996),"01:00.000");assert.equal(formatTime(3599.9996),"60:00.000");
 assert.equal(readReplay({getItem:()=>JSON.stringify({version:3,time:20,hz:30,frames:[[0,0,2,0,0,0,0,0],[600,0,2,0,0,0,0,0]]})}),null);

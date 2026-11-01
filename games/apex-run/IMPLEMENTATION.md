@@ -129,11 +129,11 @@ still required before promoting beyond beta.
   pause/resume, visibility-handler pause, and a real checkpoint-five recovery followed by normal
   steering/throttle to the finish. The practice result cannot replace the clean PB.
 - The same Chrome test runs 600 simulated seconds of repeated full-throttle handbrake drift and
-  restart cycles. On the measured Apple M1 Max ANGLE Metal renderer it took 48.914 wall seconds,
+  restart cycles. On the measured Apple M1 Max ANGLE Metal renderer it took 48.710 wall seconds,
   held at 289 geometries and 9 textures after warm-up, kept smoke at or below the 28-object pool,
   and produced no JavaScript, WebGL, console, or non-favicon HTTP errors.
 - These are accelerated simulated-time metrics, not a claim of 60 FPS over ten real minutes. The
   result is hardware/driver-specific; software-renderer performance remains unmeasured.
-- A separate 240-frame normal-time production-page sample measured 16.7 ms median and 16.8 ms
-  p95/p99 rAF intervals on that same machine. These are presentation intervals, not isolated GPU
+- A separate 240-frame normal-time production-page sample measured 16.7 ms median/p95 and 16.8 ms
+  p99 rAF intervals on that same machine. These are presentation intervals, not isolated GPU
   render-call timings or a portable laptop FPS guarantee.
