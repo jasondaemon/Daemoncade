@@ -7,6 +7,7 @@ Daemoncade vendors runtime dependencies locally. An engine should be adopted whe
 - **Phaser 3.90.0 (Arcade Physics build):** WebGL-first game framework used by Neon Breaker, Racecar, and Circuit Rush. Best for action games with many moving bodies, collision rules, effects, multiple levels, or combined keyboard/pointer/touch input.
 - **PixiJS 7.4.3:** GPU renderer used by Blockfall, Canyon Crawler, Orbit Run, and iMines. Best when a game needs accelerated presentation but already has suitable game logic and collision handling.
 - **Three.js r185 (0.185.1 distribution):** WebGL 3D renderer used by Blitz!'s perspective runner world and Space Defender's instanced voxel presentation. Best when real 3D geometry, cameras, materials, or high-volume instancing are integral to the visual design.
+- **Rapier 3D 0.17.3:** Apache-2.0 rigid-body physics used by Pinball and the Apex Run alpha. Apex Run uses its ray-cast vehicle controller for a dynamic chassis, suspension, wheel contact, steering, and traction under a fixed-step simulation.
 - **Planck.js 0.3.0:** rigid-body physics used by Pinball. Retain it there; pinball behavior benefits from its dedicated Box2D-style simulation.
 - **Native DOM or Canvas:** still appropriate for board games, word games, fixed-grid puzzles, and very small deterministic loops.
 

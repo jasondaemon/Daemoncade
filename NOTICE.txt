@@ -106,6 +106,14 @@ Rapier 3D 0.17.3 (Pinball / Midnight Run)
   Pinball also uses the existing MIT-licensed Three.js vendor distribution.
   Original generated playfield art and prompt: games/pinball/rebuild/ART.md
 
+Rapier 3D 0.17.3 (Apex Run)
+  Dimforge and contributors, Apache License 2.0.
+  Source: https://github.com/dimforge/rapier.js
+  Bundled JavaScript/WASM: games/apex-run/vendor/rapier-0.17.3.js
+  License: games/apex-run/vendor/RAPIER-LICENSE
+  Apex Run also uses the existing MIT-licensed Three.js vendor distribution.
+  All course, vehicle, interface, and icon geometry is original procedural art.
+
 Quaternius Cars Pack (Racecar)
   Authored vehicle models by Quaternius, CC0 1.0 per the original pack's
   included License.txt. Source: https://quaternius.com/packs/cars.html

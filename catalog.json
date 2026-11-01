@@ -1,6 +1,23 @@
 {
   "games": [
     {
+      "title": "Apex Run",
+      "slug": "apex-run",
+      "version": "0.1.0-alpha.1",
+      "release_stage": "alpha",
+      "order": 28,
+      "category": "Racing",
+      "source": "Daemoncade",
+      "players": "Solo",
+      "controls": "Keyboard",
+      "orientation": "landscape",
+      "summary": "Attack a gravity-bending 3D stadium course, master momentum, and chase your personal best.",
+      "accent": "cyan",
+      "mark": "▲",
+      "icon": "app-icon.png",
+      "metric": "time"
+    },
+    {
       "title": "Circuit Rush",
       "slug": "circuit-rush",
       "version": "1.2.0",

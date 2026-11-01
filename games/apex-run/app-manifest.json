@@ -1,0 +1,11 @@
+{
+  "id": "/games/apex-run/app.html",
+  "name": "Apex Run",
+  "short_name": "Apex Run",
+  "start_url": "./app.html",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#07101b",
+  "theme_color": "#07101b",
+  "icons": [{"src":"app-icon.png","sizes":"512x512","type":"image/png","purpose":"any"}]
+}
