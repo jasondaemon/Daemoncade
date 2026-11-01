@@ -24,10 +24,10 @@ for(const timing of[7.5,7.7,7.9,8.1]){const result=opening(timing);console.log("
 console.log("Apex Run human-scale opening timing tolerance passed");
 const route=run([
   {label:"launch",seconds:7.7,input:I.forward},{label:"corner 1",seconds:1.2,input:I.left},{label:"south",seconds:3.3,input:I.forward},
-  {label:"brake corner 2",seconds:1.25,input:I.brakeLeft},{label:"settle 2",seconds:1,input:I.brake},{label:"align west",seconds:.3,input:I.right},{label:"west",seconds:6,input:I.forward},
-  {label:"west gate",seconds:.25,input:I.forward},{label:"brake corner 3",seconds:1.45,input:I.brakeLeft},{label:"settle 3",seconds:.8,input:I.brake},{label:"align north",seconds:.45,input:I.right},{label:"north",seconds:8,input:I.forward},
-  {label:"brake corner 4",seconds:1.25,input:I.brakeLeft},{label:"settle 4",seconds:.8,input:I.brake},{label:"east",seconds:6.7,input:I.forward},
-  {label:"brake corner 5",seconds:1.3,input:I.brakeLeft},{label:"settle 5",seconds:.8,input:I.brake},{label:"align south",seconds:.2,input:I.right},{label:"south finish",seconds:6,input:I.forward},
+  {label:"wide corner 2",seconds:1.2,input:I.left},{label:"west",seconds:5,input:I.forward},
+  {label:"corner 3",seconds:1.7,input:I.left},{label:"settle north",seconds:.1,input:I.right},{label:"north",seconds:7.5,input:I.forward},
+  {label:"corner 4",seconds:1.5,input:I.left},{label:"east",seconds:5.2,input:I.forward},
+  {label:"corner 5",seconds:1.8,input:I.left},{label:"south finish",seconds:6,input:I.forward},
 ]);
 console.log("route development",JSON.stringify(route.trace));
 assert.equal(route.checkpoint,6,"low-frequency fixed input route must complete all gates");

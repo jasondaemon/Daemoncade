@@ -2,7 +2,7 @@
 
 ## Status
 
-Version `0.4.0-alpha.5` is an early desktop-keyboard alpha under active handling revision. It
+Version `0.4.0-alpha.6` is an early desktop-keyboard alpha under active handling revision. It
 is an original single-player stadium time attack inspired by the broad genre, not a Trackmania
 clone or formula-equivalent simulation. Earlier automated beta gates are retained below as
 regression receipts; they did not establish human playability and no longer justify a beta label.
@@ -17,7 +17,7 @@ Then open `http://127.0.0.1:4173/games/apex-run/`.
 
 ## Controls and rules
 
-- W/Up: throttle; S/Down: service brake and reverse; A/D or Left/Right: steer.
+- W/Up: throttle; S/Down: service brake. Release and press S/Down again after stopping to select reverse. A/D or Left/Right: steer.
 - Space: drift/handbrake; Backspace: recover; R: restart; P/Escape: pause; M: mute.
 - Checkpoints must be crossed in order. Recovery adds 1.5 seconds and makes the attempt a
   practice run: it can finish, but cannot earn a medal, PB, or ghost.

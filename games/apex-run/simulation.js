@@ -1,7 +1,7 @@
 export const FIXED_DT=1/120;
-export {checkpointAdvance,isOnRoad} from "./track-model.js?v=0.4.0-alpha5";
-export const REPLAY_VERSION=3;
-export const REPLAY_KEY="apex-run:replay:v3";
+export {checkpointAdvance,isOnRoad} from "./track-model.js?v=0.4.0-alpha6";
+export const REPLAY_VERSION=4;
+export const REPLAY_KEY="apex-run:replay:v4";
 export const REPLAY_HZ=30;
 export const MEDALS=Object.freeze([{name:"APEX",time:43,color:0x55efff},{name:"GOLD",time:47,color:0xffd454},{name:"SILVER",time:52,color:0xd6e2ec},{name:"BRONZE",time:60,color:0xd58b55}]);
 export function clamp(v,min,max){return Math.max(min,Math.min(max,v))}
@@ -10,11 +10,11 @@ export function formatTime(seconds){
   const totalMs=Math.round(Math.max(0,Number.isFinite(seconds)?seconds:0)*1000),minutes=Math.floor(totalMs/60000),rest=totalMs-minutes*60000;
   return `${String(minutes).padStart(2,"0")}:${String(Math.floor(rest/1000)).padStart(2,"0")}.${String(rest%1000).padStart(3,"0")}`;
 }
-export function readBest(storage,key="apex-run:pb:v2"){
+export function readBest(storage,key="apex-run:pb:v3"){
   try{const value=Number(storage.getItem(key));return Number.isFinite(value)&&value>1&&value<3600?value:null}catch{return null}
 }
 export function reconcileBest(best,replay){return replay&&(!best||replay.time<best)?replay.time:best}
-export function saveBest(storage,time,key="apex-run:pb:v2"){if(!Number.isFinite(time)||time<=1||time>=3600)return false;try{storage.setItem(key,String(time));return true}catch{return false}}
+export function saveBest(storage,time,key="apex-run:pb:v3"){if(!Number.isFinite(time)||time<=1||time>=3600)return false;try{storage.setItem(key,String(time));return true}catch{return false}}
 function finiteArray(value,length){return Array.isArray(value)&&value.length===length&&value.every(Number.isFinite)}
 export function validateReplay(value){
   if(!value||value.version!==REPLAY_VERSION||!Number.isFinite(value.time)||value.time<=1||value.time>300||value.hz!==REPLAY_HZ||!Array.isArray(value.frames)||value.frames.length<2||value.frames.length>REPLAY_HZ*300)return null;
