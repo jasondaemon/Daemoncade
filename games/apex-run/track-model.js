@@ -17,6 +17,12 @@ export const TRACK_BOXES=Object.freeze([
   // Its former -98 m edge left one tire on the lower grass at the corner seam.
   {x:18,y:0,z:140,hx:124,hy:.45,hz:16},{x:135,y:-.02,z:125,hx:55,hy:.45,hz:45,surface:"runoff"},{x:150,y:0,z:72,hx:18,hy:.45,hz:68,surface:"bank"},
 ]);
+// The grass slab is the final physical support surface. Keep gameplay recovery
+// slightly inside its vertical edges so a chassis cannot settle unsupported in
+// the void while still appearing to be on the field.
+export const PLAY_AREA=Object.freeze({minX:-218,maxX:218,minZ:-238,maxZ:198,grace:.35});
+export function isInPlayArea({x,z}){return Number.isFinite(x)&&Number.isFinite(z)&&x>=PLAY_AREA.minX&&x<=PLAY_AREA.maxX&&z>=PLAY_AREA.minZ&&z<=PLAY_AREA.maxZ}
+export function advanceOutsidePlayTime(previous,position,dt){return isInPlayArea(position)?0:Math.max(0,previous)+(Number.isFinite(dt)&&dt>0?dt:0)}
 // Single authoritative centerline for world arrows and the minimap. Points are
 // ordered in race direction; all guidance tangents are derived from this list.
 export const ROUTE_PATH=Object.freeze([
