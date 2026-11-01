@@ -1,8 +1,7 @@
 import assert from "node:assert/strict";
 import RAPIER from "./vendor/rapier-0.17.3.js";
 import {VEHICLE,applySurfaceDrag,createVehicle,driveVehicle,stabilizeChassis} from "./vehicle-model.js";
-import {TRACK_BOXES,CHECKPOINTS,RECOVERY_SPOTS,isOnRoad,checkpointAdvance,recoveryForward} from "./track-model.js";
-import {REFERENCE_SEGMENTS} from "./reference-lap.js";
+import {TRACK_BOXES,RECOVERY_SPOTS,ROAD_SAMPLES,buildRoadMesh,isOnRoad,checkpointAdvance,recoveryForward} from "./track-model.js";
 
 await RAPIER.init();
 const DT=1/120;
@@ -10,6 +9,7 @@ function setup(start={x:-2,y:2.2,z:0},rotation=null){
   const world=new RAPIER.World({x:0,y:VEHICLE.gravity,z:0});world.integrationParameters.dt=DT;
   const roadHandles=new Set();
   for(const {x,y,z,hx,hy,hz,rx=0,rz=0,surface="road"} of TRACK_BOXES){const q={x:Math.sin(rx/2),y:0,z:Math.sin(rz/2),w:Math.cos(rx/2)*Math.cos(rz/2)},c=world.createCollider(RAPIER.ColliderDesc.cuboid(hx,hy,hz).setTranslation(x,y,z).setRotation(q).setFriction(1.1));if(surface!=="grass")roadHandles.add(c.handle)}
+  const road=buildRoadMesh(22),roadCollider=world.createCollider(RAPIER.ColliderDesc.trimesh(new Float32Array(road.positions),new Uint32Array(road.indices)).setFriction(1.1));roadHandles.add(roadCollider.handle);
   const result=createVehicle(RAPIER,world,start),state={steer:0,surfaceBlend:1};if(rotation)result.chassis.setRotation(rotation,true);
   for(let t=0;t<360;t++){driveVehicle(result.vehicle,state,{},DT,true);for(let i=0;i<4;i++)result.vehicle.setWheelBrake(i,5000);result.vehicle.updateVehicle(DT,RAPIER.QueryFilterFlags.EXCLUDE_DYNAMIC);world.step()}
   return{world,...result,state,roadHandles};
@@ -20,53 +20,25 @@ function run(segments){const sim=setup(),trace=[];let checkpoint=0,tick=0,offroa
   return{trace,checkpoint,offroadSeconds:offroadTicks*DT,sim};
 }
 const I={forward:{forward:true},right:{forward:true,right:true},left:{forward:true,left:true},brake:{reverse:true},brakeRight:{reverse:true,right:true},brakeLeft:{reverse:true,left:true},coast:{}};
-const opening=startTurn=>run([{label:"launch",seconds:startTurn,input:I.forward},{label:"turn",seconds:1.2,input:I.left},{label:"release",seconds:1.2,input:I.forward}]);
-for(const timing of[7.5,7.7,7.9,8.1]){const result=opening(timing);console.log("opening",timing,JSON.stringify(result.trace));const p=result.sim.chassis.translation(),q=result.sim.chassis.rotation(),upY=1-2*(q.x*q.x+q.z*q.z);assert.ok(isOnRoad(p),`opening timing ${timing} left road`);assert.ok(upY>.8,`opening timing ${timing} rolled car`)}
+const opening=startTurn=>run([{label:"launch",seconds:startTurn,input:I.forward},{label:"turn",seconds:.65,input:I.left},{label:"release",seconds:1.2,input:I.forward}]);
+for(const timing of[7.3,7.5,7.7,7.9]){const result=opening(timing);console.log("opening",timing,JSON.stringify(result.trace));const p=result.sim.chassis.translation(),q=result.sim.chassis.rotation(),upY=1-2*(q.x*q.x+q.z*q.z);assert.ok(isOnRoad(p),`opening timing ${timing} left road`);assert.ok(upY>.8,`opening timing ${timing} rolled car`)}
 console.log("Apex Run human-scale opening timing tolerance passed");
-for(const trial of[{name:"reported",brake:.9,turn:1.25},{name:"gentle",brake:.7,turn:.65}]){const result=run([{label:"launch",seconds:7.7,input:I.forward},{label:"corner 1",seconds:1.2,input:I.left},{label:"south",seconds:3.3,input:I.forward},{label:"service brake",seconds:trial.brake,input:I.brake},{label:"west input",seconds:trial.turn,input:I.left},{label:"exit",seconds:5,input:I.forward}]);console.log(`gate2 ${trial.name}`,JSON.stringify(result.trace.slice(-3)))}
-const reportedMixed=run([{label:"W6",seconds:6,input:I.forward},{label:"W1.1",seconds:1.1,input:I.forward},{label:"WA1.2",seconds:1.2,input:I.left},{label:"W2.8",seconds:2.8,input:I.forward},{label:"W2.2",seconds:2.2,input:I.forward},{label:"W3",seconds:3,input:I.forward},{label:"WD.7",seconds:.7,input:I.right},{label:"W3b",seconds:3,input:I.forward},{label:"WD2.2",seconds:2.2,input:I.right},{label:"W2.5",seconds:2.5,input:I.forward},{label:"W5",seconds:5,input:I.forward}]);
-console.log("reported mixed-surface sequence",JSON.stringify(reportedMixed.trace));
-assert.ok(reportedMixed.trace.at(-1).speed>5,"held throttle must not decay to walking speed on a flat mixed surface");
-const routeLabels=["launch","corner 1","south","brake 2","wide corner 2","west","corner 3","north","corner 4","east","corner 5","south finish"],route=run(REFERENCE_SEGMENTS.map(([seconds,input],index)=>({label:routeLabels[index],seconds,input})));
-console.log("route development",JSON.stringify(route.trace));
-assert.equal(route.checkpoint,6,"low-frequency fixed input route must complete all gates");
-assert.equal(route.offroadSeconds,0,"reference route must remain on the modeled road until finish");
-console.log("Apex Run low-frequency full route passed",JSON.stringify({time:route.trace.at(-1).t,segments:route.trace.length,offroadSeconds:route.offroadSeconds}));
-
+const recoveryResults=[];
 for(let i=0;i<RECOVERY_SPOTS.length;i++){
-  const spot=RECOVERY_SPOTS[i],target=CHECKPOINTS[i],forward=recoveryForward(spot.rotation),toTarget={x:target.x-spot.x,z:target.z-spot.z},dot=forward.x*toTarget.x+forward.z*toTarget.z;
-  assert.ok(dot>0,`recovery ${i} faces away from gate ${i}`);
-  const sim=setup(spot,spot.rotation),before=sim.chassis.translation(),beforeDistance=Math.hypot(target.x-before.x,target.z-before.z),after=driveSteps(sim,{forward:true},2),afterDistance=Math.hypot(target.x-after.x,target.z-after.z);
-  assert.ok(afterDistance<beforeDistance-2,`recovery ${i} did not drive toward its gate: ${beforeDistance} -> ${afterDistance}`);
+  const spot=RECOVERY_SPOTS[i],forward=recoveryForward(spot.rotation),sim=setup(spot,spot.rotation),before=sim.chassis.translation(),after=driveSteps(sim,{forward:true},1.5),motion={x:after.x-before.x,z:after.z-before.z};
+  assert.ok(isOnRoad(spot),`recovery ${i} is not on the spline road`);
+  assert.ok(motion.x*forward.x+motion.z*forward.z>2,`recovery ${i} did not move along its route tangent`);
+  assert.ok(isOnRoad(after),`recovery ${i} immediately left the modeled road`);
+  recoveryResults.push({i,distance:+Math.hypot(motion.x,motion.z).toFixed(1),y:+after.y.toFixed(1)});
 }
-console.log("Apex Run recovery headings and driven exits passed");
+console.log("Apex Run spline recovery exits passed",JSON.stringify(recoveryResults));
 
-// Recovery must also work after the controller has accumulated wheel/contact
-// state. This mirrors game.js clearVehicle/place on the same chassis/controller.
-const reused=setup();driveSteps(reused,{forward:true},7.7);driveSteps(reused,{forward:true,left:true},1.2);driveSteps(reused,{forward:true},1.2);
-const reusedSpot=RECOVERY_SPOTS[1],reusedTarget=CHECKPOINTS[1];
-for(let i=0;i<4;i++){reused.vehicle.setWheelEngineForce(i,0);reused.vehicle.setWheelBrake(i,0);reused.vehicle.setWheelSteering(i,0)}
-reused.chassis.resetForces(true);reused.chassis.resetTorques(true);reused.chassis.setLinvel({x:0,y:0,z:0},true);reused.chassis.setAngvel({x:0,y:0,z:0},true);reused.chassis.setTranslation(reusedSpot,true);reused.chassis.setRotation(reusedSpot.rotation,true);reused.state.steer=0;reused.state.surfaceBlend=1;
-const reusedBefore=Math.hypot(reusedTarget.x-reusedSpot.x,reusedTarget.z-reusedSpot.z),reusedAfterPosition=driveSteps(reused,{forward:true},2),reusedAfter=Math.hypot(reusedTarget.x-reusedAfterPosition.x,reusedTarget.z-reusedAfterPosition.z);
-console.log("Apex Run reused-controller recovery",JSON.stringify({before:reusedBefore,after:reusedAfter,position:reusedAfterPosition}));assert.ok(reusedAfter<reusedBefore-2,`reused controller drove away after recovery: ${reusedBefore} -> ${reusedAfter}`);
-
-const repeated=setup(),repeatedResults=[];
-for(let recoveryIndex=0;recoveryIndex<RECOVERY_SPOTS.length;recoveryIndex++){
-  const spot=RECOVERY_SPOTS[recoveryIndex];for(let wheel=0;wheel<4;wheel++){repeated.vehicle.setWheelEngineForce(wheel,0);repeated.vehicle.setWheelBrake(wheel,0);repeated.vehicle.setWheelSteering(wheel,0)}repeated.chassis.resetForces(true);repeated.chassis.resetTorques(true);repeated.chassis.setLinvel({x:0,y:0,z:0},true);repeated.chassis.setAngvel({x:0,y:0,z:0},true);repeated.chassis.setTranslation(spot,true);repeated.chassis.setRotation(spot.rotation,true);repeated.state.steer=0;repeated.state.surfaceBlend=1;
-  assert.ok(isOnRoad(spot),`recovery ${recoveryIndex} is not on the modeled road`);let crossed=false,elapsed=0;for(;elapsed<20&&!crossed;elapsed+=.25){const position=driveSteps(repeated,{forward:true},.25);assert.ok(isOnRoad(position),`recovery ${recoveryIndex} left road before its gate at ${JSON.stringify(position)}`);crossed=checkpointAdvance(recoveryIndex,position)===recoveryIndex+1}assert.ok(crossed,`reused recovery ${recoveryIndex} never entered gate ${recoveryIndex}`);repeatedResults.push({recoveryIndex,time:+elapsed.toFixed(2)});
-}
-console.log("Apex Run repeated reused-controller gate entries passed",JSON.stringify(repeatedResults));
-
-const edgeScenarios=[
-  {name:"opening north shoulder",start:{x:50,y:2,z:15},rotation:{x:0,y:.7071068,z:0,w:.7071068},input:{forward:true}},
-  {name:"east vertical shoulder",start:{x:116,y:2,z:-60},rotation:{x:0,y:1,z:0,w:0},input:{forward:true}},
-  {name:"west vertical shoulder",start:{x:-107,y:2,z:0},rotation:{x:0,y:0,z:0,w:1},input:{forward:true}},
-  {name:"north straight shoulder",start:{x:0,y:2,z:160},rotation:{x:0,y:.7071068,z:0,w:.7071068},input:{forward:true}},
-  {name:"final straight shoulder",start:{x:171,y:2,z:60},rotation:{x:0,y:1,z:0,w:0},input:{forward:true}},
-  {name:"reverse from grass",start:{x:50,y:2,z:15},rotation:{x:0,y:-.7071068,z:0,w:.7071068},input:{reverse:true}},
-];
-for(const scenario of edgeScenarios){const sim=setup(scenario.start,scenario.rotation),after=driveSteps(sim,scenario.input,2.5),speed=Math.abs(sim.vehicle.currentVehicleSpeed());assert.ok(isOnRoad(after),`${scenario.name} failed to re-enter: ${JSON.stringify(after)}`);assert.ok(speed>1,`${scenario.name} remained trapped at ${speed}`)}
-console.log("Apex Run road/grass re-entry and reverse escape passed");
-const grassMerge=setup({x:-82,y:2,z:115},{x:0,y:0,z:0,w:1}),grassMergePosition=driveSteps(grassMerge,{forward:true,right:true},4),grassMergeSpeed=Math.abs(grassMerge.vehicle.currentVehicleSpeed());
-assert.ok(isOnRoad(grassMergePosition),`parallel grass steering failed to merge onto east road: ${JSON.stringify(grassMergePosition)}`);assert.ok(grassMergeSpeed>3.5,`parallel grass merge remained too slow: ${grassMergeSpeed}`);
-console.log("Apex Run parallel grass steering merge passed",JSON.stringify({position:grassMergePosition,speed:+grassMergeSpeed.toFixed(2)}));
+// The elevated back section must use the same trimesh as the rendered road.
+// A short straight launch toward the crest verifies suspension contact and
+// vertical travel without relying on the obsolete rectangular course tape.
+const rampSample=ROAD_SAMPLES[5*22+2],rampHalf=-rampSample.heading/2,rampRotation={x:0,y:Math.sin(rampHalf),z:0,w:Math.cos(rampHalf)},ramp=setup({x:rampSample.x,y:rampSample.y+1.7,z:rampSample.z},rampRotation);ramp.chassis.setLinvel({x:Math.cos(rampSample.heading)*26,y:0,z:Math.sin(rampSample.heading)*26},true);let maxY=-Infinity,minContacts=4,airborne=false,landed=false;
+for(let tick=0;tick<600&&!landed;tick++){driveSteps(ramp,{forward:true},DT);const p=ramp.chassis.translation(),contacts=[0,1,2,3].filter(i=>ramp.vehicle.wheelIsInContact(i)).length;maxY=Math.max(maxY,p.y);minContacts=Math.min(minContacts,contacts);if(contacts===0)airborne=true;else if(airborne&&contacts>=2)landed=true}
+assert.ok(maxY>rampSample.y+3,"crest failed to produce meaningful vertical travel");
+assert.ok(airborne&&landed,"crest must produce a real jump and suspension landing");
+assert.ok(isOnRoad(ramp.chassis.translation()),`jump did not land on the modeled road: ${JSON.stringify(ramp.chassis.translation())}`);
+console.log("Apex Run elevated crest traversal passed",JSON.stringify({startY:+rampSample.y.toFixed(1),maxY:+maxY.toFixed(1),endY:+ramp.chassis.translation().y.toFixed(1),minContacts}));

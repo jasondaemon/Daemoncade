@@ -118,6 +118,31 @@ The finish remains narrow and digital steering still benefits from frequent corr
 course and car are original procedural geometry, not production photoreal assets. Lower-end
 laptop, software-renderer, and Windows performance remain uncharacterized.
 
+## Visual alpha 4: spline stadium proof
+
+This milestone intentionally returns the release label to alpha while the new course earns
+fresh player validation. It replaces the slab course rather than claiming the previous beta
+evidence automatically applies to different geometry.
+
+- One Catmull-Rom route definition produces the centerline, variable road width, elevation,
+  banking, minimap, route guidance and recovery tangents. `buildRoadMesh()` emits the indexed
+  positions consumed by both Three.js and Rapier; there is no hidden flat road collider.
+- The course has six visual beats: opening sweeper, banked climb, elevated technical section,
+  west-straight crest jump, high return, and downhill finish. The current 243-sample mesh has
+  1,936 triangles and approximately 18 metres of vertical range.
+- Alternating inset curbs, luminous rails, structural columns and footings make elevation and
+  road edges readable. Continuous elliptical stadium tiers, banners, light masts and low-poly
+  hills replace the previous horizon of repeated cuboids.
+- The vehicle shell now uses a rounded capsule fuselage, tapered nose, rounded side pods and
+  rear haunches while retaining the verified steering/rolling wheel hierarchy.
+- At a 26 m/s approach, the crest regression records zero wheel contacts, then a multi-wheel
+  suspension landing on the same spline road. Recovery height and heading are sampled from the
+  authored road rather than copied from the former flat layout.
+
+Current visual-alpha limits: the route still needs a fresh complete player lap and lifecycle
+fixture on this geometry. The environment remains original procedural art rather than authored
+photogrammetry, and lower-end GPU performance remains unmeasured.
+
 ## Beta browser integration
 
 - `RaceController` is the single countdown, timer, ordered-checkpoint, pause, recovery-eligibility,

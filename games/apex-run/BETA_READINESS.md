@@ -2,9 +2,11 @@
 
 ## Status
 
-Version `0.4.0-beta.1` is a scoped desktop-keyboard beta candidate. It is an original
-single-player stadium time attack inspired by the broad genre, not a Trackmania clone,
-formula-equivalent simulation, or AAA-production claim.
+Version `0.5.0-alpha.4` is a visual-course alpha candidate. The previously verified flat-course
+beta remains available in Git history at `16a26e5`; its player-lap result must not be treated as
+validation of this materially different spline layout. The game is an original single-player
+stadium time attack inspired by the broad genre, not a Trackmania clone, formula-equivalent
+simulation, or AAA-production claim.
 
 Start a local preview from the repository root:
 
@@ -27,6 +29,18 @@ Then open `http://127.0.0.1:4173/games/apex-run/`.
 
 ## Verified scope
 
+- The visual alpha uses one shared indexed spline mesh for rendering and collision. Automated
+  geometry checks cover non-degenerate triangles, bounded sample seams, banking, road occupancy,
+  spline-derived recovery poses, and more than 18 metres of elevation.
+- A 26 m/s west-straight crest test becomes fully airborne and lands on the spline collider;
+  the opening curve remains on the modeled road across a 0.6-second launch-timing window.
+- Browser inspection at 1280x720 confirms the new curved ribbon, curbs, elevated supports,
+  continuous stadium tiers, hills and reshaped vehicle render without console-visible startup
+  failure. Real production W/A key input was exercised through the opening curve.
+
+The following evidence describes the prior `0.4.0-beta.1` geometry and is retained as history,
+not as a readiness claim for visual alpha 4:
+
 - Independent production-page player QA completed a clean `1:54.342` Rookie-medal lap using
   ordinary keyboard controls and screen-visible navigation. It used no reset, Backspace,
   recovery, hidden coordinates, or scripted controller. Observation pauses were used and are
@@ -44,7 +58,7 @@ Then open `http://127.0.0.1:4173/games/apex-run/`.
 - A 600-second simulated drift/reset soak is accelerated test time, not ten real-time minutes.
   See the latest integration-test output for measured wall time and renderer counts.
 
-Known beta limits: the finish gate remains deliberately narrow, digital steering still benefits
+Known prior-beta limits: the finish gate remains deliberately narrow, digital steering still benefits
 from frequent correction, and only desktop keyboard control is supported. Touch, gamepad,
 multiplayer, editor, loops, and wall rides are future work, not beta commitments. Lower-end
 laptop, software-renderer, and Windows performance remain uncharacterized.
@@ -68,9 +82,10 @@ node games/apex-run/play-area.test.mjs
 node games/apex-run/handling-response.test.mjs
 node games/apex-run/human-control.test.mjs
 node games/apex-run/trajectory.test.mjs
-node scripts/test-apex-run-beta.mjs
+node games/apex-run/track-geometry.test.mjs
 ```
 
-The browser integration requires installed Google Chrome and the repository's established
+The older browser integration requires installed Google Chrome and the repository's established
 Playwright runtime path. It uses `games/apex-run/test.html`, which is not linked by or enabled in
-the normal production entry. The production page exposes no test controller.
+the normal production entry. Its fixed route tape has not yet been promoted as visual-alpha
+acceptance evidence. The production page exposes no test controller.
