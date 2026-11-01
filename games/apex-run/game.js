@@ -1,10 +1,10 @@
-import * as THREE from "../vendor/three/three.module.min.js?v=0.4.0-alpha16";
-import RAPIER from "./vendor/rapier-0.17.3.js?v=0.4.0-alpha16";
-import {FixedStepper,MEDALS,clamp,commitResult,formatTime,frameGapInvalidates,isOnRoad,medalFor,persistenceNote,readBest,readReplay,reconcileBest,replayFrameAt} from "./simulation.js?v=0.4.0-alpha16";
-import {VEHICLE,applySurfaceDrag,createVehicle,driveVehicle,stabilizeChassis} from "./vehicle-model.js?v=0.4.0-alpha16";
-import {makeWheelVisual,setWheelVisualPose} from "./wheel-visual.js?v=0.4.0-alpha16";
-import {TRACK_BOXES,CHECKPOINTS,RECOVERY_SPOTS,ROUTE_PATH,PLAY_AREA,advanceOutsidePlayTime,routeGuides,routeStage,routeTarget} from "./track-model.js?v=0.4.0-alpha16";
-import {RaceController} from "./race-controller.js?v=0.4.0-alpha16";
+import * as THREE from "../vendor/three/three.module.min.js?v=0.4.0-beta1";
+import RAPIER from "./vendor/rapier-0.17.3.js?v=0.4.0-beta1";
+import {FixedStepper,MEDALS,clamp,commitResult,formatTime,frameGapInvalidates,isOnRoad,medalFor,persistenceNote,readBest,readReplay,reconcileBest,replayFrameAt} from "./simulation.js?v=0.4.0-beta1";
+import {VEHICLE,applySurfaceDrag,createVehicle,driveVehicle,stabilizeChassis} from "./vehicle-model.js?v=0.4.0-beta1";
+import {makeWheelVisual,setWheelVisualPose} from "./wheel-visual.js?v=0.4.0-beta1";
+import {TRACK_BOXES,CHECKPOINTS,RECOVERY_SPOTS,ROUTE_PATH,PLAY_AREA,advanceOutsidePlayTime,routeGuides,routeStage,routeTarget} from "./track-model.js?v=0.4.0-beta1";
+import {RaceController} from "./race-controller.js?v=0.4.0-beta1";
 
 const $=id=>document.getElementById(id),canvas=$("view"),scene=new THREE.Scene();
 const reducedMotion=matchMedia("(prefers-reduced-motion: reduce)").matches;

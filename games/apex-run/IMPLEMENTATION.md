@@ -114,9 +114,9 @@ Primary references:
   shake, and smoke use render delta; smoke is a fixed 28-mesh pool with no per-puff allocation.
 
 Known beta limitations: keyboard is the supported control mode; no touch/gamepad UI is shown.
-The course and car are original procedural geometry, not production photoreal assets. Browser
-automation cannot substitute for a human handling evaluation, so a real keyboard playtest is
-still required before promoting beyond beta.
+The finish remains narrow and digital steering still benefits from frequent correction. The
+course and car are original procedural geometry, not production photoreal assets. Lower-end
+laptop, software-renderer, and Windows performance remain uncharacterized.
 
 ## Beta browser integration
 
@@ -124,16 +124,16 @@ still required before promoting beyond beta.
   and finish state machine used by the production game and tests.
 - `test.html` is a separate, unlinked test entry. It enables a fixed-tick input provider only by
   setting `data-apex-test`; the production page has no query-string win or teleport shortcut.
-- Playwright drives the exact browser Rapier world with the recorded binary keyboard tape, checks
-  a 34.825-second clean finish, PB storage, tick-zero replay, reload-visible ghost, velocity-safe
+- Playwright drives the exact browser Rapier world with the shared low-frequency keyboard-like
+  lifecycle fixture, checks a clean finish, PB storage, tick-zero replay, reload-visible ghost, velocity-safe
   pause/resume, visibility-handler pause, and a real checkpoint-five recovery followed by normal
   steering/throttle to the finish. The practice result cannot replace the clean PB.
 - The same Chrome test runs 600 simulated seconds of repeated full-throttle handbrake drift and
-  restart cycles. On the measured Apple M1 Max ANGLE Metal renderer it took 48.710 wall seconds,
-  held at 289 geometries and 9 textures after warm-up, kept smoke at or below the 28-object pool,
-  and produced no JavaScript, WebGL, console, or non-favicon HTTP errors.
+  restart cycles, asserts stable renderer resource counts after warm-up, keeps smoke at or below
+  the 28-object pool, and rejects JavaScript, WebGL, console, or non-favicon HTTP errors. The
+  fixture is lifecycle regression evidence, not player proof.
 - These are accelerated simulated-time metrics, not a claim of 60 FPS over ten real minutes. The
   result is hardware/driver-specific; software-renderer performance remains unmeasured.
-- A separate 240-frame normal-time production-page sample measured 16.7 ms median/p95 and 16.8 ms
-  p99 rAF intervals on that same machine. These are presentation intervals, not isolated GPU
-  render-call timings or a portable laptop FPS guarantee.
+- A separate 240-frame normal-time production-page sample records median/p95/p99 rAF intervals.
+  These are presentation intervals, not isolated GPU render-call timings or a portable laptop
+  FPS guarantee. Current exact values are emitted by the integration run.

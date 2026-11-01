@@ -2,6 +2,7 @@ import assert from "node:assert/strict";
 import RAPIER from "./vendor/rapier-0.17.3.js";
 import {VEHICLE,applySurfaceDrag,createVehicle,driveVehicle,stabilizeChassis} from "./vehicle-model.js";
 import {TRACK_BOXES,CHECKPOINTS,RECOVERY_SPOTS,isOnRoad,checkpointAdvance,recoveryForward} from "./track-model.js";
+import {REFERENCE_SEGMENTS} from "./reference-lap.js";
 
 await RAPIER.init();
 const DT=1/120;
@@ -26,13 +27,7 @@ for(const trial of[{name:"reported",brake:.9,turn:1.25},{name:"gentle",brake:.7,
 const reportedMixed=run([{label:"W6",seconds:6,input:I.forward},{label:"W1.1",seconds:1.1,input:I.forward},{label:"WA1.2",seconds:1.2,input:I.left},{label:"W2.8",seconds:2.8,input:I.forward},{label:"W2.2",seconds:2.2,input:I.forward},{label:"W3",seconds:3,input:I.forward},{label:"WD.7",seconds:.7,input:I.right},{label:"W3b",seconds:3,input:I.forward},{label:"WD2.2",seconds:2.2,input:I.right},{label:"W2.5",seconds:2.5,input:I.forward},{label:"W5",seconds:5,input:I.forward}]);
 console.log("reported mixed-surface sequence",JSON.stringify(reportedMixed.trace));
 assert.ok(reportedMixed.trace.at(-1).speed>5,"held throttle must not decay to walking speed on a flat mixed surface");
-const route=run([
-  {label:"launch",seconds:7.7,input:I.forward},{label:"corner 1",seconds:1.12,input:I.left},{label:"south",seconds:3.3,input:I.forward},
-  {label:"brake 2",seconds:.9,input:I.brake},{label:"wide corner 2",seconds:1.35,input:I.left},{label:"west",seconds:8.2,input:I.forward},
-  {label:"corner 3",seconds:1.3,input:I.left},{label:"north",seconds:7.7,input:I.forward},
-  {label:"corner 4",seconds:1.65,input:I.left},{label:"east",seconds:5.9,input:I.forward},
-  {label:"corner 5",seconds:1.4,input:I.left},{label:"south finish",seconds:6,input:I.forward},
-]);
+const routeLabels=["launch","corner 1","south","brake 2","wide corner 2","west","corner 3","north","corner 4","east","corner 5","south finish"],route=run(REFERENCE_SEGMENTS.map(([seconds,input],index)=>({label:routeLabels[index],seconds,input})));
 console.log("route development",JSON.stringify(route.trace));
 assert.equal(route.checkpoint,6,"low-frequency fixed input route must complete all gates");
 assert.equal(route.offroadSeconds,0,"reference route must remain on the modeled road until finish");

@@ -2,10 +2,9 @@
 
 ## Status
 
-Version `0.4.0-alpha.16` is an early desktop-keyboard alpha under active handling revision. It
-is an original single-player stadium time attack inspired by the broad genre, not a Trackmania
-clone or formula-equivalent simulation. Earlier automated beta gates are retained below as
-regression receipts; they did not establish human playability and no longer justify a beta label.
+Version `0.4.0-beta.1` is a scoped desktop-keyboard beta candidate. It is an original
+single-player stadium time attack inspired by the broad genre, not a Trackmania clone,
+formula-equivalent simulation, or AAA-production claim.
 
 Start a local preview from the repository root:
 
@@ -28,19 +27,27 @@ Then open `http://127.0.0.1:4173/games/apex-run/`.
 
 ## Verified scope
 
-- Chrome/Playwright on Apple M1 Max using `ANGLE Metal Renderer: Apple M1 Max`.
-- Exact runtime clean lap: 34.825 seconds, six ordered checkpoints, physical jump/landing,
-  PB save, tick-zero replay, reload-visible moving/rotating ghost.
+- Independent production-page player QA completed a clean `1:54.342` Rookie-medal lap using
+  ordinary keyboard controls and screen-visible navigation. It used no reset, Backspace,
+  recovery, hidden coordinates, or scripted controller. Observation pauses were used and are
+  disclosed, so this is not represented as one uninterrupted real-time lap.
+- The same player QA confirmed the original blocking concerns are corrected: the car remains
+  controllable on track, wheel hubs remain correctly aligned while tires roll and steer, grass
+  mistakes can re-enter, recovery headings work, unsupported world edges recover, and ordered
+  breadcrumb navigation no longer points to passed invisible helpers.
+- Chrome/Playwright lifecycle verification exercises the exact runtime physics with a shared
+  low-frequency keyboard-like fixture: ordered finish, PB save, tick-zero replay,
+  reload-visible moving/rotating ghost, pause/visibility handling, recovery-protected PB,
+  denied storage messaging, direct entry, app-shell startup, and bounded drift/reset soak.
 - Recovery-to-finish practice flow preserves the prior clean PB and ghost.
-- Recorded identical inputs finish at 34.833/34.833/34.825 seconds under 30/60/144 FPS render
-  schedules with zero recovery.
+- Recorded identical inputs remain trajectory-equivalent under 30/60/144 FPS render schedules.
 - A 600-second simulated drift/reset soak is accelerated test time, not ten real-time minutes.
   See the latest integration-test output for measured wall time and renderer counts.
 
-No automated result is represented as a human-driven lap. Human keyboard feel remains the main
-subjective beta feedback item. Touch, gamepad, multiplayer, editor, loops, and wall rides are
-future work, not beta commitments. Software-renderer and low-end Windows laptop performance are
-not yet characterized.
+Known beta limits: the finish gate remains deliberately narrow, digital steering still benefits
+from frequent correction, and only desktop keyboard control is supported. Touch, gamepad,
+multiplayer, editor, loops, and wall rides are future work, not beta commitments. Lower-end
+laptop, software-renderer, and Windows performance remain uncharacterized.
 
 ## Code and licenses
 
@@ -55,6 +62,11 @@ not yet characterized.
 ```sh
 node games/apex-run/simulation.test.mjs
 node games/apex-run/vehicle-model.test.mjs
+node games/apex-run/wheel-visual.test.mjs
+node games/apex-run/route-guidance.test.mjs
+node games/apex-run/play-area.test.mjs
+node games/apex-run/handling-response.test.mjs
+node games/apex-run/human-control.test.mjs
 node games/apex-run/trajectory.test.mjs
 node scripts/test-apex-run-beta.mjs
 ```
