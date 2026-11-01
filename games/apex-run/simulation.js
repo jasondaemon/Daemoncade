@@ -1,18 +1,18 @@
 export const FIXED_DT=1/120;
-export const REPLAY_VERSION=2;
-export const REPLAY_KEY="apex-run:replay:v2";
+export const REPLAY_VERSION=3;
+export const REPLAY_KEY="apex-run:replay:v3";
 export const REPLAY_HZ=30;
-export const MEDALS=Object.freeze([{name:"APEX",time:12,color:0x55efff},{name:"GOLD",time:14,color:0xffd454},{name:"SILVER",time:17,color:0xd6e2ec},{name:"BRONZE",time:22,color:0xd58b55}]);
+export const MEDALS=Object.freeze([{name:"APEX",time:34,color:0x55efff},{name:"GOLD",time:39,color:0xffd454},{name:"SILVER",time:46,color:0xd6e2ec},{name:"BRONZE",time:58,color:0xd58b55}]);
 export function clamp(v,min,max){return Math.max(min,Math.min(max,v))}
 export function formatTime(seconds){
   const safe=Math.max(0,Number.isFinite(seconds)?seconds:0),minutes=Math.floor(safe/60),rest=safe-minutes*60;
   return `${String(minutes).padStart(2,"0")}:${rest.toFixed(3).padStart(6,"0")}`;
 }
-export function readBest(storage,key="apex-run:pb:v1"){
+export function readBest(storage,key="apex-run:pb:v2"){
   try{const value=Number(storage.getItem(key));return Number.isFinite(value)&&value>1&&value<3600?value:null}catch{return null}
 }
 export function reconcileBest(best,replay){return replay&&(!best||replay.time<best)?replay.time:best}
-export function saveBest(storage,time,key="apex-run:pb:v1"){if(!Number.isFinite(time)||time<=1||time>=3600)return false;try{storage.setItem(key,String(time));return true}catch{return false}}
+export function saveBest(storage,time,key="apex-run:pb:v2"){if(!Number.isFinite(time)||time<=1||time>=3600)return false;try{storage.setItem(key,String(time));return true}catch{return false}}
 function finiteArray(value,length){return Array.isArray(value)&&value.length===length&&value.every(Number.isFinite)}
 export function validateReplay(value){
   if(!value||value.version!==REPLAY_VERSION||!Number.isFinite(value.time)||value.time<=1||value.time>300||value.hz!==REPLAY_HZ||!Array.isArray(value.frames)||value.frames.length<2||value.frames.length>REPLAY_HZ*300)return null;
@@ -28,9 +28,9 @@ export function replayFrameAt(replay,seconds){
   const a=frames[lo],b=frames[Math.min(lo+1,frames.length-1)],span=Math.max(1,b[0]-a[0]),t=clamp((tick-a[0])/span,0,1),out=new Array(8);out[0]=tick;for(let i=1;i<8;i++)out[i]=a[i]+(b[i]-a[i])*t;return out;
 }
 export function medalFor(seconds){return MEDALS.find(m=>seconds<=m.time)||null}
-export function isOnRoad(position){const{x,z}=position;return(x>=-11&&x<=108&&Math.abs(z)<=14)||(x>=81&&x<=121&&z>=-103&&z<=4)||(x>=-91&&x<=121&&z>=-121&&z<=-84)}
+export function isOnRoad(position){const{x,z}=position;return(x>=-11&&x<=121&&Math.abs(z)<=14)||(x>=81&&x<=121&&z>=-121&&z<=4)||(x>=-99&&x<=121&&z>=-121&&z<=-84)||(x>=-99&&x<=-65&&z>=-121&&z<=141)||(x>=-99&&x<=151&&z>=123&&z<=157)||(x>=133&&x<=167&&z>=-5&&z<=157)}
 export function checkpointAdvance(current,position){
-  const zones=[{x:99,z:-12,hx:18,hz:18},{x:101,z:-103,hx:18,hz:12},{x:-18,z:-105,hx:14,hz:16},{x:-82,z:-105,hx:10,hz:16}];
+  const zones=[{x:99,z:-12,hx:18,hz:18},{x:101,z:-103,hx:18,hz:12},{x:-82,z:-103,hx:16,hz:16},{x:-82,z:125,hx:16,hz:18},{x:135,z:140,hx:18,hz:16},{x:150,z:8,hx:16,hz:12}];
   const zone=zones[current];if(!zone)return current;
   return Math.abs(position.x-zone.x)<=zone.hx&&Math.abs(position.z-zone.z)<=zone.hz?current+1:current;
 }

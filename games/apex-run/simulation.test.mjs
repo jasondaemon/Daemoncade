@@ -10,7 +10,7 @@ const memory=new Map(),store={getItem:key=>memory.get(key)??null,setItem:(key,va
 const frames=[[0,0,2,0,0,0,0,1],[30,30,3,-4,0,.2,0,.98]];
 assert.equal(saveReplay(store,20,frames),true);assert.ok(memory.has(REPLAY_KEY));const replay=readReplay(store);assert.equal(replay.time,20);assert.deepEqual(replayFrameAt(replay,.5).slice(1,4),[15,2.5,-2]);
 store.setItem(REPLAY_KEY,JSON.stringify({...replay,frames:[[0,999,2,0,0,0,0,1],[1,0,2,0,0,0,0,1]]}));assert.equal(readReplay(store),null);
-assert.equal(medalFor(11.9).name,"APEX");assert.equal(medalFor(15).name,"SILVER");assert.equal(medalFor(23),null);
+assert.equal(medalFor(33.9).name,"APEX");assert.equal(medalFor(42).name,"SILVER");assert.equal(medalFor(59),null);
 assert.equal(reconcileBest(18,{time:20}),18);assert.equal(reconcileBest(22,{time:20}),20);
 const denied={getItem(){throw Error("denied")},setItem(){throw Error("quota")}};assert.equal(readBest(denied),null);assert.equal(readReplay(denied),null);assert.equal(saveBest(denied,12),false);assert.equal(saveReplay(denied,20,frames),false);
 assert.equal(isOnRoad({x:50,z:0}),true);assert.equal(isOnRoad({x:101,z:-60}),true);assert.equal(isOnRoad({x:0,z:-103}),true);assert.equal(isOnRoad({x:50,z:40}),false);

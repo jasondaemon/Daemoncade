@@ -67,3 +67,17 @@ Primary references:
 
 - Gamepad/touch controls, audio, particles, and two more tracks.
 - Loops or wall rides only after a dedicated contact/adhesion prototype proves predictable.
+
+## Alpha 3 stadium rebuild
+
+- Expanded the sprint into a six-gate, roughly 31-second reference route with a braking
+  corner, technical hairpin, physical ramp and landing, north climb, long stadium straight,
+  and final braking run. Medal targets now match the longer layout.
+- Added continuous curbs and lane rhythm, corner instruction boards, start-grid markings,
+  layered grandstands and roof lighting, plus distinct cyan checkpoint and gold finish arches.
+- Rebuilt the car silhouette with side pods, floor, splitter, rear deck, diffuser, fin,
+  illuminated lamps, alloy hubs, visible steering and wheel rotation.
+- Added velocity-aware camera look, landing shake, handbrake smoke, and procedural engine and
+  wind audio. Audio starts only after a driving input to respect browser autoplay policy.
+- Versioned PB/replay storage again so ghosts from the shorter course cannot appear on the
+  rebuilt layout. Fixed the vendored Rapier initialization wrapper's deprecation warning.
