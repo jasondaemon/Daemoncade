@@ -2,7 +2,7 @@
 
 ## Status
 
-Version `0.5.0-alpha.16` is a visual-course alpha candidate. The previously verified flat-course
+Version `0.5.0-alpha.16` is a desktop-keyboard beta candidate. The previously verified flat-course
 beta remains available in Git history at `16a26e5`; its player-lap result must not be treated as
 validation of this materially different spline layout. The game is an original single-player
 stadium time attack inspired by the broad genre, not a Trackmania clone, formula-equivalent
@@ -14,7 +14,7 @@ Start a local preview from the repository root:
 python3 -m http.server 4173 --bind 127.0.0.1
 ```
 
-Then open `http://127.0.0.1:4173/games/apex-run/`.
+Then open `http://127.0.0.1:4173/games/apex-run/?build=alpha16`.
 
 ## Controls and rules
 
@@ -63,14 +63,32 @@ Then open `http://127.0.0.1:4173/games/apex-run/`.
   direct rail contact still removes too much momentum even though it no longer traps the car.
 - Low-speed launch torque now tapers from 1550 to the original 1200 per wheel by 90 km/h:
   flat-road speed at five seconds improves from 65.9 to 75.7 km/h while the unchanged 35-unit
-  service brake stops from 80 km/h in 1.34 seconds / 14.68 metres. Incidence-aware rail probes
-  show nine shallow 3–15 degree contacts retain 97–111% of tangential speed after 0.35 seconds;
-  the old near-zero minima occur only after sustained input turns a scrape into a nose-first impact.
+  service brake stops from 80 km/h in 1.34 seconds / 14.68 metres. Under throttle, nine shallow
+  3–15 degree contacts retain 97–111% of tangential speed after 0.35 seconds; this is gameplay
+  response, not a pure collision-energy claim. With neutral throttle, five both-side 5–13 degree
+  glances retain 90–96%. Neutral 35-degree impacts retain 69–75%, 60-degree impacts retain
+  37–41%, and near-frontal 83-degree impacts retain 1–3%, establishing a monotonic physical
+  response from a momentum-preserving scrape to a credible stop.
 - Production-page alpha 16 keyboard QA completed a `2:54.167` recovery/practice lap that correctly
   left the PB unchanged, then a no-recovery `2:22.725` run that remained PB-eligible. Both used
   visible chase-view feedback with disclosed observation pauses, so neither is represented as an
   uninterrupted performance lap. The clean run physically reversed away from several hard rail
   contacts and finished with no browser warnings or errors; the existing `00:48.700` PB persisted.
+- Independent production-page keyboard QA on the same alpha 16 graph completed a clean
+  `00:46.000` lap without recovery or reverse. Observation pauses were disclosed, so this is
+  player-control and finish evidence rather than an uninterrupted performance benchmark. A
+  production shallow scrape retained 71 km/h from a 73 km/h approach.
+- Chrome lifecycle integration on the exact alpha 16 graph completes a clean 45.325-second
+  fixture, saves 1,360 replay frames, reloads a visible ghost that moves 115.6 metres and changes
+  orientation, and proves that a recovered practice finish cannot replace the clean PB/ghost.
+  It also covers denied-storage messaging, direct entry, the app shell, pause/visibility handling,
+  and verifies that the normal entry exposes no test controller. The reactive fixture exercises
+  the real runtime race loop and storage path, but is not represented as player-driving evidence.
+- On one 2021 MacBook Pro (Apple M1 Max, 24-core GPU, 32 GB) using Chrome's ANGLE Metal renderer,
+  a 240-frame production sample measured 16.7 ms median, 16.8 ms p95 and 16.8 ms p99 intervals.
+  A 600-second accelerated drift/reset soak took 84.8 wall-clock seconds and remained at 262
+  geometries / 11 textures after full-cycle warm-up. This is one-machine evidence; lower-end Mac,
+  Windows and software-renderer performance remain uncharacterized.
 
 The following evidence describes the prior `0.4.0-beta.1` geometry and is retained as history,
 not as a readiness claim for visual alpha 5:
@@ -120,7 +138,7 @@ node games/apex-run/track-geometry.test.mjs
 node games/apex-run/rail-contact.test.mjs
 ```
 
-The older browser integration requires installed Google Chrome and the repository's established
+The browser integration requires installed Google Chrome and the repository's established
 Playwright runtime path. It uses `games/apex-run/test.html`, which is not linked by or enabled in
-the normal production entry. Its fixed route tape has not yet been promoted as visual-alpha
-acceptance evidence. The production page exposes no test controller.
+the normal production entry. Its reactive route driver is lifecycle/regression evidence, not
+visual or player acceptance evidence. The production page exposes no test controller.
