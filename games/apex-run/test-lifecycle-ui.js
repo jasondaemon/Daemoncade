@@ -1,4 +1,4 @@
-import {CHECKPOINTS,ROAD_SAMPLES,ROAD_STEPS_PER_SEGMENT} from "./track-model.js?v=0.5.0-alpha37";
+import {CHECKPOINTS,ROAD_SAMPLES,ROAD_STEPS_PER_SEGMENT} from "./track-model.js?v=0.5.0-alpha38";
 
 const button=document.querySelector("#run-lifecycle"),report=document.querySelector("#lifecycle-report"),params=new URLSearchParams(location.search),scope=params.get("testStorage"),phase=params.get("lifecycle"),pendingKey="apex-run:test-lifecycle:pending";
 const neutral=Array.from({length:361},()=>({})),targetStride=Math.max(1,Math.round(6*ROAD_STEPS_PER_SEGMENT/22)),targets=ROAD_SAMPLES.filter((_,index)=>index%targetStride===0).map(({x,z})=>[x,z]);targets.push([ROAD_SAMPLES.at(-1).x,ROAD_SAMPLES.at(-1).z]);

@@ -1,5 +1,5 @@
-import {requestedTrackId} from "./track-catalog.js?v=0.5.0-alpha37";
-import {buildStuntLoop} from "./stunt-loop.js?v=0.5.0-alpha37";
+import {requestedTrackId} from "./track-catalog.js?v=0.5.0-alpha38";
+import {buildStuntLoop} from "./stunt-loop.js?v=0.5.0-alpha38";
 
 const ALPINE_ROUTE=Object.freeze([
   {x:-2,y:0,z:0,width:24,bank:0},{x:62,y:.5,z:0,width:24,bank:0},{x:96,y:2,z:-24,width:25,bank:-.08},{x:96,y:6,z:-72,width:25,bank:-.16},{x:78,y:9,z:-98,width:24,bank:-.1},{x:28,y:10,z:-108,width:23,bank:0},{x:-82,y:7,z:-103,width:24,bank:0},

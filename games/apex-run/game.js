@@ -1,17 +1,17 @@
 import * as THREE from "../vendor/three/three.module.min.js?v=0.5.0-alpha25";
 import {GLTFLoader} from "../vendor/three/addons/loaders/GLTFLoader.js?v=0.5.0-alpha25";
 import RAPIER from "./vendor/rapier-0.17.3.js?v=0.5.0-alpha25";
-import {FixedStepper,MEDALS,REPLAY_HZ,clamp,commitResult,formatTime,frameGapInvalidates,isOnRoad,medalFor,persistenceNote,readBest,readReplay,reconcileBest,replayForBest,replayFrameAt} from "./simulation.js?v=0.5.0-alpha37";
-import {formatSplitDelta,replayCheckpointSplits,splitTone,summarizeSplits} from "./race-feedback.js?v=0.5.0-alpha37";
+import {FixedStepper,MEDALS,REPLAY_HZ,clamp,commitResult,formatTime,frameGapInvalidates,isOnRoad,medalFor,persistenceNote,readBest,readReplay,reconcileBest,replayForBest,replayFrameAt} from "./simulation.js?v=0.5.0-alpha38";
+import {formatSplitDelta,replayCheckpointSplits,splitTone,summarizeSplits} from "./race-feedback.js?v=0.5.0-alpha38";
 import {RAIL_COLLISION_GROUPS,SUSPENSION_QUERY_GROUPS,VEHICLE,applyLowSpeedSteering,applySurfaceDrag,createVehicle,driveVehicle,hasSupportingContact,stabilizeChassis} from "./vehicle-model.js?v=0.5.0-alpha25";
 import {setWheelVisualPose} from "./wheel-visual.js?v=0.5.0-alpha25";
 import {makeFormulaCar,makeFormulaGhost,makeFormulaWheelVisual} from "./formula-car.js?v=0.5.0-alpha26";
-import {TRACK_BOXES,BRANCH_JUNCTIONS,BRANCH_ROADS,CHECKPOINTS,INTENTIONAL_OBSTACLES,JUMP_ZONE,RECOVERY_SPOTS,ROAD_PATHS,ROAD_SAMPLES,ROAD_STEPS_PER_SEGMENT,PLAY_AREA,RAIL_PROFILE,SPLIT_LAYOUT,START_GATE_SAMPLE_INDEX,START_SPAWN_SAMPLE_INDEX,STUNT_RAIL_GAPS,VENUE,advanceOutsidePlayTime,advanceUnderRoadTime,buildLaneRibbon,buildRailColliderMesh,buildRoadColliderMesh,buildRoadMesh,buildSupportSpecs,roadPoseNear,routeStage,routeTarget} from "./track-model.js?v=0.5.0-alpha37";
-import {RaceController} from "./race-controller.js?v=0.5.0-alpha37";
+import {TRACK_BOXES,BRANCH_JUNCTIONS,BRANCH_ROADS,CHECKPOINTS,INTENTIONAL_OBSTACLES,JUMP_ZONE,RECOVERY_SPOTS,ROAD_PATHS,ROAD_SAMPLES,ROAD_STEPS_PER_SEGMENT,PLAY_AREA,RAIL_PROFILE,SPLIT_LAYOUT,START_GATE_SAMPLE_INDEX,START_SPAWN_SAMPLE_INDEX,STUNT_RAIL_GAPS,VENUE,advanceOutsidePlayTime,advanceUnderRoadTime,buildLaneRibbon,buildRailColliderMesh,buildRoadColliderMesh,buildRoadMesh,buildSupportSpecs,roadPoseNear,routeStage,routeTarget} from "./track-model.js?v=0.5.0-alpha38";
+import {RaceController} from "./race-controller.js?v=0.5.0-alpha38";
 import {createTelemetry,sampleTelemetry} from "./telemetry.js?v=0.5.0-alpha28";
-import {activeTrack,TRACK_CATALOG} from "./track-catalog.js?v=0.5.0-alpha37";
-import {resolveQuality,shadowPlacement} from "./graphics-quality.js?v=0.5.0-alpha37";
-import {loadOptionalAssets} from "./optional-assets.js?v=0.5.0-alpha37";
+import {activeTrack,TRACK_CATALOG} from "./track-catalog.js?v=0.5.0-alpha38";
+import {resolveQuality,shadowPlacement} from "./graphics-quality.js?v=0.5.0-alpha38";
+import {loadOptionalAssets} from "./optional-assets.js?v=0.5.0-alpha38";
 
 const $=id=>document.getElementById(id),canvas=$("view"),scene=new THREE.Scene(),testMode=document.documentElement.dataset.apexTest==="1",testParams=new URLSearchParams(location.search),renderTelemetryMode=testMode&&testParams.get("renderTelemetry")==="1",splitScenario=renderTelemetryMode&&testParams.get("scenario")==="split",splitLine=splitScenario?testParams.get("line"):null;
 const reducedMotion=matchMedia("(prefers-reduced-motion: reduce)").matches;
