@@ -193,11 +193,17 @@ unmeasured.
   or lower-quality substitute asset was used. The rejected alpha-23 procedural body therefore
   remains an explicit unresolved visual blocker rather than being mislabeled as finished.
 - A non-production matched-input telemetry harness compares 22/44/88/176-step colliders at 120 Hz.
-  It projects chassis and camera motion into the interpolated road-normal frame, counts contact-loss
-  ticks instead of filtering them out, excludes only the intentional crest, and compares common
-  20-metre arclength / 5 m/s bins. In nine common bins, heave RMS falls from 0.070 to 0.052 m/s and
-  mean pitch motion from 0.074 to 0.071; whole-probe chassis pitch RMS falls from 0.115 to 0.054
+  It projects chassis motion into the interpolated road-normal frame, counts contact-loss ticks
+  instead of filtering them out, excludes only the intentional crest, and compares common 20-metre
+  arclength / 5 m/s bins only when both runs contribute at least 0.25 seconds. In seven covered bins,
+  heave RMS falls from 0.080 to 0.059 m/s and mean pitch motion from 0.094 to 0.090; whole-probe
+  chassis pitch RMS falls from 0.115 to 0.054
   rad/s and suspension-length velocity RMS from 0.448 to 0.366 m/s.
+- The harness's `desiredCameraRoadVelocityRms` is only an unsmoothed geometric boom-point proxy. It
+  is not the rendered chase camera and omits runtime interpolation, pitch comfort, shake and
+  obstruction shortening. Adding a recorder to production `game.js`, even conditionally for the
+  test entry, was rejected as an unapproved production hook; that action did not execute and was not
+  routed around. Actual 38-55 km/h rendered-camera/body-motion capture therefore remains blocked.
 - Isolated controls make the causal boundary explicit. A planar ribbon stays effectively motionless
   at every resolution. On the same smooth vertical curve, heave velocity falls 0.122 -> 0.033 ->
   0.010 -> 0.004 m/s for 22/44/88/176 samples. On the authored course, raw world-Y acceleration and
