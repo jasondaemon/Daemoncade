@@ -253,3 +253,18 @@ failure, quality selection, broader input support and additional hardware covera
 The exact physics, spline/collider, checkpoint and PB/replay semantics are unchanged. Audio mix
 quality is still unverified by ear, and procedural art remains short of a fully authored asset
 pipeline. Windows, lower-end GPU, touch and gamepad coverage remain future work.
+
+## Production vertical slice 4: reliability and settings
+
+- Result staging now removes all live race telemetry and controls behind the finish dialog.
+- Pause is the safe in-session settings surface for quality, sound, ghost and a concise controls
+  reminder. Focus stays in the modal, held driving keys are cleared and Escape resumes normally.
+- The CSP-safe load guard listens for non-bubbling resource errors during capture and offers both
+  a normal retry and a persisted Low-quality retry with concise diagnostics.
+- WebGL context loss pauses and invalidates the active attempt. Restoration never silently resumes
+  timing: the player must explicitly restart a clean run. Integration uses the browser's real
+  `WEBGL_lose_context` extension and an actually aborted module request rather than synthetic calls.
+
+This bounded patch does not alter course geometry, handling or art composition. The next visual
+milestone must replace the generic ring/field/repeated-support language with a coherent authored
+venue rather than accumulating more procedural primitives.

@@ -2,7 +2,7 @@
 
 ## Status
 
-Version `0.5.0-alpha.19` is a desktop-keyboard production-slice candidate, not a release candidate. The previously verified flat-course
+Version `0.5.0-alpha.20` is a desktop-keyboard production-slice candidate, not a release candidate. The previously verified flat-course
 beta remains available in Git history at `16a26e5`; its player-lap result must not be treated as
 validation of this materially different spline layout. The game is an original single-player
 stadium time attack inspired by the broad genre, not a Trackmania clone, formula-equivalent
@@ -14,7 +14,7 @@ Start a local preview from the repository root:
 python3 -m http.server 4173 --bind 127.0.0.1
 ```
 
-Then open `http://127.0.0.1:4173/games/apex-run/?build=alpha19`.
+Then open `http://127.0.0.1:4173/games/apex-run/?build=alpha20`.
 
 ## Controls and rules
 
@@ -126,6 +126,18 @@ Then open `http://127.0.0.1:4173/games/apex-run/?build=alpha19`.
 - Exact alpha 19 Chrome lifecycle still finishes in 43.042 seconds with 1,292 frames. Its
   600-second accelerated soak took 101.4 wall-clock seconds and stabilized at 300 geometries /
   13 textures; the M1 Max/ANGLE Metal 240-frame sample measured 16.7 ms median and 16.8 ms p95/p99.
+- Alpha 20 completes state staging: the finished result hides race HUD, eligibility, navigation,
+  quick actions and bottom controls. Pause exposes accessible graphics, sound and ghost controls;
+  held inputs remain cleared, Escape resumes, and R retains instant clean-restart semantics.
+- The load guard listens in capture phase, so a real aborted module-resource request reaches the
+  failure surface. Browser integration aborts `game.js`, verifies actionable Retry and Retry in Low
+  choices, and confirms the normal entry never exposes the test controller.
+- Real `WEBGL_lose_context` coverage starts a production run, loses the context, verifies immediate
+  pause and PB ineligibility, restores the context, and requires an explicit clean restart. A
+  context interruption can therefore never silently save a competitive time.
+- Alpha 20's exact lifecycle remains 43.042 seconds / 1,292 frames. The accelerated 600-second
+  soak took 88.5 wall-clock seconds with 300 geometries / 13 textures; M1 Max/ANGLE Metal frame
+  intervals remained 16.7 ms median and 16.8 ms p95/p99. Audio mix remains unverified by ear.
 
 The following evidence describes the prior `0.4.0-beta.1` geometry and is retained as history,
 not as a readiness claim for visual alpha 5:
