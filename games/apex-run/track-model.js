@@ -1,4 +1,4 @@
-import {requestedTrackId} from "./track-catalog.js?v=0.5.0-alpha34";
+import {requestedTrackId} from "./track-catalog.js?v=0.5.0-alpha35";
 
 const ALPINE_ROUTE=Object.freeze([
   {x:-2,y:0,z:0,width:24,bank:0},{x:62,y:.5,z:0,width:24,bank:0},{x:96,y:2,z:-24,width:25,bank:-.08},{x:96,y:6,z:-72,width:25,bank:-.16},{x:78,y:9,z:-98,width:24,bank:-.1},{x:28,y:10,z:-108,width:23,bank:0},{x:-82,y:7,z:-103,width:24,bank:0},
@@ -70,23 +70,24 @@ export function buildRoadMesh(stepsPerSegment=ROAD_STEPS_PER_SEGMENT){const samp
     a+6,b+6,a+7,b+6,b+7,a+7,
   )}return{positions,indices,samples}}
 export const ROAD_SAMPLES=Object.freeze(buildRoadMesh().samples.map(Object.freeze));
-function bezier(a,b,c,d,t){const u=1-t;return u*u*u*a+3*u*u*t*b+3*u*t*t*c+t*t*t*d}
 function buildBranchSamples(){
   if(!summit)return[];
-  const entryIndex=routeSampleIndex(13),mergeIndex=routeSampleIndex(16),entry=ROAD_SAMPLES[entryIndex],merge=ROAD_SAMPLES[mergeIndex],steps=180,samples=[];
-  const controls={a:entry,b:{x:-215,y:10.5,z:-112},c:{x:42,y:19.5,z:-74},d:merge};
+  const entryIndex=routeSampleIndex(13),mergeIndex=routeSampleIndex(16),entry=ROAD_SAMPLES[entryIndex],merge=ROAD_SAMPLES[mergeIndex],steps=180,samples=[],mainDirection=index=>normalized({x:ROAD_SAMPLES[index+1].x-ROAD_SAMPLES[index-1].x,y:ROAD_SAMPLES[index+1].y-ROAD_SAMPLES[index-1].y,z:ROAD_SAMPLES[index+1].z-ROAD_SAMPLES[index-1].z});
+  const anchors=[entry,{x:-220,y:11,z:-158},{x:30,y:18.5,z:-58},merge],directions=[mainDirection(entryIndex),normalized({x:250,y:7.5,z:100}),normalized({x:360,y:17.5,z:138}),mainDirection(mergeIndex)],magnitudes=[54,94,92,76],segmentSteps=steps/(anchors.length-1),bankStartSlope=(ROAD_SAMPLES[entryIndex+1].bank-entry.bank)*steps,bankEndSlope=(merge.bank-ROAD_SAMPLES[mergeIndex-1].bank)*steps;
   for(let index=0;index<=steps;index++){
-    const t=index/steps,ease=t*t*(3-2*t),width=18+22*(1-Math.sin(Math.PI*t)**.55),bank=.08*Math.sin(Math.PI*t),sample={x:bezier(controls.a.x,controls.b.x,controls.c.x,controls.d.x,t),y:bezier(controls.a.y,controls.b.y,controls.c.y,controls.d.y,t),z:bezier(controls.a.z,controls.b.z,controls.c.z,controls.d.z,t),width,bank,progress:ease};samples.push(sample);
+    const overall=index/steps,segment=Math.min(anchors.length-2,Math.floor(index/segmentSteps)),local=(index-segment*segmentSteps)/segmentSteps,a=anchors[segment],b=anchors[segment+1],ma=directions[segment],mb=directions[segment+1],scaleA=magnitudes[segment],scaleB=magnitudes[segment+1],width=40-22*Math.sin(Math.PI*overall)**2,bank=hermite(entry.bank,merge.bank,bankStartSlope,bankEndSlope,overall),sample={x:hermite(a.x,b.x,ma.x*scaleA,mb.x*scaleB,local),y:hermite(a.y,b.y,ma.y*scaleA,mb.y*scaleB,local),z:hermite(a.z,b.z,ma.z*scaleA,mb.z*scaleB,local),width,bank,progress:overall};samples.push(sample);
   }
   for(let index=0;index<samples.length;index++){const before=samples[Math.max(0,index-1)],after=samples[Math.min(samples.length-1,index+1)],dx=after.x-before.x,dz=after.z-before.z,length=Math.hypot(dx,dz)||1,rx=-dz/length,rz=dx/length,half=samples[index].width/2,cos=Math.cos(samples[index].bank),sin=Math.sin(samples[index].bank);samples[index].heading=Math.atan2(dz,dx);samples[index].left={x:samples[index].x+rx*half*cos,y:samples[index].y+half*sin,z:samples[index].z+rz*half*cos};samples[index].right={x:samples[index].x-rx*half*cos,y:samples[index].y-half*sin,z:samples[index].z-rz*half*cos}}
-  return samples;
+  samples[0].left={...entry.left};samples[0].right={...entry.right};samples[0].heading=entry.heading;samples.at(-1).left={...merge.left};samples.at(-1).right={...merge.right};samples.at(-1).heading=merge.heading;return samples;
 }
 function roadMeshFromSamples(samples){const positions=[],indices=[],thickness=1.1;for(const sample of samples)positions.push(sample.left.x,sample.left.y,sample.left.z,sample.right.x,sample.right.y,sample.right.z,sample.left.x,sample.left.y-thickness,sample.left.z,sample.right.x,sample.right.y-thickness,sample.right.z,sample.left.x,sample.left.y,sample.left.z,sample.left.x,sample.left.y-thickness,sample.left.z,sample.right.x,sample.right.y,sample.right.z,sample.right.x,sample.right.y-thickness,sample.right.z);for(let index=0;index<samples.length-1;index++){const a=index*8,b=(index+1)*8;indices.push(a,b,a+1,b,b+1,a+1,a+2,a+3,b+2,b+2,a+3,b+3,a+4,a+5,b+4,b+4,a+5,b+5,a+6,b+6,a+7,b+6,b+7,a+7)}return{positions,indices,samples}}
 const shortcutSamples=buildBranchSamples();
-export const BRANCH_ROADS=Object.freeze(shortcutSamples.length?[Object.freeze({id:"inside-line",name:"ATTACK LINE",samples:Object.freeze(shortcutSamples.map(Object.freeze)),mesh:roadMeshFromSamples(shortcutSamples)})]:[]);
+function branchSurfaceSamples(samples){if(!samples.length)return[];const separated=samples.map(sample=>{let distance=Infinity,width=0;for(const main of ROAD_SAMPLES){const candidate=Math.hypot(sample.x-main.x,sample.z-main.z);if(candidate<distance){distance=candidate;width=main.width}}return distance>=(sample.width+width)/2-.5}),start=separated.indexOf(true),end=separated.lastIndexOf(true);return start<0?[]:samples.slice(start,end+1)}
+const shortcutSurface=branchSurfaceSamples(shortcutSamples);
+export const BRANCH_ROADS=Object.freeze(shortcutSamples.length?[Object.freeze({id:"inside-line",name:"ATTACK LINE",samples:Object.freeze(shortcutSamples.map(Object.freeze)),surfaceSamples:Object.freeze(shortcutSurface),mesh:roadMeshFromSamples(shortcutSurface)})]:[]);
 export const ROAD_PATHS=Object.freeze([ROAD_SAMPLES,...BRANCH_ROADS.map(branch=>branch.samples)]);
 export const SPLIT_LAYOUT=Object.freeze(shortcutSamples.length?{entrySample:routeSampleIndex(13),mergeSample:routeSampleIndex(16),gapSide:"left",gapRadius:45,branchId:"inside-line"}:null);
-export const INTENTIONAL_OBSTACLES=Object.freeze(shortcutSamples.length?[58,92,126].map((sampleIndex,index)=>{const sample=shortcutSamples[sampleIndex],frame=sampleFrame(shortcutSamples,sampleIndex),offset=(index%2?1:-1)*3.8;return Object.freeze({id:`inside-column-${index+1}`,branchId:"inside-line",sampleIndex,x:sample.x+frame.lateral.x*offset,y:sample.y+frame.up.y*3.2,z:sample.z+frame.lateral.z*offset,radius:1.15,height:6.4,rotation:basisQuaternion(frame.forward,frame.up,frame.lateral)})}):[]);
+export const INTENTIONAL_OBSTACLES=Object.freeze(shortcutSamples.length?[78,98,118].map((sampleIndex,index)=>{const sample=shortcutSamples[sampleIndex],frame=sampleFrame(shortcutSamples,sampleIndex),offset=(index%2?1:-1)*3.8;return Object.freeze({id:`inside-column-${index+1}`,branchId:"inside-line",sampleIndex,x:sample.x+frame.lateral.x*offset,y:sample.y+frame.up.y*3.2,z:sample.z+frame.lateral.z*offset,radius:1.15,height:6.4,rotation:basisQuaternion(frame.forward,frame.up,frame.lateral)})}):[]);
 // Suspension rays and chassis contacts use only the authored driving surface.
 // The rendered mesh keeps its underside and edge walls for visual thickness,
 // but those vertical triangles are not ground and must not catch a tire ray at

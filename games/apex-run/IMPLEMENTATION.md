@@ -489,3 +489,16 @@ magnetic adhesion or pose correction.
 No loop is shipped in Alpha 34. The separate physics lab has demonstrated genuine inverted
 suspension contact on a small loop, but entry/exit topology still needs a continuous,
 non-overlapping proof before it can become production course geometry.
+
+## Alpha 35 — Welded split junctions and resilient scenery
+
+- The attack road now inherits the main road's position, tangent, width and bank at both shared
+  cross-sections. A gradual zero-slope width taper replaces the prior shoulder step. Only the
+  fully separated middle of the attack road owns an additional render/collision ribbon; the main
+  road supplies the shared entry/merge aprons, eliminating the overlapping physical sheets that
+  hid folded 55° / 15° junctions in Alpha 34.
+- Regression coverage checks both road edges, endpoint tangent and bank, bounded junction
+  curvature, isolated collision ownership, obstacle placement and common-gate shortcut rejection.
+- Kenney scenery loads independently. A missing stand, office or barrier now falls back to the
+  existing authored stand or simple race furniture while the physical obstacle course and game
+  continue to initialize.
