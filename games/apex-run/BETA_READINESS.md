@@ -138,6 +138,9 @@ Then open `http://127.0.0.1:4173/games/apex-run/?build=alpha22`.
 - Graphics failure and restoration surfaces use alert-dialog semantics, make background game
   controls inert, and focus the primary visible action. Browser coverage activates Restart with
   the keyboard and verifies that the canvas becomes interactive again only after the clean reset.
+- After successful initialization the loading surface is now both `hidden` and visually removed,
+  so its stale `BUILDING THE STADIUM` status is absent from the accessibility tree. Real module or
+  WebGL failures explicitly unhide it and restore alert-dialog semantics, isolation and focus.
 - Alpha 20's exact lifecycle remains 43.042 seconds / 1,292 frames. The accelerated 600-second
   soak took 88.5 wall-clock seconds with 300 geometries / 13 textures; M1 Max/ANGLE Metal frame
   intervals remained 16.7 ms median and 16.8 ms p95/p99. Audio mix remains unverified by ear.
@@ -161,7 +164,7 @@ Then open `http://127.0.0.1:4173/games/apex-run/?build=alpha22`.
 - The replay ghost now shares the player car's major side pods, rear wing and roll hoop in addition
   to body, nose and rear deck. Its material remains transparent and non-colliding.
 - Exact alpha 22 lifecycle remains 43.042 seconds / 1,292 frames. The richer pavilion template
-  stabilizes at 340 geometries / 13 textures; its accelerated 600-second soak took 92.3 wall-clock
+  stabilizes at 340 geometries / 13 textures; the final accelerated 600-second soak took 107.9 wall-clock
   seconds, and M1 Max/ANGLE Metal timing remained 16.7 ms median, 16.8 ms p95/p99.
 
 The following evidence describes the prior `0.4.0-beta.1` geometry and is retained as history,
