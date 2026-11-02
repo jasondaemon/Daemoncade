@@ -1,0 +1,11 @@
+import assert from"node:assert/strict";
+import{readFile}from"node:fs/promises";
+import{createTelemetry,sampleTelemetry}from"./telemetry.js";
+const q={x:0,y:0,z:0,w:1},dt=1/120;
+let state=createTelemetry();state=sampleTelemetry(state,{velocity:{x:0,y:0,z:0},rotation:q,contacts:4},dt);for(let tick=0;tick<120;tick++)state=sampleTelemetry(state,{velocity:{x:(tick+1)*dt*9.80665,y:0,z:0},rotation:q,contacts:4},dt);
+assert.ok(state.longitudinalG>.9&&state.longitudinalG<1.1);assert.ok(Math.abs(state.lateralG)<.01);
+state=createTelemetry();state=sampleTelemetry(state,{velocity:{x:15,y:0,z:0},rotation:q,contacts:4},dt);for(let tick=0;tick<120;tick++)state=sampleTelemetry(state,{velocity:{x:15,y:0,z:(tick+1)*dt*9.80665},rotation:q,contacts:4,slipRadians:.1},dt);
+assert.ok(state.lateralG>.9&&state.lateralG<1.1);assert.ok(Math.abs(state.longitudinalG)<.01);assert.equal(state.contacts,4);assert.ok(state.slipDegrees>5&&state.slipDegrees<6);state=sampleTelemetry(state,{velocity:{x:15,y:-2,z:9.80665},rotation:q,contacts:0},dt);assert.equal(state.airborne,true);
+state=createTelemetry();state=sampleTelemetry(state,{velocity:{x:0,y:0,z:0},rotation:q,contacts:4},dt);state=sampleTelemetry(state,{velocity:{x:100,y:0,z:100},rotation:q,contacts:4},dt);assert.ok(Math.abs(state.longitudinalG)<.5&&Math.abs(state.lateralG)<.5,"display smoothing must bound collision spikes");
+const html=await readFile(new URL("index.html",import.meta.url),"utf8");assert.match(html,/id="pause-telemetry"/);assert.match(html,/id="telemetry"[^>]*hidden/);assert.match(html,/id="pause-quality"/);assert.match(html,/id="pause-ghost"/);assert.match(html,/id="pause-sound"/);
+console.log("Apex Run telemetry axes passed");

@@ -373,3 +373,21 @@ climb, crest and return hero views still require independent pixel review before
 - Gate posts are offset beyond the sampled road half-width. Crossbeams and triggers use the road's
   full tangent/lateral/up frame, including pitch and bank, rather than yaw-only world rectangles.
 - PB and replay storage keys are versioned forward because the sector split model changed.
+
+## Production vertical slice 8: driving data and support clearance
+
+- The focused Settings surface now owns graphics, sound, ghost and an optional persistent Driving
+  Data panel. Opening it clears held input and pauses an active run; the race HUD stays compact.
+- Driving Data is off by default and reports smoothed occupant-frame longitudinal/lateral specific
+  force in standard Earth G, slip angle and suspension contact count. Derivative history resets on
+  pause, restart and recovery so those lifecycle transitions cannot manufacture a displayed spike.
+- Every elevated-road cap now derives its top from the lowest nearby sampled deck underside, with
+  an explicit clearance margin. The fix is visual-only: supports remain outside vehicle collision.
+- Rollover probes cover both candidate third-turn sectors, both steering directions and 60/80/100
+  km/h. They distinguish tire cornering before guardrail contact from collision response and retain
+  the established grip, suspension, mass and free-flight behavior because the current shared model
+  does not reproduce a pre-contact traction rollover.
+
+This pass does not claim that every player collision is rollover-proof. A repeatable production
+input trace that overturns the car remains the required evidence for a broader handling retune;
+the genuine crest jump, rail glancing/escape behavior and recovery lifecycle stay protected.
