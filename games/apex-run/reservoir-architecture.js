@@ -9,12 +9,12 @@ export function isReservoirFailure(position,layout){
   return radius<=layout.waterRadius&&position.y<=layout.waterY;
 }
 
-export function addReservoirArchitecture(THREE,scene,start,end,terrainTop=.35){
+export function addReservoirArchitecture(THREE,scene,start,end,terrainTop=.35,detailMaps={}){
   const layout=reservoirLayout(start,end,terrainTop),
     earth=new THREE.MeshStandardMaterial({color:0x58645b,roughness:.96,metalness:.01}),
-    stone=new THREE.MeshStandardMaterial({color:0x767c79,roughness:.82,metalness:.04}),
+    stone=new THREE.MeshStandardMaterial({color:0x9a9a94,map:detailMaps.concreteColor||null,normalMap:detailMaps.concreteNormal||null,roughnessMap:detailMaps.concreteArm||null,normalScale:new THREE.Vector2(.42,.42),roughness:.82,metalness:.04}),
     {graphite,concrete:white,cyan}=venueMaterials(THREE),
-    waterMaterial=new THREE.MeshStandardMaterial({color:0x176b85,roughness:.18,metalness:.12,transparent:true,opacity:.9});
+    waterMaterial=new THREE.MeshPhysicalMaterial({color:0x176b85,roughness:.12,metalness:.05,transmission:.08,clearcoat:.7,clearcoatRoughness:.18,transparent:true,opacity:.92});
   const structures=[];
   for(const [index,terrace] of layout.terraces.entries()){const lower=index?layout.terraces[index-1].height:0,height=terrace.height-lower,mesh=new THREE.Mesh(new THREE.CylinderGeometry(terrace.radius,terrace.radius+(index?5:0),height,72,1,false),index===1?stone:earth);mesh.position.set(layout.centerX,terrainTop+lower+height/2,layout.centerZ);mesh.castShadow=true;mesh.receiveShadow=true;scene.add(mesh);structures.push(mesh)}
   const wall=new THREE.Mesh(new THREE.CylinderGeometry(layout.topRadius+.8,layout.topRadius+1.9,layout.wallHeight,72,1,true),stone);
