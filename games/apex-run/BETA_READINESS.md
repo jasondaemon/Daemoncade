@@ -2,7 +2,7 @@
 
 ## Status
 
-Version `0.5.0-alpha.31` is a desktop-keyboard production-slice candidate, not a release candidate. The previously verified flat-course
+Version `0.5.0-alpha.32` is a desktop-keyboard production-slice candidate, not a release candidate. The previously verified flat-course
 beta remains available in Git history at `16a26e5`; its player-lap result must not be treated as
 validation of this materially different spline layout. The game is an original single-player
 stadium time attack inspired by the broad genre, not a Trackmania clone, formula-equivalent
@@ -14,7 +14,7 @@ Start a local preview from the repository root:
 python3 -m http.server 4173 --bind 127.0.0.1
 ```
 
-Then open `http://127.0.0.1:4173/games/apex-run/?build=alpha31`. Add `&track=summit-circuit` to open the longer advanced course directly.
+Then open `http://127.0.0.1:4173/games/apex-run/?build=alpha33`. Add `&track=summit-circuit` to open the longer advanced course directly.
 
 Alpha 24 repairs the measured coarse road-normal transitions and visible triangular sidewall
 artifacts while retaining the authored crest jump. Alpha 25 replaces the rejected procedural car
@@ -141,8 +141,8 @@ road stripe, physical ramp, landmark gates, minimap and internal recovery guidan
   measurements, not lower-end hardware certification.
 - Alpha 19 stages the interface so the ready screen presents only the objective, essential
   controls and graphics choice; race telemetry appears after Start, while detailed sector analysis
-  remains a finish-only surface. High mode retains capped device pixel ratio and shadows; Low mode
-  uses a 1.0 pixel ratio and disables shadow rendering. Chrome integration asserts the persisted
+  remains a finish-only surface. High, Medium and Low vary capped pixel ratio, shadow resolution,
+  local shadow extent, rail detail and scenery density while retaining contact shadows. Chrome integration asserts the persisted
   choice and the 1280-pixel Low-mode race canvas.
 - Presentation geometry adds continuous seating bands, varied infield surfaces, rounded distant
   landforms, a checkered finish identity, larger full-width jump markings and a curved ghost shell

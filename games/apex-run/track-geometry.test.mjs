@@ -1,5 +1,5 @@
 import assert from "node:assert/strict";
-import {CHECKPOINTS,JUMP_ZONE,RECOVERY_SPOTS,ROAD_SAMPLES,ROAD_STEPS_PER_SEGMENT,ROUTE_PATH,START_EXTENSION_SAMPLES,TRACK_BOXES,buildLaneRibbon,buildRailColliderMesh,buildRoadMesh,buildSupportSpecs,checkpointAdvance,isOnRoad,nearestRoadSample,routeGuides} from "./track-model.js";
+import {CHECKPOINTS,JUMP_ZONE,RECOVERY_SPOTS,ROAD_SAMPLES,ROAD_STEPS_PER_SEGMENT,ROUTE_PATH,START_EXTENSION_SAMPLES,START_GATE_SAMPLE_INDEX,START_SPAWN_SAMPLE_INDEX,TRACK_BOXES,buildLaneRibbon,buildRailColliderMesh,buildRoadMesh,buildSupportSpecs,checkpointAdvance,isOnRoad,nearestRoadSample,routeGuides} from "./track-model.js";
 const road=buildRoadMesh(),{samples,positions,indices}=road;
 assert.equal(TRACK_BOXES.filter(box=>box.surface!=="grass").length,0,"road collision must not fall back to hidden boxes");
 assert.equal(ROAD_STEPS_PER_SEGMENT,88,"production road sampling must retain the measured smoothness fix");
@@ -29,4 +29,6 @@ const elevated=ROAD_SAMPLES.reduce((best,sample)=>sample.y>best.y?sample:best,RO
 const elevatedGate=CHECKPOINTS.findIndex(gate=>gate.y>10);assert.equal(checkpointAdvance(elevatedGate,{x:CHECKPOINTS[elevatedGate].x,y:0,z:CHECKPOINTS[elevatedGate].z}),elevatedGate,"ground below an elevated gate must not count");assert.equal(checkpointAdvance(elevatedGate,{x:CHECKPOINTS[elevatedGate].x,y:CHECKPOINTS[elevatedGate].y+1.5,z:CHECKPOINTS[elevatedGate].z}),elevatedGate+1);
 assert.equal(ROUTE_PATH.length,12);
 assert.equal(ROAD_SAMPLES[START_EXTENSION_SAMPLES].x,ROUTE_PATH[0].x);assert.ok(ROAD_SAMPLES[0].x<ROUTE_PATH[0].x-25,"start apron does not extend behind the car");assert.ok(JUMP_ZONE.approach<JUMP_ZONE.takeoff&&JUMP_ZONE.takeoff<JUMP_ZONE.landing);
+assert.ok(START_GATE_SAMPLE_INDEX<START_SPAWN_SAMPLE_INDEX,"start gantry must remain behind the timed spawn");
+const startGate=ROAD_SAMPLES[START_GATE_SAMPLE_INDEX],startSpawn=ROAD_SAMPLES[START_SPAWN_SAMPLE_INDEX];assert.ok(Math.hypot(startSpawn.x-startGate.x,startSpawn.z-startGate.z)>=12,"start gantry needs chase-camera clearance behind the spawn");
 console.log("Apex Run spline geometry passed",JSON.stringify({samples:samples.length,triangles:indices.length/3,elevation:[+Math.min(...elevations).toFixed(1),+Math.max(...elevations).toFixed(1)],maxBankRise:+Math.max(...banks).toFixed(1),maxTangentAngle:+maxTangentAngle.toFixed(2)}));

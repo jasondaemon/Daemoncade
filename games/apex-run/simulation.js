@@ -1,11 +1,13 @@
 export const FIXED_DT=1/120;
-export {checkpointAdvance,isOnRoad} from "./track-model.js?v=0.5.0-alpha31";
-import {requestedTrackId,trackStorageKeys} from "./track-catalog.js?v=0.5.0-alpha31";
-export const REPLAY_VERSION=10;
+export {checkpointAdvance,isOnRoad} from "./track-model.js?v=0.5.0-alpha33";
+import {activeTrack,requestedTrackId,trackStorageKeys} from "./track-catalog.js?v=0.5.0-alpha33";
+export const REPLAY_VERSION=activeTrack().replayVersion;
+const REPLAY_BOUNDS=activeTrack().replayBounds;
+const REPLAY_MAX_SECONDS=activeTrack().replayMaxSeconds;
 export const BEST_KEY=trackStorageKeys(requestedTrackId()).pb;
 export const REPLAY_KEY=trackStorageKeys(requestedTrackId()).replay;
-export const REPLAY_HZ=30;
-export const MEDALS=Object.freeze([{name:"APEX",time:48,color:0x55efff},{name:"GOLD",time:60,color:0xffd454},{name:"SILVER",time:75,color:0xd6e2ec},{name:"BRONZE",time:95,color:0xd58b55},{name:"ROOKIE",time:120,color:0x79d987}]);
+export const REPLAY_HZ=activeTrack().replayHz;
+export const MEDALS=activeTrack().medals;
 export function clamp(v,min,max){return Math.max(min,Math.min(max,v))}
 export function frameGapInvalidates(elapsed){return Number.isFinite(elapsed)&&elapsed>.25}
 export function formatTime(seconds){
@@ -20,9 +22,9 @@ export function replayForBest(best,replay){return replay&&Number.isFinite(best)&
 export function saveBest(storage,time,key=BEST_KEY){if(!Number.isFinite(time)||time<=1||time>=3600)return false;try{storage.setItem(key,String(time));return true}catch{return false}}
 function finiteArray(value,length){return Array.isArray(value)&&value.length===length&&value.every(Number.isFinite)}
 export function validateReplay(value){
-  if(!value||value.version!==REPLAY_VERSION||!Number.isFinite(value.time)||value.time<=1||value.time>300||value.hz!==REPLAY_HZ||!Array.isArray(value.frames)||value.frames.length<2||value.frames.length>REPLAY_HZ*300)return null;
+  if(!value||value.version!==REPLAY_VERSION||!Number.isFinite(value.time)||value.time<=1||value.time>REPLAY_MAX_SECONDS||value.hz!==REPLAY_HZ||!Array.isArray(value.frames)||value.frames.length<2||value.frames.length>REPLAY_HZ*REPLAY_MAX_SECONDS)return null;
   let previous=-1;
-  for(const frame of value.frames){if(!finiteArray(frame,8))return null;const norm=Math.hypot(...frame.slice(4));if(!Number.isInteger(frame[0])||frame[0]<=previous||frame[0]>REPLAY_HZ*300||Math.abs(frame[1])>300||frame[2]<-20||frame[2]>100||Math.abs(frame[3])>300||frame.slice(4).some(v=>Math.abs(v)>1.001)||norm<.9||norm>1.1)return null;previous=frame[0]}
+  for(const frame of value.frames){if(!finiteArray(frame,8))return null;const norm=Math.hypot(...frame.slice(4));if(!Number.isInteger(frame[0])||frame[0]<=previous||frame[0]>REPLAY_HZ*REPLAY_MAX_SECONDS||Math.abs(frame[1])>REPLAY_BOUNDS||frame[2]<-20||frame[2]>100||Math.abs(frame[3])>REPLAY_BOUNDS||frame.slice(4).some(v=>Math.abs(v)>1.001)||norm<.9||norm>1.1)return null;previous=frame[0]}
   if(value.frames[0][0]!==0||Math.abs(value.frames.at(-1)[0]-Math.round(value.time*value.hz))>2)return null;
   return value;
 }

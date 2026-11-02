@@ -1,20 +1,20 @@
-import {requestedTrackId} from "./track-catalog.js?v=0.5.0-alpha31";
+import {requestedTrackId} from "./track-catalog.js?v=0.5.0-alpha33";
 
 const ALPINE_ROUTE=Object.freeze([
   {x:-2,y:0,z:0,width:24,bank:0},{x:62,y:.5,z:0,width:24,bank:0},{x:96,y:2,z:-24,width:25,bank:-.08},{x:96,y:6,z:-72,width:25,bank:-.16},{x:78,y:9,z:-98,width:24,bank:-.1},{x:28,y:10,z:-108,width:23,bank:0},{x:-82,y:7,z:-103,width:24,bank:0},
   {x:-88,y:11,z:114,width:23,bank:.08},{x:-62,y:14,z:140,width:23,bank:.1},{x:126,y:11,z:140,width:24,bank:-.08},{x:150,y:7,z:114,width:25,bank:-.16},{x:150,y:2,z:8,width:23,bank:0},
 ]);
 const SUMMIT_ROUTE=Object.freeze([
-  {x:-380,y:0,z:-280,bank:0},{x:-240,y:.5,z:-300,bank:0},{x:-60,y:3,z:-340,bank:-.1},{x:140,y:8,z:-320,bank:-.16},{x:320,y:14,z:-240,bank:-.2},{x:410,y:18,z:-80,bank:-.12},{x:390,y:16,z:100,bank:.1},{x:280,y:12,z:240,bank:.18},{x:100,y:8,z:330,bank:.14},{x:-110,y:18,z:340,bank:-.12},{x:-300,y:30,z:260,bank:-.18},{x:-410,y:25,z:100,bank:-.12},{x:-400,y:14,z:-60,bank:.1},{x:-300,y:8,z:-160,bank:.18},{x:-150,y:12,z:-180,bank:.12},{x:0,y:20,z:-120,bank:-.1},{x:140,y:28,z:-20,bank:-.18},{x:220,y:20,z:80,bank:-.1},{x:280,y:10,z:-20,bank:.08},{x:360,y:2,z:-120,bank:0},
+  {x:-380,y:0,z:-280,bank:0},{x:-270,y:1,z:-330,bank:.08},{x:-120,y:5,z:-250,bank:.18},{x:40,y:9,z:-340,bank:-.18},{x:220,y:18,z:-300,bank:-.12},{x:360,y:28,z:-180,bank:-.2},{x:410,y:38,z:20,bank:.1},{x:280,y:30,z:240,bank:.18},{x:100,y:18,z:330,bank:.14},{x:-110,y:18,z:340,bank:-.12},{x:-300,y:30,z:260,bank:-.18},{x:-410,y:25,z:100,bank:-.12},{x:-400,y:14,z:-60,bank:.1},{x:-300,y:8,z:-160,bank:.18},{x:-150,y:12,z:-180,bank:.12},{x:0,y:20,z:-120,bank:-.1},{x:140,y:28,z:-20,bank:-.18},{x:220,y:22,z:90,bank:-.1},{x:340,y:14,z:110,bank:.04},{x:450,y:8,z:20,bank:.1},{x:500,y:2,z:-120,bank:0},
 ].map(point=>Object.freeze({...point,width:40})));
 const TRACK_DEFINITIONS=Object.freeze({
   "alpine-sprint":Object.freeze({route:ALPINE_ROUTE,checkpointPoints:[2,6,9,11],stageRanges:[[0,2],[2,6],[6,9],[9,11]],humps:{5:14},jumpSegment:5}),
-  "summit-circuit":Object.freeze({route:SUMMIT_ROUTE,checkpointPoints:[3,6,10,13,16,19],stageRanges:[[0,3],[3,6],[6,10],[10,13],[13,16],[16,19]],humps:{10:12},jumpSegment:10}),
+  "summit-circuit":Object.freeze({route:SUMMIT_ROUTE,checkpointPoints:[3,6,10,13,16,20],stageRanges:[[0,3],[3,6],[6,10],[10,13],[13,16],[16,20]],humps:{10:12},jumpSegment:10}),
 });
 export const ACTIVE_TRACK_ID=requestedTrackId();
 export const ACTIVE_TRACK_DEFINITION=TRACK_DEFINITIONS[ACTIVE_TRACK_ID]||TRACK_DEFINITIONS["alpine-sprint"];
 const summit=ACTIVE_TRACK_ID==="summit-circuit";
-export const VENUE=Object.freeze(summit?{centerX:0,centerZ:0,halfX:520,halfZ:450,stands:[{x:0,z:-418,rotation:0,length:130},{x:-488,z:30,rotation:Math.PI/2,length:108},{x:488,z:60,rotation:-Math.PI/2,length:116}],basinRadius:500}:{centerX:0,centerZ:-20,halfX:220,halfZ:220,stands:[{x:10,z:-188,rotation:0,length:105},{x:-177,z:35,rotation:Math.PI/2,length:78},{x:212,z:62,rotation:-Math.PI/2,length:88}],basinRadius:245});
+export const VENUE=Object.freeze(summit?{centerX:0,centerZ:0,halfX:540,halfZ:450,stands:[{x:0,z:-418,rotation:0,length:130},{x:-508,z:30,rotation:Math.PI/2,length:108},{x:508,z:280,rotation:-Math.PI/2,length:116}],basinRadius:515}:{centerX:0,centerZ:-20,halfX:220,halfZ:220,stands:[{x:10,z:-188,rotation:0,length:105},{x:-177,z:35,rotation:Math.PI/2,length:78},{x:212,z:62,rotation:-Math.PI/2,length:88}],basinRadius:245});
 export const TRACK_BOXES=Object.freeze([
   // The stadium floor is the only box surface. The authored road and its
   // Rapier collider are generated together by buildRoadMesh below.
@@ -30,7 +30,13 @@ export function advanceOutsidePlayTime(previous,position,dt){return isInPlayArea
 // ordered in race direction; all guidance tangents are derived from this list.
 export const ROUTE_PATH=ACTIVE_TRACK_DEFINITION.route;
 export const START_EXTENSION_SAMPLES=10;
-export const ROAD_STEPS_PER_SEGMENT=88;
+// The timed spawn sits just beyond the authored route origin.  Keep the
+// start gantry behind it on the straight apron: placing both at the same
+// cross-section made Summit's 40 m beam fill the chase camera and visually
+// slice the first bend.
+export const START_SPAWN_SAMPLE_INDEX=START_EXTENSION_SAMPLES+2;
+export const START_GATE_SAMPLE_INDEX=Math.max(1,START_EXTENSION_SAMPLES-4);
+export const ROAD_STEPS_PER_SEGMENT=summit?100:88;
 const routeSampleIndex=(routePoint,offset=0)=>START_EXTENSION_SAMPLES+routePoint*ROAD_STEPS_PER_SEGMENT+offset;
 export const JUMP_ZONE=Object.freeze({approach:routeSampleIndex(ACTIVE_TRACK_DEFINITION.jumpSegment,8),takeoff:routeSampleIndex(ACTIVE_TRACK_DEFINITION.jumpSegment,36),landing:routeSampleIndex(ACTIVE_TRACK_DEFINITION.jumpSegment,68)});
 const distance3=(a,b)=>Math.hypot(b.x-a.x,(b.y||0)-(a.y||0),b.z-a.z);

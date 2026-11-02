@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
   <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'wasm-unsafe-eval'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; connect-src 'self'; object-src 'none'; base-uri 'none'">
   <title>Apex Run</title>
-  <link rel="stylesheet" href="game.css?v=0.5.0-alpha31">
+  <link rel="stylesheet" href="game.css?v=0.5.0-alpha33">
 </head>
 <body>
   <main id="game">
@@ -22,7 +22,7 @@
     <div id="split" role="status" aria-live="polite" hidden></div>
     <nav class="quick-actions" aria-label="Game controls"><button id="settings" type="button">SETTINGS</button></nav>
     <aside class="controls"><b>W/S</b> drive · <b>A/D</b> steer · <b>SPACE</b> drift · <b>BACKSPACE</b> recover · <b>R</b> restart</aside>
-    <section id="pause-card" role="dialog" aria-modal="true" aria-labelledby="pause-title" hidden><span>RACE PAUSED</span><strong id="pause-title">Settings</strong><p>Changing settings clears held keys. Resume returns to the same run.</p><div class="pause-settings"><label>GRAPHICS <select id="pause-quality"><option value="high">HIGH</option><option value="low">LOW</option></select></label><button id="pause-telemetry" type="button" aria-pressed="false">DRIVING DATA OFF</button><button id="pause-ghost" type="button">GHOST ON</button><button id="pause-sound" type="button">SOUND ON</button></div><small>W/S drive · A/D steer · Space drift · Backspace recover · R restart</small><button id="resume" type="button">Resume</button></section>
+    <section id="pause-card" role="dialog" aria-modal="true" aria-labelledby="pause-title" hidden><span>RACE PAUSED</span><strong id="pause-title">Settings</strong><p>Changing settings clears held keys. Resume returns to the same run.</p><div class="pause-settings"><label>GRAPHICS <select id="pause-quality"><option value="high">HIGH</option><option value="medium">MEDIUM</option><option value="low">LOW</option></select></label><button id="pause-telemetry" type="button" aria-pressed="false">DRIVING DATA OFF</button><button id="pause-ghost" type="button">GHOST ON</button><button id="pause-sound" type="button">SOUND ON</button></div><small>W/S drive · A/D steer · Space drift · Backspace recover · R restart</small><button id="resume" type="button">Resume</button></section>
     <section id="start-card" role="dialog" aria-modal="true" aria-labelledby="start-title"><span>STADIUM TIME ATTACK</span><strong id="start-title">APEX RUN</strong><label class="track-control">TRACK <select id="track-select" aria-label="Track"><option value="alpine-sprint">ALPINE SPRINT</option><option value="summit-circuit">SUMMIT CIRCUIT</option></select></label><p id="track-description">Cross three landmark gates, then the finish. Chase your PB ghost through the banked climb and crest jump.</p><div class="start-controls"><b>W / ↑</b><small>THROTTLE</small><b>A D / ← →</b><small>STEER</small><b>S / ↓</b><small>BRAKE</small><b>SPACE</b><small>DRIFT</small></div><p class="reverse-help">To reverse: brake to a stop, release S, then press it again. Backspace recovers but makes the run practice-only.</p><div class="start-actions"><button id="start-settings" type="button">Settings</button><button id="start-race" type="button">Start run</button></div></section>
     <aside id="telemetry" aria-label="Driving data" hidden><strong>DRIVING DATA</strong><dl><div><dt>LATERAL</dt><dd id="telemetry-lateral">0.00 G</dd></div><div><dt>LONGITUDINAL</dt><dd id="telemetry-longitudinal">0.00 G</dd></div><div><dt>SLIP</dt><dd id="telemetry-slip">0°</dd></div><div><dt>CONTACT</dt><dd id="telemetry-contact">4 / 4</dd></div></dl></aside>
     <section id="result" role="dialog" aria-modal="true" aria-labelledby="result-title" aria-live="polite" hidden>
@@ -31,6 +31,6 @@
     </section>
   </main>
   <script src="load-guard.js?v=0.5.0-alpha25"></script>
-  <script type="module" src="game.js?v=0.5.0-alpha31"></script>
+  <script type="module" src="game.js?v=0.5.0-alpha33"></script>
 </body>
 </html>

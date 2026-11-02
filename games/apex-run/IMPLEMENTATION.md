@@ -441,3 +441,31 @@ teleporting; otherwise loops remain out of the playable catalog.
   separation was rejected because it would reintroduce overlapping entry/exit geometry. No loop or
   physics retune ships in Alpha 31; the next lab needs a non-overlapping transition whose chassis
   attitude follows the transported road frame across a real speed/offset window.
+
+## Alpha 33 — Summit flow, stable shadows and long replays
+
+- Summit Circuit now spans 3,529 m. Its opening sectors add linked bank and elevation changes,
+  while the gate-five-to-finish sector replaces the hidden 24.6 m-radius trap with a readable
+  sequence whose minimum sampled radius is 56.5 m. The shared-physics driver completes all six
+  gates at 30, 60 and 144 render Hz in 144.608 seconds without recovery and remains above 23.7 m/s
+  after gate five. This is deterministic drivability evidence, not an uninterrupted human lap.
+- Summit PB records advance to isolated v2 keys because its route and split timing changed. Replay
+  storage advances independently to v3 and records at 15 Hz for up to 15 minutes, so an eligible
+  long player lap cannot save a PB while silently losing its ghost. Its
+  provisional medal targets are 1:45 / 2:10 / 2:35 / 3:00 / 3:30; these deliberately generous
+  baselines still need calibration from ordinary uninterrupted player sessions.
+- High, Medium and Low now control real render cost: pixel ratio, shadow-map resolution, local
+  shadow extent, rail tessellation and scenery density. All tiers retain shadows. A fixed-direction
+  sun follows the car in a light-space, texel-snapped window, avoiding the previous route boundary
+  where road and contact shadows abruptly vanished. Route-wide tests keep the car and nearby road
+  inside that local volume at every quality level.
+- Crossing validation compares the complete banked upper-deck underside against the lower route's
+  rail-top envelope; the closest authored crossing retains 14.4 m clearance. Venue stands remain
+  outside the swept road, rail and chase-camera corridor.
+- The start gantry sits on the straight apron behind the timed spawn and uses the same road frame.
+  Summit's 40 m beam no longer fills the chase view or visually cuts the first bend; road, collider,
+  lane stripe and rails remain one continuous spline.
+
+No loop is shipped in Alpha 33. A branch/merge and intentional obstacle complex are the next
+content milestone; the loop remains gated on repeatable physical entry, descent and exit without
+magnetic adhesion or pose correction.
