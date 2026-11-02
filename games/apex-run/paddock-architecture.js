@@ -19,14 +19,15 @@ export function paddockLayout(roadWidth){
   return Object.freeze({roadHalf,sideSetback});
 }
 
-export function addPaddockArchitecture(THREE,scene,sample,rotation){
+export function addPaddockArchitecture(THREE,scene,sample,rotation,detailMaps={}){
   const group=new THREE.Group(),graphite=new THREE.MeshStandardMaterial({color:0x202a31,metalness:.38,roughness:.36}),
     concrete=new THREE.MeshStandardMaterial({color:0xd8d3c7,metalness:.04,roughness:.68}),
     white=new THREE.MeshStandardMaterial({color:0xf3f1e9,metalness:.08,roughness:.42}),
     cyan=new THREE.MeshStandardMaterial({color:0x4de7f2,emissive:0x123940,emissiveIntensity:.72,metalness:.45,roughness:.25}),
     gold=new THREE.MeshStandardMaterial({color:0xffc74a,emissive:0x3a2404,emissiveIntensity:.35,metalness:.38,roughness:.3}),
     glass=new THREE.MeshStandardMaterial({color:0x5e8997,metalness:.55,roughness:.16,transparent:true,opacity:.72}),
-    recess=new THREE.MeshStandardMaterial({color:0x10171c,metalness:.18,roughness:.58});
+    recess=new THREE.MeshStandardMaterial({color:0x10171c,metalness:.18,roughness:.58}),
+    garage=detailMaps.garageColor?new THREE.MeshStandardMaterial({color:0xd8dfe0,map:detailMaps.garageColor,normalMap:detailMaps.garageNormal,normalScale:new THREE.Vector2(.48,.48),roughnessMap:detailMaps.garageArm,roughness:.82,metalness:.04}):recess;
   const add=(mesh,x,y,z,materialShadow=true)=>{mesh.position.set(x,y,z);mesh.castShadow=materialShadow;mesh.receiveShadow=true;group.add(mesh);return mesh};
 
   // Roadside pit building: a recessed garage rhythm, glazed race-control floor,
@@ -39,7 +40,7 @@ export function addPaddockArchitecture(THREE,scene,sample,rotation){
   add(roundedBox(THREE,75,.42,4.2,.24,graphite),buildingX,7.55,buildingZ+9.05);
   add(roundedBox(THREE,65,.22,.28,.1,cyan),buildingX,10.9,buildingZ+9.1,false);
   const bayXs=Array.from({length:7},(_,bay)=>buildingX-30+bay*10),canopyXs=[buildingX-33,buildingX-11,buildingX+11,buildingX+33];
-  addInstances(THREE,group,new THREE.BoxGeometry(8.3,5.5,.34),recess,bayXs.map(x=>[x,3.75,buildingZ+9.02]));
+  addInstances(THREE,group,new THREE.BoxGeometry(8.3,5.5,.34),garage,bayXs.map(x=>[x,3.75,buildingZ+9.02]));
   addInstances(THREE,group,new THREE.BoxGeometry(7.35,.11,.08),white,bayXs.flatMap(x=>[[x,1.6,buildingZ+9.23],[x,3.7,buildingZ+9.23]]),false);
   addInstances(THREE,group,new THREE.BoxGeometry(7.35,.11,.08),graphite,bayXs.flatMap(x=>[[x,2.65,buildingZ+9.23],[x,4.75,buildingZ+9.23]]),false);
   addInstances(THREE,group,new THREE.BoxGeometry(.62,6.3,.7),concrete,bayXs.map(x=>[x-4.7,3.5,buildingZ+9.18]));
