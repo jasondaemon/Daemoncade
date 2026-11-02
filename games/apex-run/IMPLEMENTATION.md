@@ -201,9 +201,20 @@ unmeasured.
   rad/s and suspension-length velocity RMS from 0.448 to 0.366 m/s.
 - The harness's `desiredCameraRoadVelocityRms` is only an unsmoothed geometric boom-point proxy. It
   is not the rendered chase camera and omits runtime interpolation, pitch comfort, shake and
-  obstruction shortening. Adding a recorder to production `game.js`, even conditionally for the
-  test entry, was rejected as an unapproved production hook; that action did not execute and was not
-  routed around. Actual 38-55 km/h rendered-camera/body-motion capture therefore remains blocked.
+  obstruction shortening. After explicit user approval, `test.html?renderTelemetry=1` can dynamically
+  load a local-only recorder and run the real animation loop; normal production neither imports nor
+  exposes it, and the recorder contains no transmission path. In an actual straight acceleration at
+  38-55 km/h it recorded only fully supported render frames: road-normal body-clearance velocity was
+  about 0.0002 m/s RMS, wheel-to-body render velocity about 0.001 m/s RMS, and normalized on-screen
+  body velocity about 0.02/s RMS. The actual camera-to-body distance changed while accelerating because
+  the authored boom length grows with speed; that is smooth camera coupling, not evidence of chassis
+  heave. A second imperfect stop/restart sample preserved four contacts but includes control-transition
+  spikes and is not used as the acceptance result.
+- These render measurements show that the reported 38-55 km/h repeated body bounce is no longer
+  reproduced after the 88-step road repair. No suspension, camera, or physics constants were changed
+  to improve a metric. A normal-keyboard crest traversal was not completed in this bounded IAB run,
+  so actual rendered jump telemetry remains unmeasured; the dedicated physical crest fixture still
+  supplies the genuine airborne-and-landing regression rather than being relabeled as player proof.
 - Isolated controls make the causal boundary explicit. A planar ribbon stays effectively motionless
   at every resolution. On the same smooth vertical curve, heave velocity falls 0.122 -> 0.033 ->
   0.010 -> 0.004 m/s for 22/44/88/176 samples. On the authored course, raw world-Y acceleration and
