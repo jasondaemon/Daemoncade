@@ -519,7 +519,7 @@ non-overlapping proof before it can become production course geometry.
   It is regression evidence rather than a player lap, writes no synthesized PB values, and is
   absent from the normal production entry.
 
-## Alpha 39 — Physical Summit loop and isolated lifecycle evidence
+## Alpha 40 — Physical Summit loop and isolated lifecycle evidence
 
 - Summit replaces one ordinary elevated segment with a single welded, spatially separated
   teardrop-loop ribbon. The production Rapier chassis, world gravity, suspension and drivetrain
@@ -535,3 +535,15 @@ non-overlapping proof before it can become production course geometry.
   writes only to a fresh UUID-scoped test namespace and requires the current run to save its own
   matching PB/replay before verifying the reloaded moving ghost. Production records are never
   cleared or rewritten by the fixture.
+
+## Alpha 40 — Visible loop practice and safe failed-entry recovery
+
+- `test.html` adds a visible, test-only practice button that places the car at the real final
+  recovery pose before the loop, at rest and already PB-ineligible. Its interactive mode uses the
+  normal keyboard, fixed-step physics, chase camera and recovery lifecycle; the production entry
+  contains neither the button nor the placement query.
+- A 24 m/s under-speed entry now proves natural contact loss under world gravity. If the car comes
+  to rest inverted against the loop, a generic measured inverted-stall grace triggers the ordinary
+  checkpoint recovery. It does not award progress, remains practice-only and can accelerate from
+  the valid recovery pose for another attempt. Successful loop traversal remains unchanged and
+  receives no artificial adhesion.

@@ -3,8 +3,9 @@ import {readFile} from "node:fs/promises";
 
 const [testPage,productionPage,runner]=await Promise.all([readFile(new URL("./test.html",import.meta.url),"utf8"),readFile(new URL("./index.html",import.meta.url),"utf8"),readFile(new URL("./test-lifecycle-ui.js",import.meta.url),"utf8")]);
 assert.match(testPage,/id="run-lifecycle"/);
+assert.match(testPage,/id="place-loop"/);
 assert.match(testPage,/test-lifecycle-ui\.js/);
-assert.doesNotMatch(productionPage,/run-lifecycle|test-lifecycle-ui/,"local lifecycle runner leaked into production entry");
+assert.doesNotMatch(productionPage,/run-lifecycle|place-loop|practiceLoop|test-lifecycle-ui/,"local lifecycle runner leaked into production entry");
 assert.match(runner,/controller\.stepBatch/,"runner does not exercise the real runtime controller");
 assert.match(runner,/location\.replace\(url\)/,"runner does not verify a production-style reload");
 assert.match(runner,/crypto\.randomUUID/,"runner does not create a unique isolated namespace");
@@ -12,4 +13,6 @@ assert.match(runner,/NEW PERSONAL BEST/,"runner does not require its current run
 assert.match(runner,/bestReplayTime/,"runner does not verify the newly saved replay identity");
 assert.doesNotMatch(runner,/localStorage\.setItem|localStorage\.clear/,"runner synthesizes or destroys PB storage instead of finishing the race");
 assert.match(runner,/localStorage\.removeItem\(keys\.pb\)/,"runner does not clean only its isolated PB key");
+assert.match(runner,/controller\.placeLoopPractice\(\)/,"visible loop practice control does not use the real runtime recovery pose");
+assert.match(runner,/snapshot\.eligible\|\|snapshot\.checkpoint!==CHECKPOINTS\.length-1/,"loop practice control does not require a PB-ineligible pre-loop state");
 console.log("Apex Run visible test-only lifecycle runner passed");

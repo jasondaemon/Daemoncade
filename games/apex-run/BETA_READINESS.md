@@ -14,7 +14,7 @@ Start a local preview from the repository root:
 python3 -m http.server 4173 --bind 127.0.0.1
 ```
 
-Then open `http://127.0.0.1:4173/games/apex-run/?build=alpha39`. Add `&track=summit-circuit` to open the longer advanced course directly.
+Then open `http://127.0.0.1:4173/games/apex-run/?build=alpha40`. Add `&track=summit-circuit` to open the longer advanced course directly.
 
 Alpha 24 repairs the measured coarse road-normal transitions and visible triangular sidewall
 artifacts while retaining the authored crest jump. Alpha 25 replaces the rejected procedural car
@@ -27,7 +27,7 @@ angles; physics, suspension and wheel locations remain unchanged.
 Alpha 27 removes the early-development ground chevrons, world-space breadcrumb rings, transverse
 jump paint and instructional crest/finish boards from this single-path course. The permanent white
 road stripe, physical ramp, landmark gates, minimap and internal recovery guidance remain.
-Alpha 39 integrates the physical stunt loop into Summit Circuit on one welded, non-overlapping
+Alpha 40 integrates the physical stunt loop into Summit Circuit on one welded, non-overlapping
 3D ribbon. It uses the unchanged Rapier vehicle, world gravity and suspension: correctly aligned
 entries remain in contact through inversion, while an under-speed attempt falls naturally and
 recovers as a practice run. Summit PB/replay keys advance to v5/v6 because the timed layout changed.
@@ -221,7 +221,7 @@ not as a readiness claim for visual alpha 5:
 
 Known prior-beta limits: the finish gate remains deliberately narrow, digital steering still benefits
 from frequent correction, and only desktop keyboard control is supported. Touch, gamepad,
-multiplayer, editor, and wall rides are future work, not beta commitments. Alpha 39 adds one
+multiplayer, editor, and wall rides are future work, not beta commitments. Alpha 40 adds one
 physical Summit inversion with automated production-physics coverage; an ordinary uninterrupted
 player completion of that new layout is still outstanding. Lower-end
 laptop, software-renderer, and Windows performance remain uncharacterized.
