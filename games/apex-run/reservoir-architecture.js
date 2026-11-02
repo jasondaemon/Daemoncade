@@ -3,6 +3,11 @@ export function reservoirLayout(start,end,terrainTop=.35){
   return Object.freeze({centerX:(start.x+end.x)/2,centerZ:(start.z+end.z)/2,waterY,waterRadius,shoreWidth,topRadius,bottomRadius,bankBottom:terrainTop-.4,bankTop:waterY-.22,wallHeight:4.5});
 }
 
+export function isReservoirFailure(position,layout){
+  const radius=Math.hypot(position.x-layout.centerX,position.z-layout.centerZ);
+  return radius<=layout.bottomRadius&&position.y<=Math.max(layout.waterY,layout.bankTop+.15);
+}
+
 export function addReservoirArchitecture(THREE,scene,start,end,terrainTop=.35){
   const layout=reservoirLayout(start,end,terrainTop),bankHeight=layout.bankTop-layout.bankBottom,
     earth=new THREE.MeshStandardMaterial({color:0x58645b,roughness:.96,metalness:.01}),
