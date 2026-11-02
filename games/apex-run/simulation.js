@@ -1,11 +1,13 @@
 export const FIXED_DT=1/120;
-export {checkpointAdvance,isOnRoad} from "./track-model.js?v=0.5.0-alpha36";
-import {activeTrack,requestedTrackId,trackStorageKeys} from "./track-catalog.js?v=0.5.0-alpha36";
+export {checkpointAdvance,isOnRoad} from "./track-model.js?v=0.5.0-alpha37";
+import {activeTrack,requestedTrackId,trackStorageKeys} from "./track-catalog.js?v=0.5.0-alpha37";
 export const REPLAY_VERSION=activeTrack().replayVersion;
 const REPLAY_BOUNDS=activeTrack().replayBounds;
 const REPLAY_MAX_SECONDS=activeTrack().replayMaxSeconds;
-export const BEST_KEY=trackStorageKeys(requestedTrackId()).pb;
-export const REPLAY_KEY=trackStorageKeys(requestedTrackId()).replay;
+export function requestedTestStorageScope(search=globalThis.location?.search||"",root=globalThis.document?.documentElement){if(root?.dataset?.apexTest!=="1")return null;try{const value=new URLSearchParams(search).get("testStorage");return typeof value==="string"&&/^[a-z0-9-]{8,80}$/.test(value)?value:null}catch{return null}}
+const trackId=requestedTrackId(),productionKeys=trackStorageKeys(trackId),testScope=requestedTestStorageScope();
+export const BEST_KEY=testScope?`apex-run:test:${trackId}:${testScope}:pb`:productionKeys.pb;
+export const REPLAY_KEY=testScope?`apex-run:test:${trackId}:${testScope}:replay`:productionKeys.replay;
 export const REPLAY_HZ=activeTrack().replayHz;
 export const MEDALS=activeTrack().medals;
 export function clamp(v,min,max){return Math.max(min,Math.min(max,v))}
