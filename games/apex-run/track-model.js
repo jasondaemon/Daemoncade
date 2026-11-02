@@ -1,5 +1,5 @@
-import {requestedTrackId} from "./track-catalog.js?v=0.5.0-alpha45-review";
-import {buildStuntLoop} from "./stunt-loop.js?v=0.5.0-alpha45-review";
+import {requestedTrackId} from "./track-catalog.js?v=0.5.0-alpha46-review";
+import {buildStuntLoop} from "./stunt-loop.js?v=0.5.0-alpha46-review";
 
 const ALPINE_ROUTE=Object.freeze([
   {x:-2,y:0,z:0,width:24,bank:0},{x:62,y:.5,z:0,width:24,bank:0},{x:96,y:2,z:-24,width:25,bank:-.08},{x:96,y:6,z:-72,width:25,bank:-.16},{x:78,y:9,z:-98,width:24,bank:-.1},{x:28,y:10,z:-108,width:23,bank:0},{x:-82,y:7,z:-103,width:24,bank:0},
@@ -116,10 +116,10 @@ export const BRANCH_JUNCTIONS=Object.freeze(shortcutSurface.length?[
 export const ROAD_PATHS=Object.freeze([ROAD_SAMPLES,...BRANCH_ROADS.map(branch=>branch.samples)]);
 const ROAD_SURFACES=Object.freeze([ROAD_SAMPLES,...BRANCH_ROADS.map(branch=>branch.surfaceSamples)]);
 export const SPLIT_LAYOUT=Object.freeze(shortcutSamples.length?{entrySample:routeSampleIndex(13),mergeSample:routeSampleIndex(16),gapSide:"left",gapRadius:45,branchId:"inside-line"}:null);
-const obstacleAt=(samples,sampleIndex,offset,id,branchId=null)=>{const sample=samples[sampleIndex],frame=sampleFrame(samples,sampleIndex),height=5.2;return Object.freeze({id,branchId,sampleIndex,x:sample.x+frame.lateral.x*offset,y:sample.y+frame.up.y*height/2,z:sample.z+frame.lateral.z*offset,radius:.9,height,rotation:basisQuaternion(frame.forward,frame.up,frame.lateral)})};
+const obstacleAt=(samples,sampleIndex,offset,id,branchId=null,profile="column")=>{const sample=samples[sampleIndex],frame=sampleFrame(samples,sampleIndex),isIsland=profile==="island",height=isIsland?.8:5.2,radius=isIsland?.85:.9;return Object.freeze({id,branchId,profile,sampleIndex,x:sample.x+frame.lateral.x*offset,y:sample.y+frame.up.y*height/2,z:sample.z+frame.lateral.z*offset,radius,height,rotation:basisQuaternion(frame.forward,frame.up,frame.lateral)})};
 export const INTENTIONAL_OBSTACLES=Object.freeze(shortcutSamples.length?[
-  obstacleAt(ROAD_SAMPLES,routeSampleIndex(2,18),-3.1,"paddock-island-1"),
-  obstacleAt(ROAD_SAMPLES,routeSampleIndex(2,54),3.1,"paddock-island-2"),
+  obstacleAt(ROAD_SAMPLES,routeSampleIndex(2,18),-3.1,"paddock-island-1",null,"island"),
+  obstacleAt(ROAD_SAMPLES,routeSampleIndex(2,54),3.1,"paddock-island-2",null,"island"),
   ...[78,98,118].map((sampleIndex,index)=>obstacleAt(shortcutSamples,sampleIndex,(index%2?1:-1)*3.8,`inside-column-${index+1}`,"inside-line")),
 ]:[]);
 // Suspension rays and chassis contacts use only the authored driving surface.
