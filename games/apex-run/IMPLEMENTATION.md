@@ -192,6 +192,18 @@ unmeasured.
   normal official download requires a signed-in account; no viewer extraction, account creation,
   or lower-quality substitute asset was used. The rejected alpha-23 procedural body therefore
   remains an explicit unresolved visual blocker rather than being mislabeled as finished.
+- A non-production matched-input telemetry harness compares the old 22-step collider with the
+  production 88-step collider at 120 Hz, using the same keyboard-like tape and only four-wheel,
+  on-road samples outside the intentional crest. Across 746/748 matched samples, chassis pitch
+  RMS falls from 0.115 to 0.054 rad/s and suspension-length velocity RMS from 0.448 to 0.366 m/s.
+  Chassis vertical-acceleration RMS does not improve (4.66 to 5.42 m/s²), and wheel-normal change
+  rate rises because the denser mesh presents more frequent smaller facets; these mixed values are
+  retained in the test output rather than being presented as universal ride smoothing. The visible
+  improvement is specifically reduced pitch and suspension chatter, consistent with independent
+  chase-view review, not a claim that all vertical dynamics disappeared.
+- Physical rail collision stays at the full shared resolution, but decorative round rail tubes use
+  490 longitudinal segments instead of 1,958. That reduces each tube from roughly 27,400 to 6,860
+  triangles while preserving a denser visual curve than the pre-repair road.
 
 ## Beta browser integration
 
