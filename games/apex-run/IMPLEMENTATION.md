@@ -409,3 +409,14 @@ the genuine crest jump, rail glancing/escape behavior and recovery lifecycle sta
 This is foundation only. Alpine Sprint rendering and physics remain unchanged. A loop is not a
 playable feature until a separate Rapier proof demonstrates genuine world gravity, wheel contact,
 an attainable entry-speed window, an unsupported slow-entry fall, camera behavior and safe recovery.
+
+### Loop feasibility result
+
+An isolated teardrop-loop lab used the production 120 Hz Rapier chassis, world gravity, drivetrain,
+suspension and transported road frames. The chassis did become genuinely inverted and one 34 m/s
+run retained three apex contacts, while slow entries detached or rolled back without assistance.
+However, adjacent 30–38 m/s runs were not robust: several lost all apex contact or fell from the
+descending branch, and none produced a repeatable clean exit. That experiment is intentionally not
+shipped as a passing test or production stunt. The next loop milestone must solve authored entry /
+exit separation and supported descent across a speed window without magnetic forces, pose clamps or
+teleporting; otherwise loops remain out of the playable catalog.
