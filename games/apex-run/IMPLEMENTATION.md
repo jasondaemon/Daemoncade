@@ -518,3 +518,20 @@ non-overlapping proof before it can become production course geometry.
   the real runtime race/storage path, reloads the page and verifies the resulting moving ghost.
   It is regression evidence rather than a player lap, writes no synthesized PB values, and is
   absent from the normal production entry.
+
+## Alpha 39 — Physical Summit loop and isolated lifecycle evidence
+
+- Summit replaces one ordinary elevated segment with a single welded, spatially separated
+  teardrop-loop ribbon. The production Rapier chassis, world gravity, suspension and drivetrain
+  traverse the 28 m inversion without magnetic adhesion, downforce, pose correction or teleport.
+  Production rails, collision, minimap, ordered progress and recovery all consume the same 3D
+  samples. Alpine Sprint retains its prior road collider and behavior.
+- The loop's deterministic production-physics fixture enters from its real recovery/run-up,
+  retains wheel contact through inversion and exits upright. The complete Summit fixture reaches
+  all seven ordered sectors at 30, 60 and 144 render schedules without recovery. These are
+  automated drivability checks, not a claim of an uninterrupted human lap.
+- Summit records advance to PB v5 / replay v6 because the route topology and sector timing changed.
+  The visible `test.html` lifecycle runner now follows full 3D ordered samples through the loop,
+  writes only to a fresh UUID-scoped test namespace and requires the current run to save its own
+  matching PB/replay before verifying the reloaded moving ghost. Production records are never
+  cleared or rewritten by the fixture.

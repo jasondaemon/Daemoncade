@@ -1,6 +1,6 @@
 export const FIXED_DT=1/120;
-export {checkpointAdvance,isOnRoad} from "./track-model.js?v=0.5.0-alpha38";
-import {activeTrack,requestedTrackId,trackStorageKeys} from "./track-catalog.js?v=0.5.0-alpha38";
+export {checkpointAdvance,isOnRoad} from "./track-model.js?v=0.5.0-alpha39";
+import {activeTrack,requestedTrackId,trackStorageKeys} from "./track-catalog.js?v=0.5.0-alpha39";
 export const REPLAY_VERSION=activeTrack().replayVersion;
 const REPLAY_BOUNDS=activeTrack().replayBounds;
 const REPLAY_MAX_SECONDS=activeTrack().replayMaxSeconds;

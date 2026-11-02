@@ -1,4 +1,4 @@
-import {CHECKPOINTS,checkpointAdvance} from "./track-model.js?v=0.5.0-alpha38";
+import {CHECKPOINTS,checkpointAdvance} from "./track-model.js?v=0.5.0-alpha39";
 
 export function replayCheckpointSplits(replay){
   if(!replay?.frames?.length||!Number.isFinite(replay.hz)||replay.hz<=0)return[];
