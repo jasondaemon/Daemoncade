@@ -2,7 +2,7 @@
 
 ## Status
 
-Version `0.5.0-alpha.22` is a desktop-keyboard production-slice candidate, not a release candidate. The previously verified flat-course
+Version `0.5.0-alpha.23` is a desktop-keyboard production-slice candidate, not a release candidate. The previously verified flat-course
 beta remains available in Git history at `16a26e5`; its player-lap result must not be treated as
 validation of this materially different spline layout. The game is an original single-player
 stadium time attack inspired by the broad genre, not a Trackmania clone, formula-equivalent
@@ -14,7 +14,7 @@ Start a local preview from the repository root:
 python3 -m http.server 4173 --bind 127.0.0.1
 ```
 
-Then open `http://127.0.0.1:4173/games/apex-run/?build=alpha22`.
+Then open `http://127.0.0.1:4173/games/apex-run/?build=alpha23`.
 
 ## Controls and rules
 
@@ -22,6 +22,21 @@ Then open `http://127.0.0.1:4173/games/apex-run/?build=alpha22`.
 - Space: drift/handbrake; Backspace: recover; R: restart; P/Escape: pause; M: mute.
 - Checkpoints must be crossed in order. Recovery adds 1.5 seconds and makes the attempt a
   practice run: it can finish, but cannot earn a medal, PB, or ghost.
+
+## Alpha 23: Formula silhouette and landmark sectors
+
+- The player car is now an original open-wheel Formula-style single seater with a tapered nose,
+  exposed hubbed tires, front and rear wings/endplates, sculpted sidepods and engine cover,
+  open cockpit, driver helmet, halo and original cyan/gold livery. The replay ghost clones the
+  same major geometry. Physics, wheel locations, suspension and collider are unchanged.
+- Six inherited doorway checkpoints are replaced by four landmark sectors: opening sweeper,
+  crest/landing, elevated return and finish. Every gate is built from the exact spline sample's
+  width and full surface frame, so its crossbeam spans rail-to-rail and its supports sit outside
+  the drivable lane on banked/elevated road.
+- Trigger detection uses the same local forward/lateral/up basis as the visible gate. Ordered
+  altitude-aware checks prevent a lower overlapping route from falsely crossing an elevated gate.
+  The incompatible PB/replay schema is explicitly advanced to PB v9 / replay v10; older sector
+  splits and ghosts are not silently compared with this layout.
 - Focus loss or a hidden tab pauses without changing velocity. A long unexplained render gap
   invalidates the attempt rather than silently undercounting competitive time.
 - If scalar PB storage succeeds but replay storage is unavailable, the result explicitly says
@@ -206,6 +221,8 @@ laptop, software-renderer, and Windows performance remain uncharacterized.
 node games/apex-run/simulation.test.mjs
 node games/apex-run/vehicle-model.test.mjs
 node games/apex-run/wheel-visual.test.mjs
+node games/apex-run/formula-car.test.mjs
+node games/apex-run/race-feedback.test.mjs
 node games/apex-run/route-guidance.test.mjs
 node games/apex-run/play-area.test.mjs
 node games/apex-run/handling-response.test.mjs

@@ -1,4 +1,4 @@
-import {checkpointAdvance} from "./track-model.js?v=0.5.0-alpha22";
+import {CHECKPOINTS,checkpointAdvance} from "./track-model.js?v=0.5.0-alpha23";
 
 export class RaceController{
   constructor(){this.reset({ready:true})}
@@ -11,7 +11,7 @@ export class RaceController{
   observe(position){
     if(this.state!=="racing")return{finished:false,checkpointChanged:false};
     const next=checkpointAdvance(this.checkpoint,position),checkpointChanged=next!==this.checkpoint;this.checkpoint=next;
-    if(this.checkpoint===6){this.state="finished";return{finished:true,checkpointChanged}}
+    if(this.checkpoint===CHECKPOINTS.length){this.state="finished";return{finished:true,checkpointChanged}}
     return{finished:false,checkpointChanged};
   }
   step(dt,position){this.advance(dt);return this.observe(position)}

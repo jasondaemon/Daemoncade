@@ -304,3 +304,14 @@ hero-view review. Audible mix and non-M1 hardware remain unverified.
 The richer architecture increases warmed renderer geometries from 266 to 340 while staying stable
 through the accelerated soak; frame intervals remain unchanged on the sole measured M1 Max. Finish,
 climb, crest and return hero views still require independent pixel review before visual acceptance.
+
+## Production vertical slice 7: Formula car and spline-width sectors
+
+- Vehicle visuals are isolated in `formula-car.js` and preserve the established +X-forward,
+  +Y-up, +Z-axle coordinate convention. The procedural model is fitted to the verified 3.0 m
+  wheelbase / 2.04 m track without altering Rapier chassis, wheel or handling parameters.
+- Four authored landmarks replace six frequent legacy checkpoints. Detection, gate art, HUD,
+  minimap, guidance, recovery, replay splits and finish semantics share the same layout.
+- Gate posts are offset beyond the sampled road half-width. Crossbeams and triggers use the road's
+  full tangent/lateral/up frame, including pitch and bank, rather than yaw-only world rectangles.
+- PB and replay storage keys are versioned forward because the sector split model changed.

@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
   <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'wasm-unsafe-eval'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; connect-src 'none'; object-src 'none'; base-uri 'none'">
   <title>Apex Run</title>
-  <link rel="stylesheet" href="game.css?v=0.5.0-alpha22">
+  <link rel="stylesheet" href="game.css?v=0.5.0-alpha23">
 </head>
 <body>
   <main id="game">
@@ -13,7 +13,7 @@
     <section id="loading" role="status" tabindex="-1"><strong>APEX RUN</strong><span id="loading-status">Building the stadium…</span><div class="load-actions"><button id="retry-load" type="button" hidden>Retry</button><button id="retry-low" type="button" hidden>Retry in Low</button></div></section>
     <header class="hud">
       <div><span class="label">TIME</span><strong id="time">00:00.000</strong><small id="delta">PERSONAL BEST —</small></div>
-      <div class="checkpoint"><span class="label">GATE</span><strong id="checkpoint">0 / 5</strong><small id="next-gate">NEXT 1</small></div>
+      <div class="checkpoint"><span class="label">SECTOR</span><strong id="checkpoint">0 / 4</strong><small id="next-gate">NEXT 1</small></div>
       <div class="speed"><strong id="speed">000</strong><span>KM/H</span></div>
     </header>
     <div id="run-status">PB ELIGIBLE</div>
@@ -23,13 +23,13 @@
     <nav class="quick-actions" aria-label="Game controls"><button id="ghost-toggle" type="button" aria-pressed="true">GHOST ON</button><button id="pause" type="button" aria-pressed="false">PAUSE</button><button id="mute" type="button" aria-pressed="false">SOUND ON</button></nav>
     <aside class="controls"><b>W/S</b> drive · <b>A/D</b> steer · <b>SPACE</b> drift · <b>BACKSPACE</b> recover · <b>R</b> restart</aside>
     <section id="pause-card" role="dialog" aria-modal="true" aria-labelledby="pause-title" hidden><span>RACE PAUSED</span><strong id="pause-title">Take a breath.</strong><p>Press <b>P</b>, <b>Escape</b>, or Resume. The timer is stopped and held keys are cleared.</p><div class="pause-settings"><label>GRAPHICS <select id="pause-quality"><option value="high">HIGH</option><option value="low">LOW</option></select></label><button id="pause-ghost" type="button">GHOST ON</button><button id="pause-sound" type="button">SOUND ON</button></div><small>W/S drive · A/D steer · Space drift · Backspace recover · R restart</small><button id="resume" type="button">Resume</button></section>
-    <section id="start-card" role="dialog" aria-modal="true" aria-labelledby="start-title"><span>STADIUM TIME ATTACK</span><strong id="start-title">APEX RUN</strong><p>Cross all five gates, then the finish. Chase your PB ghost through the banked climb and crest jump.</p><div class="start-controls"><b>W / ↑</b><small>THROTTLE</small><b>A D / ← →</b><small>STEER</small><b>S / ↓</b><small>BRAKE</small><b>SPACE</b><small>DRIFT</small></div><label class="quality-control">GRAPHICS <select id="quality"><option value="high">HIGH</option><option value="low">LOW</option></select></label><p class="reverse-help">To reverse: brake to a stop, release S, then press it again. Backspace recovers but makes the run practice-only.</p><button id="start-race" type="button">Start run</button></section>
+    <section id="start-card" role="dialog" aria-modal="true" aria-labelledby="start-title"><span>STADIUM TIME ATTACK</span><strong id="start-title">APEX RUN</strong><p>Cross three landmark gates, then the finish. Chase your PB ghost through the banked climb and crest jump.</p><div class="start-controls"><b>W / ↑</b><small>THROTTLE</small><b>A D / ← →</b><small>STEER</small><b>S / ↓</b><small>BRAKE</small><b>SPACE</b><small>DRIFT</small></div><label class="quality-control">GRAPHICS <select id="quality"><option value="high">HIGH</option><option value="low">LOW</option></select></label><p class="reverse-help">To reverse: brake to a stop, release S, then press it again. Backspace recovers but makes the run practice-only.</p><button id="start-race" type="button">Start run</button></section>
     <section id="result" role="dialog" aria-modal="true" aria-labelledby="result-title" aria-live="polite" hidden>
       <span id="result-title">RUN COMPLETE</span><strong id="result-time">00:00.000</strong><p id="result-pb"></p><ol id="result-splits" aria-label="Checkpoint splits"></ol><p id="result-analysis"></p>
       <button id="again" type="button">Race again</button>
     </section>
   </main>
-  <script src="load-guard.js?v=0.5.0-alpha22"></script>
-  <script type="module" src="game.js?v=0.5.0-alpha22"></script>
+  <script src="load-guard.js?v=0.5.0-alpha23"></script>
+  <script type="module" src="game.js?v=0.5.0-alpha23"></script>
 </body>
 </html>

@@ -1,11 +1,11 @@
-import {checkpointAdvance} from "./track-model.js?v=0.5.0-alpha22";
+import {CHECKPOINTS,checkpointAdvance} from "./track-model.js?v=0.5.0-alpha23";
 
 export function replayCheckpointSplits(replay){
   if(!replay?.frames?.length||!Number.isFinite(replay.hz)||replay.hz<=0)return[];
   const splits=[];let checkpoint=0;
   for(const frame of replay.frames){
     const next=checkpointAdvance(checkpoint,{x:frame[1],y:frame[2],z:frame[3]});
-    if(next!==checkpoint){checkpoint=next;splits.push(frame[0]/replay.hz);if(checkpoint>=6)break}
+    if(next!==checkpoint){checkpoint=next;splits.push(frame[0]/replay.hz);if(checkpoint>=CHECKPOINTS.length)break}
   }
   return splits;
 }

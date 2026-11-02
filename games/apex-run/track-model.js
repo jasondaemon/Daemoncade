@@ -58,7 +58,9 @@ export function roadPoseNear(position,lift=1.7){
 // Each checkpoint may only navigate along its own ordered route stage. This
 // prevents a nearby later straight (especially the finish) from becoming a
 // tempting but invalid cross-grass shortcut.
-export const ROUTE_STAGE_RANGES=Object.freeze([[0,2],[2,3],[3,6],[6,7],[7,9],[9,11]].map(Object.freeze));
+// Four meaningful sectors replace the inherited square-track doorway cadence:
+// opening sweeper, crest/landing, elevated return, and the finish descent.
+export const ROUTE_STAGE_RANGES=Object.freeze([[0,2],[2,6],[6,9],[9,11]].map(Object.freeze));
 export function routeStage(checkpoint){const range=ROUTE_STAGE_RANGES[Math.max(0,Math.min(checkpoint,ROUTE_STAGE_RANGES.length-1))],start=START_EXTENSION_SAMPLES+range[0]*22,end=Math.min(ROAD_SAMPLES.length-1,START_EXTENSION_SAMPLES+range[1]*22),points=ROAD_SAMPLES.slice(start,end+1).map(({x,y,z})=>({x,y,z})),gate=CHECKPOINTS[Math.max(0,Math.min(checkpoint,CHECKPOINTS.length-1))];return points.concat(gate?{x:gate.x,y:gate.y,z:gate.z}:[])}
 function stageGeometry(checkpoint){const points=routeStage(checkpoint),segments=[];let total=0;for(let i=0;i<points.length-1;i++){const a=points[i],b=points[i+1],dx=b.x-a.x,dy=(b.y||0)-(a.y||0),dz=b.z-a.z,length=Math.hypot(dx,dz);if(length<.001)continue;segments.push({a,b,dx,dy,dz,length,start:total});total+=length}return{segments,total}}
 function pointAt(geometry,along){const wanted=Math.max(0,Math.min(geometry.total,along));for(const segment of geometry.segments)if(wanted<=segment.start+segment.length){const t=(wanted-segment.start)/segment.length;return{x:segment.a.x+segment.dx*t,y:(segment.a.y||0)+segment.dy*t,z:segment.a.z+segment.dz*t}}const last=geometry.segments.at(-1)?.b||{x:0,y:0,z:0};return{x:last.x,y:last.y||0,z:last.z}}
@@ -71,17 +73,16 @@ export function routeTarget(checkpoint,position,lookahead=28,minimumProgress=0){
   const progress=Math.max(minimumProgress,best.along),distances=[lookahead*.45,lookahead,lookahead*1.55],breadcrumbs=distances.map(distance=>pointAt(geometry,progress+distance)),target=breadcrumbs[1];return{...target,stage:checkpoint,progress,total:geometry.total,breadcrumbs}
 }
 export function routeGuides(spacing=32){const guides=[];let carry=spacing*.5;for(let i=1;i<ROAD_SAMPLES.length;i++){const a=ROAD_SAMPLES[i-1],b=ROAD_SAMPLES[i],dx=b.x-a.x,dy=b.y-a.y,dz=b.z-a.z,length=Math.hypot(dx,dy,dz);while(carry<=length){const t=carry/length;guides.push({x:a.x+dx*t,y:a.y+dy*t,z:a.z+dz*t,heading:Math.atan2(dz,dx),segment:i-1});carry+=spacing}carry-=length}return guides}
-export const CHECKPOINTS=Object.freeze([
-  {x:99,y:2,z:-12,hx:18,hz:18,rotation:Math.PI/2},{x:96,y:6,z:-72,hx:28,hz:26,rotation:Math.PI/2},
-  {x:-82,y:7,z:-103,hx:16,hz:16,rotation:0},{x:-82,y:13,z:125,hx:40,hz:20,rotation:Math.PI/2},
-  {x:135,y:10,z:140,hx:18,hz:16,rotation:0},{x:150,y:2,z:8,hx:16,hz:12,rotation:Math.PI/2,finish:true},
-]);
+function checkpointAt(routePoint,finish=false){
+  const sampleIndex=Math.min(ROAD_SAMPLES.length-1,START_EXTENSION_SAMPLES+routePoint*22),sample=ROAD_SAMPLES[sampleIndex],{forward,lateral,up}=sampleFrame(ROAD_SAMPLES,sampleIndex);
+  return Object.freeze({x:sample.x,y:sample.y,z:sample.z,width:sample.width,sampleIndex,forward,lateral,up,rotation:basisQuaternion(forward,up,lateral),finish});
+}
+export const CHECKPOINTS=Object.freeze([checkpointAt(2),checkpointAt(6),checkpointAt(9),checkpointAt(11,true)]);
 export const RECOVERY_SPOTS=Object.freeze([
-  roadPoseNear({x:-2,z:0}),roadPoseNear({x:93,z:-20}),roadPoseNear({x:76,z:-102}),
-  roadPoseNear({x:-85,z:-78}),roadPoseNear({x:-76,z:132}),roadPoseNear({x:148,z:124}),
+  roadPoseNear({x:-2,z:0}),roadPoseNear(CHECKPOINTS[0]),roadPoseNear(CHECKPOINTS[1]),roadPoseNear(CHECKPOINTS[2]),
 ].map(Object.freeze));
 export function recoveryForward(rotation){return{x:1-2*(rotation.y*rotation.y+rotation.z*rotation.z),z:2*(rotation.x*rotation.z-rotation.w*rotation.y)}}
 export function isOnRoad({x,y,z}){let best=Infinity,width=0,height=0;for(const sample of ROAD_SAMPLES){const distance=Math.hypot(x-sample.x,z-sample.z);if(distance<best){best=distance;width=sample.width;height=sample.y}}return best<=width*.58&&(!Number.isFinite(y)||Math.abs(y-height)<=5.5)}
 export function isUnderRoad({x,y,z},clearance=2.6){if(!Number.isFinite(y))return false;const sample=nearestRoadSample({x,z});return Math.hypot(x-sample.x,z-sample.z)<=sample.width*.62&&y<sample.y-clearance}
 export function advanceUnderRoadTime(previous,position,dt){return isUnderRoad(position)?Math.max(0,previous)+(Number.isFinite(dt)&&dt>0?dt:0):0}
-export function checkpointAdvance(current,position){const zone=CHECKPOINTS[current];return zone&&Math.abs(position.x-zone.x)<=zone.hx&&Math.abs(position.z-zone.z)<=zone.hz&&(!Number.isFinite(position.y)||Math.abs(position.y-(zone.y+1.5))<7)?current+1:current}
+export function checkpointAdvance(current,position){const zone=CHECKPOINTS[current];if(!zone)return current;const dx=position.x-zone.x,dy=(position.y??zone.y+1.5)-(zone.y+1.5),dz=position.z-zone.z,longitudinal=dx*zone.forward.x+dy*zone.forward.y+dz*zone.forward.z,lateral=dx*zone.lateral.x+dy*zone.lateral.y+dz*zone.lateral.z,vertical=dx*zone.up.x+dy*zone.up.y+dz*zone.up.z;return Math.abs(longitudinal)<=6&&Math.abs(lateral)<=zone.width/2+1&&Math.abs(vertical)<=5.5?current+1:current}

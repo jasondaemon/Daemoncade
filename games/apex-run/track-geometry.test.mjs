@@ -14,6 +14,13 @@ const orientation=(a,b,c)=>(b.x-a.x)*(c.z-a.z)-(b.z-a.z)*(c.x-a.x),crosses=(a,b,
 for(const [index,spot] of RECOVERY_SPOTS.entries())assert.ok(isOnRoad(spot),`recovery ${index} is off spline road`);
 const rotate=(axis,q)=>({x:axis.x*(1-2*(q.y*q.y+q.z*q.z))+axis.y*2*(q.x*q.y-q.w*q.z)+axis.z*2*(q.x*q.z+q.w*q.y),y:axis.x*2*(q.x*q.y+q.w*q.z)+axis.y*(1-2*(q.x*q.x+q.z*q.z))+axis.z*2*(q.y*q.z-q.w*q.x),z:axis.x*2*(q.x*q.z-q.w*q.y)+axis.y*2*(q.y*q.z+q.w*q.x)+axis.z*(1-2*(q.x*q.x+q.y*q.y))});assert.ok(RECOVERY_SPOTS.some(spot=>{const up=rotate({x:0,y:1,z:0},spot.rotation);return Math.abs(up.x)+Math.abs(up.z)>.05}),"recovery rotations discarded road pitch/bank");for(const [index,spot] of RECOVERY_SPOTS.entries()){const up=rotate({x:0,y:1,z:0},spot.rotation);assert.ok(up.y>.9,`recovery ${index} is not upright on its surface frame`)}
 for(const [index,gate] of CHECKPOINTS.entries())assert.ok(isOnRoad(gate),`gate ${index} is off spline road`);
+assert.equal(CHECKPOINTS.length,4,"course should use landmark sectors rather than frequent legacy doorways");
+for(const [index,gate] of CHECKPOINTS.entries()){
+  const road=ROAD_SAMPLES[gate.sampleIndex];assert.ok(Math.abs(gate.width-road.width)<1e-9,`gate ${index} did not inherit road width`);
+  const inside={x:gate.x+gate.lateral.x*(gate.width/2-.2),y:gate.y+1.5+gate.lateral.y*(gate.width/2-.2),z:gate.z+gate.lateral.z*(gate.width/2-.2)};
+  const outside={x:gate.x+gate.lateral.x*(gate.width/2+2.5),y:gate.y+1.5+gate.lateral.y*(gate.width/2+2.5),z:gate.z+gate.lateral.z*(gate.width/2+2.5)};
+  assert.equal(checkpointAdvance(index,inside),index+1,`gate ${index} did not span its drivable road`);assert.equal(checkpointAdvance(index,outside),index,`gate ${index} trigger extended beyond its road frame`);
+}
 for(const guide of routeGuides(27)){const sample=nearestRoadSample(guide);assert.ok(Math.hypot(guide.x-sample.x,guide.y-sample.y,guide.z-sample.z)<6.5,"guide diverged from spline road")}
 const elevated=ROAD_SAMPLES.reduce((best,sample)=>sample.y>best.y?sample:best,ROAD_SAMPLES[0]);assert.equal(isOnRoad({x:elevated.x,y:elevated.y+1.5,z:elevated.z}),true);assert.equal(isOnRoad({x:elevated.x,y:0,z:elevated.z}),false,"ground below elevated road must not inherit asphalt traction");
 const elevatedGate=CHECKPOINTS.findIndex(gate=>gate.y>10);assert.equal(checkpointAdvance(elevatedGate,{x:CHECKPOINTS[elevatedGate].x,y:0,z:CHECKPOINTS[elevatedGate].z}),elevatedGate,"ground below an elevated gate must not count");assert.equal(checkpointAdvance(elevatedGate,{x:CHECKPOINTS[elevatedGate].x,y:CHECKPOINTS[elevatedGate].y+1.5,z:CHECKPOINTS[elevatedGate].z}),elevatedGate+1);

@@ -3,12 +3,13 @@ import {FixedStepper,REPLAY_KEY,checkpointAdvance,commitResult,formatTime,frameG
 import {RaceController} from "./race-controller.js";
 assert.equal(formatTime(65.4321),"01:05.432");
 const storage={getItem:()=>"not-a-time"};assert.equal(readBest(storage),null);
-assert.equal(checkpointAdvance(0,{x:99,z:-12}),1);assert.equal(checkpointAdvance(0,{x:-18,z:-105}),0);
+assert.equal(checkpointAdvance(0,{x:96,y:3.5,z:-24}),1);assert.equal(checkpointAdvance(0,{x:-18,z:-105}),0);
 let ticks=0;const stepper=new FixedStepper(()=>ticks++,1/120);for(let i=0;i<60;i++)stepper.advance(1/60);assert.equal(ticks,120);
 let ticks30=0;const at30=new FixedStepper(()=>ticks30++,1/120);for(let i=0;i<30;i++)at30.advance(1/30);assert.equal(ticks30,ticks);
 for(const fps of[30,60,144]){let count=0;const fixed=new FixedStepper(()=>count++,1/120);for(let i=0;i<fps*10;i++)fixed.advance(1/fps);assert.ok(Math.abs(count-1200)<=1,`${fps} FPS produced ${count} ticks`)}
 assert.equal(frameGapInvalidates(5),true);assert.equal(frameGapInvalidates(30),true);assert.equal(frameGapInvalidates(.2),false);
 const memory=new Map(),store={getItem:key=>memory.get(key)??null,setItem:(key,value)=>memory.set(key,value)};
+const legacyStore={getItem:key=>key==="apex-run:pb:v8"?"42":key==="apex-run:replay:v9"?"{}":null};assert.equal(readBest(legacyStore),null);assert.equal(readReplay(legacyStore),null);
 const frames=[[0,0,2,0,0,0,0,1],[30,30,3,-4,0,.2,0,.98],[600,30,3,-4,0,.2,0,.98]];
 assert.equal(saveReplay(store,20,frames),true);assert.ok(memory.has(REPLAY_KEY));const replay=readReplay(store);assert.equal(replay.time,20);assert.deepEqual(replayFrameAt(replay,.5).slice(1,4),[15,2.5,-2]);
 store.setItem(REPLAY_KEY,JSON.stringify({...replay,frames:[[0,999,2,0,0,0,0,1],[1,0,2,0,0,0,0,1]]}));assert.equal(readReplay(store),null);
@@ -25,6 +26,6 @@ const practice=commitResult(store,20,18,frames,{eligible:false});assert.equal(pr
 assert.equal(formatTime(59.9996),"01:00.000");assert.equal(formatTime(3599.9996),"60:00.000");
 assert.equal(readReplay({getItem:()=>JSON.stringify({version:3,time:20,hz:30,frames:[[0,0,2,0,0,0,0,0],[600,0,2,0,0,0,0,0]]})}),null);
 assert.equal(isOnRoad({x:50,z:0}),true);assert.equal(isOnRoad({x:101,z:-60}),true);assert.equal(isOnRoad({x:0,z:-103}),true);assert.equal(isOnRoad({x:50,z:40}),false);
-let cp=0;cp=checkpointAdvance(cp,{x:-82,z:125});assert.equal(cp,0);cp=checkpointAdvance(cp,{x:99,z:-12});assert.equal(cp,1);cp=checkpointAdvance(cp,{x:150,z:8});assert.equal(cp,1);
+let cp=0;cp=checkpointAdvance(cp,{x:-82,z:125});assert.equal(cp,0);cp=checkpointAdvance(cp,{x:96,y:3.5,z:-24});assert.equal(cp,1);cp=checkpointAdvance(cp,{x:150,z:8});assert.equal(cp,1);
 const race=new RaceController();assert.equal(race.state,"ready");assert.equal(race.start(),true);assert.equal(race.start(),false);for(let i=0;i<361;i++)race.step(1/120,{x:-2,z:0});assert.equal(race.state,"racing");race.pause();const pausedTime=race.time;race.step(10,{x:99,z:-12});assert.equal(race.time,pausedTime);race.resume();race.recover();assert.equal(race.eligible,false);assert.equal(race.time,pausedTime+1.5);race.reset();assert.equal(race.state,"countdown");
 console.log("Apex Run simulation tests passed");
