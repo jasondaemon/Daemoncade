@@ -14,7 +14,12 @@ Start a local preview from the repository root:
 python3 -m http.server 4173 --bind 127.0.0.1
 ```
 
-Then open `http://127.0.0.1:4173/games/apex-run/?build=alpha23`.
+Then open `http://127.0.0.1:4173/games/apex-run/?build=alpha24`.
+
+Alpha 24 repairs the measured coarse road-normal transitions and the visible triangular sidewall
+artifacts while retaining the authored crest jump. The requested licensed Formula-car replacement
+is still blocked on the official Sketchfab download requiring a signed-in account; the existing
+procedural alpha-23 car should not be treated as accepted final art.
 
 ## Controls and rules
 

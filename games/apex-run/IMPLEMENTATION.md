@@ -175,6 +175,24 @@ while direct impacts still require a physical stop/release/reverse escape. The e
 original procedural art rather than authored photogrammetry, and lower-end GPU performance remains
 unmeasured.
 
+### Alpha 24 road-surface repair
+
+- The shared rendered/physical spline now uses 88 samples per control segment instead of 22.
+  Measured adjacent surface-tangent change falls from a 12.39-degree maximum to 3.12 degrees,
+  removing the coarse piecewise-planar wheel-normal transitions that made the car look as if it
+  were traversing a rocky road. This changes geometry resolution, not suspension softness.
+- The signature crest remains intentionally shaped: 30 and 34 m/s approaches across the center
+  and both four-metre offsets become airborne and establish a stable landing; a 26 m/s approach
+  remains grounded. Recovery-to-crest and rail-contact coverage use the same denser collider.
+- Rendered top, underside, and edge-wall strips have separate vertices and normals. The former
+  shared-vertex smoothing exposed every curved sidewall triangle as a sawtooth even though the
+  physical collider was already top-only. Elevated piers now terminate at the deck underside and
+  begin at terrain height instead of visibly floating below the road.
+- The preferred replacement car is salasilma13's CC-BY 4.0 Low Poly-F1 model on Sketchfab. Its
+  normal official download requires a signed-in account; no viewer extraction, account creation,
+  or lower-quality substitute asset was used. The rejected alpha-23 procedural body therefore
+  remains an explicit unresolved visual blocker rather than being mislabeled as finished.
+
 ## Beta browser integration
 
 - `RaceController` is the single countdown, timer, ordered-checkpoint, pause, recovery-eligibility,

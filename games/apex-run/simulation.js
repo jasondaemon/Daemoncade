@@ -1,5 +1,5 @@
 export const FIXED_DT=1/120;
-export {checkpointAdvance,isOnRoad} from "./track-model.js?v=0.5.0-alpha23";
+export {checkpointAdvance,isOnRoad} from "./track-model.js?v=0.5.0-alpha24";
 export const REPLAY_VERSION=10;
 export const REPLAY_KEY="apex-run:replay:v10";
 export const REPLAY_HZ=30;

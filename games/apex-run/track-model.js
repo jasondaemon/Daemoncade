@@ -16,7 +16,9 @@ export const ROUTE_PATH=Object.freeze([
   {x:-88,y:11,z:114,width:23,bank:.08},{x:-62,y:14,z:140,width:23,bank:.1},{x:126,y:11,z:140,width:24,bank:-.08},{x:150,y:7,z:114,width:25,bank:-.16},{x:150,y:2,z:8,width:23,bank:0},
 ]);
 export const START_EXTENSION_SAMPLES=10;
-export const JUMP_ZONE=Object.freeze({approach:START_EXTENSION_SAMPLES+5*22+2,takeoff:START_EXTENSION_SAMPLES+5*22+9,landing:START_EXTENSION_SAMPLES+5*22+17});
+export const ROAD_STEPS_PER_SEGMENT=88;
+const routeSampleIndex=(routePoint,offset=0)=>START_EXTENSION_SAMPLES+routePoint*ROAD_STEPS_PER_SEGMENT+offset;
+export const JUMP_ZONE=Object.freeze({approach:routeSampleIndex(5,8),takeoff:routeSampleIndex(5,36),landing:routeSampleIndex(5,68)});
 const distance3=(a,b)=>Math.hypot(b.x-a.x,(b.y||0)-(a.y||0),b.z-a.z);
 function tangentAt(index,key){
   const point=ROUTE_PATH[index],before=ROUTE_PATH[Math.max(0,index-1)],after=ROUTE_PATH[Math.min(ROUTE_PATH.length-1,index+1)];
@@ -29,12 +31,25 @@ function sampleControl(index,t){
   // The crest uses a C2-continuous bump. Zero first and second derivatives at
   // both joins keep the visual ribbon and suspension collider from acquiring
   // the sharp pitch kink produced by the earlier Gaussian profile.
-  const a=ROUTE_PATH[index],b=ROUTE_PATH[index+1],hump=index===5?672*t**3*(1-t)**3:0;
+  const a=ROUTE_PATH[index],b=ROUTE_PATH[index+1],hump=index===5?14*Math.sin(Math.PI*t)**4:0;
   return{x:hermite(a.x,b.x,tangentAt(index,"x"),tangentAt(index+1,"x"),t),y:hermite(a.y,b.y,tangentAt(index,"y"),tangentAt(index+1,"y"),t)+hump+.55,z:hermite(a.z,b.z,tangentAt(index,"z"),tangentAt(index+1,"z"),t),width:a.width+(b.width-a.width)*t,bank:a.bank+(b.bank-a.bank)*t}
 }
-export function buildRoadMesh(stepsPerSegment=18){const samples=[],first=sampleControl(0,0),second=sampleControl(0,1/stepsPerSegment),dx=second.x-first.x,dz=second.z-first.z,length=Math.hypot(dx,dz)||1,fx=dx/length,fz=dz/length;for(let step=START_EXTENSION_SAMPLES;step>0;step--)samples.push({...first,x:first.x-fx*step*3,z:first.z-fz*step*3});for(let segment=0;segment<ROUTE_PATH.length-1;segment++)for(let step=0;step<stepsPerSegment;step++)samples.push(sampleControl(segment,step/stepsPerSegment));samples.push(sampleControl(ROUTE_PATH.length-2,1));for(let i=0;i<samples.length;i++){const before=samples[Math.max(0,i-1)],after=samples[Math.min(samples.length-1,i+1)],dx=after.x-before.x,dz=after.z-before.z,length=Math.hypot(dx,dz)||1,rx=-dz/length,rz=dx/length,half=samples[i].width/2,cos=Math.cos(samples[i].bank),sin=Math.sin(samples[i].bank);samples[i].heading=Math.atan2(dz,dx);samples[i].left={x:samples[i].x+rx*half*cos,y:samples[i].y+half*sin,z:samples[i].z+rz*half*cos};samples[i].right={x:samples[i].x-rx*half*cos,y:samples[i].y-half*sin,z:samples[i].z-rz*half*cos}}
-  const positions=[],indices=[],thickness=1.1;for(const sample of samples)positions.push(sample.left.x,sample.left.y,sample.left.z,sample.right.x,sample.right.y,sample.right.z,sample.left.x,sample.left.y-thickness,sample.left.z,sample.right.x,sample.right.y-thickness,sample.right.z);for(let i=0;i<samples.length-1;i++){const a=i*4,b=(i+1)*4;indices.push(a,b,a+1,b,b+1,a+1,a+2,a+3,b+2,b+2,a+3,b+3,a,a+2,b,b,a+2,b+2,a+1,b+1,a+3,b+1,a+3,b+3)}return{positions,indices,samples}}
-export const ROAD_SAMPLES=Object.freeze(buildRoadMesh(22).samples.map(Object.freeze));
+export function buildRoadMesh(stepsPerSegment=ROAD_STEPS_PER_SEGMENT){const samples=[],first=sampleControl(0,0),second=sampleControl(0,1/stepsPerSegment),dx=second.x-first.x,dz=second.z-first.z,length=Math.hypot(dx,dz)||1,fx=dx/length,fz=dz/length;for(let step=START_EXTENSION_SAMPLES;step>0;step--)samples.push({...first,x:first.x-fx*step*3,z:first.z-fz*step*3});for(let segment=0;segment<ROUTE_PATH.length-1;segment++)for(let step=0;step<stepsPerSegment;step++)samples.push(sampleControl(segment,step/stepsPerSegment));samples.push(sampleControl(ROUTE_PATH.length-2,1));for(let i=0;i<samples.length;i++){const before=samples[Math.max(0,i-1)],after=samples[Math.min(samples.length-1,i+1)],dx=after.x-before.x,dz=after.z-before.z,length=Math.hypot(dx,dz)||1,rx=-dz/length,rz=dx/length,half=samples[i].width/2,cos=Math.cos(samples[i].bank),sin=Math.sin(samples[i].bank);samples[i].heading=Math.atan2(dz,dx);samples[i].left={x:samples[i].x+rx*half*cos,y:samples[i].y+half*sin,z:samples[i].z+rz*half*cos};samples[i].right={x:samples[i].x-rx*half*cos,y:samples[i].y-half*sin,z:samples[i].z-rz*half*cos}}
+  // Keep the road top, underside, and edge-wall vertices separate. The old
+  // shared vertices averaged normals across hard corners, making each curved
+  // side quad reveal its diagonal as a sawtooth under chase-view lighting.
+  const positions=[],indices=[],thickness=1.1;for(const sample of samples)positions.push(
+    sample.left.x,sample.left.y,sample.left.z,sample.right.x,sample.right.y,sample.right.z,
+    sample.left.x,sample.left.y-thickness,sample.left.z,sample.right.x,sample.right.y-thickness,sample.right.z,
+    sample.left.x,sample.left.y,sample.left.z,sample.left.x,sample.left.y-thickness,sample.left.z,
+    sample.right.x,sample.right.y,sample.right.z,sample.right.x,sample.right.y-thickness,sample.right.z,
+  );for(let i=0;i<samples.length-1;i++){const a=i*8,b=(i+1)*8;indices.push(
+    a,b,a+1,b,b+1,a+1,
+    a+2,a+3,b+2,b+2,a+3,b+3,
+    a+4,a+5,b+4,b+4,a+5,b+5,
+    a+6,b+6,a+7,b+6,b+7,a+7,
+  )}return{positions,indices,samples}}
+export const ROAD_SAMPLES=Object.freeze(buildRoadMesh().samples.map(Object.freeze));
 // Suspension rays and chassis contacts use only the authored driving surface.
 // The rendered mesh keeps its underside and edge walls for visual thickness,
 // but those vertical triangles are not ground and must not catch a tire ray at
@@ -61,7 +76,7 @@ export function roadPoseNear(position,lift=1.7){
 // Four meaningful sectors replace the inherited square-track doorway cadence:
 // opening sweeper, crest/landing, elevated return, and the finish descent.
 export const ROUTE_STAGE_RANGES=Object.freeze([[0,2],[2,6],[6,9],[9,11]].map(Object.freeze));
-export function routeStage(checkpoint){const range=ROUTE_STAGE_RANGES[Math.max(0,Math.min(checkpoint,ROUTE_STAGE_RANGES.length-1))],start=START_EXTENSION_SAMPLES+range[0]*22,end=Math.min(ROAD_SAMPLES.length-1,START_EXTENSION_SAMPLES+range[1]*22),points=ROAD_SAMPLES.slice(start,end+1).map(({x,y,z})=>({x,y,z})),gate=CHECKPOINTS[Math.max(0,Math.min(checkpoint,CHECKPOINTS.length-1))];return points.concat(gate?{x:gate.x,y:gate.y,z:gate.z}:[])}
+export function routeStage(checkpoint){const range=ROUTE_STAGE_RANGES[Math.max(0,Math.min(checkpoint,ROUTE_STAGE_RANGES.length-1))],start=routeSampleIndex(range[0]),end=Math.min(ROAD_SAMPLES.length-1,routeSampleIndex(range[1])),points=ROAD_SAMPLES.slice(start,end+1).map(({x,y,z})=>({x,y,z})),gate=CHECKPOINTS[Math.max(0,Math.min(checkpoint,CHECKPOINTS.length-1))];return points.concat(gate?{x:gate.x,y:gate.y,z:gate.z}:[])}
 function stageGeometry(checkpoint){const points=routeStage(checkpoint),segments=[];let total=0;for(let i=0;i<points.length-1;i++){const a=points[i],b=points[i+1],dx=b.x-a.x,dy=(b.y||0)-(a.y||0),dz=b.z-a.z,length=Math.hypot(dx,dz);if(length<.001)continue;segments.push({a,b,dx,dy,dz,length,start:total});total+=length}return{segments,total}}
 function pointAt(geometry,along){const wanted=Math.max(0,Math.min(geometry.total,along));for(const segment of geometry.segments)if(wanted<=segment.start+segment.length){const t=(wanted-segment.start)/segment.length;return{x:segment.a.x+segment.dx*t,y:(segment.a.y||0)+segment.dy*t,z:segment.a.z+segment.dz*t}}const last=geometry.segments.at(-1)?.b||{x:0,y:0,z:0};return{x:last.x,y:last.y||0,z:last.z}}
 export function routeTarget(checkpoint,position,lookahead=28,minimumProgress=0){
@@ -74,7 +89,7 @@ export function routeTarget(checkpoint,position,lookahead=28,minimumProgress=0){
 }
 export function routeGuides(spacing=32){const guides=[];let carry=spacing*.5;for(let i=1;i<ROAD_SAMPLES.length;i++){const a=ROAD_SAMPLES[i-1],b=ROAD_SAMPLES[i],dx=b.x-a.x,dy=b.y-a.y,dz=b.z-a.z,length=Math.hypot(dx,dy,dz);while(carry<=length){const t=carry/length;guides.push({x:a.x+dx*t,y:a.y+dy*t,z:a.z+dz*t,heading:Math.atan2(dz,dx),segment:i-1});carry+=spacing}carry-=length}return guides}
 function checkpointAt(routePoint,finish=false){
-  const sampleIndex=Math.min(ROAD_SAMPLES.length-1,START_EXTENSION_SAMPLES+routePoint*22),sample=ROAD_SAMPLES[sampleIndex],{forward,lateral,up}=sampleFrame(ROAD_SAMPLES,sampleIndex);
+  const sampleIndex=Math.min(ROAD_SAMPLES.length-1,routeSampleIndex(routePoint)),sample=ROAD_SAMPLES[sampleIndex],{forward,lateral,up}=sampleFrame(ROAD_SAMPLES,sampleIndex);
   return Object.freeze({x:sample.x,y:sample.y,z:sample.z,width:sample.width,sampleIndex,forward,lateral,up,rotation:basisQuaternion(forward,up,lateral),finish});
 }
 export const CHECKPOINTS=Object.freeze([checkpointAt(2),checkpointAt(6),checkpointAt(9),checkpointAt(11,true)]);
