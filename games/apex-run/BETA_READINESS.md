@@ -2,7 +2,7 @@
 
 ## Status
 
-Version `0.5.0-alpha.26` is a desktop-keyboard production-slice candidate, not a release candidate. The previously verified flat-course
+Version `0.5.0-alpha.27` is a desktop-keyboard production-slice candidate, not a release candidate. The previously verified flat-course
 beta remains available in Git history at `16a26e5`; its player-lap result must not be treated as
 validation of this materially different spline layout. The game is an original single-player
 stadium time attack inspired by the broad genre, not a Trackmania clone, formula-equivalent
@@ -14,7 +14,7 @@ Start a local preview from the repository root:
 python3 -m http.server 4173 --bind 127.0.0.1
 ```
 
-Then open `http://127.0.0.1:4173/games/apex-run/?build=alpha26`.
+Then open `http://127.0.0.1:4173/games/apex-run/?build=alpha27`.
 
 Alpha 24 repairs the measured coarse road-normal transitions and visible triangular sidewall
 artifacts while retaining the authored crest jump. Alpha 25 replaces the rejected procedural car
@@ -24,6 +24,9 @@ Alpha 26 removes the source model's baked opposite wheel camber before establish
 runtime pivots, so every tire now rolls concentrically around the physical hub axis instead of
 visibly coning. Full-revolution invariants cover all four authored wheel meshes at three steering
 angles; physics, suspension and wheel locations remain unchanged.
+Alpha 27 removes the early-development ground chevrons, world-space breadcrumb rings, transverse
+jump paint and instructional crest/finish boards from this single-path course. The permanent white
+road stripe, physical ramp, landmark gates, minimap and internal recovery guidance remain.
 
 ## Controls and rules
 

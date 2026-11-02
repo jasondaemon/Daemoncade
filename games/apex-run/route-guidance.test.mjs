@@ -1,8 +1,9 @@
 import assert from "node:assert/strict";
+import{readFileSync}from"node:fs";
 import {CHECKPOINTS,RECOVERY_SPOTS,ROAD_SAMPLES,ROUTE_PATH,ROUTE_STAGE_RANGES,recoveryForward,routeGuides,routeStage,routeTarget} from "./track-model.js";
 
 const guides=routeGuides(27);
-assert.ok(guides.length>=20,"route needs frequent visible arrows");
+assert.ok(guides.length>=20,"route sampling needs enough internal guidance probes");
 for(const guide of guides){
   const a=ROAD_SAMPLES[guide.segment],b=ROAD_SAMPLES[guide.segment+1],length=Math.hypot(b.x-a.x,b.z-a.z);
   const tangent={x:(b.x-a.x)/length,z:(b.z-a.z)/length};
@@ -11,6 +12,8 @@ for(const guide of guides){
   const dot=renderedForward.x*tangent.x+renderedForward.z*tangent.z;
   assert.ok(dot>.999999,`arrow ${JSON.stringify(guide)} points against route tangent ${dot}`);
 }
+const production=readFileSync(new URL("game.js",import.meta.url),"utf8");
+for(const obsolete of["routeArrow(","RingGeometry(","CREST  ↑","BRAKE · FINISH TURN","roadMarker("])assert.equal(production.includes(obsolete),false,`obsolete production guidance visual remains: ${obsolete}`);
 function distanceToStage(point,stage){let best=Infinity;for(let i=0;i<stage.length-1;i++){const a=stage[i],b=stage[i+1],dx=b.x-a.x,dz=b.z-a.z,length2=dx*dx+dz*dz;if(length2<1e-6)continue;const t=Math.max(0,Math.min(1,((point.x-a.x)*dx+(point.z-a.z)*dz)/length2)),x=a.x+dx*t,z=a.z+dz*t;best=Math.min(best,Math.hypot(point.x-x,point.z-z))}return best}
 const probes=[
   [{x:-2,z:0},{x:80,z:0}], [{x:96,z:-24},{x:0,z:-103}],
