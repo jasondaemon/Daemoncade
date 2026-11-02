@@ -3,7 +3,9 @@ globalThis.location={search:"?track=summit-circuit"};
 const model=await import("./track-model.js?split-route-test");
 
 assert.equal(model.BRANCH_ROADS.length,1,"Summit must expose one authored route choice");
-assert.equal(model.INTENTIONAL_OBSTACLES.length,3,"attack line must contain a readable slalom");
+const attackObstacles=model.INTENTIONAL_OBSTACLES.filter(obstacle=>obstacle.branchId==="inside-line"),paddockObstacles=model.INTENTIONAL_OBSTACLES.filter(obstacle=>!obstacle.branchId);
+assert.equal(attackObstacles.length,3,"attack line must contain a readable slalom");
+assert.equal(paddockObstacles.length,2,"main route must contain a readable paddock chicane");
 const branch=model.BRANCH_ROADS[0],layout=model.SPLIT_LAYOUT,entry=model.ROAD_SAMPLES[layout.entrySample],merge=model.ROAD_SAMPLES[layout.mergeSample];
 const distance=(a,b)=>Math.hypot(a.x-b.x,a.y-b.y,a.z-b.z),pathLength=samples=>samples.slice(1).reduce((sum,point,index)=>sum+distance(samples[index],point),0);
 assert.ok(distance(branch.samples[0],entry)<.01,"branch does not share the declared entry cross-section");
@@ -29,7 +31,8 @@ for(const [index,junction] of model.BRANCH_JUNCTIONS.entries()){
   // coplanar sheet or the old 1-5 m height gap hidden by XZ-only trimming.
   const direction=Math.sign(junction.mainEnd-junction.mainStart)||1;for(let step=0;step<values.length/6;step++){const inner=vertex(step*2+1),main=model.ROAD_SAMPLES[junction.mainStart+step*direction].left;assert.ok(distance(inner,main)<.02,`junction ${index} inner edge detached from the main deck at ${step}`)}
 }
-for(const obstacle of model.INTENTIONAL_OBSTACLES){const sample=branch.samples[obstacle.sampleIndex],offset=Math.hypot(obstacle.x-sample.x,obstacle.z-sample.z);assert.ok(branch.surfaceSamples.includes(sample),`${obstacle.id} is not on the isolated physical branch`);assert.ok(offset+obstacle.radius<sample.width/2-1.3,`${obstacle.id} blocks the entire attack line`);assert.equal(model.isOnRoad({x:obstacle.x,y:sample.y+1,z:obstacle.z}),true)}
+for(const obstacle of attackObstacles){const sample=branch.samples[obstacle.sampleIndex],offset=Math.hypot(obstacle.x-sample.x,obstacle.z-sample.z);assert.ok(branch.surfaceSamples.includes(sample),`${obstacle.id} is not on the isolated physical branch`);assert.ok(offset+obstacle.radius<sample.width/2-1.3,`${obstacle.id} blocks the entire attack line`);assert.equal(model.isOnRoad({x:obstacle.x,y:sample.y+1,z:obstacle.z}),true)}
+for(const obstacle of paddockObstacles){const sample=model.ROAD_SAMPLES[obstacle.sampleIndex],offset=Math.hypot(obstacle.x-sample.x,obstacle.z-sample.z);assert.ok(offset+obstacle.radius<sample.width/2-1.3,`${obstacle.id} blocks the entire paddock deck`)}
 const poseSample=branch.surfaceSamples[10],poseBefore=branch.surfaceSamples[9],poseAfter=branch.surfaceSamples[11],pose=model.roadPoseNear(poseSample,1.7),poseLength=Math.hypot(pose.x-poseSample.x,pose.y-poseSample.y,pose.z-poseSample.z),expectedForward={x:poseAfter.x-poseBefore.x,y:poseAfter.y-poseBefore.y,z:poseAfter.z-poseBefore.z},expectedLength=Math.hypot(expectedForward.x,expectedForward.y,expectedForward.z),poseForward={x:1-2*(pose.rotation.y**2+pose.rotation.z**2),y:2*(pose.rotation.x*pose.rotation.y+pose.rotation.w*pose.rotation.z),z:2*(pose.rotation.x*pose.rotation.z-pose.rotation.w*pose.rotation.y)};
 assert.ok(Math.abs(poseLength-1.7)<.02,`branch recovery lift is not road-normal: ${poseLength}`);
 assert.ok((poseForward.x*expectedForward.x+poseForward.y*expectedForward.y+poseForward.z*expectedForward.z)/expectedLength>.998,"branch recovery orientation came from the main route");

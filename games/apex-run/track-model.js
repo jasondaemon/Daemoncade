@@ -1,13 +1,14 @@
-import {requestedTrackId} from "./track-catalog.js?v=0.5.0-alpha42";
-import {buildStuntLoop} from "./stunt-loop.js?v=0.5.0-alpha42";
+import {requestedTrackId} from "./track-catalog.js?v=0.5.0-alpha43";
+import {buildStuntLoop} from "./stunt-loop.js?v=0.5.0-alpha43";
 
 const ALPINE_ROUTE=Object.freeze([
   {x:-2,y:0,z:0,width:24,bank:0},{x:62,y:.5,z:0,width:24,bank:0},{x:96,y:2,z:-24,width:25,bank:-.08},{x:96,y:6,z:-72,width:25,bank:-.16},{x:78,y:9,z:-98,width:24,bank:-.1},{x:28,y:10,z:-108,width:23,bank:0},{x:-82,y:7,z:-103,width:24,bank:0},
   {x:-88,y:11,z:114,width:23,bank:.08},{x:-62,y:14,z:140,width:23,bank:.1},{x:126,y:11,z:140,width:24,bank:-.08},{x:150,y:7,z:114,width:25,bank:-.16},{x:150,y:2,z:8,width:23,bank:0},
 ]);
+const SUMMIT_WIDTHS=[30,28,24,22,26,24,20,22,24,22,26,24,22,26,20,22,24,18,22,26,28];
 const SUMMIT_ROUTE=Object.freeze([
   {x:-380,y:0,z:-280,bank:0},{x:-270,y:1,z:-330,bank:.08},{x:-120,y:5,z:-250,bank:.18},{x:40,y:9,z:-340,bank:-.18},{x:220,y:18,z:-300,bank:-.12},{x:360,y:28,z:-180,bank:-.2},{x:410,y:38,z:20,bank:.1},{x:280,y:30,z:240,bank:.18},{x:100,y:18,z:330,bank:.14},{x:-110,y:18,z:340,bank:-.12},{x:-300,y:30,z:260,bank:-.18},{x:-410,y:25,z:100,bank:-.12},{x:-400,y:14,z:-60,bank:.1},{x:-300,y:8,z:-160,bank:.18},{x:-150,y:12,z:-180,bank:.12},{x:0,y:20,z:-120,bank:-.1},{x:140,y:28,z:-20,bank:-.18},{x:220,y:22,z:90,bank:-.1},{x:340,y:14,z:110,bank:.04},{x:450,y:8,z:20,bank:.1},{x:500,y:2,z:-120,bank:0},
-].map(point=>Object.freeze({...point,width:40})));
+].map((point,index)=>Object.freeze({...point,width:SUMMIT_WIDTHS[index]})));
 const TRACK_DEFINITIONS=Object.freeze({
   "alpine-sprint":Object.freeze({route:ALPINE_ROUTE,checkpointPoints:[2,6,9,11],stageRanges:[[0,2],[2,6],[6,9],[9,11]],humps:{5:14},jumpSegment:5}),
   "summit-circuit":Object.freeze({route:SUMMIT_ROUTE,checkpointPoints:[3,6,10,13,16,18,20],stageRanges:[[0,3],[3,6],[6,10],[10,13],[13,16],[16,18],[18,20]],humps:{10:12},jumpSegment:10}),
@@ -40,6 +41,12 @@ export const START_GATE_SAMPLE_INDEX=Math.max(1,START_EXTENSION_SAMPLES-4);
 export const ROAD_STEPS_PER_SEGMENT=summit?100:88;
 const routeSampleIndex=(routePoint,offset=0)=>START_EXTENSION_SAMPLES+routePoint*ROAD_STEPS_PER_SEGMENT+offset;
 export const JUMP_ZONE=Object.freeze({approach:routeSampleIndex(ACTIVE_TRACK_DEFINITION.jumpSegment,8),takeoff:routeSampleIndex(ACTIVE_TRACK_DEFINITION.jumpSegment,36),landing:routeSampleIndex(ACTIVE_TRACK_DEFINITION.jumpSegment,68)});
+// Summit's reservoir jump is an honest missing section of deck.  All visual,
+// collision, lane and rail builders consume this same interval; there is no
+// invisible bridge.  Alpine remains byte-for-byte continuous.
+export const SURFACE_GAPS=Object.freeze(summit?[Object.freeze({id:"reservoir-jump",start:routeSampleIndex(10,27),end:routeSampleIndex(10,38),side:"both"})]:[]);
+const gapBetween=(index)=>SURFACE_GAPS.some(gap=>index>gap.start&&index<=gap.end);
+const gapSample=(index)=>SURFACE_GAPS.some(gap=>index>=gap.start&&index<=gap.end);
 const distance3=(a,b)=>Math.hypot(b.x-a.x,(b.y||0)-(a.y||0),b.z-a.z);
 function tangentAt(index,key){
   const point=ROUTE_PATH[index],before=ROUTE_PATH[Math.max(0,index-1)],after=ROUTE_PATH[Math.min(ROUTE_PATH.length-1,index+1)];
@@ -48,11 +55,12 @@ function tangentAt(index,key){
   return({x:dx,y:dy,z:dz}[key]/norm)*length;
 }
 function hermite(a,b,ma,mb,t){const t2=t*t,t3=t2*t;return(2*t3-3*t2+1)*a+(t3-2*t2+t)*ma+(-2*t3+3*t2)*b+(t3-t2)*mb}
+const smooth5=t=>t**3*(10+t*(-15+6*t));
 function sampleControl(index,t){
   // The crest uses a C2-continuous bump. Zero first and second derivatives at
   // both joins keep the visual ribbon and suspension collider from acquiring
   // the sharp pitch kink produced by the earlier Gaussian profile.
-  const a=ROUTE_PATH[index],b=ROUTE_PATH[index+1],hump=(ACTIVE_TRACK_DEFINITION.humps[index]||0)*Math.sin(Math.PI*t)**4;
+  const a=ROUTE_PATH[index],b=ROUTE_PATH[index+1],humpScale=ACTIVE_TRACK_DEFINITION.humps[index]||0,jumpProfile=t<=.28?smooth5(t/.28):t<=.38?1:t<=.62?1-.16*smooth5((t-.38)/.24):t<.8?.84*(1-smooth5((t-.62)/.18)):0,hump=humpScale*(summit&&index===10?jumpProfile:Math.sin(Math.PI*t)**4);
   return{x:hermite(a.x,b.x,tangentAt(index,"x"),tangentAt(index+1,"x"),t),y:hermite(a.y,b.y,tangentAt(index,"y"),tangentAt(index+1,"y"),t)+hump+.55,z:hermite(a.z,b.z,tangentAt(index,"z"),tangentAt(index+1,"z"),t),width:a.width+(b.width-a.width)*t,bank:a.bank+(b.bank-a.bank)*t}
 }
 function framedConnector(start){
@@ -75,7 +83,7 @@ export function buildRoadMesh(stepsPerSegment=ROAD_STEPS_PER_SEGMENT){let sample
     sample.left.x,sample.left.y-thickness,sample.left.z,sample.right.x,sample.right.y-thickness,sample.right.z,
     sample.left.x,sample.left.y,sample.left.z,sample.left.x,sample.left.y-thickness,sample.left.z,
     sample.right.x,sample.right.y,sample.right.z,sample.right.x,sample.right.y-thickness,sample.right.z,
-  );for(let i=0;i<samples.length-1;i++){const a=i*8,b=(i+1)*8;indices.push(
+  );for(let i=0;i<samples.length-1;i++){if(gapBetween(i+1))continue;const a=i*8,b=(i+1)*8;indices.push(
     a,b,a+1,b,b+1,a+1,
     a+2,a+3,b+2,b+2,a+3,b+3,
     a+4,a+5,b+4,b+4,a+5,b+5,
@@ -87,7 +95,7 @@ function buildBranchSamples(){
   const entryIndex=routeSampleIndex(13),mergeIndex=routeSampleIndex(16),entry=ROAD_SAMPLES[entryIndex],merge=ROAD_SAMPLES[mergeIndex],steps=180,samples=[],mainDirection=index=>normalized({x:ROAD_SAMPLES[index+1].x-ROAD_SAMPLES[index-1].x,y:ROAD_SAMPLES[index+1].y-ROAD_SAMPLES[index-1].y,z:ROAD_SAMPLES[index+1].z-ROAD_SAMPLES[index-1].z});
   const anchors=[entry,{x:-220,y:11,z:-158},{x:30,y:18.5,z:-58},merge],directions=[mainDirection(entryIndex),normalized({x:250,y:7.5,z:100}),normalized({x:360,y:17.5,z:138}),mainDirection(mergeIndex)],magnitudes=[54,94,92,76],segmentSteps=steps/(anchors.length-1),bankStartSlope=(ROAD_SAMPLES[entryIndex+1].bank-entry.bank)*steps,bankEndSlope=(merge.bank-ROAD_SAMPLES[mergeIndex-1].bank)*steps;
   for(let index=0;index<=steps;index++){
-    const overall=index/steps,segment=Math.min(anchors.length-2,Math.floor(index/segmentSteps)),local=(index-segment*segmentSteps)/segmentSteps,a=anchors[segment],b=anchors[segment+1],ma=directions[segment],mb=directions[segment+1],scaleA=magnitudes[segment],scaleB=magnitudes[segment+1],width=40-22*Math.sin(Math.PI*overall)**2,bank=hermite(entry.bank,merge.bank,bankStartSlope,bankEndSlope,overall),sample={x:hermite(a.x,b.x,ma.x*scaleA,mb.x*scaleB,local),y:hermite(a.y,b.y,ma.y*scaleA,mb.y*scaleB,local),z:hermite(a.z,b.z,ma.z*scaleA,mb.z*scaleB,local),width,bank,progress:overall};samples.push(sample);
+    const overall=index/steps,segment=Math.min(anchors.length-2,Math.floor(index/segmentSteps)),local=(index-segment*segmentSteps)/segmentSteps,a=anchors[segment],b=anchors[segment+1],ma=directions[segment],mb=directions[segment+1],scaleA=magnitudes[segment],scaleB=magnitudes[segment+1],edgeWidth=entry.width+(merge.width-entry.width)*overall,width=edgeWidth-(edgeWidth-18)*Math.sin(Math.PI*overall)**2,bank=hermite(entry.bank,merge.bank,bankStartSlope,bankEndSlope,overall),sample={x:hermite(a.x,b.x,ma.x*scaleA,mb.x*scaleB,local),y:hermite(a.y,b.y,ma.y*scaleA,mb.y*scaleB,local),z:hermite(a.z,b.z,ma.z*scaleA,mb.z*scaleB,local),width,bank,progress:overall};samples.push(sample);
   }
   for(let index=0;index<samples.length;index++){const before=samples[Math.max(0,index-1)],after=samples[Math.min(samples.length-1,index+1)],dx=after.x-before.x,dz=after.z-before.z,length=Math.hypot(dx,dz)||1,rx=-dz/length,rz=dx/length,half=samples[index].width/2,cos=Math.cos(samples[index].bank),sin=Math.sin(samples[index].bank);samples[index].heading=Math.atan2(dz,dx);samples[index].left={x:samples[index].x+rx*half*cos,y:samples[index].y+half*sin,z:samples[index].z+rz*half*cos};samples[index].right={x:samples[index].x-rx*half*cos,y:samples[index].y-half*sin,z:samples[index].z-rz*half*cos}}
   samples[0].left={...entry.left};samples[0].right={...entry.right};samples[0].heading=entry.heading;samples.at(-1).left={...merge.left};samples.at(-1).right={...merge.right};samples.at(-1).heading=merge.heading;return samples;
@@ -108,16 +116,21 @@ export const BRANCH_JUNCTIONS=Object.freeze(shortcutSurface.length?[
 export const ROAD_PATHS=Object.freeze([ROAD_SAMPLES,...BRANCH_ROADS.map(branch=>branch.samples)]);
 const ROAD_SURFACES=Object.freeze([ROAD_SAMPLES,...BRANCH_ROADS.map(branch=>branch.surfaceSamples)]);
 export const SPLIT_LAYOUT=Object.freeze(shortcutSamples.length?{entrySample:routeSampleIndex(13),mergeSample:routeSampleIndex(16),gapSide:"left",gapRadius:45,branchId:"inside-line"}:null);
-export const INTENTIONAL_OBSTACLES=Object.freeze(shortcutSamples.length?[78,98,118].map((sampleIndex,index)=>{const sample=shortcutSamples[sampleIndex],frame=sampleFrame(shortcutSamples,sampleIndex),offset=(index%2?1:-1)*3.8;return Object.freeze({id:`inside-column-${index+1}`,branchId:"inside-line",sampleIndex,x:sample.x+frame.lateral.x*offset,y:sample.y+frame.up.y*3.2,z:sample.z+frame.lateral.z*offset,radius:1.15,height:6.4,rotation:basisQuaternion(frame.forward,frame.up,frame.lateral)})}):[]);
+const obstacleAt=(samples,sampleIndex,offset,id,branchId=null)=>{const sample=samples[sampleIndex],frame=sampleFrame(samples,sampleIndex);return Object.freeze({id,branchId,sampleIndex,x:sample.x+frame.lateral.x*offset,y:sample.y+frame.up.y*3.2,z:sample.z+frame.lateral.z*offset,radius:1.15,height:6.4,rotation:basisQuaternion(frame.forward,frame.up,frame.lateral)})};
+export const INTENTIONAL_OBSTACLES=Object.freeze(shortcutSamples.length?[
+  obstacleAt(ROAD_SAMPLES,routeSampleIndex(2,18),-5.3,"paddock-island-1"),
+  obstacleAt(ROAD_SAMPLES,routeSampleIndex(2,54),5.3,"paddock-island-2"),
+  ...[78,98,118].map((sampleIndex,index)=>obstacleAt(shortcutSamples,sampleIndex,(index%2?1:-1)*3.8,`inside-column-${index+1}`,"inside-line")),
+]:[]);
 // Suspension rays and chassis contacts use only the authored driving surface.
 // The rendered mesh keeps its underside and edge walls for visual thickness,
 // but those vertical triangles are not ground and must not catch a tire ray at
 // the shoulder of a banked curve.
-export function buildRoadColliderMesh(samples=ROAD_SAMPLES,lateralSegments=samples.some(sample=>sample.phase==="loop")?4:1){const positions=[],indices=[],stride=lateralSegments+1;for(let i=0;i<samples.length;i++){const sample=samples[i];for(let lateral=0;lateral<=lateralSegments;lateral++){const t=lateral/lateralSegments;positions.push(sample.left.x+(sample.right.x-sample.left.x)*t,sample.left.y+(sample.right.y-sample.left.y)*t,sample.left.z+(sample.right.z-sample.left.z)*t)}if(i)for(let lateral=0;lateral<lateralSegments;lateral++){const a=(i-1)*stride+lateral,b=i*stride+lateral;indices.push(a,b,a+1,b,b+1,a+1)}}return{positions,indices,samples}}
+export function buildRoadColliderMesh(samples=ROAD_SAMPLES,lateralSegments=samples.some(sample=>sample.phase==="loop")?4:1){const positions=[],indices=[],stride=lateralSegments+1,isMain=samples===ROAD_SAMPLES;for(let i=0;i<samples.length;i++){const sample=samples[i];for(let lateral=0;lateral<=lateralSegments;lateral++){const t=lateral/lateralSegments;positions.push(sample.left.x+(sample.right.x-sample.left.x)*t,sample.left.y+(sample.right.y-sample.left.y)*t,sample.left.z+(sample.right.z-sample.left.z)*t)}if(i&&!(isMain&&gapBetween(i)))for(let lateral=0;lateral<lateralSegments;lateral++){const a=(i-1)*stride+lateral,b=i*stride+lateral;indices.push(a,b,a+1,b,b+1,a+1)}}return{positions,indices,samples}}
 function sampleFrame(samples,index){const sample=samples[index],before=samples[Math.max(0,index-1)],after=samples[Math.min(samples.length-1,index+1)],forward=normalized({x:after.x-before.x,y:after.y-before.y,z:after.z-before.z}),lateral=normalized({x:sample.left.x-sample.right.x,y:sample.left.y-sample.right.y,z:sample.left.z-sample.right.z});return{forward,lateral,up:normalized(cross(lateral,forward))}}
-export function buildLaneRibbon(samples=ROAD_SAMPLES,halfWidth=.11,lift=.075){const positions=[],indices=[];for(let i=0;i<samples.length;i++){const sample=samples[i],{lateral,up}=sampleFrame(samples,i);for(const side of[-1,1])positions.push(sample.x+up.x*lift+lateral.x*halfWidth*side,sample.y+up.y*lift+lateral.y*halfWidth*side,sample.z+up.z*lift+lateral.z*halfWidth*side);if(i){const a=(i-1)*2,b=i*2;indices.push(a,b,a+1,b,b+1,a+1)}}return{positions,indices}}
+export function buildLaneRibbon(samples=ROAD_SAMPLES,halfWidth=.11,lift=.075){const positions=[],indices=[],isMain=samples===ROAD_SAMPLES;for(let i=0;i<samples.length;i++){const sample=samples[i],{lateral,up}=sampleFrame(samples,i);for(const side of[-1,1])positions.push(sample.x+up.x*lift+lateral.x*halfWidth*side,sample.y+up.y*lift+lateral.y*halfWidth*side,sample.z+up.z*lift+lateral.z*halfWidth*side);if(i&&!(isMain&&gapBetween(i))){const a=(i-1)*2,b=i*2;indices.push(a,b,a+1,b,b+1,a+1)}}return{positions,indices}}
 export const RAIL_PROFILE=Object.freeze({height:1.05});
-export const STUNT_RAIL_GAPS=Object.freeze([]);
+export const STUNT_RAIL_GAPS=SURFACE_GAPS;
 export function buildRailColliderMesh(samples=ROAD_SAMPLES,height=RAIL_PROFILE.height,gaps=[]){const positions=[],indices=[];for(const side of["left","right"]){const offset=positions.length/3;for(let i=0;i<samples.length;i++){const edge=samples[i][side],{up}=sampleFrame(samples,i);positions.push(edge.x+up.x*.02,edge.y+up.y*.02,edge.z+up.z*.02,edge.x+up.x*height,edge.y+up.y*height,edge.z+up.z*height);if(i&&!gaps.some(gap=>(gap.side===side||gap.side==="both")&&i>=gap.start&&i<=gap.end)){const a=offset+(i-1)*2,b=offset+i*2;if(side==="left")indices.push(a,a+1,b,b,a+1,b+1);else indices.push(a,b,a+1,b,b+1,a+1)}}}return{positions,indices}}
 function undersideHeightAt(samples,index,point){let nearest=samples[index],best=Infinity;for(let i=Math.max(0,index-8);i<=Math.min(samples.length-1,index+8);i++){const sample=samples[i],distance=(point.x-sample.x)**2+(point.z-sample.z)**2;if(distance<best){best=distance;nearest=sample}}const dx=nearest.left.x-nearest.right.x,dz=nearest.left.z-nearest.right.z,length2=dx*dx+dz*dz||1,t=Math.max(0,Math.min(1,((point.x-nearest.right.x)*dx+(point.z-nearest.right.z)*dz)/length2));return nearest.right.y+(nearest.left.y-nearest.right.y)*t-1.1}
 export function buildSupportSpecs(samples=ROAD_SAMPLES,terrainTop=.35){const specs=[],start=Math.round(18*ROAD_STEPS_PER_SEGMENT/22),stride=Math.round(24*ROAD_STEPS_PER_SEGMENT/22),capHeight=.55,halfForward=2.5,halfLateral=1.1,clearance=.18;for(let index=start;index<samples.length-start/2;index+=stride){const sample=samples[index];if(sample.y<3.2||sample.stunt==="loop")continue;const frame=sampleFrame(samples,index),rotation=basisQuaternion(frame.forward,frame.up,frame.lateral);for(const side of["left","right"]){const edge=sample[side],localCorners=Array.from({length:8},(_,corner)=>({forward:(corner&1?1:-1)*halfForward,up:(corner&2?1:-1)*capHeight/2,lateral:(corner&4?1:-1)*halfLateral}));let capY=edge.y-1.1-clearance-capHeight/2;const cornersAt=y=>localCorners.map(corner=>({x:edge.x+frame.forward.x*corner.forward+frame.up.x*corner.up+frame.lateral.x*corner.lateral,y:y+frame.forward.y*corner.forward+frame.up.y*corner.up+frame.lateral.y*corner.lateral,z:edge.z+frame.forward.z*corner.forward+frame.up.z*corner.up+frame.lateral.z*corner.lateral}));let capCorners=cornersAt(capY),excess=Math.max(...capCorners.map(corner=>corner.y-(undersideHeightAt(samples,index,corner)-clearance)));if(excess>0)capY-=excess;capCorners=cornersAt(capY);const cornerClearances=capCorners.map(corner=>undersideHeightAt(samples,index,corner)-corner.y),roadBottom=Math.min(...capCorners.map(corner=>undersideHeightAt(samples,index,corner))),capTop=Math.max(...capCorners.map(corner=>corner.y)),pierTop=capY-capHeight/2,height=Math.max(.35,pierTop-terrainTop);specs.push({index,side,x:edge.x,z:edge.z,heading:sample.heading,rotation,roadBottom,capTop,capHeight,capY,capCorners,cornerClearances,pierHeight:height,pierY:terrainTop+height/2})}}return specs}
@@ -158,7 +171,7 @@ function checkpointAt(routePoint,finish=false){
 export const CHECKPOINTS=Object.freeze(ACTIVE_TRACK_DEFINITION.checkpointPoints.map((point,index)=>checkpointAt(point,index===ACTIVE_TRACK_DEFINITION.checkpointPoints.length-1)));
 export const RECOVERY_SPOTS=Object.freeze([roadPoseNear(ROUTE_PATH[0]),...CHECKPOINTS.slice(0,-1).map(checkpoint=>roadPoseNear(checkpoint))].map(Object.freeze));
 export function recoveryForward(rotation){return{x:1-2*(rotation.y*rotation.y+rotation.z*rotation.z),z:2*(rotation.x*rotation.z-rotation.w*rotation.y)}}
-export function isOnRoad({x,y,z}){let best=Infinity,width=0;for(const samples of ROAD_SURFACES)for(const sample of samples){const distance=Math.hypot(x-sample.x,z-sample.z,Number.isFinite(y)?y-sample.y:0);if(distance<best){best=distance;width=sample.width}}return best<=width*.58}
+export function isOnRoad({x,y,z}){let best=Infinity,width=0,mainIndex=-1;for(const samples of ROAD_SURFACES)for(let index=0;index<samples.length;index++){const sample=samples[index],distance=Math.hypot(x-sample.x,z-sample.z,Number.isFinite(y)?y-sample.y:0);if(distance<best){best=distance;width=sample.width;mainIndex=samples===ROAD_SAMPLES?index:-1}}return best<=width*.58&&(mainIndex<0||!gapSample(mainIndex))}
 export function isUnderRoad({x,y,z},clearance=2.6){if(!Number.isFinite(y))return false;const sample=nearestRoadSample({x,y,z});return Math.hypot(x-sample.x,z-sample.z)<=sample.width*.62&&y<sample.y-clearance}
 export function advanceUnderRoadTime(previous,position,dt){return isUnderRoad(position)?Math.max(0,previous)+(Number.isFinite(dt)&&dt>0?dt:0):0}
 export function checkpointAdvance(current,position){const zone=CHECKPOINTS[current];if(!zone)return current;const dx=position.x-zone.x,dy=(position.y??zone.y+1.5)-(zone.y+1.5),dz=position.z-zone.z,longitudinal=dx*zone.forward.x+dy*zone.forward.y+dz*zone.forward.z,lateral=dx*zone.lateral.x+dy*zone.lateral.y+dz*zone.lateral.z,vertical=dx*zone.up.x+dy*zone.up.y+dz*zone.up.z;return Math.abs(longitudinal)<=6&&Math.abs(lateral)<=zone.width/2+1&&Math.abs(vertical)<=5.5?current+1:current}
