@@ -2,7 +2,7 @@
 
 ## Status
 
-Version `0.5.0-alpha.21` is a desktop-keyboard production-slice candidate, not a release candidate. The previously verified flat-course
+Version `0.5.0-alpha.22` is a desktop-keyboard production-slice candidate, not a release candidate. The previously verified flat-course
 beta remains available in Git history at `16a26e5`; its player-lap result must not be treated as
 validation of this materially different spline layout. The game is an original single-player
 stadium time attack inspired by the broad genre, not a Trackmania clone, formula-equivalent
@@ -14,7 +14,7 @@ Start a local preview from the repository root:
 python3 -m http.server 4173 --bind 127.0.0.1
 ```
 
-Then open `http://127.0.0.1:4173/games/apex-run/?build=alpha21`.
+Then open `http://127.0.0.1:4173/games/apex-run/?build=alpha22`.
 
 ## Controls and rules
 
@@ -154,6 +154,15 @@ Then open `http://127.0.0.1:4173/games/apex-run/?build=alpha21`.
   soak took 81.6 wall-clock seconds, and M1 Max/ANGLE Metal intervals remain 16.7 ms median/p95 and
   16.8 ms p99. The first two headless launches exceeded the old 30-second initialization wait;
   after the exact entry was verified in IAB, a 60-second harness allowance completed cleanly.
+- Alpha 22 grounds each pavilion on a continuous warm-concrete plinth and localized service apron,
+  adds end walls, aligned substantial columns/braces, canopy fascia, access opening, stair aisles
+  and restrained crowd-color bands. The stepped profile now reads as one architectural template
+  with controlled variation instead of floating shelves and detached thin roofs.
+- The replay ghost now shares the player car's major side pods, rear wing and roll hoop in addition
+  to body, nose and rear deck. Its material remains transparent and non-colliding.
+- Exact alpha 22 lifecycle remains 43.042 seconds / 1,292 frames. The richer pavilion template
+  stabilizes at 340 geometries / 13 textures; its accelerated 600-second soak took 92.3 wall-clock
+  seconds, and M1 Max/ANGLE Metal timing remained 16.7 ms median, 16.8 ms p95/p99.
 
 The following evidence describes the prior `0.4.0-beta.1` geometry and is retained as history,
 not as a readiness claim for visual alpha 5:

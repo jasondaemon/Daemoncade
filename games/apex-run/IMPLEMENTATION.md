@@ -287,3 +287,18 @@ venue rather than accumulating more procedural primitives.
 The shared spline, collision, guidance, handling and timing models are unchanged. Actual visual
 inspection covers start and opening sweeper; climb, crest, return and finish still need independent
 hero-view review. Audible mix and non-M1 hardware remain unverified.
+
+## Production vertical slice 6: grounded pavilion template
+
+- Each grandstand now has a continuous foundation plinth and service apron meeting the terrain,
+  substantial end walls, recessed access, aligned columns and diagonal canopy braces.
+- Seating retains a raked stepped profile but adds pale stair aisles, restrained crowd-color bands
+  and a deep fascia that visually connects the cantilever roof to its structural frame.
+- The same template is reused at three scales/orientations, avoiding unrelated ornament while
+  preserving distinct venue landmarks. Physics and road collision remain untouched.
+- The ghost adds side pods, rear wing and roll hoop so its chase-view silhouette now follows the
+  most recognizable player-car additions without duplicating opaque detail.
+
+The richer architecture increases warmed renderer geometries from 266 to 340 while staying stable
+through the accelerated soak; frame intervals remain unchanged on the sole measured M1 Max. Finish,
+climb, crest and return hero views still require independent pixel review before visual acceptance.
