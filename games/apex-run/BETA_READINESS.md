@@ -48,6 +48,12 @@ recovery normally returns the car before water contact, and no water-driving phy
 Repeated paddock details are instanced down to 23 constructed draw meshes / 7 materials / 7,064
 rendered triangles. A physical two-sided island test now covers impact, stop, release/repress
 reverse, and a forward lane rejoin without recovery or pose correction.
+Alpha 49 moves the start architecture a further seven metres outside the full road/rail/camera
+envelope and validates every grandstand's complete paving, wall and roof footprint against the
+Summit ribbon. The reservoir is now an intentional stepped civil facility rather than an isolated
+mountain: three grounded terraces, radial structural buttresses, a service deck and a small control
+building share the graphite / white concrete / cyan identity used at the paddock. The jump and
+water-contact recovery contract are unchanged.
 
 ## Controls and rules
 

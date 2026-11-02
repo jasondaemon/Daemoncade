@@ -6,6 +6,8 @@ assert.ok(layout.bankBottom<=terrain,"reservoir embankment does not connect to t
 assert.ok(layout.bankTop<layout.waterY&&layout.waterY-layout.bankTop<.3,"water is not contained by the authored bank top");
 assert.ok(layout.topRadius-layout.waterRadius>=8,"shoreline is too thin to cover the water perimeter from oblique views");
 assert.ok(layout.bottomRadius>layout.topRadius+20,"embankment does not visibly support the elevated reservoir");
+assert.equal(layout.terraces.length,3,"reservoir facility lost its grounded stepped massing");
+assert.ok(layout.terraces.every((terrace,index,list)=>!index||terrace.height>list[index-1].height),"reservoir terraces do not rise coherently");
 assert.equal(isReservoirFailure({x:layout.centerX,y:layout.waterY+.8,z:layout.centerZ},layout),false,"valid airborne jump was captured above the reservoir");
 assert.equal(isReservoirFailure({x:layout.centerX,y:layout.waterY,z:layout.centerZ},layout),true,"water contact did not enter the failure volume");
 assert.equal(isReservoirFailure({x:layout.centerX+layout.waterRadius+1,y:0,z:layout.centerZ},layout),false,"water failure volume leaked beyond the visible surface");

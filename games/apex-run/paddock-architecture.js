@@ -14,6 +14,10 @@ function addInstances(THREE,group,geometry,material,items,castShadow=true){
 }
 
 export const PADDOCK_BUDGET=Object.freeze({drawMeshes:23,uniqueMaterials:7,maxTriangles:24000});
+export function paddockLayout(roadWidth){
+  const roadHalf=roadWidth/2,sideSetback=roadHalf+26;
+  return Object.freeze({roadHalf,sideSetback});
+}
 
 export function addPaddockArchitecture(THREE,scene,sample,rotation){
   const group=new THREE.Group(),graphite=new THREE.MeshStandardMaterial({color:0x202a31,metalness:.38,roughness:.36}),
@@ -28,7 +32,7 @@ export function addPaddockArchitecture(THREE,scene,sample,rotation){
   // Roadside pit building: a recessed garage rhythm, glazed race-control floor,
   // framed canopy and parapet. It is authored as one composition instead of a
   // uniformly scaled low-poly kit prop.
-  const side=sample.width/2+12,buildingX=39,buildingZ=-side;
+  const layout=paddockLayout(sample.width),side=layout.sideSetback,buildingX=39,buildingZ=-side;
   add(roundedBox(THREE,76,1.1,19,.7,concrete),buildingX,.55,buildingZ);
   add(roundedBox(THREE,76,2.1,18,.65,graphite),buildingX,10.8,buildingZ-.4);
   add(roundedBox(THREE,73,.85,3.2,.35,white),buildingX,8.15,buildingZ+7.55);
@@ -47,7 +51,7 @@ export function addPaddockArchitecture(THREE,scene,sample,rotation){
 
   // Opposite-side timing pavilion gives the start a recognizable silhouette
   // without enclosing the course or blocking the chase camera.
-  const towerZ=sample.width/2+13,towerX=18;
+  const towerZ=layout.sideSetback+1,towerX=18;
   add(roundedBox(THREE,22,1.2,15,.7,concrete),towerX,.6,towerZ);
   add(roundedBox(THREE,19,9.8,12,.8,graphite),towerX,5.7,towerZ);
   add(roundedBox(THREE,17,6.3,12.5,.65,glass),towerX,12.9,towerZ);
