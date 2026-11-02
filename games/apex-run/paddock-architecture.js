@@ -7,7 +7,13 @@ function roundedBox(THREE,width,height,depth,radius,material){
   geometry.translate(0,0,-depth/2);geometry.computeVertexNormals();return new THREE.Mesh(geometry,material);
 }
 
-export const PADDOCK_BUDGET=Object.freeze({meshes:78,uniqueMaterials:7});
+function addInstances(THREE,group,geometry,material,items,castShadow=true){
+  const mesh=new THREE.InstancedMesh(geometry,material,items.length),dummy=new THREE.Object3D();
+  items.forEach(([x,y,z,rx=0],index)=>{dummy.position.set(x,y,z);dummy.rotation.set(rx,0,0);dummy.updateMatrix();mesh.setMatrixAt(index,dummy.matrix)});
+  mesh.instanceMatrix.needsUpdate=true;mesh.castShadow=castShadow;mesh.receiveShadow=true;group.add(mesh);return mesh;
+}
+
+export const PADDOCK_BUDGET=Object.freeze({drawMeshes:23,uniqueMaterials:7,maxTriangles:24000});
 
 export function addPaddockArchitecture(THREE,scene,sample,rotation){
   const group=new THREE.Group(),graphite=new THREE.MeshStandardMaterial({color:0x202a31,metalness:.38,roughness:.36}),
@@ -28,19 +34,16 @@ export function addPaddockArchitecture(THREE,scene,sample,rotation){
   add(roundedBox(THREE,73,.85,3.2,.35,white),buildingX,8.15,buildingZ+7.55);
   add(roundedBox(THREE,75,.42,4.2,.24,graphite),buildingX,7.55,buildingZ+9.05);
   add(roundedBox(THREE,65,.22,.28,.1,cyan),buildingX,10.9,buildingZ+9.1,false);
-  const bayGeometry=new THREE.BoxGeometry(8.3,5.5,.34),pierGeometry=new THREE.BoxGeometry(.62,6.3,.7);
-  for(let bay=0;bay<7;bay++){
-    const x=buildingX-30+bay*10;
-    add(new THREE.Mesh(bayGeometry,recess),x,3.75,buildingZ+9.02);
-    for(let stripe=0;stripe<4;stripe++)add(new THREE.Mesh(new THREE.BoxGeometry(7.35,.11,.08),stripe%2?graphite:white),x,1.6+stripe*1.05,buildingZ+9.23,false);
-    add(new THREE.Mesh(pierGeometry,concrete),x-4.7,3.5,buildingZ+9.18);
-    const bayLight=add(new THREE.Mesh(new THREE.BoxGeometry(5.6,.13,.12),bay%2?cyan:gold),x,6.75,buildingZ+9.24,false);bayLight.castShadow=false;
-  }
-  for(let window=0;window<12;window++)add(new THREE.Mesh(new THREE.BoxGeometry(4.45,2.35,.18),glass),buildingX-32.5+window*5.9,9.35,buildingZ+8.72);
-  for(const x of[buildingX-33,buildingX-11,buildingX+11,buildingX+33]){
-    add(new THREE.Mesh(new THREE.BoxGeometry(.48,8.1,.48),graphite),x,8.5,buildingZ+10.45);
-    const brace=add(new THREE.Mesh(new THREE.BoxGeometry(.28,5.2,.28),graphite),x,10.2,buildingZ+8.95);brace.rotation.x=-.58;
-  }
+  const bayXs=Array.from({length:7},(_,bay)=>buildingX-30+bay*10),canopyXs=[buildingX-33,buildingX-11,buildingX+11,buildingX+33];
+  addInstances(THREE,group,new THREE.BoxGeometry(8.3,5.5,.34),recess,bayXs.map(x=>[x,3.75,buildingZ+9.02]));
+  addInstances(THREE,group,new THREE.BoxGeometry(7.35,.11,.08),white,bayXs.flatMap(x=>[[x,1.6,buildingZ+9.23],[x,3.7,buildingZ+9.23]]),false);
+  addInstances(THREE,group,new THREE.BoxGeometry(7.35,.11,.08),graphite,bayXs.flatMap(x=>[[x,2.65,buildingZ+9.23],[x,4.75,buildingZ+9.23]]),false);
+  addInstances(THREE,group,new THREE.BoxGeometry(.62,6.3,.7),concrete,bayXs.map(x=>[x-4.7,3.5,buildingZ+9.18]));
+  addInstances(THREE,group,new THREE.BoxGeometry(5.6,.13,.12),cyan,bayXs.filter((_,i)=>i%2===0).map(x=>[x,6.75,buildingZ+9.24]),false);
+  addInstances(THREE,group,new THREE.BoxGeometry(5.6,.13,.12),gold,bayXs.filter((_,i)=>i%2===1).map(x=>[x,6.75,buildingZ+9.24]),false);
+  addInstances(THREE,group,new THREE.BoxGeometry(4.45,2.35,.18),glass,Array.from({length:12},(_,window)=>[buildingX-32.5+window*5.9,9.35,buildingZ+8.72]));
+  addInstances(THREE,group,new THREE.BoxGeometry(.48,8.1,.48),graphite,canopyXs.map(x=>[x,8.5,buildingZ+10.45]));
+  addInstances(THREE,group,new THREE.BoxGeometry(.28,5.2,.28),graphite,canopyXs.map(x=>[x,10.2,buildingZ+8.95,-.58]));
 
   // Opposite-side timing pavilion gives the start a recognizable silhouette
   // without enclosing the course or blocking the chase camera.
@@ -50,9 +53,10 @@ export function addPaddockArchitecture(THREE,scene,sample,rotation){
   add(roundedBox(THREE,17,6.3,12.5,.65,glass),towerX,12.9,towerZ);
   add(roundedBox(THREE,23,.7,16,.3,white),towerX,16.35,towerZ);
   add(new THREE.Mesh(new THREE.BoxGeometry(17.5,.25,.3),cyan),towerX,15.45,towerZ-6.4,false);
-  for(const x of[towerX-7.3,towerX,towerX+7.3])add(new THREE.Mesh(new THREE.BoxGeometry(.42,6.1,.42),graphite),x,12.8,towerZ-6.65);
+  addInstances(THREE,group,new THREE.BoxGeometry(.42,6.1,.42),graphite,[towerX-7.3,towerX,towerX+7.3].map(x=>[x,12.8,towerZ-6.65]));
   const balcony=add(roundedBox(THREE,25,.42,4,.2,graphite),towerX,10.1,towerZ-7.1);balcony.castShadow=true;
-  for(let panel=0;panel<5;panel++)add(new THREE.Mesh(new THREE.BoxGeometry(3.1,1.1,.16),panel===2?gold:cyan),towerX-7.2+panel*3.6,7.2,towerZ-6.18,false);
+  addInstances(THREE,group,new THREE.BoxGeometry(3.1,1.1,.16),cyan,[0,1,3,4].map(panel=>[towerX-7.2+panel*3.6,7.2,towerZ-6.18]),false);
+  addInstances(THREE,group,new THREE.BoxGeometry(3.1,1.1,.16),gold,[[towerX,7.2,towerZ-6.18]],false);
 
   group.position.set(sample.x,sample.y,sample.z);group.quaternion.set(rotation.x,rotation.y,rotation.z,rotation.w);scene.add(group);
   return group;

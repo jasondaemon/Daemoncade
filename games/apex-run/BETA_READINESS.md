@@ -41,6 +41,13 @@ matrix lands all powered approaches; a 12 m/s coast falls into the reservoir and
 marks the attempt practice-only without awarding a checkpoint. The deterministic production
 controller completes the changed seven-sector route without recovery; this remains regression
 evidence, not a human-play claim. Summit PB/replay keys advance to v8/v9.
+Alpha 47 grounds that elevated water surface inside a closed, terrain-connected embankment with
+a visible shore, retaining wall and coping, while leaving the proven takeoff, missing deck and
+landing physics unchanged. The reservoir remains an honest visual hazard: the existing under-road
+recovery normally returns the car before water contact, and no water-driving physics are claimed.
+Repeated paddock details are instanced down to 23 constructed draw meshes / 7 materials / 7,064
+rendered triangles. A physical two-sided island test now covers impact, stop, release/repress
+reverse, and a forward lane rejoin without recovery or pose correction.
 
 ## Controls and rules
 
