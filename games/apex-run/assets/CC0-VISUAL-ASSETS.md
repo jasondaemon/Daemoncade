@@ -56,5 +56,6 @@ authored shared road/obstacle geometry.
   rotation variation. Full placement bounds remain at least 12 metres beyond
   every road sample, stratified evenly across all four course quarters.
 
-Total included transfer size is intentionally bounded to the selected model and
-twelve 1K JPG maps; no raw 4K packages or source DCC scenes ship with the game.
+Total included transfer size is intentionally bounded to the selected models
+and their optimized 1K JPG/PNG runtime maps (including the shrub alpha PNG); no
+raw 4K packages or source DCC scenes ship with the game.

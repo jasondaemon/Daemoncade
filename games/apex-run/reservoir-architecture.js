@@ -8,6 +8,7 @@ export function isReservoirFailure(position,layout){
   const radius=Math.hypot(position.x-layout.centerX,position.z-layout.centerZ);
   return radius<=layout.waterRadius&&position.y<=layout.waterY;
 }
+function metreScaleCylinderUV(geometry,radius,height,metres=2.4){const uv=geometry.attributes.uv;for(let index=0;index<uv.count;index++)uv.setXY(index,uv.getX(index)*Math.PI*2*radius/metres,uv.getY(index)*height/metres);uv.needsUpdate=true;return geometry}
 
 export function addReservoirArchitecture(THREE,scene,start,end,terrainTop=.35,detailMaps={}){
   const layout=reservoirLayout(start,end,terrainTop),
@@ -16,8 +17,8 @@ export function addReservoirArchitecture(THREE,scene,start,end,terrainTop=.35,de
     {graphite,concrete:white,cyan}=venueMaterials(THREE),
     waterMaterial=new THREE.MeshPhysicalMaterial({color:0x176b85,roughness:.12,metalness:.05,transmission:.08,clearcoat:.7,clearcoatRoughness:.18,transparent:true,opacity:.92});
   const structures=[];
-  for(const [index,terrace] of layout.terraces.entries()){const lower=index?layout.terraces[index-1].height:0,height=terrace.height-lower,mesh=new THREE.Mesh(new THREE.CylinderGeometry(terrace.radius,terrace.radius+(index?5:0),height,72,1,false),index===1?stone:earth);mesh.position.set(layout.centerX,terrainTop+lower+height/2,layout.centerZ);mesh.castShadow=true;mesh.receiveShadow=true;scene.add(mesh);structures.push(mesh)}
-  const wall=new THREE.Mesh(new THREE.CylinderGeometry(layout.topRadius+.8,layout.topRadius+1.9,layout.wallHeight,72,1,true),stone);
+  for(const [index,terrace] of layout.terraces.entries()){const lower=index?layout.terraces[index-1].height:0,height=terrace.height-lower,radius=terrace.radius+(index?2.5:0),geometry=new THREE.CylinderGeometry(terrace.radius,terrace.radius+(index?5:0),height,72,1,false);if(index===1)metreScaleCylinderUV(geometry,radius,height);const mesh=new THREE.Mesh(geometry,index===1?stone:earth);mesh.position.set(layout.centerX,terrainTop+lower+height/2,layout.centerZ);mesh.castShadow=true;mesh.receiveShadow=true;scene.add(mesh);structures.push(mesh)}
+  const wallGeometry=metreScaleCylinderUV(new THREE.CylinderGeometry(layout.topRadius+.8,layout.topRadius+1.9,layout.wallHeight,72,1,true),layout.topRadius+1.35,layout.wallHeight),wall=new THREE.Mesh(wallGeometry,stone);
   wall.position.set(layout.centerX,layout.bankTop-layout.wallHeight/2+.05,layout.centerZ);wall.castShadow=true;wall.receiveShadow=true;scene.add(wall);
   const coping=new THREE.Mesh(new THREE.TorusGeometry(layout.topRadius+.35,.38,6,72),stone);
   coping.rotation.x=Math.PI/2;coping.position.set(layout.centerX,layout.bankTop+.08,layout.centerZ);coping.castShadow=true;scene.add(coping);

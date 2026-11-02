@@ -14,11 +14,11 @@ import {resolveQuality,shadowPlacement,verticalCameraMode} from "./graphics-qual
 import {loadOptionalAssets} from "./optional-assets.js?v=0.5.0-alpha49-review3";
 import {gantryLayout} from "./scenery-layout.js?v=0.5.0-alpha49-review3";
 import {addPaddockArchitecture} from "./paddock-architecture.js?v=0.5.0-alpha50";
-import {addReservoirArchitecture,isReservoirFailure} from "./reservoir-architecture.js?v=0.5.0-alpha51e";
-import {ribbonUV,roadMeshUV} from "./road-uv.js?v=0.5.0-alpha51e";
-import {makeBarrierLOD} from "./barrier-lod.js?v=0.5.0-alpha51e";
-import {roadMaterialParameters} from "./visual-materials.js?v=0.5.0-alpha51e";
-import {addLandscapeDetails} from "./landscape-details.js?v=0.5.0-alpha51e";
+import {addReservoirArchitecture,isReservoirFailure} from "./reservoir-architecture.js?v=0.5.0-alpha51f";
+import {ribbonUV,roadMeshUV} from "./road-uv.js?v=0.5.0-alpha51f";
+import {makeBarrierLOD} from "./barrier-lod.js?v=0.5.0-alpha51f";
+import {roadMaterialParameters} from "./visual-materials.js?v=0.5.0-alpha51f";
+import {addLandscapeDetails} from "./landscape-details.js?v=0.5.0-alpha51f";
 
 const $=id=>document.getElementById(id),canvas=$("view"),scene=new THREE.Scene(),testMode=document.documentElement.dataset.apexTest==="1",testParams=new URLSearchParams(location.search),renderTelemetryMode=testMode&&testParams.get("renderTelemetry")==="1",loopPracticeMode=testMode&&testParams.get("practiceLoop")==="1",interactiveTestMode=renderTelemetryMode||loopPracticeMode,splitScenario=renderTelemetryMode&&testParams.get("scenario")==="split",splitLine=splitScenario?testParams.get("line"):null;
 const reservoirScenario=renderTelemetryMode&&testParams.get("scenario")==="reservoir";
@@ -56,8 +56,10 @@ const world=new RAPIER.World({x:0,y:VEHICLE.gravity,z:0});world.integrationParam
 const meshes=[],keys=new Set(),course=[],roadColliders=new Set(),supportColliders=[];
 const materials={road:new THREE.MeshStandardMaterial(roadMaterialParameters(THREE,{colorMap:asphaltColor,normalMap:asphaltNormal,roughnessMap:asphaltRoughness})),bank:new THREE.MeshStandardMaterial({color:0x666762,map:concreteColor,normalMap:concreteNormal,roughnessMap:concreteArm,roughness:.82}),runoff:new THREE.MeshStandardMaterial({color:0xaaa494,roughness:.95}),edge:new THREE.MeshStandardMaterial({color:0x3ad6e7,emissive:0x075565,emissiveIntensity:.42}),grass:new THREE.MeshStandardMaterial({color:0x708065,map:grassColor,normalMap:grassNormal,roughnessMap:grassRoughness,normalScale:new THREE.Vector2(.5,.5),roughness:1}),stadium:new THREE.MeshStandardMaterial({color:0x62645f,map:concreteColor,normalMap:concreteNormal,roughnessMap:concreteArm,roughness:.86})};
 
+function metreScaleBoxUV(geometry,metres=2.4){const position=geometry.attributes.position,normal=geometry.attributes.normal,uv=geometry.attributes.uv;for(let index=0;index<position.count;index++){const nx=Math.abs(normal.getX(index)),ny=Math.abs(normal.getY(index)),nz=Math.abs(normal.getZ(index));if(nx>=ny&&nx>=nz)uv.setXY(index,position.getZ(index)/metres,position.getY(index)/metres);else if(ny>=nz)uv.setXY(index,position.getX(index)/metres,position.getZ(index)/metres);else uv.setXY(index,position.getX(index)/metres,position.getY(index)/metres)}uv.needsUpdate=true;return geometry}
+
 function addBox({x,y,z,hx,hy,hz,rx=0,ry=0,rz=0,material=materials.road,collider=true,surface="road"}){
-  const mesh=new THREE.Mesh(new THREE.BoxGeometry(hx*2,hy*2,hz*2),material);mesh.position.set(x,y,z);mesh.rotation.set(rx,ry,rz);mesh.castShadow=true;mesh.receiveShadow=true;scene.add(mesh);
+  const geometry=new THREE.BoxGeometry(hx*2,hy*2,hz*2);if(material===materials.bank||material===materials.stadium)metreScaleBoxUV(geometry);const mesh=new THREE.Mesh(geometry,material);mesh.position.set(x,y,z);mesh.rotation.set(rx,ry,rz);mesh.castShadow=true;mesh.receiveShadow=true;scene.add(mesh);
   if(collider){const rotation=new THREE.Quaternion().setFromEuler(mesh.rotation),desc=RAPIER.ColliderDesc.cuboid(hx,hy,hz).setTranslation(x,y,z).setRotation(rotation).setFriction(1.1),created=world.createCollider(desc);supportColliders.push(created);if(surface!=="grass")roadColliders.add(created.handle)}
   course.push(mesh);return mesh;
 }
