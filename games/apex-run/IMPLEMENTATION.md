@@ -469,3 +469,23 @@ teleporting; otherwise loops remain out of the playable catalog.
 No loop is shipped in Alpha 33. A branch/merge and intentional obstacle complex are the next
 content milestone; the loop remains gated on repeatable physical entry, descent and exit without
 magnetic adhesion or pose correction.
+
+## Alpha 34 — Summit route choice and obstacle line
+
+- Summit's fourth sector now has a declared split/merge graph. The 488.4 m cyan outside road is
+  wide and unobstructed; the 463.2 m gold inside road trades 25.2 m of distance for three offset
+  physical columns. Both roads use the same render, top-surface collision, rail, occupancy and
+  road-frame recovery construction, then cross the same ordered gate at the common merge.
+- The branch is shown on the minimap and receives a compact direction cue only within 110 m of the
+  real split. No general-purpose breadcrumbs or instructional boards were restored. A cross-country
+  chord between entry and merge cannot advance the shared gate.
+- The user-supplied Kenney Racing Kit 1.2 archive contributes a covered stand, pit office and
+  red/white obstacle barriers. Only the selected glTF/BIN pairs ship; their CC0 license, source,
+  archive hash and modification notes live beside the assets.
+- Summit records advance to PB v3 / replay v4 so older results are not compared to a materially
+  different route graph. Direct production-control probes traversed both branches with four wheel
+  contacts and advanced the common gate; this is branch playability evidence, not a full human lap.
+
+No loop is shipped in Alpha 34. The separate physics lab has demonstrated genuine inverted
+suspension contact on a small loop, but entry/exit topology still needs a continuous,
+non-overlapping proof before it can become production course geometry.

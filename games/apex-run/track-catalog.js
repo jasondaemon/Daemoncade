@@ -3,7 +3,7 @@ const ALPINE_MEDALS=Object.freeze([{name:"APEX",time:48,color:0x55efff},{name:"G
 const SUMMIT_MEDALS=Object.freeze([{name:"APEX",time:105,color:0x55efff},{name:"GOLD",time:130,color:0xffd454},{name:"SILVER",time:155,color:0xd6e2ec},{name:"BRONZE",time:180,color:0xd58b55},{name:"ROOKIE",time:210,color:0x79d987}]);
 const tracks=[
   {id:DEFAULT_TRACK_ID,name:"Alpine Sprint",description:"The original elevated stadium time attack.",difficulty:"INTERMEDIATE",storage:{pb:"apex-run:pb:v9",replay:"apex-run:replay:v10"},replayVersion:10,replayBounds:300,replayHz:30,replayMaxSeconds:300,checkpointCount:4,medals:ALPINE_MEDALS,status:"playable"},
-  {id:"summit-circuit",name:"Summit Circuit",description:"A longer technical climb with linked banks, two crests and an elevated return.",difficulty:"ADVANCED",storage:{pb:"apex-run:track:summit-circuit:pb:v2",replay:"apex-run:track:summit-circuit:replay:v3"},replayVersion:3,replayBounds:600,replayHz:15,replayMaxSeconds:900,checkpointCount:6,medals:SUMMIT_MEDALS,status:"playable"},
+  {id:"summit-circuit",name:"Summit Circuit",description:"A longer technical climb with a safe outside line, obstacle shortcut and elevated return.",difficulty:"ADVANCED",storage:{pb:"apex-run:track:summit-circuit:pb:v3",replay:"apex-run:track:summit-circuit:replay:v4"},replayVersion:4,replayBounds:600,replayHz:15,replayMaxSeconds:900,checkpointCount:6,medals:SUMMIT_MEDALS,status:"playable"},
 ];
 export const TRACK_CATALOG=Object.freeze(tracks.map(track=>Object.freeze({...track,storage:Object.freeze({...track.storage}),medals:track.medals})));
 export function resolveTrack(trackId=DEFAULT_TRACK_ID){return TRACK_CATALOG.find(track=>track.id===trackId)||TRACK_CATALOG[0]}
