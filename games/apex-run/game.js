@@ -14,11 +14,11 @@ import {resolveQuality,shadowPlacement,verticalCameraMode} from "./graphics-qual
 import {loadOptionalAssets} from "./optional-assets.js?v=0.5.0-alpha49-review3";
 import {gantryLayout} from "./scenery-layout.js?v=0.5.0-alpha49-review3";
 import {addPaddockArchitecture} from "./paddock-architecture.js?v=0.5.0-alpha50";
-import {addReservoirArchitecture,isReservoirFailure} from "./reservoir-architecture.js?v=0.5.0-alpha51d";
-import {ribbonUV,roadMeshUV} from "./road-uv.js?v=0.5.0-alpha51d";
-import {makeBarrierLOD} from "./barrier-lod.js?v=0.5.0-alpha51d";
-import {roadMaterialParameters} from "./visual-materials.js?v=0.5.0-alpha51d";
-import {addLandscapeDetails} from "./landscape-details.js?v=0.5.0-alpha51d";
+import {addReservoirArchitecture,isReservoirFailure} from "./reservoir-architecture.js?v=0.5.0-alpha51e";
+import {ribbonUV,roadMeshUV} from "./road-uv.js?v=0.5.0-alpha51e";
+import {makeBarrierLOD} from "./barrier-lod.js?v=0.5.0-alpha51e";
+import {roadMaterialParameters} from "./visual-materials.js?v=0.5.0-alpha51e";
+import {addLandscapeDetails} from "./landscape-details.js?v=0.5.0-alpha51e";
 
 const $=id=>document.getElementById(id),canvas=$("view"),scene=new THREE.Scene(),testMode=document.documentElement.dataset.apexTest==="1",testParams=new URLSearchParams(location.search),renderTelemetryMode=testMode&&testParams.get("renderTelemetry")==="1",loopPracticeMode=testMode&&testParams.get("practiceLoop")==="1",interactiveTestMode=renderTelemetryMode||loopPracticeMode,splitScenario=renderTelemetryMode&&testParams.get("scenario")==="split",splitLine=splitScenario?testParams.get("line"):null;
 const reservoirScenario=renderTelemetryMode&&testParams.get("scenario")==="reservoir";
