@@ -135,6 +135,9 @@ Then open `http://127.0.0.1:4173/games/apex-run/?build=alpha20`.
 - Real `WEBGL_lose_context` coverage starts a production run, loses the context, verifies immediate
   pause and PB ineligibility, restores the context, and requires an explicit clean restart. A
   context interruption can therefore never silently save a competitive time.
+- Graphics failure and restoration surfaces use alert-dialog semantics, make background game
+  controls inert, and focus the primary visible action. Browser coverage activates Restart with
+  the keyboard and verifies that the canvas becomes interactive again only after the clean reset.
 - Alpha 20's exact lifecycle remains 43.042 seconds / 1,292 frames. The accelerated 600-second
   soak took 88.5 wall-clock seconds with 300 geometries / 13 textures; M1 Max/ANGLE Metal frame
   intervals remained 16.7 ms median and 16.8 ms p95/p99. Audio mix remains unverified by ear.

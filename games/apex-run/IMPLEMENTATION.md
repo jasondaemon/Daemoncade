@@ -264,6 +264,8 @@ pipeline. Windows, lower-end GPU, touch and gamepad coverage remain future work.
 - WebGL context loss pauses and invalidates the active attempt. Restoration never silently resumes
   timing: the player must explicitly restart a clean run. Integration uses the browser's real
   `WEBGL_lose_context` extension and an actually aborted module request rather than synthetic calls.
+- Failure and restoration overlays are modal, isolate the background with `inert`, focus their
+  primary action and return keyboard focus to the race canvas after an explicit clean restart.
 
 This bounded patch does not alter course geometry, handling or art composition. The next visual
 milestone must replace the generic ring/field/repeated-support language with a coherent authored
