@@ -391,3 +391,21 @@ climb, crest and return hero views still require independent pixel review before
 This pass does not claim that every player collision is rollover-proof. A repeatable production
 input trace that overturns the car remains the required evidence for a broader handling retune;
 the genuine crest jump, rail glancing/escape behavior and recovery lifecycle stay protected.
+
+## Track platform 1: catalog and fully 3D frames
+
+- `track-catalog.js` establishes stable track IDs, display metadata and per-track PB/replay storage
+  contracts. Alpine Sprint deliberately keeps its existing v9/v10 keys, so the architecture change
+  does not discard current player history; future layouts receive isolated namespaced keys.
+- Result persistence accepts an explicit track key pair. A regression saves a second hypothetical
+  track and proves it cannot overwrite Alpine Sprint's PB or ghost.
+- `track-frame.js` provides rotation-minimizing 3D frames and cross-sections. Unlike the current
+  XZ/world-up construction, it remains defined through vertical and inverted tangents and applies
+  authored roll without accumulating twist.
+- The isolated geometry proof transports 129 samples around a complete vertical circle, reaches an
+  inverted local up vector at the apex, retains an orthonormal right-handed basis and closes without
+  a lateral-frame flip.
+
+This is foundation only. Alpine Sprint rendering and physics remain unchanged. A loop is not a
+playable feature until a separate Rapier proof demonstrates genuine world gravity, wheel contact,
+an attainable entry-speed window, an unsupported slow-entry fall, camera behavior and safe recovery.

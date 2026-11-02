@@ -1,7 +1,7 @@
 import * as THREE from "../vendor/three/three.module.min.js?v=0.5.0-alpha25";
 import {GLTFLoader} from "../vendor/three/addons/loaders/GLTFLoader.js?v=0.5.0-alpha25";
 import RAPIER from "./vendor/rapier-0.17.3.js?v=0.5.0-alpha25";
-import {FixedStepper,MEDALS,clamp,commitResult,formatTime,frameGapInvalidates,isOnRoad,medalFor,persistenceNote,readBest,readReplay,reconcileBest,replayForBest,replayFrameAt} from "./simulation.js?v=0.5.0-alpha25";
+import {FixedStepper,MEDALS,clamp,commitResult,formatTime,frameGapInvalidates,isOnRoad,medalFor,persistenceNote,readBest,readReplay,reconcileBest,replayForBest,replayFrameAt} from "./simulation.js?v=0.5.0-alpha29";
 import {formatSplitDelta,replayCheckpointSplits,splitTone,summarizeSplits} from "./race-feedback.js?v=0.5.0-alpha25";
 import {RAIL_COLLISION_GROUPS,SUSPENSION_QUERY_GROUPS,VEHICLE,applyLowSpeedSteering,applySurfaceDrag,createVehicle,driveVehicle,hasSupportingContact,stabilizeChassis} from "./vehicle-model.js?v=0.5.0-alpha25";
 import {setWheelVisualPose} from "./wheel-visual.js?v=0.5.0-alpha25";

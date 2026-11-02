@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import {chromium} from "/Users/jasondaemon/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/node_modules/playwright/index.mjs";
 import {CHECKPOINTS,ROAD_SAMPLES,ROAD_STEPS_PER_SEGMENT} from "../games/apex-run/track-model.js";
-const base=process.env.APEX_RUN_URL||"http://127.0.0.1:4173/games/apex-run/test.html?build=alpha28",productionBase=base.replace(/test\.html(?:\?.*)?$/,"?build=alpha28"),appBase=base.replace(/test\.html(?:\?.*)?$/,"app.html?v=0.5.0-alpha28"),finishCount=CHECKPOINTS.length;
+const base=process.env.APEX_RUN_URL||"http://127.0.0.1:4173/games/apex-run/test.html?build=alpha29",productionBase=base.replace(/test\.html(?:\?.*)?$/,"?build=alpha29"),appBase=base.replace(/test\.html(?:\?.*)?$/,"app.html?v=0.5.0-alpha29"),finishCount=CHECKPOINTS.length;
 const browser=await chromium.launch({headless:true,executablePath:"/Applications/Google Chrome.app/Contents/MacOS/Google Chrome",args:["--enable-unsafe-swiftshader"]});
 const context=await browser.newContext({viewport:{width:1280,height:720}}),page=await context.newPage(),consoleErrors=[],httpErrors=[];
 page.on("console",message=>{if(message.type()==="error"&&!message.text().startsWith("Failed to load resource:"))consoleErrors.push(message.text())});page.on("pageerror",error=>consoleErrors.push(error.message));page.on("response",response=>{if(response.status()>=400&&!response.url().endsWith("/favicon.ico"))httpErrors.push(`${response.status()} ${response.url()}`)});

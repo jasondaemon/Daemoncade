@@ -1,5 +1,5 @@
 import assert from "node:assert/strict";
-import {FixedStepper,REPLAY_KEY,checkpointAdvance,commitResult,formatTime,frameGapInvalidates,isOnRoad,medalFor,persistenceNote,readBest,readReplay,reconcileBest,replayForBest,replayFrameAt,saveBest,saveReplay} from "./simulation.js";
+import {BEST_KEY,FixedStepper,REPLAY_KEY,checkpointAdvance,commitResult,formatTime,frameGapInvalidates,isOnRoad,medalFor,persistenceNote,readBest,readReplay,reconcileBest,replayForBest,replayFrameAt,saveBest,saveReplay} from "./simulation.js";
 import {RaceController} from "./race-controller.js";
 assert.equal(formatTime(65.4321),"01:05.432");
 const storage={getItem:()=>"not-a-time"};assert.equal(readBest(storage),null);
@@ -9,6 +9,7 @@ let ticks30=0;const at30=new FixedStepper(()=>ticks30++,1/120);for(let i=0;i<30;
 for(const fps of[30,60,144]){let count=0;const fixed=new FixedStepper(()=>count++,1/120);for(let i=0;i<fps*10;i++)fixed.advance(1/fps);assert.ok(Math.abs(count-1200)<=1,`${fps} FPS produced ${count} ticks`)}
 assert.equal(frameGapInvalidates(5),true);assert.equal(frameGapInvalidates(30),true);assert.equal(frameGapInvalidates(.2),false);
 const memory=new Map(),store={getItem:key=>memory.get(key)??null,setItem:(key,value)=>memory.set(key,value)};
+assert.equal(BEST_KEY,"apex-run:pb:v9");assert.equal(REPLAY_KEY,"apex-run:replay:v10");
 const legacyStore={getItem:key=>key==="apex-run:pb:v8"?"42":key==="apex-run:replay:v9"?"{}":null};assert.equal(readBest(legacyStore),null);assert.equal(readReplay(legacyStore),null);
 const frames=[[0,0,2,0,0,0,0,1],[30,30,3,-4,0,.2,0,.98],[600,30,3,-4,0,.2,0,.98]];
 assert.equal(saveReplay(store,20,frames),true);assert.ok(memory.has(REPLAY_KEY));const replay=readReplay(store);assert.equal(replay.time,20);assert.deepEqual(replayFrameAt(replay,.5).slice(1,4),[15,2.5,-2]);
@@ -23,6 +24,7 @@ const deniedFinish=commitResult(denied,22,19,frames);assert.equal(deniedFinish.b
 const partialMemory=new Map([[REPLAY_KEY,JSON.stringify({...replay,time:20,frames})]]),partial={getItem:key=>partialMemory.get(key)??null,setItem(key,value){if(key===REPLAY_KEY)throw Error("replay quota");partialMemory.set(key,value)}};const partialFinish=commitResult(partial,20,19,frames);assert.equal(partialFinish.bestSaved,true);assert.equal(partialFinish.replaySaved,false);assert.equal(partialFinish.ghostUnavailable,true);assert.equal(partialFinish.replay,null);assert.equal(persistenceNote(partialFinish)," · PB SAVED; GHOST UNAVAILABLE");assert.equal(readBest(partial),19);assert.equal(readReplay(partial).time,20);assert.equal(persistenceNote(committed),"");
 assert.equal(replayForBest(readBest(partial),readReplay(partial)),null);
 const practice=commitResult(store,20,18,frames,{eligible:false});assert.equal(practice.eligible,false);assert.equal(practice.best,20);assert.equal(readBest(store),20);
+const secondTrackKeys={pb:"apex-run:track:loop-lab:pb:v1",replay:"apex-run:track:loop-lab:replay:v1"},secondFrames=[frames[0],frames[1],[630,...frames.at(-1).slice(1)]],secondTrack=commitResult(store,null,21,secondFrames,{keys:secondTrackKeys});assert.equal(secondTrack.isBest,true);assert.equal(readBest(store,secondTrackKeys.pb),21);assert.equal(readReplay(store,secondTrackKeys.replay).time,21);assert.equal(readBest(store),20,"second-track result overwrote Alpine Sprint PB");
 assert.equal(formatTime(59.9996),"01:00.000");assert.equal(formatTime(3599.9996),"60:00.000");
 assert.equal(readReplay({getItem:()=>JSON.stringify({version:3,time:20,hz:30,frames:[[0,0,2,0,0,0,0,0],[600,0,2,0,0,0,0,0]]})}),null);
 assert.equal(isOnRoad({x:50,z:0}),true);assert.equal(isOnRoad({x:101,z:-60}),true);assert.equal(isOnRoad({x:0,z:-103}),true);assert.equal(isOnRoad({x:50,z:40}),false);

@@ -1,7 +1,9 @@
 export const FIXED_DT=1/120;
 export {checkpointAdvance,isOnRoad} from "./track-model.js?v=0.5.0-alpha25";
+import {trackStorageKeys} from "./track-catalog.js?v=0.5.0-alpha29";
 export const REPLAY_VERSION=10;
-export const REPLAY_KEY="apex-run:replay:v10";
+export const BEST_KEY=trackStorageKeys().pb;
+export const REPLAY_KEY=trackStorageKeys().replay;
 export const REPLAY_HZ=30;
 export const MEDALS=Object.freeze([{name:"APEX",time:48,color:0x55efff},{name:"GOLD",time:60,color:0xffd454},{name:"SILVER",time:75,color:0xd6e2ec},{name:"BRONZE",time:95,color:0xd58b55},{name:"ROOKIE",time:120,color:0x79d987}]);
 export function clamp(v,min,max){return Math.max(min,Math.min(max,v))}
@@ -10,12 +12,12 @@ export function formatTime(seconds){
   const totalMs=Math.round(Math.max(0,Number.isFinite(seconds)?seconds:0)*1000),minutes=Math.floor(totalMs/60000),rest=totalMs-minutes*60000;
   return `${String(minutes).padStart(2,"0")}:${String(Math.floor(rest/1000)).padStart(2,"0")}.${String(rest%1000).padStart(3,"0")}`;
 }
-export function readBest(storage,key="apex-run:pb:v9"){
+export function readBest(storage,key=BEST_KEY){
   try{const value=Number(storage.getItem(key));return Number.isFinite(value)&&value>1&&value<3600?value:null}catch{return null}
 }
 export function reconcileBest(best,replay){return replay&&(!best||replay.time<best)?replay.time:best}
 export function replayForBest(best,replay){return replay&&Number.isFinite(best)&&Math.abs(replay.time-best)<1e-6?replay:null}
-export function saveBest(storage,time,key="apex-run:pb:v9"){if(!Number.isFinite(time)||time<=1||time>=3600)return false;try{storage.setItem(key,String(time));return true}catch{return false}}
+export function saveBest(storage,time,key=BEST_KEY){if(!Number.isFinite(time)||time<=1||time>=3600)return false;try{storage.setItem(key,String(time));return true}catch{return false}}
 function finiteArray(value,length){return Array.isArray(value)&&value.length===length&&value.every(Number.isFinite)}
 export function validateReplay(value){
   if(!value||value.version!==REPLAY_VERSION||!Number.isFinite(value.time)||value.time<=1||value.time>300||value.hz!==REPLAY_HZ||!Array.isArray(value.frames)||value.frames.length<2||value.frames.length>REPLAY_HZ*300)return null;
@@ -26,10 +28,10 @@ export function validateReplay(value){
 }
 export function readReplay(storage,key=REPLAY_KEY){try{return validateReplay(JSON.parse(storage.getItem(key)))}catch{return null}}
 export function saveReplay(storage,time,frames,key=REPLAY_KEY){const replay=validateReplay({version:REPLAY_VERSION,time,hz:REPLAY_HZ,frames});if(!replay)return false;try{storage.setItem(key,JSON.stringify(replay));return true}catch{return false}}
-export function commitResult(storage,currentBest,time,frames,{eligible=true}={}){
-  if(!eligible)return{best:currentBest,replay:readReplay(storage),isBest:false,eligible:false,replaySaved:false,bestSaved:false};
-  const isBest=!currentBest||time<currentBest;if(!isBest)return{best:currentBest,replay:readReplay(storage),isBest:false,replaySaved:false};
-  const bestSaved=saveBest(storage,time),replaySaved=saveReplay(storage,time,frames),replay=replaySaved?readReplay(storage):null;
+export function commitResult(storage,currentBest,time,frames,{eligible=true,keys={pb:BEST_KEY,replay:REPLAY_KEY}}={}){
+  if(!eligible)return{best:currentBest,replay:readReplay(storage,keys.replay),isBest:false,eligible:false,replaySaved:false,bestSaved:false};
+  const isBest=!currentBest||time<currentBest;if(!isBest)return{best:currentBest,replay:readReplay(storage,keys.replay),isBest:false,replaySaved:false};
+  const bestSaved=saveBest(storage,time,keys.pb),replaySaved=saveReplay(storage,time,frames,keys.replay),replay=replaySaved?readReplay(storage,keys.replay):null;
   return{best:time,replay,isBest:true,bestSaved,replaySaved,ghostUnavailable:bestSaved&&!replaySaved,storageUnavailable:!bestSaved&&!replaySaved};
 }
 export function persistenceNote(result){if(result?.storageUnavailable)return" · RESULT NOT SAVED; STORAGE UNAVAILABLE";return result?.ghostUnavailable?" · PB SAVED; GHOST UNAVAILABLE":""}
