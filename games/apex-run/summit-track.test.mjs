@@ -15,7 +15,8 @@ for(let index=1;index<model.ROAD_SAMPLES.length;index++){
   length+=gap;
   assert.ok(gap<3.01,`road tessellation gap at ${index}: ${gap}`);
 }
-assert.ok(length>3600&&length<3900,`Summit Circuit misses its authored advanced-course scale: ${length.toFixed(1)} m`);
+assert.ok(length>3900&&length<4100,`Summit Circuit misses its authored advanced-course scale: ${length.toFixed(1)} m`);
+assert.ok(model.ROAD_SAMPLES.some(sample=>sample.phase==="loop"&&sample.up.y<-.98),"Summit Circuit lacks a genuinely inverted road section");
 assert.ok(model.ROAD_SAMPLES.some(sample=>sample.y>30),"Summit Circuit lacks a signature elevated crest");
 for(const [index,checkpoint] of model.CHECKPOINTS.entries()){
   assert.equal(model.isOnRoad({...checkpoint,y:checkpoint.y+1.5}),true,`checkpoint ${index} is off its road frame`);
