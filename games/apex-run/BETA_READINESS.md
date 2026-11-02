@@ -2,7 +2,7 @@
 
 ## Status
 
-Version `0.5.0-alpha.18` is a desktop-keyboard production-slice candidate, not a release candidate. The previously verified flat-course
+Version `0.5.0-alpha.19` is a desktop-keyboard production-slice candidate, not a release candidate. The previously verified flat-course
 beta remains available in Git history at `16a26e5`; its player-lap result must not be treated as
 validation of this materially different spline layout. The game is an original single-player
 stadium time attack inspired by the broad genre, not a Trackmania clone, formula-equivalent
@@ -14,7 +14,7 @@ Start a local preview from the repository root:
 python3 -m http.server 4173 --bind 127.0.0.1
 ```
 
-Then open `http://127.0.0.1:4173/games/apex-run/?build=alpha18`.
+Then open `http://127.0.0.1:4173/games/apex-run/?build=alpha19`.
 
 ## Controls and rules
 
@@ -111,6 +111,21 @@ Then open `http://127.0.0.1:4173/games/apex-run/?build=alpha18`.
   at 274 geometries / 13 textures; a normal 240-frame production sample measured 16.7 ms median,
   16.7 ms p95 and 16.8 ms p99 on the same M1 Max/ANGLE Metal machine. These remain single-machine
   measurements, not lower-end hardware certification.
+- Alpha 19 stages the interface so the ready screen presents only the objective, essential
+  controls and graphics choice; race telemetry appears after Start, while detailed sector analysis
+  remains a finish-only surface. High mode retains capped device pixel ratio and shadows; Low mode
+  uses a 1.0 pixel ratio and disables shadow rendering. Chrome integration asserts the persisted
+  choice and the 1280-pixel Low-mode race canvas.
+- Presentation geometry adds continuous seating bands, varied infield surfaces, rounded distant
+  landforms, a checkered finish identity, larger full-width jump markings and a curved ghost shell
+  matching the player car's main silhouette. These are original procedural additions and do not
+  modify the shared road collider or vehicle tuning.
+- A CSP-safe load guard keeps the loading surface available when module, WebGL or WASM startup
+  rejects, explains that graphics failed and offers an explicit retry. Audible mix quality remains
+  unverified because the automation surface cannot listen to WebAudio output.
+- Exact alpha 19 Chrome lifecycle still finishes in 43.042 seconds with 1,292 frames. Its
+  600-second accelerated soak took 101.4 wall-clock seconds and stabilized at 300 geometries /
+  13 textures; the M1 Max/ANGLE Metal 240-frame sample measured 16.7 ms median and 16.8 ms p95/p99.
 
 The following evidence describes the prior `0.4.0-beta.1` geometry and is retained as history,
 not as a readiness claim for visual alpha 5:

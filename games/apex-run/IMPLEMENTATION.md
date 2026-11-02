@@ -234,3 +234,22 @@ failure state, broader input support and non-M1 performance coverage remain subs
 This milestone improves authored presentation and jump readability without changing the proven
 vehicle tuning or timed racing line. Finish-area art, richer impact/tire audio, graceful renderer
 failure, quality selection, broader input support and additional hardware coverage remain open.
+
+## Production vertical slice 3: presentation and resilience
+
+- The ready state now suppresses race HUD, navigation, quick actions and the persistent control
+  strip, giving the objective and Start action a single visual hierarchy. Race telemetry returns
+  for the countdown/run; the sector table stays confined to the result dialog.
+- Persistent High/Low graphics modes affect real renderer work: Low caps pixel ratio at 1.0 and
+  disables shadow maps, while High restores capped device resolution and shadows. This is a
+  bounded fallback, not an automatic device benchmark or minimum-spec claim.
+- Continuous seating bands and varied infield materials strengthen the stadium bowl; rounded
+  distant masses replace the most obvious pyramid skyline. The finish gains a checkered identity,
+  crest/landing markings fill more of the road width, and the ghost reuses the curved main body,
+  nose and rear-deck geometry instead of rectangular proxy boxes.
+- A separate CSP-compatible load guard converts module, WebGL and WASM startup failures into a
+  readable retry state instead of leaving an indefinite `Building the stadium` overlay.
+
+The exact physics, spline/collider, checkpoint and PB/replay semantics are unchanged. Audio mix
+quality is still unverified by ear, and procedural art remains short of a fully authored asset
+pipeline. Windows, lower-end GPU, touch and gamepad coverage remain future work.
