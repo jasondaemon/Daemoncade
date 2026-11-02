@@ -15,4 +15,5 @@ assert.doesNotMatch(runner,/localStorage\.setItem|localStorage\.clear/,"runner s
 assert.match(runner,/localStorage\.removeItem\(keys\.pb\)/,"runner does not clean only its isolated PB key");
 assert.match(runner,/controller\.placeLoopPractice\(\)/,"visible loop practice control does not use the real runtime recovery pose");
 assert.match(runner,/snapshot\.eligible\|\|snapshot\.checkpoint!==CHECKPOINTS\.length-1/,"loop practice control does not require a PB-ineligible pre-loop state");
+assert.match(await readFile(new URL("./game.js",import.meta.url),"utf8"),/loopPracticeMode\?placeLoopPractice\(\):restart\(\)/,"R does not preserve the visible loop-practice lifecycle");
 console.log("Apex Run visible test-only lifecycle runner passed");
