@@ -1,5 +1,5 @@
 import assert from "node:assert/strict";
-import {FixedStepper,REPLAY_KEY,checkpointAdvance,commitResult,formatTime,frameGapInvalidates,isOnRoad,medalFor,persistenceNote,readBest,readReplay,reconcileBest,replayFrameAt,saveBest,saveReplay} from "./simulation.js";
+import {FixedStepper,REPLAY_KEY,checkpointAdvance,commitResult,formatTime,frameGapInvalidates,isOnRoad,medalFor,persistenceNote,readBest,readReplay,reconcileBest,replayForBest,replayFrameAt,saveBest,saveReplay} from "./simulation.js";
 import {RaceController} from "./race-controller.js";
 assert.equal(formatTime(65.4321),"01:05.432");
 const storage={getItem:()=>"not-a-time"};assert.equal(readBest(storage),null);
@@ -14,15 +14,17 @@ assert.equal(saveReplay(store,20,frames),true);assert.ok(memory.has(REPLAY_KEY))
 store.setItem(REPLAY_KEY,JSON.stringify({...replay,frames:[[0,999,2,0,0,0,0,1],[1,0,2,0,0,0,0,1]]}));assert.equal(readReplay(store),null);
 assert.equal(medalFor(47).name,"APEX");assert.equal(medalFor(59).name,"GOLD");assert.equal(medalFor(74).name,"SILVER");assert.equal(medalFor(94).name,"BRONZE");assert.equal(medalFor(119).name,"ROOKIE");assert.equal(medalFor(121),null);
 assert.equal(reconcileBest(18,{time:20}),18);assert.equal(reconcileBest(22,{time:20}),20);
+assert.equal(replayForBest(18,{time:20}),null);assert.deepEqual(replayForBest(20,{time:20,frames}),{time:20,frames});
 const committed=commitResult(store,22,20,frames);assert.equal(committed.isBest,true);assert.equal(committed.best,20);assert.equal(readBest(store),20);assert.equal(readReplay(store).time,20);
 const slower=commitResult(store,20,25,frames);assert.equal(slower.isBest,false);assert.equal(readBest(store),20);
 const denied={getItem(){throw Error("denied")},setItem(){throw Error("quota")}};assert.equal(readBest(denied),null);assert.equal(readReplay(denied),null);assert.equal(saveBest(denied,12),false);assert.equal(saveReplay(denied,20,frames),false);
 const deniedFinish=commitResult(denied,22,19,frames);assert.equal(deniedFinish.best,19);assert.equal(deniedFinish.bestSaved,false);assert.equal(deniedFinish.replaySaved,false);assert.equal(deniedFinish.storageUnavailable,true);assert.equal(deniedFinish.ghostUnavailable,false);assert.equal(persistenceNote(deniedFinish)," · RESULT NOT SAVED; STORAGE UNAVAILABLE");
 const partialMemory=new Map([[REPLAY_KEY,JSON.stringify({...replay,time:20,frames})]]),partial={getItem:key=>partialMemory.get(key)??null,setItem(key,value){if(key===REPLAY_KEY)throw Error("replay quota");partialMemory.set(key,value)}};const partialFinish=commitResult(partial,20,19,frames);assert.equal(partialFinish.bestSaved,true);assert.equal(partialFinish.replaySaved,false);assert.equal(partialFinish.ghostUnavailable,true);assert.equal(partialFinish.replay,null);assert.equal(persistenceNote(partialFinish)," · PB SAVED; GHOST UNAVAILABLE");assert.equal(readBest(partial),19);assert.equal(readReplay(partial).time,20);assert.equal(persistenceNote(committed),"");
+assert.equal(replayForBest(readBest(partial),readReplay(partial)),null);
 const practice=commitResult(store,20,18,frames,{eligible:false});assert.equal(practice.eligible,false);assert.equal(practice.best,20);assert.equal(readBest(store),20);
 assert.equal(formatTime(59.9996),"01:00.000");assert.equal(formatTime(3599.9996),"60:00.000");
 assert.equal(readReplay({getItem:()=>JSON.stringify({version:3,time:20,hz:30,frames:[[0,0,2,0,0,0,0,0],[600,0,2,0,0,0,0,0]]})}),null);
 assert.equal(isOnRoad({x:50,z:0}),true);assert.equal(isOnRoad({x:101,z:-60}),true);assert.equal(isOnRoad({x:0,z:-103}),true);assert.equal(isOnRoad({x:50,z:40}),false);
 let cp=0;cp=checkpointAdvance(cp,{x:-82,z:125});assert.equal(cp,0);cp=checkpointAdvance(cp,{x:99,z:-12});assert.equal(cp,1);cp=checkpointAdvance(cp,{x:150,z:8});assert.equal(cp,1);
-const race=new RaceController();for(let i=0;i<361;i++)race.step(1/120,{x:-2,z:0});assert.equal(race.state,"racing");race.pause();const pausedTime=race.time;race.step(10,{x:99,z:-12});assert.equal(race.time,pausedTime);race.resume();race.recover();assert.equal(race.eligible,false);assert.equal(race.time,pausedTime+1.5);
+const race=new RaceController();assert.equal(race.state,"ready");assert.equal(race.start(),true);assert.equal(race.start(),false);for(let i=0;i<361;i++)race.step(1/120,{x:-2,z:0});assert.equal(race.state,"racing");race.pause();const pausedTime=race.time;race.step(10,{x:99,z:-12});assert.equal(race.time,pausedTime);race.resume();race.recover();assert.equal(race.eligible,false);assert.equal(race.time,pausedTime+1.5);race.reset();assert.equal(race.state,"countdown");
 console.log("Apex Run simulation tests passed");

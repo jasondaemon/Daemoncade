@@ -1,5 +1,5 @@
 export const FIXED_DT=1/120;
-export {checkpointAdvance,isOnRoad} from "./track-model.js?v=0.5.0-alpha16";
+export {checkpointAdvance,isOnRoad} from "./track-model.js?v=0.5.0-alpha17";
 export const REPLAY_VERSION=9;
 export const REPLAY_KEY="apex-run:replay:v9";
 export const REPLAY_HZ=30;
@@ -14,6 +14,7 @@ export function readBest(storage,key="apex-run:pb:v8"){
   try{const value=Number(storage.getItem(key));return Number.isFinite(value)&&value>1&&value<3600?value:null}catch{return null}
 }
 export function reconcileBest(best,replay){return replay&&(!best||replay.time<best)?replay.time:best}
+export function replayForBest(best,replay){return replay&&Number.isFinite(best)&&Math.abs(replay.time-best)<1e-6?replay:null}
 export function saveBest(storage,time,key="apex-run:pb:v8"){if(!Number.isFinite(time)||time<=1||time>=3600)return false;try{storage.setItem(key,String(time));return true}catch{return false}}
 function finiteArray(value,length){return Array.isArray(value)&&value.length===length&&value.every(Number.isFinite)}
 export function validateReplay(value){

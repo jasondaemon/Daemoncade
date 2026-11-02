@@ -2,7 +2,7 @@
 
 ## Status
 
-Version `0.5.0-alpha.16` is a desktop-keyboard beta candidate. The previously verified flat-course
+Version `0.5.0-alpha.17` is a desktop-keyboard production-slice candidate, not a release candidate. The previously verified flat-course
 beta remains available in Git history at `16a26e5`; its player-lap result must not be treated as
 validation of this materially different spline layout. The game is an original single-player
 stadium time attack inspired by the broad genre, not a Trackmania clone, formula-equivalent
@@ -14,7 +14,7 @@ Start a local preview from the repository root:
 python3 -m http.server 4173 --bind 127.0.0.1
 ```
 
-Then open `http://127.0.0.1:4173/games/apex-run/?build=alpha16`.
+Then open `http://127.0.0.1:4173/games/apex-run/?build=alpha17`.
 
 ## Controls and rules
 
@@ -85,10 +85,17 @@ Then open `http://127.0.0.1:4173/games/apex-run/?build=alpha16`.
   and verifies that the normal entry exposes no test controller. The reactive fixture exercises
   the real runtime race loop and storage path, but is not represented as player-driving evidence.
 - On one 2021 MacBook Pro (Apple M1 Max, 24-core GPU, 32 GB) using Chrome's ANGLE Metal renderer,
-  a 240-frame production sample measured 16.7 ms median, 16.8 ms p95 and 16.8 ms p99 intervals.
-  A 600-second accelerated drift/reset soak took 84.8 wall-clock seconds and remained at 262
+  a 240-frame alpha 17 production sample measured 16.7 ms median, 16.7 ms p95 and 16.8 ms p99 intervals.
+  A 600-second accelerated drift/reset soak took 85.8 wall-clock seconds and remained at 262
   geometries / 11 textures after full-cycle warm-up. This is one-machine evidence; lower-end Mac,
   Windows and software-renderer performance remain uncharacterized.
+- Alpha 17 adds an explicit ready/start state, concise keyboard and recovery onboarding, an
+  immediate PB-eligibility badge, a persistent ghost toggle, replay-derived checkpoint deltas,
+  a six-split finish analysis, and bounded checkpoint/finish audio cues. Split extraction and
+  presentation logic are pure and separately tested; the browser lifecycle asserts all six split
+  rows through the real finish path.
+- Scalar PB/replay reconciliation now suppresses an older ghost after a newer scalar PB saved but
+  replay storage failed. Unit and browser reload regressions cover this partial-storage case.
 
 The following evidence describes the prior `0.4.0-beta.1` geometry and is retained as history,
 not as a readiness claim for visual alpha 5:

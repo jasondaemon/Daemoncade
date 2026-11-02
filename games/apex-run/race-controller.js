@@ -1,8 +1,9 @@
-import {checkpointAdvance} from "./track-model.js?v=0.5.0-alpha16";
+import {checkpointAdvance} from "./track-model.js?v=0.5.0-alpha17";
 
 export class RaceController{
-  constructor(){this.reset()}
-  reset(){this.state="countdown";this.pausedFrom=null;this.time=0;this.countdown=3;this.checkpoint=0;this.tick=0;this.eligible=true;return this}
+  constructor(){this.reset({ready:true})}
+  reset({ready=false}={}){this.state=ready?"ready":"countdown";this.pausedFrom=null;this.time=0;this.countdown=3;this.checkpoint=0;this.tick=0;this.eligible=true;return this}
+  start(){if(this.state!=="ready")return false;this.state="countdown";return true}
   advance(dt){
     if(this.state==="countdown"){this.countdown-=dt;if(this.countdown<=0){this.countdown=0;this.state="racing"}}
     if(this.state==="racing"){this.time+=dt;this.tick++}

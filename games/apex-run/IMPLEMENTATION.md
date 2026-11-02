@@ -194,3 +194,23 @@ unmeasured.
 - A separate 240-frame normal-time production-page sample records median/p95/p99 rAF intervals.
   These are presentation intervals, not isolated GPU render-call timings or a portable laptop
   FPS guarantee. Current exact values are emitted by the integration run.
+
+## Production vertical slice 1: competitive run feedback
+
+- A fresh production load now waits in an explicit ready state instead of spending the countdown
+  before the player has read the objective. The start card teaches the core controls, the unusual
+  stop/release/repress reverse lifecycle, and the fact that recovery makes a run practice-only.
+  Rapid restart and Race Again still go directly to the countdown.
+- The existing validated PB replay is also the source of six checkpoint reference splits. Gate
+  crossings show accessible ahead/behind feedback and the finish dialog lists every split plus the
+  largest gain and loss. No second timing model or hand-authored sector data is introduced.
+- Recovery changes the always-visible eligibility badge immediately. A persisted ghost toggle is
+  available in the race UI; a scalar PB whose matching replay failed to save now suppresses the
+  stale older ghost on reload.
+- Checkpoint and finish cues are short-lived oscillators routed through the existing mute-safe
+  WebAudio graph. They add event feedback without network audio, decoded assets, or a second audio
+  lifecycle.
+
+This is a production-direction milestone, not release certification. The authored start/finish
+presentation, signature jump readability, impact/tire/landing audio, quality fallback, WebGL/WASM
+failure state, broader input support and non-M1 performance coverage remain subsequent work.
