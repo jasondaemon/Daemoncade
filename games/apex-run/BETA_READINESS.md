@@ -14,7 +14,7 @@ Start a local preview from the repository root:
 python3 -m http.server 4173 --bind 127.0.0.1
 ```
 
-Then open `http://127.0.0.1:4173/games/apex-run/?build=alpha35`. Add `&track=summit-circuit` to open the longer advanced course directly.
+Then open `http://127.0.0.1:4173/games/apex-run/?build=alpha36`. Add `&track=summit-circuit` to open the longer advanced course directly.
 
 Alpha 24 repairs the measured coarse road-normal transitions and visible triangular sidewall
 artifacts while retaining the authored crest jump. Alpha 25 replaces the rejected procedural car
@@ -245,6 +245,9 @@ node games/apex-run/track-geometry.test.mjs
 node games/apex-run/rail-contact.test.mjs
 node games/apex-run/telemetry.test.mjs
 node games/apex-run/rollover.test.mjs
+node games/apex-run/split-route.test.mjs
+node games/apex-run/split-junction.test.mjs
+node games/apex-run/test-lifecycle-ui.test.mjs
 ```
 
 The browser integration requires installed Google Chrome and the repository's established

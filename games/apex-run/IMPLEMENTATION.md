@@ -502,3 +502,19 @@ non-overlapping proof before it can become production course geometry.
 - Kenney scenery loads independently. A missing stand, office or barrier now falls back to the
   existing authored stand or simple race furniture while the physical obstacle course and game
   continue to initialize.
+
+## Alpha 36 — Continuous 3D fork and visible lifecycle proof
+
+- Summit's attack road no longer relies on planar center-distance trimming. Entry and merge use
+  explicit 3D transition ribbons whose inner vertices are welded point-for-point to the main
+  road's banked shoulder. Their outer vertices open smoothly to the isolated attack deck, whose
+  boundary is snapped to the same shared edge. This removes the measured 1.02 / 5.16 m height
+  discontinuities and avoids duplicate coplanar collision sheets.
+- Static coverage checks validate every transition triangle, upward collision winding, shared
+  main-road vertices and exact attack-deck endpoints. Six shared-Rapier probes start from rest and
+  cross both transitions at three lateral offsets; each travels more than 45 m with at least two
+  tire contacts throughout.
+- `test.html` now contains a visible local lifecycle button. It completes an eligible run through
+  the real runtime race/storage path, reloads the page and verifies the resulting moving ghost.
+  It is regression evidence rather than a player lap, writes no synthesized PB values, and is
+  absent from the normal production entry.
