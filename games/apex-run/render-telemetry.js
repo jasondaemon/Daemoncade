@@ -21,7 +21,7 @@ function roadProjection(position,samples){
   return{center,up};
 }
 
-export function createRenderTelemetry({THREE,camera,car,wheels,vehicle,chassis,roadSamples,jumpZone}){
+export function createRenderTelemetry({THREE,renderer,camera,car,wheels,vehicle,chassis,roadSamples,jumpZone}){
   const output=document.createElement("pre");output.id="render-telemetry";output.setAttribute("aria-live","polite");
   Object.assign(output.style,{position:"fixed",right:"8px",bottom:"8px",zIndex:"50",maxWidth:"42rem",maxHeight:"45vh",overflow:"auto",margin:"0",padding:"8px",color:"#dff",background:"#071521e8",font:"11px/1.35 ui-monospace,monospace",whiteSpace:"pre-wrap",pointerEvents:"none"});
   document.body.append(output);
@@ -33,7 +33,7 @@ export function createRenderTelemetry({THREE,camera,car,wheels,vehicle,chassis,r
     const cameraBody=camera.position.distanceTo(car.position),wheelOffsets=wheels.map(wheel=>wheel.root.position.y-car.position.y),dt=previous.time===null?0:(now-previous.time)/1000;
     const speed=Math.abs(vehicle.currentVehicleSpeed?.()||0)*3.6,contacts=[0,1,2,3].filter(index=>vehicle.wheelIsInContact(index)).length;
     const nearest=roadSamples.reduce((best,sample,index)=>{const distance=(sample.x-car.position.x)**2+(sample.z-car.position.z)**2;return distance<best.distance?{distance,index}:best},{distance:Infinity,index:0}).index;
-    const sample={time:now,speed,speedRate:dt&&previous.speed!==null?(speed-previous.speed)/dt:0,contacts,jump:nearest>=jumpZone.approach-6&&nearest<=jumpZone.landing+8,clearance,screenY,cameraBody,
+    const sample={time:now,frameMs:dt*1000,speed,speedRate:dt&&previous.speed!==null?(speed-previous.speed)/dt:0,contacts,jump:nearest>=jumpZone.approach-6&&nearest<=jumpZone.landing+8,clearance,screenY,cameraBody,
       clearanceVelocity:dt?(clearance-previous.clearance)/dt:0,screenVelocity:dt?(screenY-previous.screenY)/dt:0,cameraBodyVelocity:dt?(cameraBody-previous.cameraBody)/dt:0,
       wheelBodyVelocity:dt&&previous.wheelOffsets?rms(wheelOffsets.map((value,index)=>(value-previous.wheelOffsets[index])/dt)):0,verticalVelocity:chassis.linvel().y};
     latest={speed:+speed.toFixed(1),contacts};if(speed>1||sample.jump){frames.push(sample);if(frames.length>7200)frames.shift()}
@@ -50,7 +50,7 @@ export function createRenderTelemetry({THREE,camera,car,wheels,vehicle,chassis,r
       renderedWheelBodyRelativeVelocityRms:+rms(supported.map(frame=>frame.wheelBodyVelocity)).toFixed(4),
       chassisWorldVerticalVelocityRms:+rms(supported.map(frame=>frame.verticalVelocity)).toFixed(4)};
   }
-  function report(){return{source:"actual requestAnimationFrame render poses; local test page only",frameCount:frames.length,
+  function report(){const intervals=frames.map(frame=>frame.frameMs).filter(value=>value>0&&value<100);return{source:"actual requestAnimationFrame render poses; local test page only",frameCount:frames.length,frameMs:{median:+percentile(intervals,.5).toFixed(2),p95:+percentile(intervals,.95).toFixed(2),p99:+percentile(intervals,.99).toFixed(2)},renderer:{calls:renderer.info.render.calls,triangles:renderer.info.render.triangles,...renderer.info.memory},
     accelerating38to55:summarize(frames.filter(frame=>frame.speed>=38&&frame.speed<=55&&frame.speedRate>.5)),
     all38to55:summarize(frames.filter(frame=>frame.speed>=38&&frame.speed<=55)),
     speed56to100:summarize(frames.filter(frame=>frame.speed>55&&frame.speed<=100)),

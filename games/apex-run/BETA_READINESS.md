@@ -2,7 +2,7 @@
 
 ## Status
 
-Version `0.5.0-alpha.23` is a desktop-keyboard production-slice candidate, not a release candidate. The previously verified flat-course
+Version `0.5.0-alpha.25` is a desktop-keyboard production-slice candidate, not a release candidate. The previously verified flat-course
 beta remains available in Git history at `16a26e5`; its player-lap result must not be treated as
 validation of this materially different spline layout. The game is an original single-player
 stadium time attack inspired by the broad genre, not a Trackmania clone, formula-equivalent
@@ -14,12 +14,12 @@ Start a local preview from the repository root:
 python3 -m http.server 4173 --bind 127.0.0.1
 ```
 
-Then open `http://127.0.0.1:4173/games/apex-run/?build=alpha24`.
+Then open `http://127.0.0.1:4173/games/apex-run/?build=alpha25`.
 
-Alpha 24 repairs the measured coarse road-normal transitions and the visible triangular sidewall
-artifacts while retaining the authored crest jump. The requested licensed Formula-car replacement
-is still blocked on the official Sketchfab download requiring a signed-in account; the existing
-procedural alpha-23 car should not be treated as accepted final art.
+Alpha 24 repairs the measured coarse road-normal transitions and visible triangular sidewall
+artifacts while retaining the authored crest jump. Alpha 25 replaces the rejected procedural car
+with the user-supplied, attributed CC-BY 4.0 Low Poly-F1 asset, fitted to the unchanged physical
+wheelbase/track and animated through the existing steering, suspension and wheel-roll transforms.
 
 ## Controls and rules
 
@@ -28,12 +28,13 @@ procedural alpha-23 car should not be treated as accepted final art.
 - Checkpoints must be crossed in order. Recovery adds 1.5 seconds and makes the attempt a
   practice run: it can finish, but cannot earn a medal, PB, or ghost.
 
-## Alpha 23: Formula silhouette and landmark sectors
+## Alpha 25: authored Formula car and landmark sectors
 
-- The player car is now an original open-wheel Formula-style single seater with a tapered nose,
-  exposed hubbed tires, front and rear wings/endplates, sculpted sidepods and engine cover,
-  open cockpit, driver helmet, halo and original cyan/gold livery. The replay ghost clones the
-  same major geometry. Physics, wheel locations, suspension and collider are unchanged.
+- The player car now uses salasilma13's authored Low Poly-F1 body and tires under CC BY 4.0, with
+  source and modification credits beside the asset. Static source tires are removed and repivoted
+  copies animate at the unchanged physical wheel locations. The original Apex livery contains no
+  team logos, and the replay ghost clones the complete fitted silhouette. Physics, suspension,
+  wheel locations and collider remain unchanged.
 - Six inherited doorway checkpoints are replaced by four landmark sectors: opening sweeper,
   crest/landing, elevated return and finish. Every gate is built from the exact spline sample's
   width and full surface frame, so its crossbeam spans rail-to-rail and its supports sit outside

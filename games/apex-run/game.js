@@ -1,12 +1,13 @@
-import * as THREE from "../vendor/three/three.module.min.js?v=0.5.0-alpha24";
-import RAPIER from "./vendor/rapier-0.17.3.js?v=0.5.0-alpha24";
-import {FixedStepper,MEDALS,clamp,commitResult,formatTime,frameGapInvalidates,isOnRoad,medalFor,persistenceNote,readBest,readReplay,reconcileBest,replayForBest,replayFrameAt} from "./simulation.js?v=0.5.0-alpha24";
-import {formatSplitDelta,replayCheckpointSplits,splitTone,summarizeSplits} from "./race-feedback.js?v=0.5.0-alpha24";
-import {RAIL_COLLISION_GROUPS,SUSPENSION_QUERY_GROUPS,VEHICLE,applyLowSpeedSteering,applySurfaceDrag,createVehicle,driveVehicle,hasSupportingContact,stabilizeChassis} from "./vehicle-model.js?v=0.5.0-alpha24";
-import {makeWheelVisual,setWheelVisualPose} from "./wheel-visual.js?v=0.5.0-alpha24";
-import {makeFormulaCar,makeFormulaGhost} from "./formula-car.js?v=0.5.0-alpha24";
-import {TRACK_BOXES,CHECKPOINTS,JUMP_ZONE,RECOVERY_SPOTS,ROAD_SAMPLES,ROAD_STEPS_PER_SEGMENT,PLAY_AREA,RAIL_PROFILE,START_EXTENSION_SAMPLES,advanceOutsidePlayTime,advanceUnderRoadTime,buildLaneRibbon,buildRailColliderMesh,buildRoadColliderMesh,buildRoadMesh,roadPoseNear,routeGuides,routeStage,routeTarget} from "./track-model.js?v=0.5.0-alpha24";
-import {RaceController} from "./race-controller.js?v=0.5.0-alpha24";
+import * as THREE from "../vendor/three/three.module.min.js?v=0.5.0-alpha25";
+import {GLTFLoader} from "../vendor/three/addons/loaders/GLTFLoader.js?v=0.5.0-alpha25";
+import RAPIER from "./vendor/rapier-0.17.3.js?v=0.5.0-alpha25";
+import {FixedStepper,MEDALS,clamp,commitResult,formatTime,frameGapInvalidates,isOnRoad,medalFor,persistenceNote,readBest,readReplay,reconcileBest,replayForBest,replayFrameAt} from "./simulation.js?v=0.5.0-alpha25";
+import {formatSplitDelta,replayCheckpointSplits,splitTone,summarizeSplits} from "./race-feedback.js?v=0.5.0-alpha25";
+import {RAIL_COLLISION_GROUPS,SUSPENSION_QUERY_GROUPS,VEHICLE,applyLowSpeedSteering,applySurfaceDrag,createVehicle,driveVehicle,hasSupportingContact,stabilizeChassis} from "./vehicle-model.js?v=0.5.0-alpha25";
+import {setWheelVisualPose} from "./wheel-visual.js?v=0.5.0-alpha25";
+import {makeFormulaCar,makeFormulaGhost,makeFormulaWheelVisual} from "./formula-car.js?v=0.5.0-alpha25";
+import {TRACK_BOXES,CHECKPOINTS,JUMP_ZONE,RECOVERY_SPOTS,ROAD_SAMPLES,ROAD_STEPS_PER_SEGMENT,PLAY_AREA,RAIL_PROFILE,START_EXTENSION_SAMPLES,advanceOutsidePlayTime,advanceUnderRoadTime,buildLaneRibbon,buildRailColliderMesh,buildRoadColliderMesh,buildRoadMesh,roadPoseNear,routeGuides,routeStage,routeTarget} from "./track-model.js?v=0.5.0-alpha25";
+import {RaceController} from "./race-controller.js?v=0.5.0-alpha25";
 
 const $=id=>document.getElementById(id),canvas=$("view"),scene=new THREE.Scene(),testMode=document.documentElement.dataset.apexTest==="1",renderTelemetryMode=testMode&&new URLSearchParams(location.search).get("renderTelemetry")==="1";
 const reducedMotion=matchMedia("(prefers-reduced-motion: reduce)").matches;
@@ -72,9 +73,10 @@ const grid=new THREE.GridHelper(320,32,0xffffff,0xffffff);grid.position.y=-.15;g
 
 const{chassis,chassisCollider,vehicle,wheelOffsets}=createVehicle(RAPIER,world);
 
-const car=makeFormulaCar(THREE);scene.add(car);
-const tireMaterial=new THREE.MeshStandardMaterial({color:0x0b0e10,roughness:.88}),rimMaterial=new THREE.MeshStandardMaterial({color:0xa8bac5,metalness:.9,roughness:.2}),wheelMeshes=[];for(const p of wheelOffsets){const wheel=makeWheelVisual(THREE,tireMaterial,rimMaterial);scene.add(wheel.root);wheelMeshes.push(wheel)}
-const ghost=makeFormulaGhost(THREE,car,wheelOffsets);scene.add(ghost);
+const formulaAsset=(await new GLTFLoader().loadAsync("./assets/low-poly-f1.glb")).scene;
+const car=makeFormulaCar(THREE,formulaAsset);scene.add(car);
+const wheelMeshes=[];for(let index=0;index<wheelOffsets.length;index++){const wheel=makeFormulaWheelVisual(THREE,formulaAsset,index);scene.add(wheel.root);wheelMeshes.push(wheel)}
+const ghost=makeFormulaGhost(THREE,car,wheelOffsets,formulaAsset);scene.add(ghost);
 const smokeGeometry=new THREE.SphereGeometry(.25,8,5),smoke=Array.from({length:28},()=>{const s=new THREE.Mesh(smokeGeometry,new THREE.MeshBasicMaterial({color:0xd8e2e8,transparent:true,opacity:0,depthWrite:false}));s.visible=false;s.userData.life=0;scene.add(s);return s});let smokeCursor=0;function puff(p){const s=smoke[smokeCursor++%smoke.length];s.position.set(p.x,p.y+.25,p.z);s.scale.setScalar(1);s.userData.life=1;s.material.opacity=.22;s.visible=true}
 
 const race=new RaceController(),vehicleState={steer:0,surfaceBlend:1};let best=readBest(localStorage),bestReplay=readReplay(localStorage),bestSplits=[],runSplits=[],lastPosition=new THREE.Vector3(),lastRotation=new THREE.Quaternion(),cameraReady=false,replayFrames=[],wasGrounded=true,lastAirVerticalSpeed=0,cameraShake=0,testInput=null,guideCheckpoint=-1,guideProgress=0,splitTimer=0;
@@ -133,5 +135,5 @@ let previous=performance.now();function frame(now){const elapsed=(now-previous)/
   canvas.addEventListener("webglcontextlost",event=>{event.preventDefault();setPaused(true,"graphics");showGraphicsState(false)});canvas.addEventListener("webglcontextrestored",()=>showGraphicsState(true));
   addEventListener("resize",()=>{camera.aspect=innerWidth/innerHeight;camera.updateProjectionMatrix();renderer.setSize(innerWidth,innerHeight,false);applyQuality()});$("again").addEventListener("click",()=>restart());$("start-race").addEventListener("click",beginRace);$("ghost-toggle").addEventListener("click",toggleGhost);$("pause").addEventListener("click",()=>setPaused(race.state!=="paused"));$("resume").addEventListener("click",()=>setPaused(false));$("mute").addEventListener("click",toggleMute);$("quality")?.addEventListener("change",setQuality);$("pause-quality")?.addEventListener("change",setQuality);$("pause-ghost")?.addEventListener("click",toggleGhost);$("pause-sound")?.addEventListener("click",toggleMute);
 const testSnapshot=()=>{const v=chassis.linvel(),p=chassis.translation(),q=chassis.rotation();return{state:race.state,time:race.time,tick:race.tick,checkpoint:race.checkpoint,eligible:race.eligible,best,ghostVisible:ghost.visible,ghost:{x:ghost.position.x,y:ghost.position.y,z:ghost.position.z,qx:ghost.quaternion.x,qy:ghost.quaternion.y,qz:ghost.quaternion.z,qw:ghost.quaternion.w},replayFrames:replayFrames.length,runSplits:[...runSplits],splitSummary:[...$("result-splits").children].map(item=>item.textContent),result:$("result-pb").textContent,velocity:{x:v.x,y:v.y,z:v.z},position:{x:p.x,y:p.y,z:p.z},rotation:{x:q.x,y:q.y,z:q.z,w:q.w},surfaceBlend:vehicleState.surfaceBlend,outsidePlayTime,underRoadTime,renderer:{...renderer.info.memory},smokeVisible:smoke.filter(s=>s.visible).length}};if(testMode)globalThis.__apexTest={step(input={}){testInput=input;physicsStep(1/120);render(1,1/120);return testSnapshot()},stepBatch(inputs){for(let i=0;i<inputs.length&&race.state!=="finished";i++){testInput=inputs[i];physicsStep(1/120);if(i%2===1)render(1,1/60)}render(1,1/120);return testSnapshot()},place(position,velocity={x:0,y:0,z:0}){place(position);chassis.setLinvel(velocity,true);return testSnapshot()},restart,recover,pause:()=>setPaused(true),resume:()=>setPaused(false),visibility:handleVisibility,snapshot:testSnapshot};
-if(renderTelemetryMode){const{createRenderTelemetry}=await import("./render-telemetry.js?v=0.5.0-alpha24-render4");renderTelemetry=createRenderTelemetry({THREE,camera,car,wheels:wheelMeshes,vehicle,chassis,roadSamples:ROAD_SAMPLES,jumpZone:JUMP_ZONE})}
+if(renderTelemetryMode){const{createRenderTelemetry}=await import("./render-telemetry.js?v=0.5.0-alpha25-car1");renderTelemetry=createRenderTelemetry({THREE,renderer,camera,car,wheels:wheelMeshes,vehicle,chassis,roadSamples:ROAD_SAMPLES,jumpZone:JUMP_ZONE})}
 updateMute();updateGhostToggle();restart({ready:!testMode||renderTelemetryMode});$("loading").style.opacity="0";$("loading").style.pointerEvents="none";$("loading").hidden=true;if(!testMode||renderTelemetryMode)requestAnimationFrame(frame);

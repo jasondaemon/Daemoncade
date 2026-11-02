@@ -1,5 +1,9 @@
 import assert from "node:assert/strict";
-import {FORMULA_VISUAL} from "./formula-car.js";
+import {readFile} from "node:fs/promises";
+import * as THREE from "../vendor/three/three.module.min.js";
+import {GLTFLoader} from "../vendor/three/addons/loaders/GLTFLoader.js";
+import {FORMULA_VISUAL,makeFormulaCar,makeFormulaGhost,makeFormulaWheelVisual} from "./formula-car.js";
+import {WHEEL_OFFSETS} from "./vehicle-model.js";
 
 assert.equal(FORMULA_VISUAL.frontAxle,1.55);
 assert.equal(FORMULA_VISUAL.rearAxle,-1.45);
@@ -9,4 +13,21 @@ assert.ok(FORMULA_VISUAL.rearWingX<FORMULA_VISUAL.rearAxle-.6);
 assert.ok(FORMULA_VISUAL.width>FORMULA_VISUAL.trackHalf*2+.35);
 assert.ok(FORMULA_VISUAL.height<1.5);
 assert.ok(FORMULA_VISUAL.length<5.6);
-console.log("Apex Run Formula visual invariants passed",FORMULA_VISUAL);
+const [bytes,indexHtml]=await Promise.all([readFile(new URL(FORMULA_VISUAL.asset,import.meta.url)),readFile(new URL("index.html",import.meta.url),"utf8")]);
+assert.equal(bytes.length,632028);
+assert.equal(bytes.toString("ascii",0,4),"glTF");
+assert.equal(bytes.readUInt32LE(8),bytes.length);
+const jsonLength=bytes.readUInt32LE(12),metadata=JSON.parse(bytes.toString("utf8",20,20+jsonLength).replace(/\0| +$/g,""));
+assert.equal(metadata.asset.extras.title,"Low Poly-F1");
+assert.match(metadata.asset.extras.author,/salasilma13/);
+assert.match(metadata.asset.extras.license,/CC-BY-4\.0/);
+assert.equal(metadata.asset.extras.source,"https://sketchfab.com/3d-models/low-poly-f1-0ac02bfa81f64549be15acaa78f36f29");
+assert.match(indexHtml,/connect-src 'self'/,"same-origin GLB fetch is not allowed by CSP");
+assert.doesNotMatch(indexHtml,/connect-src[^;]*(?:\*|https?:)/,"CSP unexpectedly allows an external asset destination");
+for(const name of["FR_Tire","FL_Tire","RR_Tire","RL_Tire"])assert.ok(metadata.nodes.some(node=>node.name===name),`asset is missing ${name}`);
+const arrayBuffer=bytes.buffer.slice(bytes.byteOffset,bytes.byteOffset+bytes.byteLength),asset=(await new GLTFLoader().parseAsync(arrayBuffer,"")).scene,car=makeFormulaCar(THREE,asset),carSize=new THREE.Box3().setFromObject(car).getSize(new THREE.Vector3());
+assert.ok(carSize.x>4.7&&carSize.x<5.2&&carSize.z>2.2&&carSize.z<2.7&&carSize.y<1.35,`fitted body bounds changed: ${carSize.toArray()}`);
+for(const name of["FR_Tire","FL_Tire","RR_Tire","RL_Tire"])assert.equal(car.getObjectByName(name),undefined,`static duplicate ${name} remained in body`);
+const wheelBounds=[];for(let index=0;index<4;index++){const wheel=makeFormulaWheelVisual(THREE,asset,index),box=new THREE.Box3().setFromObject(wheel.root),center=box.getCenter(new THREE.Vector3()),size=box.getSize(new THREE.Vector3());assert.ok(center.length()<1e-5,`wheel ${index} pivot is not centered: ${center.toArray()}`);assert.ok(size.x>.84&&size.x<.9&&size.y>.84&&size.y<.9&&size.z>.49&&size.z<.54,`wheel ${index} dimensions changed: ${size.toArray()}`);wheel.steer.rotation.y=.2;wheel.roll.rotation.z=.4;assert.equal(wheel.steer.rotation.y,.2);assert.equal(wheel.roll.rotation.z,.4);wheelBounds.push(size.toArray())}
+const ghost=makeFormulaGhost(THREE,car,WHEEL_OFFSETS,asset);assert.equal(ghost.visible,false);assert.equal(ghost.children.length,car.children.length+4);assert.equal(ghost.getObjectByName("formula-ghost")?.name,"formula-ghost");
+console.log("Apex Run Formula visual invariants passed",{visual:FORMULA_VISUAL,carSize:carSize.toArray(),wheelBounds});

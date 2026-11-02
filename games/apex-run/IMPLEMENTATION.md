@@ -188,10 +188,17 @@ unmeasured.
   shared-vertex smoothing exposed every curved sidewall triangle as a sawtooth even though the
   physical collider was already top-only. Elevated piers now terminate at the deck underside and
   begin at terrain height instead of visibly floating below the road.
-- The preferred replacement car is salasilma13's CC-BY 4.0 Low Poly-F1 model on Sketchfab. Its
-  normal official download requires a signed-in account; no viewer extraction, account creation,
-  or lower-quality substitute asset was used. The rejected alpha-23 procedural body therefore
-  remains an explicit unresolved visual blocker rather than being mislabeled as finished.
+- The player-supplied replacement is salasilma13's CC-BY 4.0 Low Poly-F1 model from Sketchfab.
+  Embedded GLB metadata, size, title, creator, license, source URL and four named tire nodes are
+  regression-checked. The static source tires are removed from the body and repivoted copies use
+  the established runtime steering, suspension and axle-roll hierarchy. Independent width, height
+  and length scaling maps the authored axle centers/radius to the unchanged 3.00 m wheelbase,
+  2.04 m track and 0.43 m tire radius without changing the collider or vehicle forces. Source
+  materials are replaced by an original Apex cyan/gold/white/carbon livery; the ghost clones the
+  same body and wheel geometry. Attribution and modification notes live beside the GLB.
+- Asset fetch is restricted to the game's own origin. After explicit user approval the CSP changed
+  only from `connect-src 'none'` to `connect-src 'self'`; wildcard and external destinations remain
+  blocked, as do object embedding and external scripts.
 - A non-production matched-input telemetry harness compares 22/44/88/176-step colliders at 120 Hz.
   It projects chassis motion into the interpolated road-normal frame, counts contact-loss ticks
   instead of filtering them out, excludes only the intentional crest, and compares common 20-metre
