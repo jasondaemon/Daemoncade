@@ -8,6 +8,6 @@ assert.ok(layout.topRadius-layout.waterRadius>=8,"shoreline is too thin to cover
 assert.ok(layout.bottomRadius>layout.topRadius+20,"embankment does not visibly support the elevated reservoir");
 assert.equal(isReservoirFailure({x:layout.centerX,y:layout.waterY+.8,z:layout.centerZ},layout),false,"valid airborne jump was captured above the reservoir");
 assert.equal(isReservoirFailure({x:layout.centerX,y:layout.waterY,z:layout.centerZ},layout),true,"water contact did not enter the failure volume");
-assert.equal(isReservoirFailure({x:layout.centerX+layout.bottomRadius+1,y:0,z:layout.centerZ},layout),false,"reservoir failure volume leaked beyond the embankment");
+assert.equal(isReservoirFailure({x:layout.centerX+layout.waterRadius+1,y:0,z:layout.centerZ},layout),false,"water failure volume leaked beyond the visible surface");
 assert.ok(layout.wallHeight>=4,"retaining wall is too shallow to read from the airborne approach");
 console.log("Summit grounded reservoir layout passed",layout);

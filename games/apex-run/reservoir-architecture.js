@@ -5,7 +5,7 @@ export function reservoirLayout(start,end,terrainTop=.35){
 
 export function isReservoirFailure(position,layout){
   const radius=Math.hypot(position.x-layout.centerX,position.z-layout.centerZ);
-  return radius<=layout.bottomRadius&&position.y<=Math.max(layout.waterY,layout.bankTop+.15);
+  return radius<=layout.waterRadius&&position.y<=layout.waterY;
 }
 
 export function addReservoirArchitecture(THREE,scene,start,end,terrainTop=.35){
