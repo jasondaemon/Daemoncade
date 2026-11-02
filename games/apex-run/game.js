@@ -5,7 +5,7 @@ import {FixedStepper,MEDALS,clamp,commitResult,formatTime,frameGapInvalidates,is
 import {formatSplitDelta,replayCheckpointSplits,splitTone,summarizeSplits} from "./race-feedback.js?v=0.5.0-alpha25";
 import {RAIL_COLLISION_GROUPS,SUSPENSION_QUERY_GROUPS,VEHICLE,applyLowSpeedSteering,applySurfaceDrag,createVehicle,driveVehicle,hasSupportingContact,stabilizeChassis} from "./vehicle-model.js?v=0.5.0-alpha25";
 import {setWheelVisualPose} from "./wheel-visual.js?v=0.5.0-alpha25";
-import {makeFormulaCar,makeFormulaGhost,makeFormulaWheelVisual} from "./formula-car.js?v=0.5.0-alpha25";
+import {makeFormulaCar,makeFormulaGhost,makeFormulaWheelVisual} from "./formula-car.js?v=0.5.0-alpha26";
 import {TRACK_BOXES,CHECKPOINTS,JUMP_ZONE,RECOVERY_SPOTS,ROAD_SAMPLES,ROAD_STEPS_PER_SEGMENT,PLAY_AREA,RAIL_PROFILE,START_EXTENSION_SAMPLES,advanceOutsidePlayTime,advanceUnderRoadTime,buildLaneRibbon,buildRailColliderMesh,buildRoadColliderMesh,buildRoadMesh,roadPoseNear,routeGuides,routeStage,routeTarget} from "./track-model.js?v=0.5.0-alpha25";
 import {RaceController} from "./race-controller.js?v=0.5.0-alpha25";
 

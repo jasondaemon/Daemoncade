@@ -32,8 +32,13 @@ export function makeFormulaCar(THREE,assetScene){
 }
 
 function centeredWheel(THREE,assetScene,name,ghost=false){
-  assetScene.updateWorldMatrix(true,true);const source=assetScene.getObjectByName(name);if(!source)throw new Error(`Formula asset is missing ${name}`);
-  const model=source.clone(true);model.applyMatrix4(source.parent.matrixWorld);model.updateWorldMatrix(true,true);const center=new THREE.Box3().setFromObject(model).getCenter(new THREE.Vector3()),centerer=new THREE.Group();model.position.sub(center);centerer.add(model);style(centerer,THREE,ghost);centerer.rotation.y=Math.PI/2;centerer.scale.set(FORMULA_VISUAL.scale.width,FORMULA_VISUAL.scale.height,FORMULA_VISUAL.scale.height);return centerer;
+  const source=assetScene.getObjectByName(name);if(!source)throw new Error(`Formula asset is missing ${name}`);
+  // The source FBX wheel parent matrices contain opposite +/-4 degree static
+  // camber plus placement/scale. Keeping that matrix while rolling around the
+  // runtime local-Z axle makes the tire plane cone visibly. Preserve the
+  // authored tire/hub child geometry, but normalize away source placement and
+  // camber before establishing the exact runtime steering/roll hierarchy.
+  const model=new THREE.Group();for(const child of source.children)model.add(child.clone(true));model.updateWorldMatrix(true,true);const center=new THREE.Box3().setFromObject(model).getCenter(new THREE.Vector3()),centerer=new THREE.Group();model.position.sub(center);centerer.add(model);style(centerer,THREE,ghost);centerer.rotation.y=Math.PI/2;centerer.scale.set(FORMULA_VISUAL.scale.width,FORMULA_VISUAL.scale.height,FORMULA_VISUAL.scale.height);return centerer;
 }
 
 export function makeFormulaWheelVisual(THREE,assetScene,index,ghost=false){
