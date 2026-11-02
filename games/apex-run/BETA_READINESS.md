@@ -14,7 +14,7 @@ Start a local preview from the repository root:
 python3 -m http.server 4173 --bind 127.0.0.1
 ```
 
-Then open `http://127.0.0.1:4173/games/apex-run/?build=alpha43`. Add `&track=summit-circuit` to open the longer advanced course directly.
+Then open `http://127.0.0.1:4173/games/apex-run/?build=alpha44`. Add `&track=summit-circuit` to open the longer advanced course directly.
 
 Alpha 24 repairs the measured coarse road-normal transitions and visible triangular sidewall
 artifacts while retaining the authored crest jump. Alpha 25 replaces the rejected procedural car
@@ -31,13 +31,16 @@ Alpha 40 integrates the physical stunt loop into Summit Circuit on one welded, n
 3D ribbon. It uses the unchanged Rapier vehicle, world gravity and suspension: correctly aligned
 entries remain in contact through inversion, while an under-speed attempt falls naturally and
 recovers as a practice run. Summit PB/replay keys advance to v5/v6 because the timed layout changed.
-Alpha 43 reshapes Summit from a uniform forty-metre ribbon into 18–30 metre technical sections,
-adds a two-island paddock slalom, and replaces the continuous crest with a real reservoir air gap:
+Alpha 44 reshapes most of Summit from a uniform forty-metre ribbon into 10–16 metre technical
+sections (the split junction keeps the wider welded transition it physically requires), adds a
+two-island paddock slalom, and replaces the continuous crest with a real reservoir air gap:
 rendered deck, Rapier collider, lane stripe and both rails are all absent over the same span. A
-wide authored landing, visible water hazard and more prominent CC0 Racing Kit paddock buildings
-give the stunt a readable identity. The deterministic production controller completes the changed
-seven-sector route without recovery and records a genuine airborne-to-landed transition; this is
-physics regression evidence, not a human-play claim. Summit PB/replay keys advance to v7/v8.
+12-degree takeoff, broad descending landing, visible water hazard and close-view CC0 Racing Kit
+paddock buildings give the stunt a readable identity. A physical 20/26/32/38 m/s by -3/0/+3 m
+matrix lands all powered approaches; a 12 m/s coast falls into the reservoir and recovery correctly
+marks the attempt practice-only without awarding a checkpoint. The deterministic production
+controller completes the changed seven-sector route without recovery; this remains regression
+evidence, not a human-play claim. Summit PB/replay keys advance to v8/v9.
 
 ## Controls and rules
 

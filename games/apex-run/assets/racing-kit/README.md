@@ -12,6 +12,9 @@ into the game:
 
 - `grandStandCovered` — scaled and placed as Summit venue architecture.
 - `pitsOffice` — scaled and placed as the Summit timing/marshal building.
+- `pitsGarage` and its `tankcoBanner.png` material image — the close-view
+  paddock garage beside Summit's opening chicane.
+- `overheadRound` — the paddock timing gantry over the narrowed racing line.
 - `barrierRed` and `barrierWhite` — scaled as visual markers around the
   authored attack-line obstacle columns.
 

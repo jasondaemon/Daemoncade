@@ -1,11 +1,11 @@
-import {requestedTrackId} from "./track-catalog.js?v=0.5.0-alpha43";
-import {buildStuntLoop} from "./stunt-loop.js?v=0.5.0-alpha43";
+import {requestedTrackId} from "./track-catalog.js?v=0.5.0-alpha44-review";
+import {buildStuntLoop} from "./stunt-loop.js?v=0.5.0-alpha44-review";
 
 const ALPINE_ROUTE=Object.freeze([
   {x:-2,y:0,z:0,width:24,bank:0},{x:62,y:.5,z:0,width:24,bank:0},{x:96,y:2,z:-24,width:25,bank:-.08},{x:96,y:6,z:-72,width:25,bank:-.16},{x:78,y:9,z:-98,width:24,bank:-.1},{x:28,y:10,z:-108,width:23,bank:0},{x:-82,y:7,z:-103,width:24,bank:0},
   {x:-88,y:11,z:114,width:23,bank:.08},{x:-62,y:14,z:140,width:23,bank:.1},{x:126,y:11,z:140,width:24,bank:-.08},{x:150,y:7,z:114,width:25,bank:-.16},{x:150,y:2,z:8,width:23,bank:0},
 ]);
-const SUMMIT_WIDTHS=[30,28,24,22,26,24,20,22,24,22,26,24,22,26,20,22,24,18,22,26,28];
+const SUMMIT_WIDTHS=[16,14,12,10,14,12,10,11,12,11,14,12,22,26,20,22,24,18,12,14,16];
 const SUMMIT_ROUTE=Object.freeze([
   {x:-380,y:0,z:-280,bank:0},{x:-270,y:1,z:-330,bank:.08},{x:-120,y:5,z:-250,bank:.18},{x:40,y:9,z:-340,bank:-.18},{x:220,y:18,z:-300,bank:-.12},{x:360,y:28,z:-180,bank:-.2},{x:410,y:38,z:20,bank:.1},{x:280,y:30,z:240,bank:.18},{x:100,y:18,z:330,bank:.14},{x:-110,y:18,z:340,bank:-.12},{x:-300,y:30,z:260,bank:-.18},{x:-410,y:25,z:100,bank:-.12},{x:-400,y:14,z:-60,bank:.1},{x:-300,y:8,z:-160,bank:.18},{x:-150,y:12,z:-180,bank:.12},{x:0,y:20,z:-120,bank:-.1},{x:140,y:28,z:-20,bank:-.18},{x:220,y:22,z:90,bank:-.1},{x:340,y:14,z:110,bank:.04},{x:450,y:8,z:20,bank:.1},{x:500,y:2,z:-120,bank:0},
 ].map((point,index)=>Object.freeze({...point,width:SUMMIT_WIDTHS[index]})));
@@ -60,7 +60,7 @@ function sampleControl(index,t){
   // The crest uses a C2-continuous bump. Zero first and second derivatives at
   // both joins keep the visual ribbon and suspension collider from acquiring
   // the sharp pitch kink produced by the earlier Gaussian profile.
-  const a=ROUTE_PATH[index],b=ROUTE_PATH[index+1],humpScale=ACTIVE_TRACK_DEFINITION.humps[index]||0,jumpProfile=t<=.28?smooth5(t/.28):t<=.38?1:t<=.62?1-.16*smooth5((t-.38)/.24):t<.8?.84*(1-smooth5((t-.62)/.18)):0,hump=humpScale*(summit&&index===10?jumpProfile:Math.sin(Math.PI*t)**4);
+  const a=ROUTE_PATH[index],b=ROUTE_PATH[index+1],humpScale=ACTIVE_TRACK_DEFINITION.humps[index]||0,jumpProfile=t<=.08?0:t<=.27?260*(t-.08)**2:t<=.38?260*.19**2:t<=.62?260*.19**2*(1-.18*smooth5((t-.38)/.24)):t<.8?260*.19**2*.82*(1-smooth5((t-.62)/.18)):0,hump=summit&&index===10?jumpProfile:humpScale*Math.sin(Math.PI*t)**4;
   return{x:hermite(a.x,b.x,tangentAt(index,"x"),tangentAt(index+1,"x"),t),y:hermite(a.y,b.y,tangentAt(index,"y"),tangentAt(index+1,"y"),t)+hump+.55,z:hermite(a.z,b.z,tangentAt(index,"z"),tangentAt(index+1,"z"),t),width:a.width+(b.width-a.width)*t,bank:a.bank+(b.bank-a.bank)*t}
 }
 function framedConnector(start){
@@ -116,10 +116,10 @@ export const BRANCH_JUNCTIONS=Object.freeze(shortcutSurface.length?[
 export const ROAD_PATHS=Object.freeze([ROAD_SAMPLES,...BRANCH_ROADS.map(branch=>branch.samples)]);
 const ROAD_SURFACES=Object.freeze([ROAD_SAMPLES,...BRANCH_ROADS.map(branch=>branch.surfaceSamples)]);
 export const SPLIT_LAYOUT=Object.freeze(shortcutSamples.length?{entrySample:routeSampleIndex(13),mergeSample:routeSampleIndex(16),gapSide:"left",gapRadius:45,branchId:"inside-line"}:null);
-const obstacleAt=(samples,sampleIndex,offset,id,branchId=null)=>{const sample=samples[sampleIndex],frame=sampleFrame(samples,sampleIndex);return Object.freeze({id,branchId,sampleIndex,x:sample.x+frame.lateral.x*offset,y:sample.y+frame.up.y*3.2,z:sample.z+frame.lateral.z*offset,radius:1.15,height:6.4,rotation:basisQuaternion(frame.forward,frame.up,frame.lateral)})};
+const obstacleAt=(samples,sampleIndex,offset,id,branchId=null)=>{const sample=samples[sampleIndex],frame=sampleFrame(samples,sampleIndex),height=5.2;return Object.freeze({id,branchId,sampleIndex,x:sample.x+frame.lateral.x*offset,y:sample.y+frame.up.y*height/2,z:sample.z+frame.lateral.z*offset,radius:.9,height,rotation:basisQuaternion(frame.forward,frame.up,frame.lateral)})};
 export const INTENTIONAL_OBSTACLES=Object.freeze(shortcutSamples.length?[
-  obstacleAt(ROAD_SAMPLES,routeSampleIndex(2,18),-5.3,"paddock-island-1"),
-  obstacleAt(ROAD_SAMPLES,routeSampleIndex(2,54),5.3,"paddock-island-2"),
+  obstacleAt(ROAD_SAMPLES,routeSampleIndex(2,18),-3.1,"paddock-island-1"),
+  obstacleAt(ROAD_SAMPLES,routeSampleIndex(2,54),3.1,"paddock-island-2"),
   ...[78,98,118].map((sampleIndex,index)=>obstacleAt(shortcutSamples,sampleIndex,(index%2?1:-1)*3.8,`inside-column-${index+1}`,"inside-line")),
 ]:[]);
 // Suspension rays and chassis contacts use only the authored driving surface.

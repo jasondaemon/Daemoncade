@@ -8,7 +8,7 @@ const graphics=await import("./graphics-quality.js");
 assert.equal(model.ACTIVE_TRACK_ID,"summit-circuit");
 assert.equal(model.CHECKPOINTS.length,7);
 assert.equal(model.RECOVERY_SPOTS.length,7);
-assert.equal(catalog.trackStorageKeys("summit-circuit").pb,"apex-run:track:summit-circuit:pb:v7");
+assert.equal(catalog.trackStorageKeys("summit-circuit").pb,"apex-run:track:summit-circuit:pb:v8");
 let length=0;
 for(let index=1;index<model.ROAD_SAMPLES.length;index++){
   const a=model.ROAD_SAMPLES[index-1],b=model.ROAD_SAMPLES[index],gap=Math.hypot(b.x-a.x,b.y-a.y,b.z-a.z);
