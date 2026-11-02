@@ -192,15 +192,19 @@ unmeasured.
   normal official download requires a signed-in account; no viewer extraction, account creation,
   or lower-quality substitute asset was used. The rejected alpha-23 procedural body therefore
   remains an explicit unresolved visual blocker rather than being mislabeled as finished.
-- A non-production matched-input telemetry harness compares the old 22-step collider with the
-  production 88-step collider at 120 Hz, using the same keyboard-like tape and only four-wheel,
-  on-road samples outside the intentional crest. Across 746/748 matched samples, chassis pitch
-  RMS falls from 0.115 to 0.054 rad/s and suspension-length velocity RMS from 0.448 to 0.366 m/s.
-  Chassis vertical-acceleration RMS does not improve (4.66 to 5.42 m/s²), and wheel-normal change
-  rate rises because the denser mesh presents more frequent smaller facets; these mixed values are
-  retained in the test output rather than being presented as universal ride smoothing. The visible
-  improvement is specifically reduced pitch and suspension chatter, consistent with independent
-  chase-view review, not a claim that all vertical dynamics disappeared.
+- A non-production matched-input telemetry harness compares 22/44/88/176-step colliders at 120 Hz.
+  It projects chassis and camera motion into the interpolated road-normal frame, counts contact-loss
+  ticks instead of filtering them out, excludes only the intentional crest, and compares common
+  20-metre arclength / 5 m/s bins. In nine common bins, heave RMS falls from 0.070 to 0.052 m/s and
+  mean pitch motion from 0.074 to 0.071; whole-probe chassis pitch RMS falls from 0.115 to 0.054
+  rad/s and suspension-length velocity RMS from 0.448 to 0.366 m/s.
+- Isolated controls make the causal boundary explicit. A planar ribbon stays effectively motionless
+  at every resolution. On the same smooth vertical curve, heave velocity falls 0.122 -> 0.033 ->
+  0.010 -> 0.004 m/s for 22/44/88/176 samples. On the authored course, raw world-Y acceleration and
+  facet-normal change rates remain mixed because they include banking/steering and more frequent
+  small facet transitions; `FIX_INTERNAL_EDGES` produces byte-for-byte identical wheel-ray results.
+  The repair is therefore a demonstrated reduction in road-relative heave, pitch and suspension
+  chatter, not a claim that every acceleration statistic decreases.
 - Physical rail collision stays at the full shared resolution, but decorative round rail tubes use
   490 longitudinal segments instead of 1,958. That reduces each tube from roughly 27,400 to 6,860
   triangles while preserving a denser visual curve than the pre-repair road.
