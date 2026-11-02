@@ -14,7 +14,7 @@ Start a local preview from the repository root:
 python3 -m http.server 4173 --bind 127.0.0.1
 ```
 
-Then open `http://127.0.0.1:4173/games/apex-run/?build=alpha40`. Add `&track=summit-circuit` to open the longer advanced course directly.
+Then open `http://127.0.0.1:4173/games/apex-run/?build=alpha42`. Add `&track=summit-circuit` to open the longer advanced course directly.
 
 Alpha 24 repairs the measured coarse road-normal transitions and visible triangular sidewall
 artifacts while retaining the authored crest jump. Alpha 25 replaces the rejected procedural car

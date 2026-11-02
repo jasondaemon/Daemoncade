@@ -8,7 +8,7 @@ let ticks=0;const stepper=new FixedStepper(()=>ticks++,1/120);for(let i=0;i<60;i
 let ticks30=0;const at30=new FixedStepper(()=>ticks30++,1/120);for(let i=0;i<30;i++)at30.advance(1/30);assert.equal(ticks30,ticks);
 for(const fps of[30,60,144]){let count=0;const fixed=new FixedStepper(()=>count++,1/120);for(let i=0;i<fps*10;i++)fixed.advance(1/fps);assert.ok(Math.abs(count-1200)<=1,`${fps} FPS produced ${count} ticks`)}
 assert.equal(frameGapInvalidates(5),true);assert.equal(frameGapInvalidates(30),true);assert.equal(frameGapInvalidates(.2),false);
-const upsideDown={x:1,y:0,z:0,w:0},upright={x:0,y:0,z:0,w:1};assert.ok(advanceInvertedStallTime(.54,upsideDown,.1,.02)>=.55);assert.equal(advanceInvertedStallTime(.54,upsideDown,3,.02),0);assert.equal(advanceInvertedStallTime(.54,upright,.1,.02),0);
+const upsideDown={x:1,y:0,z:0,w:0},upright={x:0,y:0,z:0,w:1};assert.ok(advanceInvertedStallTime(.54,upsideDown,.1,.02)>=.55);assert.ok(advanceInvertedStallTime(.54,upsideDown,5.9,.02)>=.55);assert.equal(advanceInvertedStallTime(.54,upsideDown,6.1,.02),0);assert.equal(advanceInvertedStallTime(.54,upright,.1,.02),0);
 const memory=new Map(),store={getItem:key=>memory.get(key)??null,setItem:(key,value)=>memory.set(key,value)};
 assert.equal(BEST_KEY,"apex-run:pb:v9");assert.equal(REPLAY_KEY,"apex-run:replay:v10");
 const legacyStore={getItem:key=>key==="apex-run:pb:v8"?"42":key==="apex-run:replay:v9"?"{}":null};assert.equal(readBest(legacyStore),null);assert.equal(readReplay(legacyStore),null);

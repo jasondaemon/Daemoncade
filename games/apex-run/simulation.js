@@ -1,6 +1,6 @@
 export const FIXED_DT=1/120;
-export {checkpointAdvance,isOnRoad} from "./track-model.js?v=0.5.0-alpha40";
-import {activeTrack,requestedTrackId,trackStorageKeys} from "./track-catalog.js?v=0.5.0-alpha40";
+export {checkpointAdvance,isOnRoad} from "./track-model.js?v=0.5.0-alpha42";
+import {activeTrack,requestedTrackId,trackStorageKeys} from "./track-catalog.js?v=0.5.0-alpha42";
 export const REPLAY_VERSION=activeTrack().replayVersion;
 const REPLAY_BOUNDS=activeTrack().replayBounds;
 const REPLAY_MAX_SECONDS=activeTrack().replayMaxSeconds;
@@ -12,7 +12,10 @@ export const REPLAY_HZ=activeTrack().replayHz;
 export const MEDALS=activeTrack().medals;
 export function clamp(v,min,max){return Math.max(min,Math.min(max,v))}
 export function frameGapInvalidates(elapsed){return Number.isFinite(elapsed)&&elapsed>.25}
-export function advanceInvertedStallTime(elapsed,rotation,speed,dt){const upY=1-2*(rotation.x*rotation.x+rotation.z*rotation.z);return upY<-.35&&speed<.5?elapsed+dt:0}
+// A failed loop can keep sliding upside-down on the exit ribbon at jogging
+// speed. Recover that clearly stranded state without touching a moving car at
+// the crown or any normally upright jump/landing.
+export function advanceInvertedStallTime(elapsed,rotation,speed,dt){const upY=1-2*(rotation.x*rotation.x+rotation.z*rotation.z);return upY<-.35&&speed<6?elapsed+dt:0}
 export function formatTime(seconds){
   const totalMs=Math.round(Math.max(0,Number.isFinite(seconds)?seconds:0)*1000),minutes=Math.floor(totalMs/60000),rest=totalMs-minutes*60000;
   return `${String(minutes).padStart(2,"0")}:${String(Math.floor(rest/1000)).padStart(2,"0")}.${String(rest%1000).padStart(3,"0")}`;

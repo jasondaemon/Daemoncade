@@ -5,6 +5,7 @@ export const QUALITY_PROFILES=Object.freeze({
 });
 
 export function resolveQuality(value){return QUALITY_PROFILES[value]||QUALITY_PROFILES.high}
+export function verticalCameraMode(active,grounded,roadUpY){if(!grounded)return active;if(!active&&roadUpY<.7)return true;if(active&&roadUpY>.92)return false;return active}
 
 const normalize=vector=>{const length=Math.hypot(vector.x,vector.y,vector.z)||1;return{x:vector.x/length,y:vector.y/length,z:vector.z/length}}
 const cross=(a,b)=>({x:a.y*b.z-a.z*b.y,y:a.z*b.x-a.x*b.z,z:a.x*b.y-a.y*b.x});
