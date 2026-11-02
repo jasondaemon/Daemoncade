@@ -270,3 +270,20 @@ pipeline. Windows, lower-end GPU, touch and gamepad coverage remain future work.
 This bounded patch does not alter course geometry, handling or art composition. The next visual
 milestone must replace the generic ring/field/repeated-support language with a coherent authored
 venue rather than accumulating more procedural primitives.
+
+## Production vertical slice 5: Alpine motorsport pavilion
+
+- Three distinct stepped grandstands with broad seat bands, recessed concourses, cantilever roofs
+  and landscape gaps replace the continuous black/cyan stadium ring.
+- An asymmetric sage terrain basin and slate rock/berm masses give the circuit a grounded venue;
+  charcoal asphalt, warm concrete and restrained cyan timing accents establish clear hierarchy.
+- Elevated road support changes from a forest of thin posts to fewer tapered octagonal piers with
+  substantial caps. The start/sweeper view gains a recognizable pavilion landmark and open exit.
+- The car adds a gold side livery and roll hoop visible from chase view. Finish checkers and the
+  matching curved ghost remain, while the crest sign is reduced to a compact roadside marker.
+- This pass removes scene repetition rather than adding a downloaded asset pack. It uses original
+  procedural geometry only; no network runtime assets or additional libraries are introduced.
+
+The shared spline, collision, guidance, handling and timing models are unchanged. Actual visual
+inspection covers start and opening sweeper; climb, crest, return and finish still need independent
+hero-view review. Audible mix and non-M1 hardware remain unverified.

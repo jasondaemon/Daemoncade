@@ -2,7 +2,7 @@
 
 ## Status
 
-Version `0.5.0-alpha.20` is a desktop-keyboard production-slice candidate, not a release candidate. The previously verified flat-course
+Version `0.5.0-alpha.21` is a desktop-keyboard production-slice candidate, not a release candidate. The previously verified flat-course
 beta remains available in Git history at `16a26e5`; its player-lap result must not be treated as
 validation of this materially different spline layout. The game is an original single-player
 stadium time attack inspired by the broad genre, not a Trackmania clone, formula-equivalent
@@ -14,7 +14,7 @@ Start a local preview from the repository root:
 python3 -m http.server 4173 --bind 127.0.0.1
 ```
 
-Then open `http://127.0.0.1:4173/games/apex-run/?build=alpha20`.
+Then open `http://127.0.0.1:4173/games/apex-run/?build=alpha21`.
 
 ## Controls and rules
 
@@ -141,6 +141,19 @@ Then open `http://127.0.0.1:4173/games/apex-run/?build=alpha20`.
 - Alpha 20's exact lifecycle remains 43.042 seconds / 1,292 frames. The accelerated 600-second
   soak took 88.5 wall-clock seconds with 300 geometries / 13 textures; M1 Max/ANGLE Metal frame
   intervals remained 16.7 ms median and 16.8 ms p95/p99. Audio mix remains unverified by ear.
+- Alpha 21 replaces the generic continuous stadium ring with three separated roofed stepped
+  grandstands, recessed concourses and landscape gaps. A continuous sage terrain basin, slate
+  rock/berm masses, warm concrete, charcoal asphalt and fewer substantial tapered bridge piers
+  establish an Alpine pavilion material language while cyan is limited to timing/edge accents.
+- Actual 1280x720 start and opening-sweeper chase views confirm an open landscape exit, a distinct
+  roofed pavilion landmark, heavier support scale, darker road hierarchy and visible car livery /
+  roll hoop. The oversized crest billboard is replaced by a compact integrated marker; takeoff and
+  landing road markings remain surface-aligned and physically non-colliding.
+- Scene simplification reduces the warmed-up renderer count from 300 to 266 geometries while
+  retaining 13 textures. Exact lifecycle time remains 43.042 seconds; the 600-second accelerated
+  soak took 81.6 wall-clock seconds, and M1 Max/ANGLE Metal intervals remain 16.7 ms median/p95 and
+  16.8 ms p99. The first two headless launches exceeded the old 30-second initialization wait;
+  after the exact entry was verified in IAB, a 60-second harness allowance completed cleanly.
 
 The following evidence describes the prior `0.4.0-beta.1` geometry and is retained as history,
 not as a readiness claim for visual alpha 5:
