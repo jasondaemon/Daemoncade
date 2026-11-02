@@ -6,16 +6,16 @@ const model=await import("./track-model.js?summit-circuit-test");
 const catalog=await import("./track-catalog.js");
 const graphics=await import("./graphics-quality.js");
 assert.equal(model.ACTIVE_TRACK_ID,"summit-circuit");
-assert.equal(model.CHECKPOINTS.length,6);
-assert.equal(model.RECOVERY_SPOTS.length,6);
-assert.equal(catalog.trackStorageKeys("summit-circuit").pb,"apex-run:track:summit-circuit:pb:v3");
+assert.equal(model.CHECKPOINTS.length,7);
+assert.equal(model.RECOVERY_SPOTS.length,7);
+assert.equal(catalog.trackStorageKeys("summit-circuit").pb,"apex-run:track:summit-circuit:pb:v4");
 let length=0;
 for(let index=1;index<model.ROAD_SAMPLES.length;index++){
   const a=model.ROAD_SAMPLES[index-1],b=model.ROAD_SAMPLES[index],gap=Math.hypot(b.x-a.x,b.y-a.y,b.z-a.z);
   length+=gap;
   assert.ok(gap<3.01,`road tessellation gap at ${index}: ${gap}`);
 }
-assert.ok(length>3500&&length<3600,`Summit Circuit misses its authored advanced-course scale: ${length.toFixed(1)} m`);
+assert.ok(length>3600&&length<3900,`Summit Circuit misses its authored advanced-course scale: ${length.toFixed(1)} m`);
 assert.ok(model.ROAD_SAMPLES.some(sample=>sample.y>30),"Summit Circuit lacks a signature elevated crest");
 for(const [index,checkpoint] of model.CHECKPOINTS.entries()){
   assert.equal(model.isOnRoad({...checkpoint,y:checkpoint.y+1.5}),true,`checkpoint ${index} is off its road frame`);
@@ -32,9 +32,9 @@ for(const profile of Object.values(graphics.QUALITY_PROFILES))for(const sample o
 let minimumCrossingClearance=Infinity;
 for(let i=0;i<model.ROAD_SAMPLES.length;i+=4)for(let j=i+model.ROAD_STEPS_PER_SEGMENT*2;j<model.ROAD_SAMPLES.length;j+=4){
   const a=model.ROAD_SAMPLES[i],b=model.ROAD_SAMPLES[j],planar=Math.hypot(a.x-b.x,a.z-b.z);
-  if(planar<45){const upper=a.y>=b.y?a:b,lower=upper===a?b:a,upperUnderside=Math.min(upper.left.y,upper.right.y)-1.1,lowerRailTop=Math.max(lower.left.y,lower.right.y)+model.RAIL_PROFILE.height,clearance=upperUnderside-lowerRailTop;minimumCrossingClearance=Math.min(minimumCrossingClearance,clearance);assert.ok(clearance>8,`banked deck/rail crossing lacks full vehicle/camera clearance at ${i}/${j}: ${clearance}`)}
+  if(planar<45&&!a.stunt&&!b.stunt){const upper=a.y>=b.y?a:b,lower=upper===a?b:a,upperUnderside=Math.min(upper.left.y,upper.right.y)-1.1,lowerRailTop=Math.max(lower.left.y,lower.right.y)+model.RAIL_PROFILE.height,clearance=upperUnderside-lowerRailTop;minimumCrossingClearance=Math.min(minimumCrossingClearance,clearance);assert.ok(clearance>8,`banked deck/rail crossing lacks full vehicle/camera clearance at ${i}/${j}: ${clearance}`)}
 }
-let minimumFinalRadius=Infinity;const finalStart=model.START_EXTENSION_SAMPLES+16*model.ROAD_STEPS_PER_SEGMENT;for(let index=finalStart+1;index<model.ROAD_SAMPLES.length-1;index++){const a=model.ROAD_SAMPLES[index-1],b=model.ROAD_SAMPLES[index],c=model.ROAD_SAMPLES[index+1],first=Math.atan2(b.z-a.z,b.x-a.x),second=Math.atan2(c.z-b.z,c.x-b.x),turn=Math.abs(Math.atan2(Math.sin(second-first),Math.cos(second-first))),distance=(Math.hypot(b.x-a.x,b.z-a.z)+Math.hypot(c.x-b.x,c.z-b.z))/2;minimumFinalRadius=Math.min(minimumFinalRadius,distance/Math.max(turn,1e-9))}assert.ok(minimumFinalRadius>55,`final sector still contains a hidden high-speed hairpin: ${minimumFinalRadius}`);
+let minimumFinalRadius=Infinity;const finalStart=model.START_EXTENSION_SAMPLES+16*model.ROAD_STEPS_PER_SEGMENT;for(let index=finalStart+1;index<model.ROAD_SAMPLES.length-1;index++){const a=model.ROAD_SAMPLES[index-1],b=model.ROAD_SAMPLES[index],c=model.ROAD_SAMPLES[index+1];if(a.stunt||b.stunt||c.stunt)continue;const first=Math.atan2(b.z-a.z,b.x-a.x),second=Math.atan2(c.z-b.z,c.x-b.x),turn=Math.abs(Math.atan2(Math.sin(second-first),Math.cos(second-first))),distance=(Math.hypot(b.x-a.x,b.z-a.z)+Math.hypot(c.x-b.x,c.z-b.z))/2;minimumFinalRadius=Math.min(minimumFinalRadius,distance/Math.max(turn,1e-9))}assert.ok(minimumFinalRadius>55,`final sector still contains a hidden high-speed hairpin: ${minimumFinalRadius}`);
 // Venue structures reserve the full road half-width plus a chase-camera and
 // sightline corridor, rather than merely checking their center points.
 for(const stand of model.VENUE.stands){

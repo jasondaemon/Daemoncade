@@ -8,8 +8,8 @@ const dot=(a,b)=>a.x*b.x+a.y*b.y+a.z*b.z;
 // One welded teardrop ribbon. Height is the total rise, not a radius. The
 // return line moves monotonically across the road normal so entry and exit do
 // not become overlapping collision sheets at the bottom junction.
-export function buildStuntLoop({height=28,width=14,approach=70,exit=80,step=.5,separation=10,origin={x:0,y:0,z:0},forward={x:1,y:0,z:0},up={x:0,y:1,z:0}}={}){
-  const worldForward=normalized(forward),worldUp=normalized(up),worldRight=normalized(cross(worldForward,worldUp)),bottomRadius=height*.72,crownRadius=height*.34,local=[];
+export function buildStuntLoop({height=28,width=14,entryWidth=width,exitWidth=entryWidth,approach=70,exit=80,step=.5,separation=10,origin={x:0,y:0,z:0},forward={x:1,y:0,z:0},up={x:0,y:1,z:0}}={}){
+  const worldForward=normalized(forward),worldUp=normalized(up),worldLateral=normalized(cross(worldForward,worldUp)),bottomRadius=height*.72,crownRadius=height*.34,local=[];
   for(let x=0;x<approach;x+=step)local.push({x,y:0,z:0,phase:"approach"});
   const loopStart=local.length,angles=[];let theta=0;
   while(theta<Math.PI*2-1e-6){const crownFactor=(1-Math.cos(theta))/2,radius=bottomRadius+(crownRadius-bottomRadius)*smooth(crownFactor);angles.push({theta,radius});theta+=step/radius}
@@ -25,9 +25,10 @@ export function buildStuntLoop({height=28,width=14,approach=70,exit=80,step=.5,s
     const point=local[index],before=local[Math.max(0,index-1)],after=local[Math.min(local.length-1,index+1)],tangent=normalized({x:after.x-before.x,y:after.y-before.y,z:after.z-before.z});if(index)distance+=Math.hypot(point.x-local[index-1].x,point.y-local[index-1].y,point.z-local[index-1].z);point.distance=distance;point.tangent=tangent;
   }
   const samples=local.map((point,index)=>{
-    const before=local[Math.max(0,index-1)].tangent,after=local[Math.min(local.length-1,index+1)].tangent,curvature={x:after.x-before.x,y:after.y-before.y,z:after.z-before.z},curvatureLength=Math.hypot(curvature.x,curvature.y,curvature.z),planar=Math.hypot(point.tangent.x,point.tangent.y),localUp=point.phase==="loop"&&curvatureLength>1e-6?normalized(curvature):{x:-point.tangent.y/planar,y:point.tangent.x/planar,z:0},localRight=normalized(cross(point.tangent,localUp)),map=vector=>({x:worldForward.x*vector.x+worldUp.x*vector.y+worldRight.x*vector.z,y:worldForward.y*vector.x+worldUp.y*vector.y+worldRight.y*vector.z,z:worldForward.z*vector.x+worldUp.z*vector.y+worldRight.z*vector.z}),center=map(point),tangent=normalized(map(point.tangent)),roadUp=normalized(map(localUp)),right=normalized(map(localRight)),half=width/2;
+    const before=local[Math.max(0,index-1)].tangent,after=local[Math.min(local.length-1,index+1)].tangent,curvature={x:after.x-before.x,y:after.y-before.y,z:after.z-before.z},curvatureLength=Math.hypot(curvature.x,curvature.y,curvature.z),planar=Math.hypot(point.tangent.x,point.tangent.y),localUp=point.phase==="loop"&&curvatureLength>1e-6?normalized(curvature):{x:-point.tangent.y/planar,y:point.tangent.x/planar,z:0},localLateral=normalized(cross(point.tangent,localUp)),map=vector=>({x:worldForward.x*vector.x+worldUp.x*vector.y+worldLateral.x*vector.z,y:worldForward.y*vector.x+worldUp.y*vector.y+worldLateral.y*vector.z,z:worldForward.z*vector.x+worldUp.z*vector.y+worldLateral.z*vector.z}),center=map(point),tangent=normalized(map(point.tangent)),roadUp=normalized(map(localUp)),lateral=normalized(map(localLateral)),half=width/2;
     center.x+=origin.x;center.y+=origin.y;center.z+=origin.z;
-    return Object.freeze({...center,phase:point.phase,angle:point.angle,distance:point.distance,width,bank:0,tangent,up:roadUp,right,left:{x:center.x-right.x*half,y:center.y-right.y*half,z:center.z-right.z*half},rightEdge:{x:center.x+right.x*half,y:center.y+right.y*half,z:center.z+right.z*half}});
+    const approachMix=point.distance<approach?smooth5(point.distance/approach):1,exitDistance=Math.max(0,point.distance-local[loopEnd].distance),exitMix=exitDistance? smooth5(Math.min(1,exitDistance/exit)):0,sampleWidth=point.phase==="approach"?entryWidth+(width-entryWidth)*approachMix:point.phase==="exit"?width+(exitWidth-width)*exitMix:width,sampleHalf=sampleWidth/2;
+    return Object.freeze({...center,phase:point.phase,angle:point.angle,distance:point.distance,width:sampleWidth,bank:0,tangent,up:roadUp,lateral,left:{x:center.x+lateral.x*sampleHalf,y:center.y+lateral.y*sampleHalf,z:center.z+lateral.z*sampleHalf},rightEdge:{x:center.x-lateral.x*sampleHalf,y:center.y-lateral.y*sampleHalf,z:center.z-lateral.z*sampleHalf}});
   });
   // Match the road model's left/right cross-section names.
   const compatible=samples.map(sample=>Object.freeze({...sample,right:sample.rightEdge}));
