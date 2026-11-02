@@ -1,5 +1,5 @@
 import assert from "node:assert/strict";
-import {CHECKPOINTS,RECOVERY_SPOTS,ROAD_SAMPLES,ROUTE_PATH,TRACK_BOXES,buildLaneRibbon,buildRailColliderMesh,buildRoadMesh,checkpointAdvance,isOnRoad,nearestRoadSample,routeGuides} from "./track-model.js";
+import {CHECKPOINTS,JUMP_ZONE,RECOVERY_SPOTS,ROAD_SAMPLES,ROUTE_PATH,START_EXTENSION_SAMPLES,TRACK_BOXES,buildLaneRibbon,buildRailColliderMesh,buildRoadMesh,checkpointAdvance,isOnRoad,nearestRoadSample,routeGuides} from "./track-model.js";
 const road=buildRoadMesh(22),{samples,positions,indices}=road;
 assert.equal(TRACK_BOXES.filter(box=>box.surface!=="grass").length,0,"road collision must not fall back to hidden boxes");
 assert.ok(samples.length>200&&indices.length>2000,"road ribbon resolution is too low");
@@ -18,4 +18,5 @@ for(const guide of routeGuides(27)){const sample=nearestRoadSample(guide);assert
 const elevated=ROAD_SAMPLES.reduce((best,sample)=>sample.y>best.y?sample:best,ROAD_SAMPLES[0]);assert.equal(isOnRoad({x:elevated.x,y:elevated.y+1.5,z:elevated.z}),true);assert.equal(isOnRoad({x:elevated.x,y:0,z:elevated.z}),false,"ground below elevated road must not inherit asphalt traction");
 const elevatedGate=CHECKPOINTS.findIndex(gate=>gate.y>10);assert.equal(checkpointAdvance(elevatedGate,{x:CHECKPOINTS[elevatedGate].x,y:0,z:CHECKPOINTS[elevatedGate].z}),elevatedGate,"ground below an elevated gate must not count");assert.equal(checkpointAdvance(elevatedGate,{x:CHECKPOINTS[elevatedGate].x,y:CHECKPOINTS[elevatedGate].y+1.5,z:CHECKPOINTS[elevatedGate].z}),elevatedGate+1);
 assert.equal(ROUTE_PATH.length,12);
+assert.equal(ROAD_SAMPLES[START_EXTENSION_SAMPLES].x,ROUTE_PATH[0].x);assert.ok(ROAD_SAMPLES[0].x<ROUTE_PATH[0].x-25,"start apron does not extend behind the car");assert.ok(JUMP_ZONE.approach<JUMP_ZONE.takeoff&&JUMP_ZONE.takeoff<JUMP_ZONE.landing);
 console.log("Apex Run spline geometry passed",JSON.stringify({samples:samples.length,triangles:indices.length/3,elevation:[+Math.min(...elevations).toFixed(1),+Math.max(...elevations).toFixed(1)],maxBankRise:+Math.max(...banks).toFixed(1),maxTangentAngle:+maxTangentAngle.toFixed(2)}));

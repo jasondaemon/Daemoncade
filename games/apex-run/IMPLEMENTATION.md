@@ -167,7 +167,7 @@ evidence automatically applies to different geometry.
   assistance requires wheel support or a measured upward road/terrain manifold, so it cannot fire
   at an unsupported jump apex. Reverse uses actual chassis speed for gear selection and a capped
   10 m/s gear with enough low-speed torque to retreat from the final rail.
-Current visual-alpha evidence includes a 42.29-second no-recovery source fixture and screen-driven
+Current visual-alpha evidence includes a 43.95-second no-recovery source fixture and screen-driven
 no-recovery production-page laps. Alpha 16 adds a `2:22.725` PB-eligible run after a separate
 recovery/practice finish; both disclose observation pauses and are not uninterrupted performance
 claims. Incidence-aware probes show that genuinely shallow rail contact preserves tangential speed,
@@ -214,3 +214,23 @@ unmeasured.
 This is a production-direction milestone, not release certification. The authored start/finish
 presentation, signature jump readability, impact/tire/landing audio, quality fallback, WebGL/WASM
 failure state, broader input support and non-M1 performance coverage remain subsequent work.
+
+## Production vertical slice 2: authored start and signature crest
+
+- The authoritative road sample list now includes a straight 30-metre approach behind the timed
+  start. Rendering, collision, center stripe, curbs and rails consume the same expanded list, while
+  race timing, ordered route stages and PB semantics retain the original first racing sample.
+- An always-visible start gantry and grid apron replace the abrupt grass-backed road edge seen in
+  the prior chase view. This is a topology fix rather than disconnected decorative pavement.
+- The crest is authored as a readable race beat with road-frame-aligned takeoff stripes, a commit
+  board and landing markers. These visual cues use the same sampled surface pose as the physical
+  road rather than an independently placed flat overlay.
+- Physical jump coverage now spans three ordinary approach speeds and three lateral offsets. The
+  matrix records the real threshold: 30 and 34 m/s launch and land; 26 m/s remains grounded but
+  stable and on-road. The existing centered 34 m/s probe remains the dedicated airborne proof.
+- A bounded landing cue reuses the existing mute-safe audio graph and fires only after a measured
+  airborne phase followed by grounded contact with meaningful downward speed.
+
+This milestone improves authored presentation and jump readability without changing the proven
+vehicle tuning or timed racing line. Finish-area art, richer impact/tire audio, graceful renderer
+failure, quality selection, broader input support and additional hardware coverage remain open.

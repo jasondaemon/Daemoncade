@@ -2,7 +2,7 @@
 
 ## Status
 
-Version `0.5.0-alpha.17` is a desktop-keyboard production-slice candidate, not a release candidate. The previously verified flat-course
+Version `0.5.0-alpha.18` is a desktop-keyboard production-slice candidate, not a release candidate. The previously verified flat-course
 beta remains available in Git history at `16a26e5`; its player-lap result must not be treated as
 validation of this materially different spline layout. The game is an original single-player
 stadium time attack inspired by the broad genre, not a Trackmania clone, formula-equivalent
@@ -14,7 +14,7 @@ Start a local preview from the repository root:
 python3 -m http.server 4173 --bind 127.0.0.1
 ```
 
-Then open `http://127.0.0.1:4173/games/apex-run/?build=alpha17`.
+Then open `http://127.0.0.1:4173/games/apex-run/?build=alpha18`.
 
 ## Controls and rules
 
@@ -53,7 +53,7 @@ Then open `http://127.0.0.1:4173/games/apex-run/?build=alpha17`.
   then brake to a measured stop, release, reverse at least 0.5 metres and steer forward away.
   All regain more than 5 m/s and remain upright; this directly covers the prior 0-4 km/h asphalt
   immobilization without relying on a fixed-timing gear-change assumption.
-- A reactive keyboard-like source fixture completes all six ordered gates in 42.29 seconds
+- A reactive keyboard-like source fixture completes all six ordered gates in 43.95 seconds
   without recovery at 30/60/144 render schedules. This is collision/determinism coverage, not a
   substitute for a screen-driven player lap. A separate held-input crest probe, rather than this
   route fixture, proves the airborne and landing phases.
@@ -96,6 +96,21 @@ Then open `http://127.0.0.1:4173/games/apex-run/?build=alpha17`.
   rows through the real finish path.
 - Scalar PB/replay reconciliation now suppresses an older ghost after a newer scalar PB saved but
   replay storage failed. Unit and browser reload regressions cover this partial-storage case.
+- Alpha 18 extends the same rendered/collision ribbon approximately 30 metres behind the timed
+  start, so the car now sits on an authored grid apron with continuous road, stripe, curbs and
+  rails instead of at a cut road edge. The original timed route and checkpoint coordinates remain
+  unchanged, preserving PB and replay semantics while adding a persistent start gantry.
+- The west-straight crest now has surface-aligned takeoff stripes, a `COMMIT · CREST` board and
+  landing-zone markers derived from the shared road samples. A nine-case physical approach matrix
+  covers 26/30/34 m/s and lateral offsets of -4/0/+4 metres: all cases remain upright and on-road;
+  30 and 34 m/s cases become fully airborne and establish sustained landing contact. The 26 m/s
+  cases remain grounded, documenting the actual speed threshold instead of presenting every crest
+  traversal as a jump. Landing audio is triggered only by a measured airborne-to-grounded impact.
+- Exact-graph Chrome integration completes the alpha 18 lifecycle fixture in 43.042 seconds with
+  1,292 replay frames. The accelerated 600-second soak took 93.0 wall-clock seconds and stabilized
+  at 274 geometries / 13 textures; a normal 240-frame production sample measured 16.7 ms median,
+  16.7 ms p95 and 16.8 ms p99 on the same M1 Max/ANGLE Metal machine. These remain single-machine
+  measurements, not lower-end hardware certification.
 
 The following evidence describes the prior `0.4.0-beta.1` geometry and is retained as history,
 not as a readiness claim for visual alpha 5:
