@@ -1,24 +1,38 @@
+import {requestedTrackId} from "./track-catalog.js?v=0.5.0-alpha31";
+
+const ALPINE_ROUTE=Object.freeze([
+  {x:-2,y:0,z:0,width:24,bank:0},{x:62,y:.5,z:0,width:24,bank:0},{x:96,y:2,z:-24,width:25,bank:-.08},{x:96,y:6,z:-72,width:25,bank:-.16},{x:78,y:9,z:-98,width:24,bank:-.1},{x:28,y:10,z:-108,width:23,bank:0},{x:-82,y:7,z:-103,width:24,bank:0},
+  {x:-88,y:11,z:114,width:23,bank:.08},{x:-62,y:14,z:140,width:23,bank:.1},{x:126,y:11,z:140,width:24,bank:-.08},{x:150,y:7,z:114,width:25,bank:-.16},{x:150,y:2,z:8,width:23,bank:0},
+]);
+const SUMMIT_ROUTE=Object.freeze([
+  {x:-380,y:0,z:-280,bank:0},{x:-240,y:.5,z:-300,bank:0},{x:-60,y:3,z:-340,bank:-.1},{x:140,y:8,z:-320,bank:-.16},{x:320,y:14,z:-240,bank:-.2},{x:410,y:18,z:-80,bank:-.12},{x:390,y:16,z:100,bank:.1},{x:280,y:12,z:240,bank:.18},{x:100,y:8,z:330,bank:.14},{x:-110,y:18,z:340,bank:-.12},{x:-300,y:30,z:260,bank:-.18},{x:-410,y:25,z:100,bank:-.12},{x:-400,y:14,z:-60,bank:.1},{x:-300,y:8,z:-160,bank:.18},{x:-150,y:12,z:-180,bank:.12},{x:0,y:20,z:-120,bank:-.1},{x:140,y:28,z:-20,bank:-.18},{x:220,y:20,z:80,bank:-.1},{x:280,y:10,z:-20,bank:.08},{x:360,y:2,z:-120,bank:0},
+].map(point=>Object.freeze({...point,width:40})));
+const TRACK_DEFINITIONS=Object.freeze({
+  "alpine-sprint":Object.freeze({route:ALPINE_ROUTE,checkpointPoints:[2,6,9,11],stageRanges:[[0,2],[2,6],[6,9],[9,11]],humps:{5:14},jumpSegment:5}),
+  "summit-circuit":Object.freeze({route:SUMMIT_ROUTE,checkpointPoints:[3,6,10,13,16,19],stageRanges:[[0,3],[3,6],[6,10],[10,13],[13,16],[16,19]],humps:{10:12},jumpSegment:10}),
+});
+export const ACTIVE_TRACK_ID=requestedTrackId();
+export const ACTIVE_TRACK_DEFINITION=TRACK_DEFINITIONS[ACTIVE_TRACK_ID]||TRACK_DEFINITIONS["alpine-sprint"];
+const summit=ACTIVE_TRACK_ID==="summit-circuit";
+export const VENUE=Object.freeze(summit?{centerX:0,centerZ:0,halfX:520,halfZ:450,stands:[{x:0,z:-418,rotation:0,length:130},{x:-488,z:30,rotation:Math.PI/2,length:108},{x:488,z:60,rotation:-Math.PI/2,length:116}],basinRadius:500}:{centerX:0,centerZ:-20,halfX:220,halfZ:220,stands:[{x:10,z:-188,rotation:0,length:105},{x:-177,z:35,rotation:Math.PI/2,length:78},{x:212,z:62,rotation:-Math.PI/2,length:88}],basinRadius:245});
 export const TRACK_BOXES=Object.freeze([
   // The stadium floor is the only box surface. The authored road and its
   // Rapier collider are generated together by buildRoadMesh below.
-  {x:0,y:-.65,z:-20,hx:220,hy:1,hz:220,surface:"grass"},
+  {x:VENUE.centerX,y:-.65,z:VENUE.centerZ,hx:VENUE.halfX,hy:1,hz:VENUE.halfZ,surface:"grass"},
 ]);
 // The grass slab is the final physical support surface. Keep gameplay recovery
 // slightly inside its vertical edges so a chassis cannot settle unsupported in
 // the void while still appearing to be on the field.
-export const PLAY_AREA=Object.freeze({minX:-218,maxX:218,minZ:-238,maxZ:198,grace:.35});
+export const PLAY_AREA=Object.freeze({minX:VENUE.centerX-VENUE.halfX+2,maxX:VENUE.centerX+VENUE.halfX-2,minZ:VENUE.centerZ-VENUE.halfZ+2,maxZ:VENUE.centerZ+VENUE.halfZ-2,grace:.35});
 export function isInPlayArea({x,z}){return Number.isFinite(x)&&Number.isFinite(z)&&x>=PLAY_AREA.minX&&x<=PLAY_AREA.maxX&&z>=PLAY_AREA.minZ&&z<=PLAY_AREA.maxZ}
 export function advanceOutsidePlayTime(previous,position,dt){return isInPlayArea(position)?0:Math.max(0,previous)+(Number.isFinite(dt)&&dt>0?dt:0)}
 // Single authoritative centerline for world arrows and the minimap. Points are
 // ordered in race direction; all guidance tangents are derived from this list.
-export const ROUTE_PATH=Object.freeze([
-  {x:-2,y:0,z:0,width:24,bank:0},{x:62,y:.5,z:0,width:24,bank:0},{x:96,y:2,z:-24,width:25,bank:-.08},{x:96,y:6,z:-72,width:25,bank:-.16},{x:78,y:9,z:-98,width:24,bank:-.1},{x:28,y:10,z:-108,width:23,bank:0},{x:-82,y:7,z:-103,width:24,bank:0},
-  {x:-88,y:11,z:114,width:23,bank:.08},{x:-62,y:14,z:140,width:23,bank:.1},{x:126,y:11,z:140,width:24,bank:-.08},{x:150,y:7,z:114,width:25,bank:-.16},{x:150,y:2,z:8,width:23,bank:0},
-]);
+export const ROUTE_PATH=ACTIVE_TRACK_DEFINITION.route;
 export const START_EXTENSION_SAMPLES=10;
 export const ROAD_STEPS_PER_SEGMENT=88;
 const routeSampleIndex=(routePoint,offset=0)=>START_EXTENSION_SAMPLES+routePoint*ROAD_STEPS_PER_SEGMENT+offset;
-export const JUMP_ZONE=Object.freeze({approach:routeSampleIndex(5,8),takeoff:routeSampleIndex(5,36),landing:routeSampleIndex(5,68)});
+export const JUMP_ZONE=Object.freeze({approach:routeSampleIndex(ACTIVE_TRACK_DEFINITION.jumpSegment,8),takeoff:routeSampleIndex(ACTIVE_TRACK_DEFINITION.jumpSegment,36),landing:routeSampleIndex(ACTIVE_TRACK_DEFINITION.jumpSegment,68)});
 const distance3=(a,b)=>Math.hypot(b.x-a.x,(b.y||0)-(a.y||0),b.z-a.z);
 function tangentAt(index,key){
   const point=ROUTE_PATH[index],before=ROUTE_PATH[Math.max(0,index-1)],after=ROUTE_PATH[Math.min(ROUTE_PATH.length-1,index+1)];
@@ -31,7 +45,7 @@ function sampleControl(index,t){
   // The crest uses a C2-continuous bump. Zero first and second derivatives at
   // both joins keep the visual ribbon and suspension collider from acquiring
   // the sharp pitch kink produced by the earlier Gaussian profile.
-  const a=ROUTE_PATH[index],b=ROUTE_PATH[index+1],hump=index===5?14*Math.sin(Math.PI*t)**4:0;
+  const a=ROUTE_PATH[index],b=ROUTE_PATH[index+1],hump=(ACTIVE_TRACK_DEFINITION.humps[index]||0)*Math.sin(Math.PI*t)**4;
   return{x:hermite(a.x,b.x,tangentAt(index,"x"),tangentAt(index+1,"x"),t),y:hermite(a.y,b.y,tangentAt(index,"y"),tangentAt(index+1,"y"),t)+hump+.55,z:hermite(a.z,b.z,tangentAt(index,"z"),tangentAt(index+1,"z"),t),width:a.width+(b.width-a.width)*t,bank:a.bank+(b.bank-a.bank)*t}
 }
 export function buildRoadMesh(stepsPerSegment=ROAD_STEPS_PER_SEGMENT){const samples=[],first=sampleControl(0,0),second=sampleControl(0,1/stepsPerSegment),dx=second.x-first.x,dz=second.z-first.z,length=Math.hypot(dx,dz)||1,fx=dx/length,fz=dz/length;for(let step=START_EXTENSION_SAMPLES;step>0;step--)samples.push({...first,x:first.x-fx*step*3,z:first.z-fz*step*3});for(let segment=0;segment<ROUTE_PATH.length-1;segment++)for(let step=0;step<stepsPerSegment;step++)samples.push(sampleControl(segment,step/stepsPerSegment));samples.push(sampleControl(ROUTE_PATH.length-2,1));for(let i=0;i<samples.length;i++){const before=samples[Math.max(0,i-1)],after=samples[Math.min(samples.length-1,i+1)],dx=after.x-before.x,dz=after.z-before.z,length=Math.hypot(dx,dz)||1,rx=-dz/length,rz=dx/length,half=samples[i].width/2,cos=Math.cos(samples[i].bank),sin=Math.sin(samples[i].bank);samples[i].heading=Math.atan2(dz,dx);samples[i].left={x:samples[i].x+rx*half*cos,y:samples[i].y+half*sin,z:samples[i].z+rz*half*cos};samples[i].right={x:samples[i].x-rx*half*cos,y:samples[i].y-half*sin,z:samples[i].z-rz*half*cos}}
@@ -77,7 +91,7 @@ export function roadPoseNear(position,lift=1.7){
 // tempting but invalid cross-grass shortcut.
 // Four meaningful sectors replace the inherited square-track doorway cadence:
 // opening sweeper, crest/landing, elevated return, and the finish descent.
-export const ROUTE_STAGE_RANGES=Object.freeze([[0,2],[2,6],[6,9],[9,11]].map(Object.freeze));
+export const ROUTE_STAGE_RANGES=Object.freeze(ACTIVE_TRACK_DEFINITION.stageRanges.map(range=>Object.freeze([...range])));
 export function routeStage(checkpoint){const range=ROUTE_STAGE_RANGES[Math.max(0,Math.min(checkpoint,ROUTE_STAGE_RANGES.length-1))],start=routeSampleIndex(range[0]),end=Math.min(ROAD_SAMPLES.length-1,routeSampleIndex(range[1])),points=ROAD_SAMPLES.slice(start,end+1).map(({x,y,z})=>({x,y,z})),gate=CHECKPOINTS[Math.max(0,Math.min(checkpoint,CHECKPOINTS.length-1))];return points.concat(gate?{x:gate.x,y:gate.y,z:gate.z}:[])}
 function stageGeometry(checkpoint){const points=routeStage(checkpoint),segments=[];let total=0;for(let i=0;i<points.length-1;i++){const a=points[i],b=points[i+1],dx=b.x-a.x,dy=(b.y||0)-(a.y||0),dz=b.z-a.z,length=Math.hypot(dx,dz);if(length<.001)continue;segments.push({a,b,dx,dy,dz,length,start:total});total+=length}return{segments,total}}
 function pointAt(geometry,along){const wanted=Math.max(0,Math.min(geometry.total,along));for(const segment of geometry.segments)if(wanted<=segment.start+segment.length){const t=(wanted-segment.start)/segment.length;return{x:segment.a.x+segment.dx*t,y:(segment.a.y||0)+segment.dy*t,z:segment.a.z+segment.dz*t}}const last=geometry.segments.at(-1)?.b||{x:0,y:0,z:0};return{x:last.x,y:last.y||0,z:last.z}}
@@ -94,10 +108,8 @@ function checkpointAt(routePoint,finish=false){
   const sampleIndex=Math.min(ROAD_SAMPLES.length-1,routeSampleIndex(routePoint)),sample=ROAD_SAMPLES[sampleIndex],{forward,lateral,up}=sampleFrame(ROAD_SAMPLES,sampleIndex);
   return Object.freeze({x:sample.x,y:sample.y,z:sample.z,width:sample.width,sampleIndex,forward,lateral,up,rotation:basisQuaternion(forward,up,lateral),finish});
 }
-export const CHECKPOINTS=Object.freeze([checkpointAt(2),checkpointAt(6),checkpointAt(9),checkpointAt(11,true)]);
-export const RECOVERY_SPOTS=Object.freeze([
-  roadPoseNear({x:-2,z:0}),roadPoseNear(CHECKPOINTS[0]),roadPoseNear(CHECKPOINTS[1]),roadPoseNear(CHECKPOINTS[2]),
-].map(Object.freeze));
+export const CHECKPOINTS=Object.freeze(ACTIVE_TRACK_DEFINITION.checkpointPoints.map((point,index)=>checkpointAt(point,index===ACTIVE_TRACK_DEFINITION.checkpointPoints.length-1)));
+export const RECOVERY_SPOTS=Object.freeze([roadPoseNear(ROUTE_PATH[0]),...CHECKPOINTS.slice(0,-1).map(checkpoint=>roadPoseNear(checkpoint))].map(Object.freeze));
 export function recoveryForward(rotation){return{x:1-2*(rotation.y*rotation.y+rotation.z*rotation.z),z:2*(rotation.x*rotation.z-rotation.w*rotation.y)}}
 export function isOnRoad({x,y,z}){let best=Infinity,width=0,height=0;for(const sample of ROAD_SAMPLES){const distance=Math.hypot(x-sample.x,z-sample.z);if(distance<best){best=distance;width=sample.width;height=sample.y}}return best<=width*.58&&(!Number.isFinite(y)||Math.abs(y-height)<=5.5)}
 export function isUnderRoad({x,y,z},clearance=2.6){if(!Number.isFinite(y))return false;const sample=nearestRoadSample({x,z});return Math.hypot(x-sample.x,z-sample.z)<=sample.width*.62&&y<sample.y-clearance}

@@ -420,3 +420,24 @@ descending branch, and none produced a repeatable clean exit. That experiment is
 shipped as a passing test or production stunt. The next loop milestone must solve authored entry /
 exit separation and supported descent across a speed window without magnetic forces, pose clamps or
 teleporting; otherwise loops remain out of the playable catalog.
+
+## Alpha 31 — Summit Circuit
+
+- The catalog now registers two real runtime courses. Alpine Sprint keeps its original geometry and
+  `v9` / `v10` PB and replay keys; Summit Circuit uses isolated per-track storage so records and
+  sector splits cannot be compared across layouts.
+- The ready screen selects a course through the URL-backed catalog. Track construction, gates,
+  minimap bounds, route stages, recoveries, render mesh, Rapier surface and rails all consume the
+  same selected definition.
+- Summit Circuit is a 3,308 m advanced route across its own 1,040 × 900 m landscape, with six
+  landmark sectors, linked banked sweepers, an elevated crest and a technical return. The venue and
+  three grandstands derive from the selected track rather than the compact Alpine bowl. Automated
+  swept-clearance checks reserve the full road, rail and chase-camera corridor around every stand;
+  nonadjacent road approaches require more than 13.5 m vertical clearance. The shared fixed-input
+  physics fixture completes it in 131.88 seconds at 30, 60 and 144 render Hz without recovery. This is deterministic drivability
+  evidence, not a human-play claim.
+- A separated-entry loop lab measured repeated suspension-force saturation and contact loss around
+  24–32% of the ascent even after an isolated higher-force comparison. Removing the lateral
+  separation was rejected because it would reintroduce overlapping entry/exit geometry. No loop or
+  physics retune ships in Alpha 31; the next lab needs a non-overlapping transition whose chassis
+  attitude follows the transported road frame across a real speed/offset window.

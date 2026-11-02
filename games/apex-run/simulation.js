@@ -1,9 +1,9 @@
 export const FIXED_DT=1/120;
-export {checkpointAdvance,isOnRoad} from "./track-model.js?v=0.5.0-alpha25";
-import {trackStorageKeys} from "./track-catalog.js?v=0.5.0-alpha29";
+export {checkpointAdvance,isOnRoad} from "./track-model.js?v=0.5.0-alpha31";
+import {requestedTrackId,trackStorageKeys} from "./track-catalog.js?v=0.5.0-alpha31";
 export const REPLAY_VERSION=10;
-export const BEST_KEY=trackStorageKeys().pb;
-export const REPLAY_KEY=trackStorageKeys().replay;
+export const BEST_KEY=trackStorageKeys(requestedTrackId()).pb;
+export const REPLAY_KEY=trackStorageKeys(requestedTrackId()).replay;
 export const REPLAY_HZ=30;
 export const MEDALS=Object.freeze([{name:"APEX",time:48,color:0x55efff},{name:"GOLD",time:60,color:0xffd454},{name:"SILVER",time:75,color:0xd6e2ec},{name:"BRONZE",time:95,color:0xd58b55},{name:"ROOKIE",time:120,color:0x79d987}]);
 export function clamp(v,min,max){return Math.max(min,Math.min(max,v))}
