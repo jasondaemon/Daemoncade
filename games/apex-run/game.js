@@ -25,7 +25,7 @@ import {addTracksideIdentity} from "./trackside-identity.js?v=0.5.0-alpha55";
 import {addSignatureLandmarks} from "./signature-landmarks.js?v=0.5.0-alpha56";
 import {addStadiumFill} from "./stadium-fill.js?v=0.5.0-alpha64";
 import {addAlpineDisplayCars,addAlpineStartDistrict} from "./alpine-start-district.js?v=0.5.0-alpha67";
-import {addRouteDistricts} from "./route-districts.js?v=0.5.0-alpha71";
+import {addRouteDistricts} from "./route-districts.js?v=0.5.0-alpha72";
 import {addVenueTerrain} from "./venue-terrain.js?v=0.5.0-alpha64";
 import {resolveSelection} from "./car-catalog.js";
 import {createRaceCarVisual} from "./car-visual-adapter.js";
