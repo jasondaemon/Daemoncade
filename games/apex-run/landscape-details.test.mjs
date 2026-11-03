@@ -26,7 +26,7 @@ assert.match(game,/VENUE\.basinRadius\/VENUE\.halfX/);
 assert.match(game,/function metreScaleBoxUV\(geometry,metres=2\.4\)/,"concrete boxes use metre-scaled UVs");
 const reservoir=await readFile(new URL("reservoir-architecture.js",import.meta.url),"utf8");
 assert.match(reservoir,/function metreScaleCylinderUV\(geometry,radius,height,metres=2\.4\)/,"reservoir concrete uses metre-scaled UVs");
-for(const [path,targetHeight,declaredRadius] of [["assets/polyhaven/shrub-02/shrub_02_1k.gltf",2.6,4],["assets/polyhaven/rock-moss-set-01/rock_moss_set_01_1k.gltf",2.8,4.8]]){
+for(const [path,targetHeight,declaredRadius] of [["assets/polyhaven/shrub-02/shrub_02_1k.gltf",2.6,4],["assets/polyhaven/rock-moss-set-01/rock_moss_set_01_1k.gltf",1.6,3]]){
   const gltf=JSON.parse(await readFile(new URL(path,import.meta.url),"utf8"));let measured=0;
   for(const node of gltf.nodes)if(node.mesh!==undefined)for(const primitive of gltf.meshes[node.mesh].primitives){const position=gltf.accessors[primitive.attributes.POSITION],height=position.max[1]-position.min[1],radius=Math.max(...[[position.min[0],position.min[2]],[position.min[0],position.max[2]],[position.max[0],position.min[2]],[position.max[0],position.max[2]]].map(([x,z])=>Math.hypot(x,z)))/height*targetHeight;measured=Math.max(measured,radius)}
   assert.ok(measured<=declaredRadius,`${path} measured radius ${measured.toFixed(3)} exceeds placement bound ${declaredRadius}`);
