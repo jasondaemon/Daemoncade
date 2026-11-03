@@ -175,6 +175,7 @@ function checkpointAt(routePoint,finish=false){
 }
 export const CHECKPOINTS=Object.freeze(ACTIVE_TRACK_DEFINITION.checkpointPoints.map((point,index)=>checkpointAt(point,index===ACTIVE_TRACK_DEFINITION.checkpointPoints.length-1)));
 export const RECOVERY_SPOTS=Object.freeze([roadPoseNear(ROUTE_PATH[0]),...CHECKPOINTS.slice(0,-1).map(checkpoint=>roadPoseNear(checkpoint))].map(Object.freeze));
+export function recoverySpotForCheckpoint(checkpoint){return RECOVERY_SPOTS[Math.min(Math.max(0,checkpoint),RECOVERY_SPOTS.length-1)]}
 export function recoveryForward(rotation){return{x:1-2*(rotation.y*rotation.y+rotation.z*rotation.z),z:2*(rotation.x*rotation.z-rotation.w*rotation.y)}}
 export function isOnRoad({x,y,z}){let best=Infinity,width=0,mainIndex=-1;for(const samples of ROAD_SURFACES)for(let index=0;index<samples.length;index++){const sample=samples[index],distance=Math.hypot(x-sample.x,z-sample.z,Number.isFinite(y)?y-sample.y:0);if(distance<best){best=distance;width=sample.width;mainIndex=samples===ROAD_SAMPLES?index:-1}}return best<=width*.58&&(mainIndex<0||!gapSample(mainIndex))}
 export function isUnderRoad({x,y,z},clearance=2.6){if(!Number.isFinite(y))return false;const sample=nearestRoadSample({x,y,z});return Math.hypot(x-sample.x,z-sample.z)<=sample.width*.62&&y<sample.y-clearance}
