@@ -1,4 +1,5 @@
-const FOOTPRINT={halfX:27,halfZ:18};
+// Matches the largest rendered part: the 62 x 40 metre district apron.
+const FOOTPRINT={halfX:31,halfZ:20};
 const HARBOR_KINDS=["container-yard","warehouse-pier","crane-deck","breakwater-ops"];
 const ALPINE_KINDS=["spectator-terrace","service-depot","hospitality","mountain-station"];
 export function routeDistrictBudget(quality="high"){return quality==="low"?2:quality==="medium"?3:4}
@@ -16,11 +17,11 @@ export function addRouteDistricts(THREE,scene,samples,trackId="alpine-sprint",qu
   const add=(geometry,material,transforms,shadow=true)=>{const mesh=new THREE.InstancedMesh(geometry,material,transforms.length);transforms.forEach((matrix,index)=>mesh.setMatrixAt(index,matrix));mesh.instanceMatrix.needsUpdate=true;mesh.castShadow=quality==="high"&&shadow;mesh.receiveShadow=true;scene.add(mesh);parts.push(mesh);return mesh};
   const matrices=(fn)=>specs.flatMap((spec,index)=>fn(spec,index));
   add(new THREE.BoxGeometry(1,.18,1),m.ground,matrices(spec=>[compose(dummy,spec,0,.44,0,62,1,40)]),false);
-  add(new THREE.BoxGeometry(1,1,1),m.concrete,matrices(spec=>[compose(dummy,spec,0,1.05,0,58,1.4,36),compose(dummy,spec,-26,2.2,0,1.4,3.8,36),compose(dummy,spec,26,2.2,0,1.4,3.8,36)]));
+  add(new THREE.BoxGeometry(1,1,1),m.concrete,matrices(spec=>[compose(dummy,spec,0,1.05,0,58,1.4,36),compose(dummy,spec,-26,2.2,0,1.4,3.8,36),compose(dummy,spec,26,2.2,0,1.4,3.8,36),compose(dummy,spec,0,1.7,-16,52,2.8,1),compose(dummy,spec,0,1.7,16,52,2.8,1)]));
   add(new THREE.BoxGeometry(1,1,1),m.graphite,matrices(spec=>{if(spec.kind==="container-yard")return[compose(dummy,spec,-11,2.2,-7,12,3.7,5),compose(dummy,spec,4,2.2,4,12,3.7,5),compose(dummy,spec,17,2.2,-3,12,3.7,5)];if(spec.kind==="warehouse-pier")return[compose(dummy,spec,2,6,0,43,11,22)];if(spec.kind==="crane-deck")return[compose(dummy,spec,-18,10,0,2,19,2),compose(dummy,spec,18,10,0,2,19,2),compose(dummy,spec,0,20,0,43,2,3)];if(spec.kind==="breakwater-ops")return[compose(dummy,spec,-9,4,0,18,7,18),compose(dummy,spec,14,7,2,9,13,9)];if(spec.kind==="spectator-terrace")return[compose(dummy,spec,0,3.2,3,46,5,22)];if(spec.kind==="service-depot")return[compose(dummy,spec,-9,4,0,18,7,20),compose(dummy,spec,13,3,3,16,5,13)];if(spec.kind==="hospitality")return[compose(dummy,spec,0,5,0,38,9,20)];return[compose(dummy,spec,0,6,0,28,11,22)]}));
   add(new THREE.BoxGeometry(1,1,.2),m.glass,matrices(spec=>spec.kind==="container-yard"?[]:[compose(dummy,spec,0,5.5,-10.8,30,4,1)]));
   add(new THREE.BoxGeometry(1,.5,1),m.graphite,matrices(spec=>spec.kind==="container-yard"?[]:[compose(dummy,spec,0,harbor?11.8:10.2,0,harbor?48:44,1,harbor?25:24)]));
-  add(new THREE.BoxGeometry(1,.22,.22),m.accent,matrices(spec=>[compose(dummy,spec,0,harbor?9:8,-11.1,harbor?38:36,1,1)]),false);
+  add(new THREE.BoxGeometry(1,.22,.22),m.accent,matrices(spec=>[compose(dummy,spec,0,harbor?9:8,-11.1,harbor?38:36,1,1),compose(dummy,spec,-13,.57,0,18,1,1),compose(dummy,spec,13,.57,0,18,1,1)]),false);
   const mastTransforms=matrices(spec=>[-24,24].flatMap(x=>[-15,15].map(z=>compose(dummy,spec,x,5,z,1,9,1)))),lampTransforms=matrices(spec=>[-24,24].flatMap(x=>[-15,15].map(z=>compose(dummy,spec,x,9.6,z,1,1,1))));
   add(new THREE.CylinderGeometry(.12,.2,1,8),m.graphite,mastTransforms);
   add(new THREE.BoxGeometry(3,.18,.4),m.accent,lampTransforms,false);
