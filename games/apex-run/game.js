@@ -89,7 +89,7 @@ if(ACTIVE_TRACK_ID==="harbor-run"){
       addHarborFactoryComplex(THREE,scene,factorySource,qualityProfile.id);
     }
     const buoySource=await assetLoader.loadAsync("./assets/polyhaven/ocean-buoy/ocean_buoy_1k.gltf").then(result=>result.scene).catch(()=>null);
-    addHarborBuoys(THREE,scene,buoySource,ROAD_SAMPLES,qualityProfile.id,HARBOR_WATER_Y);
+    addHarborBuoys(THREE,scene,buoySource,ROAD_SAMPLES,VENUE,qualityProfile.id,HARBOR_WATER_Y);
   }
 }
 addTracksideIdentity(THREE,scene,ROAD_SAMPLES,ACTIVE_TRACK_ID,qualityProfile.id,{concreteColor,concreteNormal,concreteArm});
