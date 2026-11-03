@@ -26,6 +26,7 @@ import {addSignatureLandmarks} from "./signature-landmarks.js?v=0.5.0-alpha56";
 import {addStadiumFill} from "./stadium-fill.js?v=0.5.0-alpha64";
 import {addAlpineDisplayCars,addAlpineStartDistrict} from "./alpine-start-district.js?v=0.5.0-alpha67";
 import {addRouteDistricts} from "./route-districts.js?v=0.5.0-alpha72";
+import {addRouteLandscapeBands} from "./route-landscape-bands.js?v=0.5.0-alpha74";
 import {addVenueTerrain} from "./venue-terrain.js?v=0.5.0-alpha64";
 import {resolveSelection} from "./car-catalog.js";
 import {createRaceCarVisual} from "./car-visual-adapter.js";
@@ -76,6 +77,7 @@ addEnvironmentPresentation(THREE,scene,VENUE,qualityProfile.id,ACTIVE_TRACK_ID);
 if(ACTIVE_TRACK_ID==="harbor-run")await addHarborVenue(THREE,scene,VENUE,qualityProfile.id,{concreteColor,concreteNormal,concreteArm,garageColor,garageNormal,garageArm,assetLoader});
 addTracksideIdentity(THREE,scene,ROAD_SAMPLES,ACTIVE_TRACK_ID,qualityProfile.id,{concreteColor,concreteNormal,concreteArm});
 if(ACTIVE_TRACK_ID==="alpine-sprint"||ACTIVE_TRACK_ID==="harbor-run")addRouteDistricts(THREE,scene,ROAD_SAMPLES,ACTIVE_TRACK_ID,qualityProfile.id);
+if(ACTIVE_TRACK_ID==="alpine-sprint"||ACTIVE_TRACK_ID==="harbor-run")addRouteLandscapeBands(THREE,scene,ROAD_SAMPLES,ACTIVE_TRACK_ID,qualityProfile.id);
 if(largeVenue)addSignatureLandmarks(THREE,scene,ROAD_SAMPLES,ACTIVE_TRACK_ID,qualityProfile.id,{concreteColor,concreteNormal,concreteArm});
 
 function metreScaleBoxUV(geometry,metres=2.4){const position=geometry.attributes.position,normal=geometry.attributes.normal,uv=geometry.attributes.uv;for(let index=0;index<position.count;index++){const nx=Math.abs(normal.getX(index)),ny=Math.abs(normal.getY(index)),nz=Math.abs(normal.getZ(index));if(nx>=ny&&nx>=nz)uv.setXY(index,position.getZ(index)/metres,position.getY(index)/metres);else if(ny>=nz)uv.setXY(index,position.getX(index)/metres,position.getZ(index)/metres);else uv.setXY(index,position.getX(index)/metres,position.getY(index)/metres)}uv.needsUpdate=true;return geometry}
