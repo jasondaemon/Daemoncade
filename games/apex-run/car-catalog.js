@@ -18,13 +18,17 @@ const cars=[
   },
   {
     id:"car-concept",
-    name:"CarConcept",
+    name:"Apex GT Concept",
     category:"GT CONCEPT",
-    description:"Verified CC BY 4.0 showroom candidate. Logo removal and race optimization are required before selection is enabled.",
-    asset:{status:"pending-preparation",url:null,source:"https://github.com/KhronosGroup/glTF-Sample-Assets/tree/main/Models/CarConcept",license:"CC BY 4.0",credit:"Eric Chadwick / Darmstadt Graphics Group · modified for Apex Run"},
-    preview:{kind:"silhouette",camera:"gt",variants:["Carmine Candy","Pearly Swirly","Torched Graphite"]},
+    description:"A logo-clean, race-optimized grand-touring concept with the same competitive physics as every Apex car.",
+    asset:{status:"ready",url:"assets/car-concept-race.glb",source:"https://github.com/KhronosGroup/glTF-Sample-Assets/tree/main/Models/CarConcept",license:"CC BY 4.0",credit:"Eric Chadwick / Darmstadt Graphics Group · exterior modified and optimized for Apex Run",metrics:{bytes:8318184,triangles:143802,primitives:58}},
+    preview:{kind:"gltf",camera:"gt",variants:["Apex Cyan","Summit Gold","Midnight Grid"]},
     unlock:"three-clean-streak",
-    cosmetics:[],
+    cosmetics:[
+      {id:"gt-cyan",name:"Apex Cyan",description:"A cyan-and-gold factory GT finish.",unlock:null,variant:"Apex Cyan",palette:{primary:"#0794ad",secondary:"#f5c41f",accent:"#effcfe"}},
+      {id:"gt-summit",name:"Summit Gold",description:"Warm metallic gold over deep slate.",unlock:"apex-medal",variant:"Summit Gold",palette:{primary:"#b56b0e",secondary:"#0e1b21",accent:"#f4e8c7"}},
+      {id:"gt-midnight",name:"Midnight Grid",description:"Near-black paint with electric cyan details.",unlock:"two-track-finisher",variant:"Midnight Grid",palette:{primary:"#05070c",secondary:"#10a3b8",accent:"#dcebf0"}},
+    ],
   },
   {
     id:"licensed-prototype-slot",

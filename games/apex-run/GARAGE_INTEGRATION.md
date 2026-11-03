@@ -4,15 +4,17 @@ Isolated branch: `codex/apex-garage`, based on `ed4d5718747a8d17ea32a4e1ad01537e
 
 ## Modules
 
-- `car-catalog.js` owns car, livery and achievement metadata. Only
-  `formula-apex` has a ready race asset. CarConcept is license-verified but
-  deliberately `pending-preparation`, so it cannot be selected yet.
+- `car-catalog.js` owns car, livery and achievement metadata. `formula-apex`
+  and the prepared `car-concept` exterior are ready; both use identical race
+  physics.
 - `garage-progression.js` owns schema-v1 storage, selection fallback,
   achievement calculation, deduplication and outcome validation.
 - `race-outcome.js` is the narrow bridge from a real `RaceController` finish.
-- `garage-preview-contract.js` defines the reusable 3D adapter boundary. The
-  current garage uses a CSS fallback, allowing the race renderer to supply a
-  Three.js adapter later without coupling progression to rendering.
+- `garage-preview-contract.js` provides cancellation-safe asynchronous preview
+  switching. `garage-three-preview.js` is the Three.js showroom implementation.
+- `car-visual-adapter.js` prepares the same selected scene for showroom or race
+  use, derives wheel pivots from loaded bounds and exposes chassis/wheel pose
+  methods without touching `vehicle-model.js`.
 - `garage.html`, `garage.css`, `garage.js` provide the standalone accessible
   garage. Arrow keys move between car/livery cards; native buttons, status
   announcements and a modal reset confirmation cover keyboard operation.
@@ -34,38 +36,45 @@ Isolated branch: `codex/apex-garage`, based on `ed4d5718747a8d17ea32a4e1ad01537e
    ```
 
 3. If `outcome` exists, call `recordRaceOutcome(readGarage(localStorage),
-   outcome)` and save the returned state. If the run becomes ineligible, call
-   `recordInvalidatedRun` once so a clean streak cannot cross a practice run.
+   outcome)` and save the returned state. Route every eligibility loss through
+   `recordRaceEligibilityTransition(state,{eligible:false,reason})`; supported
+   reasons are recovery, frame-gap, visibility, debug and practice. This one
+   transition prevents a clean streak from crossing any invalid run.
 4. Surface `unlocked` IDs on the result panel, then link to `garage.html`.
 5. At vehicle asset creation, call `resolveSelection(readGarage(localStorage))`.
-   The current result always resolves to the existing F1 model; cosmetic
-   palette application is renderer-specific and must not alter `vehicle-model`.
+   Keep the existing authored Formula adapter for `formula-apex`. For
+   `car-concept`, load its asset and pass the loaded scene and selected palette
+   to `createRaceCarVisual`. Add `visual.root` to the scene, call
+   `setChassisPose` once per render and call `setWheelState` from the same four
+   Rapier wheel states already used by the F1. Do not alter `vehicle-model`.
 
 Do not award from replay import, test hooks, query parameters or raw PB values.
 Only the outcome produced from the live production `RaceController` is valid.
 
-## CarConcept asset checkpoint
+## Prepared CarConcept asset
 
 Official source: Khronos glTF Sample Assets, CarConcept. License: CC BY 4.0,
 Eric Chadwick / Darmstadt Graphics Group. The license explicitly excludes logos
-and associated trademarks. The downloaded source is 11.78 MB, approximately
-213k triangles, 97 meshes and 29 materials. It contains a license plate and
-steering emblem plus a detailed interior. It is not committed or marked ready.
+and associated trademarks. `tools/prepare-car-concept.mjs` deterministically
+creates `assets/car-concept-race.glb` from the official 11.78 MB source. It
+removes the license plate, steering emblem, detailed interior, engine, wipers
+and hidden hood pieces; unused binary buffers and logo textures are not copied.
+The prepared file is 8,318,184 bytes, 143,802 triangles, 58 primitives, 54
+nodes, 19 materials, 11 textures and 11 embedded images. The three source paint
+variants become original Apex Cyan, Summit Gold and Midnight Grid liveries of
+one car. See `assets/CAR-CONCEPT-NOTICE.md` for attribution and modifications.
 
-Before integration:
-
-- remove Khronos/3D Commerce logo geometry and textures, not merely hide nodes;
-- preserve the four wheel hierarchies and derive pivots from their bounds;
-- create one optimized exterior race GLB and optionally retain a full showroom
-  GLB; remove unseen interior/wipers from the race version;
-- retain Carmine, Pearl and Graphite as material variants of one car;
-- credit the original and describe Apex modifications alongside CC BY 4.0;
-- inspect the modified pixels and measure triangles, draw calls and download
-  size before changing `asset.status` to `ready`.
+Automated checks enforce the transfer/triangle/primitive budgets, excluded
+trademark data, exact four authored wheel groups, valid accessor references and
+variant names. Browser pixel inspection and GPU timing remain required before
+production integration; this isolated branch intentionally did not compete for
+the main writer's browser session.
 
 ## Storage behavior
 
 Garage state uses only `apex-run:garage:v1`. Existing PB, replay and settings
 keys are never changed. Corrupt/denied storage falls back to the default F1 and
-factory livery. Legacy selection keys are read but never deleted. Reset clears
-only garage state.
+factory livery. A future schema is preserved and all writes/reset are blocked
+with compatibility UI. Legacy selection keys are read once, never deleted and
+marked migrated. Reset clears only garage state and reports storage failure
+without pretending success.
