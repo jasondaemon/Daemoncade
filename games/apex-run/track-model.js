@@ -21,7 +21,7 @@ export const ACTIVE_TRACK_ID=requestedTrackId();
 export const ACTIVE_TRACK_DEFINITION=TRACK_DEFINITIONS[ACTIVE_TRACK_ID]||TRACK_DEFINITIONS["alpine-sprint"];
 const summit=ACTIVE_TRACK_ID==="summit-circuit";
 const harbor=ACTIVE_TRACK_ID==="harbor-run",largeTrack=summit||harbor;
-export const VENUE=Object.freeze(summit?{centerX:45,centerZ:0,halfX:700,halfZ:450,stands:[{x:0,z:-418,rotation:0,length:130},{x:-508,z:30,rotation:Math.PI/2,length:108},{x:700,z:410,rotation:0,length:116}],basinRadius:680}:harbor?{centerX:15,centerZ:20,halfX:760,halfZ:500,stands:[{x:-500,z:-410,rotation:0,length:110},{x:610,z:170,rotation:-Math.PI/2,length:90}],basinRadius:720}:{centerX:0,centerZ:-20,halfX:220,halfZ:220,stands:[{x:10,z:-188,rotation:0,length:105},{x:-177,z:35,rotation:Math.PI/2,length:78},{x:212,z:62,rotation:-Math.PI/2,length:88}],basinRadius:245});
+export const VENUE=Object.freeze(summit?{centerX:45,centerZ:0,halfX:700,halfZ:450,stands:[{x:0,z:-418,rotation:0,length:130},{x:-508,z:30,rotation:Math.PI/2,length:108},{x:700,z:410,rotation:0,length:116}],basinRadius:680}:harbor?{centerX:15,centerZ:20,halfX:760,halfZ:500,stands:[{x:-500,z:-410,rotation:0,length:110},{x:610,z:170,rotation:-Math.PI/2,length:90}],basinRadius:720}:{centerX:0,centerZ:-20,halfX:220,halfZ:220,stands:[{x:10,z:-188,rotation:0,length:105},{x:-177,z:35,rotation:Math.PI/2,length:78}],basinRadius:245});
 export const TRACK_BOXES=Object.freeze([
   // The stadium floor is the only box surface. The authored road and its
   // Rapier collider are generated together by buildRoadMesh below.
