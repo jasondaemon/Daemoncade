@@ -89,7 +89,8 @@ if(ACTIVE_TRACK_ID==="harbor-run"){
     const gantrySource=await assetLoader.loadAsync("./assets/innerscene/container-gantry-crane.glb").then(result=>result.scene).catch(()=>null);
     placeHarborGantryCrane(THREE,scene,gantrySource,qualityProfile.id);
     if(qualityProfile.id==="high"){
-      const factorySource=await assetLoader.loadAsync("./assets/polyhaven/modular-factory-facade/modules/modular_factory_facade_apex.gltf").then(result=>result.scene).catch(()=>null);
+      const factoryLoader=new GLTFLoader(new THREE.LoadingManager());factoryLoader.manager.setURLModifier(url=>{if(!url.includes("modular_factory_facade"))return url;const versioned=new URL(url,location.href);versioned.searchParams.set("asset","alpha90d");return versioned.href});
+      const factorySource=await factoryLoader.loadAsync("./assets/polyhaven/modular-factory-facade/modules/modular_factory_facade_apex.gltf").then(result=>result.scene).catch(()=>null);
       addHarborFactoryComplex(THREE,scene,factorySource,qualityProfile.id);
       addHarborServiceDistrict(THREE,scene,factorySource,ROAD_SAMPLES,qualityProfile.id);
     }
