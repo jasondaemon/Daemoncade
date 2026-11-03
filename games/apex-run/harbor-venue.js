@@ -3,9 +3,10 @@ export const HARBOR_DOCK_SPECS=Object.freeze([[-700,400,140,40],[-610,80,130,40]
 export const HARBOR_WAREHOUSE_SPECS=Object.freeze([[-650,350,96,22,34],[500,-420,118,25,40],[555,355,105,24,36]].map(spec=>Object.freeze(spec)));
 export const HARBOR_CRANE_SPECS=Object.freeze([[-610,270,0],[355,420,Math.PI],[-50,445,Math.PI],[650,-280,-Math.PI/2]].map(spec=>Object.freeze(spec)));
 export const HARBOR_SILO_SPECS=Object.freeze([
-  [-710,310,16,34],[-675,310,12,26],[-640,310,10,22],
-  [585,-455,18,38],[625,-455,13,28],[660,-455,11,23],
-  [645,285,15,32],[682,285,11,24],[-520,455,14,30],[-485,455,10,22],
+  [-300,380,20,44],[-254,380,15,34],[-218,380,12,28],
+  [350,400,22,48],[400,400,16,36],[440,400,12,29],
+  [585,-455,20,42],[632,-455,14,32],[670,-455,11,26],
+  [-600,200,18,38],[-558,200,13,30],[-524,200,10,24],
 ].map(spec=>Object.freeze(spec)));
 export const HARBOR_WATER_Y=.39;
 export const HARBOR_COAST_SPECS=Object.freeze([
