@@ -15,7 +15,7 @@ const HARBOR_ROUTE=Object.freeze([
 const TRACK_DEFINITIONS=Object.freeze({
   "alpine-sprint":Object.freeze({route:ALPINE_ROUTE,checkpointPoints:[2,6,9,11],stageRanges:[[0,2],[2,6],[6,9],[9,11]],humps:{5:14},jumpSegment:5}),
   "summit-circuit":Object.freeze({route:SUMMIT_ROUTE,checkpointPoints:[3,6,10,13,16,18,20],stageRanges:[[0,3],[3,6],[6,10],[10,13],[13,16],[16,18],[18,20]],humps:{10:12},jumpSegment:10}),
-  "harbor-run":Object.freeze({route:HARBOR_ROUTE,checkpointPoints:[3,7,9,12,15,19,23],stageRanges:[[0,3],[3,7],[7,9],[9,12],[12,15],[15,19],[19,23]],humps:{7:10},jumpSegment:7,gapSegment:7}),
+  "harbor-run":Object.freeze({route:HARBOR_ROUTE,checkpointPoints:[3,6,9,12,15,19,23],stageRanges:[[0,3],[3,6],[6,9],[9,12],[12,15],[15,19],[19,23]],humps:{7:10},jumpSegment:7,gapSegment:7}),
 });
 export const ACTIVE_TRACK_ID=requestedTrackId();
 export const ACTIVE_TRACK_DEFINITION=TRACK_DEFINITIONS[ACTIVE_TRACK_ID]||TRACK_DEFINITIONS["alpine-sprint"];
