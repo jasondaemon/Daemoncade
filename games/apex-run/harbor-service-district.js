@@ -1,7 +1,7 @@
 function fittedWidthClone(THREE,source,name,width){
   const original=source.getObjectByName(name);if(!original)return null;
-  const clone=original.clone(true),box=new THREE.Box3().setFromObject(clone),size=box.getSize(new THREE.Vector3()),center=box.getCenter(new THREE.Vector3()),scale=width/Math.max(size.x,.001);
-  clone.scale.setScalar(scale);clone.position.set(-center.x*scale,-box.min.y*scale,-center.z*scale);return clone;
+  const clone=original.clone(true),wrapper=new THREE.Group(),normalized=new THREE.Group();normalized.add(clone);normalized.updateMatrixWorld(true);const box=new THREE.Box3().setFromObject(normalized),size=box.getSize(new THREE.Vector3()),center=box.getCenter(new THREE.Vector3()),scale=width/Math.max(size.x,.001);
+  normalized.scale.setScalar(scale);normalized.position.set(-center.x*scale,-box.min.y*scale,-center.z*scale);wrapper.add(normalized);wrapper.userData.factoryModule=name;return wrapper;
 }
 
 export function harborServicePose(samples,index=2200,offset=53){

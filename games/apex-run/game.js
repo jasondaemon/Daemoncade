@@ -32,7 +32,7 @@ import {placeHarborGantryCrane} from "./harbor-hero-assets.js?v=0.5.0-alpha85";
 import {addHarborFactoryComplex} from "./harbor-factory-complex.js?v=0.5.0-alpha86";
 import {addHarborBuoys} from "./harbor-maritime-assets.js?v=0.5.0-alpha88b";
 import {addHarborWaterfront} from "./harbor-waterfront.js?v=0.5.0-alpha89b";
-import {addHarborServiceDistrict} from "./harbor-service-district.js?v=0.5.0-alpha90";
+import {addHarborServiceDistrict} from "./harbor-service-district.js?v=0.5.0-alpha90b";
 import {addVenueTerrain} from "./venue-terrain.js?v=0.5.0-alpha64";
 import {resolveSelection} from "./car-catalog.js";
 import {createRaceCarVisual} from "./car-visual-adapter.js";
