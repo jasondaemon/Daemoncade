@@ -14,22 +14,23 @@ import {resolveQuality,shadowPlacement,verticalCameraMode} from "./graphics-qual
 import {loadOptionalAssets} from "./optional-assets.js?v=0.5.0-alpha49-review3";
 import {gantryLayout} from "./scenery-layout.js?v=0.5.0-alpha49-review3";
 import {addPaddockArchitecture} from "./paddock-architecture.js?v=0.5.0-alpha50";
-import {addReservoirArchitecture,isReservoirFailure} from "./reservoir-architecture.js?v=0.5.0-alpha51f";
-import {ribbonUV,roadMeshUV} from "./road-uv.js?v=0.5.0-alpha51f";
-import {makeBarrierLOD} from "./barrier-lod.js?v=0.5.0-alpha51f";
-import {roadMaterialParameters} from "./visual-materials.js?v=0.5.0-alpha51f";
-import {addLandscapeDetails} from "./landscape-details.js?v=0.5.0-alpha51f";
+import {addReservoirArchitecture,isReservoirFailure} from "./reservoir-architecture.js?v=0.5.0-alpha52c";
+import {ribbonUV,roadMeshUV} from "./road-uv.js?v=0.5.0-alpha52c";
+import {makeBarrierLOD} from "./barrier-lod.js?v=0.5.0-alpha52c";
+import {roadMaterialParameters} from "./visual-materials.js?v=0.5.0-alpha52c";
+import {addLandscapeDetails} from "./landscape-details.js?v=0.5.0-alpha52c";
+import {addEnvironmentPresentation} from "./environment-presentation.js?v=0.5.0-alpha52c";
 
 const $=id=>document.getElementById(id),canvas=$("view"),scene=new THREE.Scene(),testMode=document.documentElement.dataset.apexTest==="1",testParams=new URLSearchParams(location.search),renderTelemetryMode=testMode&&testParams.get("renderTelemetry")==="1",loopPracticeMode=testMode&&testParams.get("practiceLoop")==="1",interactiveTestMode=renderTelemetryMode||loopPracticeMode,splitScenario=renderTelemetryMode&&testParams.get("scenario")==="split",splitLine=splitScenario?testParams.get("line"):null;
 const reservoirScenario=renderTelemetryMode&&testParams.get("scenario")==="reservoir";
 const reducedMotion=matchMedia("(prefers-reduced-motion: reduce)").matches;
-const largeVenue=VENUE.halfX>300;scene.background=new THREE.Color(0x8dc9ed);scene.fog=new THREE.Fog(0x8dc9ed,largeVenue?380:160,largeVenue?1150:430);
+const largeVenue=VENUE.halfX>300;scene.background=new THREE.Color(0x8dc9ed);scene.fog=largeVenue?new THREE.FogExp2(0x8fb7c9,.00072):new THREE.Fog(0x8dc9ed,160,430);
 const camera=new THREE.PerspectiveCamera(68,innerWidth/innerHeight,.1,800);
 const renderer=new THREE.WebGLRenderer({canvas,antialias:true,powerPreference:"high-performance"});
 renderer.setSize(innerWidth,innerHeight,false);renderer.shadowMap.type=THREE.PCFShadowMap;renderer.outputColorSpace=THREE.SRGBColorSpace;
-renderer.toneMapping=THREE.ACESFilmicToneMapping;renderer.toneMappingExposure=1.08;
-scene.add(new THREE.HemisphereLight(0xcceaff,0x34451e,2.1));const sun=new THREE.DirectionalLight(0xfff5dc,3.1);sun.position.set(-60,110,35);sun.castShadow=true;sun.shadow.bias=-.00035;sun.shadow.normalBias=.045;sun.target.position.set(0,0,0);scene.add(sun,sun.target);
-const rim=new THREE.DirectionalLight(0x4bdcff,1.3);rim.position.set(90,35,-130);scene.add(rim);
+renderer.toneMapping=THREE.ACESFilmicToneMapping;renderer.toneMappingExposure=.96;
+scene.add(new THREE.HemisphereLight(0xd5edff,0x26331e,1.45));const sun=new THREE.DirectionalLight(0xffedcf,3);sun.position.set(-60,110,35);sun.castShadow=true;sun.shadow.bias=-.00035;sun.shadow.normalBias=.045;sun.target.position.set(0,0,0);scene.add(sun,sun.target);
+const rim=new THREE.DirectionalLight(0x4bdcff,.8);rim.position.set(90,35,-130);scene.add(rim);
 function readQuality(){try{return resolveQuality(localStorage.getItem("apex-run:quality:v1")).id}catch{return "high"}}let quality=readQuality(),qualityProfile=resolveQuality(quality);function applyQuality(){qualityProfile=resolveQuality(quality);renderer.setPixelRatio(Math.min(devicePixelRatio,qualityProfile.pixelRatio));renderer.shadowMap.enabled=true;sun.castShadow=true;if(sun.shadow.mapSize.x!==qualityProfile.shadowMap){sun.shadow.map?.dispose();sun.shadow.map=null;sun.shadow.mapSize.set(qualityProfile.shadowMap,qualityProfile.shadowMap)}const shadowCamera=sun.shadow.camera,extent=qualityProfile.shadowExtent;shadowCamera.left=-extent;shadowCamera.right=extent;shadowCamera.top=extent;shadowCamera.bottom=-extent;shadowCamera.near=1;shadowCamera.far=420;shadowCamera.updateProjectionMatrix();try{localStorage.setItem("apex-run:quality:v1",qualityProfile.id)}catch{}const select=$("pause-quality");if(select)select.value=qualityProfile.id}applyQuality();
 
 await RAPIER.init();
@@ -55,6 +56,8 @@ for(const texture of[concreteColor,concreteNormal,concreteArm])if(texture)textur
 const world=new RAPIER.World({x:0,y:VEHICLE.gravity,z:0});world.integrationParameters.dt=1/120;
 const meshes=[],keys=new Set(),course=[],roadColliders=new Set(),supportColliders=[];
 const materials={road:new THREE.MeshStandardMaterial(roadMaterialParameters(THREE,{colorMap:asphaltColor,normalMap:asphaltNormal,roughnessMap:asphaltRoughness})),bank:new THREE.MeshStandardMaterial({color:0x666762,map:concreteColor,normalMap:concreteNormal,roughnessMap:concreteArm,roughness:.82}),runoff:new THREE.MeshStandardMaterial({color:0xaaa494,roughness:.95}),edge:new THREE.MeshStandardMaterial({color:0x3ad6e7,emissive:0x075565,emissiveIntensity:.42}),grass:new THREE.MeshStandardMaterial({color:0x708065,map:grassColor,normalMap:grassNormal,roughnessMap:grassRoughness,normalScale:new THREE.Vector2(.5,.5),roughness:1}),stadium:new THREE.MeshStandardMaterial({color:0x62645f,map:concreteColor,normalMap:concreteNormal,roughnessMap:concreteArm,roughness:.86})};
+materials.road.envMapIntensity=.28;materials.bank.envMapIntensity=.18;materials.runoff.envMapIntensity=.12;materials.grass.envMapIntensity=.08;materials.stadium.envMapIntensity=.16;
+if(largeVenue)addEnvironmentPresentation(THREE,scene,VENUE,qualityProfile.id);
 
 function metreScaleBoxUV(geometry,metres=2.4){const position=geometry.attributes.position,normal=geometry.attributes.normal,uv=geometry.attributes.uv;for(let index=0;index<position.count;index++){const nx=Math.abs(normal.getX(index)),ny=Math.abs(normal.getY(index)),nz=Math.abs(normal.getZ(index));if(nx>=ny&&nx>=nz)uv.setXY(index,position.getZ(index)/metres,position.getY(index)/metres);else if(ny>=nz)uv.setXY(index,position.getX(index)/metres,position.getZ(index)/metres);else uv.setXY(index,position.getX(index)/metres,position.getY(index)/metres)}uv.needsUpdate=true;return geometry}
 
