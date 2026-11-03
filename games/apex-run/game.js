@@ -28,7 +28,7 @@ import {addAlpineDisplayCars,addAlpineStartDistrict} from "./alpine-start-distri
 import {addRouteDistricts} from "./route-districts.js?v=0.5.0-alpha72";
 import {addRouteLandscapeBands} from "./route-landscape-bands.js?v=0.5.0-alpha76";
 import {addHarborCoastalDistricts} from "./harbor-coastal-districts.js?v=0.5.0-alpha82";
-import {placeHarborGantryCrane} from "./harbor-hero-assets.js?v=0.5.0-alpha83";
+import {placeHarborGantryCrane} from "./harbor-hero-assets.js?v=0.5.0-alpha85";
 import {addHarborFactoryComplex} from "./harbor-factory-complex.js?v=0.5.0-alpha84";
 import {addVenueTerrain} from "./venue-terrain.js?v=0.5.0-alpha64";
 import {resolveSelection} from "./car-catalog.js";
