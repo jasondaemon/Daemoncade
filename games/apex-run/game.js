@@ -30,6 +30,7 @@ import {addRouteLandscapeBands} from "./route-landscape-bands.js?v=0.5.0-alpha76
 import {addHarborCoastalDistricts} from "./harbor-coastal-districts.js?v=0.5.0-alpha82";
 import {placeHarborGantryCrane} from "./harbor-hero-assets.js?v=0.5.0-alpha85";
 import {addHarborFactoryComplex} from "./harbor-factory-complex.js?v=0.5.0-alpha86";
+import {addHarborBuoys} from "./harbor-maritime-assets.js?v=0.5.0-alpha88";
 import {addVenueTerrain} from "./venue-terrain.js?v=0.5.0-alpha64";
 import {resolveSelection} from "./car-catalog.js";
 import {createRaceCarVisual} from "./car-visual-adapter.js";
@@ -87,6 +88,8 @@ if(ACTIVE_TRACK_ID==="harbor-run"){
       const factorySource=await assetLoader.loadAsync("./assets/polyhaven/modular-factory-facade/modules/modular_factory_facade_apex.gltf").then(result=>result.scene).catch(()=>null);
       addHarborFactoryComplex(THREE,scene,factorySource,qualityProfile.id);
     }
+    const buoySource=await assetLoader.loadAsync("./assets/polyhaven/ocean-buoy/ocean_buoy_1k.gltf").then(result=>result.scene).catch(()=>null);
+    addHarborBuoys(THREE,scene,buoySource,ROAD_SAMPLES,qualityProfile.id,HARBOR_WATER_Y);
   }
 }
 addTracksideIdentity(THREE,scene,ROAD_SAMPLES,ACTIVE_TRACK_ID,qualityProfile.id,{concreteColor,concreteNormal,concreteArm});

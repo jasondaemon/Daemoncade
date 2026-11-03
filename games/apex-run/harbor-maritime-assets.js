@@ -1,0 +1,5 @@
+export const BUOY_SAMPLE_INDICES=Object.freeze([250,520,800,1050,1350,1650,1950,2200]);
+export function addHarborBuoys(THREE,scene,source,roadSamples,quality="high",waterY=.39){
+  if(!source||quality==="low")return[];const count=quality==="high"?8:5,box=new THREE.Box3().setFromObject(source),size=box.getSize(new THREE.Vector3()),center=box.getCenter(new THREE.Vector3()),scale=5/Math.max(size.y,.001),buoys=[];
+  for(const [order,index] of BUOY_SAMPLE_INDICES.slice(0,count).entries()){const sample=roadSamples[index],side=order%2?1:-1,edge=side>0?sample.right:sample.left,dx=edge.x-sample.x,dz=edge.z-sample.z,length=Math.hypot(dx,dz)||1,model=source.clone(true),group=new THREE.Group();model.scale.setScalar(scale);model.position.set(-center.x*scale,-box.min.y*scale,-center.z*scale);group.add(model);group.position.set(edge.x+dx/length*16,waterY,edge.z+dz/length*16);group.rotation.y=order*.83;group.traverse(object=>{if(object.isMesh){object.castShadow=quality==="high";object.receiveShadow=true}});group.userData={harborBuoy:true,sampleIndex:index};scene.add(group);buoys.push(group)}return buoys;
+}

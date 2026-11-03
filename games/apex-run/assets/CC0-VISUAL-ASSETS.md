@@ -73,3 +73,9 @@ raw 4K packages or source DCC scenes ship with the game.
 - License: https://polyhaven.com/license (CC0)
 - The Harbor bundle retains seven named garage/window/cornice modules from the official 1K glTF and its shared geometry buffer. Apex Run arranges five Medium or seven High bays; Low omits the complex.
 - The complete 192-module source is not instantiated at runtime.
+
+## Poly Haven — Ocean Buoy
+
+- Source: https://polyhaven.com/a/ocean_buoy
+- License: https://polyhaven.com/license (CC0)
+- Official 1K glTF with diffuse, OpenGL-normal, ARM and emission maps. Apex Run grounds five Medium or eight High navigation buoys beside selected Harbor route sections; Low omits them.

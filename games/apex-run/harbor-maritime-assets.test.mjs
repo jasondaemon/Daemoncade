@@ -1,0 +1,5 @@
+import assert from"node:assert/strict";import*as THREE from"../vendor/three/three.module.min.js";import{addHarborBuoys,BUOY_SAMPLE_INDICES}from"./harbor-maritime-assets.js";
+const samples=Array.from({length:2300},(_,index)=>({x:index,z:0,width:14,left:{x:index,z:-7},right:{x:index,z:7}})),source=new THREE.Group(),mesh=new THREE.Mesh(new THREE.CylinderGeometry(1,1,8,8),new THREE.MeshStandardMaterial());mesh.position.y=4;source.add(mesh);
+assert.equal(addHarborBuoys(THREE,new THREE.Scene(),source,samples,"low").length,0);
+for(const quality of["medium","high"]){const scene=new THREE.Scene(),buoys=addHarborBuoys(THREE,scene,source,samples,quality);assert.equal(buoys.length,quality==="high"?8:5);for(const buoy of buoys){assert.ok(BUOY_SAMPLE_INDICES.includes(buoy.userData.sampleIndex));assert.ok(Math.abs(buoy.position.z)>=23,"buoy stays beyond road edge");const box=new THREE.Box3().setFromObject(buoy);assert.ok(Math.abs(box.min.y-.39)<.001);buoy.traverse(object=>{if(object.isMesh)assert.equal(object.castShadow,quality==="high")})}}
+console.log("Apex Harbor maritime assets passed");
