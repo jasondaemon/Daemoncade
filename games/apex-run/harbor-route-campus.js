@@ -11,15 +11,28 @@ export function harborCampusSpecs(samples){
 
 function compose(dummy,spec,x,y,z,sx,sy,sz){dummy.position.set(spec.x+Math.cos(spec.heading)*x+Math.sin(spec.heading)*z,y,spec.z-Math.sin(spec.heading)*x+Math.cos(spec.heading)*z);dummy.rotation.set(0,spec.heading,0);dummy.scale.set(sx,sy,sz);dummy.updateMatrix();return dummy.matrix.clone()}
 
+export function metreBox(THREE,width,height,depth,metres=2.4){
+  const geometry=new THREE.BoxGeometry(width,height,depth),position=geometry.attributes.position,normal=geometry.attributes.normal,uv=geometry.attributes.uv;
+  for(let index=0;index<position.count;index++){
+    const nx=Math.abs(normal.getX(index)),ny=Math.abs(normal.getY(index)),nz=Math.abs(normal.getZ(index));
+    if(nx>=ny&&nx>=nz)uv.setXY(index,position.getZ(index)/metres,position.getY(index)/metres);else if(ny>=nz)uv.setXY(index,position.getX(index)/metres,position.getZ(index)/metres);else uv.setXY(index,position.getX(index)/metres,position.getY(index)/metres);
+  }
+  uv.needsUpdate=true;geometry.userData.metresPerTile=metres;return geometry;
+}
+
 export function addHarborRouteCampus(THREE,scene,samples,quality="high",maps={}){
   if(quality==="low")return null;
   const specs=harborCampusSpecs(samples),group=new THREE.Group(),dummy=new THREE.Object3D(),concrete=new THREE.MeshStandardMaterial({color:0x8b9492,map:maps.concreteColor||null,normalMap:quality==="high"?maps.concreteNormal||null:null,roughnessMap:maps.concreteArm||null,roughness:.88}),graphite=new THREE.MeshStandardMaterial({color:0x273238,roughness:.48,metalness:.42}),glass=new THREE.MeshStandardMaterial({color:0x2d7180,roughness:.16,metalness:.34}),accent=new THREE.MeshStandardMaterial({color:0x3ed2df,emissive:0x083f47,emissiveIntensity:.45,roughness:.42}),cargo=new THREE.MeshStandardMaterial({color:0xc86738,roughness:.67,metalness:.18});
   const add=(geometry,material,matrices,shadow=true)=>{const mesh=new THREE.InstancedMesh(geometry,material,matrices.length);matrices.forEach((matrix,index)=>mesh.setMatrixAt(index,matrix));mesh.castShadow=shadow;mesh.receiveShadow=true;group.add(mesh);return mesh};
-  add(new THREE.BoxGeometry(1,1,1),concrete,specs.map(spec=>compose(dummy,spec,0,spec.height/2,0,spec.width,spec.height,spec.depth)));
+  for(const spec of specs){const shell=new THREE.Mesh(metreBox(THREE,spec.width,spec.height,spec.depth),concrete);shell.position.set(spec.x,spec.height/2,spec.z);shell.rotation.y=spec.heading;shell.castShadow=true;shell.receiveShadow=true;shell.userData.harborHallShell=true;group.add(shell)}
   add(new THREE.BoxGeometry(1,1,1),graphite,specs.map(spec=>compose(dummy,spec,0,spec.height+.45,0,spec.width+1.2,.65,spec.depth+1.2)));
-  add(new THREE.BoxGeometry(1,1,1),glass,specs.map(spec=>compose(dummy,spec,0,spec.height*.58,-spec.depth/2-.03,spec.width*.76,spec.height*.34,.18)),false);
-  add(new THREE.BoxGeometry(1,1,1),accent,specs.map(spec=>compose(dummy,spec,0,spec.height*.83,-spec.depth/2-.18,spec.width*.82,.22,.25)),false);
-  const yards=specs.flatMap((spec,specIndex)=>Array.from({length:specIndex%2?4:2},(_,index)=>compose(dummy,spec,-spec.width*.32+index*5.8,1.55,spec.depth*.72,5.2,2.6,2.35)));add(new THREE.BoxGeometry(1,1,1),cargo,yards);
+  const bays=specs.flatMap(spec=>[-.28,0,.28].map(ratio=>compose(dummy,spec,spec.width*ratio,2.45,spec.depth/2+.12,5.4,4.5,.22)));add(new THREE.BoxGeometry(1,1,1),graphite,bays);
+  const framePosts=specs.flatMap(spec=>[-.28,0,.28].flatMap(ratio=>[-1,1].map(side=>compose(dummy,spec,spec.width*ratio+side*2.9,2.55,spec.depth/2+.3,.24,4.9,.26))));add(new THREE.BoxGeometry(1,1,1),concrete,framePosts);
+  const frameLintels=specs.flatMap(spec=>[-.28,0,.28].map(ratio=>compose(dummy,spec,spec.width*ratio,5,spec.depth/2+.3,6.05,.28,.26)));add(new THREE.BoxGeometry(1,1,1),concrete,frameLintels);
+  const awnings=specs.flatMap(spec=>[-.28,0,.28].map(ratio=>compose(dummy,spec,spec.width*ratio,5.28,spec.depth/2+.95,6.3,.25,1.6)));add(new THREE.BoxGeometry(1,1,1),accent,awnings,false);
+  const windows=specs.map(spec=>compose(dummy,spec,0,spec.height-1.35,spec.depth/2+.16,spec.width*.78,1.55,.2));add(new THREE.BoxGeometry(1,1,1),glass,windows,false);
+  const vents=specs.flatMap(spec=>[-.25,.25].map(ratio=>compose(dummy,spec,spec.width*ratio,spec.height+1.2,0,2.6,1.45,2.6)));add(new THREE.BoxGeometry(1,1,1),graphite,vents);
+  const yards=specs.flatMap((spec,specIndex)=>Array.from({length:specIndex%2?4:2},(_,index)=>compose(dummy,spec,-spec.width*.32+index*5.8,1.55,-spec.depth*.72,5.2,2.6,2.35)));add(new THREE.BoxGeometry(1,1,1),cargo,yards);
   const posts=specs.flatMap(spec=>[-1,1].map(side=>compose(dummy,spec,side*(spec.width/2+2.4),4.4,-spec.depth*.35,.26,8,.26)));add(new THREE.BoxGeometry(1,1,1),graphite,posts);
   const lights=specs.flatMap(spec=>[-1,1].map(side=>compose(dummy,spec,side*(spec.width/2+2.4),8.45,-spec.depth*.35,1.6,.22,.55)));add(new THREE.BoxGeometry(1,1,1),accent,lights,false);
 

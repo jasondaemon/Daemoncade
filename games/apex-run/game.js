@@ -33,7 +33,7 @@ import {addHarborFactoryComplex} from "./harbor-factory-complex.js?v=0.5.0-alpha
 import {addHarborBuoys} from "./harbor-maritime-assets.js?v=0.5.0-alpha88b";
 import {addHarborWaterfront} from "./harbor-waterfront.js?v=0.5.0-alpha89b";
 import {addHarborServiceDistrict} from "./harbor-service-district.js?v=0.5.0-alpha90e";
-import {addHarborRouteCampus} from "./harbor-route-campus.js?v=0.5.0-alpha92";
+import {addHarborRouteCampus} from "./harbor-route-campus.js?v=0.5.0-alpha93b";
 import {addVenueTerrain} from "./venue-terrain.js?v=0.5.0-alpha64";
 import {resolveSelection} from "./car-catalog.js";
 import {createRaceCarVisual} from "./car-visual-adapter.js";
