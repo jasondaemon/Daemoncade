@@ -1,0 +1,25 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data: blob:; connect-src 'self' blob:; object-src 'none'; base-uri 'none'">
+  <title>Apex Run Garage</title>
+  <link rel="stylesheet" href="garage.css">
+</head>
+<body>
+  <main class="garage-shell">
+    <header><div><span>APEX MOTORSPORT</span><h1>Garage</h1><p>Cars share identical race physics. Win clean runs to unlock new looks.</p></div><a href="./">Return to track</a></header>
+    <section class="showroom" aria-labelledby="selected-name">
+      <div id="garage-preview" class="preview" aria-label="Selected car preview"><div class="silhouette"><i></i><i></i><i></i><i></i></div><span id="preview-note"></span></div>
+      <div class="selection-copy"><span id="selected-category"></span><h2 id="selected-name"></h2><p id="selected-description"></p><p id="selected-license"></p><button id="equip" type="button">Equipped</button></div>
+    </section>
+    <section class="catalog" aria-labelledby="cars-title"><div class="section-title"><div><span>COLLECTION</span><h2 id="cars-title">Cars</h2></div><small>Use ← → to browse</small></div><ul id="cars" class="cards"></ul></section>
+    <section class="catalog" aria-labelledby="liveries-title"><div class="section-title"><div><span>PAINT SHOP</span><h2 id="liveries-title">Liveries</h2></div></div><ul id="liveries" class="cards liveries"></ul></section>
+    <section class="achievements" aria-labelledby="achievements-title"><div class="section-title"><div><span>CAREER</span><h2 id="achievements-title">Achievements</h2></div><button id="reset-garage" type="button">Reset garage</button></div><div id="achievement-list"></div></section>
+    <p id="garage-status" class="sr-only" role="status" aria-live="polite"></p>
+    <dialog id="reset-confirm"><h2>Reset garage progress?</h2><p>This clears cosmetic unlocks and selection. Race PBs and ghosts are not changed.</p><div><button id="reset-cancel" type="button">Cancel</button><button id="reset-apply" type="button">Reset garage</button></div></dialog>
+  </main>
+  <script type="module" src="garage.js?v=0.5.0-garage-integration2"></script>
+</body>
+</html>
