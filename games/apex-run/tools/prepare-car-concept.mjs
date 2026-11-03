@@ -2,10 +2,11 @@
 import fs from "node:fs";
 import path from "node:path";
 
-const [inputPath,outputPath]=process.argv.slice(2);
+const [inputPath,outputPath,mode="showroom"]=process.argv.slice(2);
 if(!inputPath||!outputPath)throw new Error("Usage: node prepare-car-concept.mjs SOURCE.glb OUTPUT.glb");
 
 const DROP_NODE=/^(Interior|Engine$|License Plate$)|WindshieldWipers|HoodInterior|HoodUnder/;
+const DROP_RACE_NODE=/Rim$|BrakePad$|Mirror(?:Color[12])?$|Handle0[12]$|WindowGasket$|HoodTopgrill$/;
 const WHEELS=new Map([["WheelFrontL","front-left"],["WheelFrontR","front-right"],["WheelRearL","rear-left"],["WheelRearR","rear-right"]]);
 const PAINTS={
   "Paint 1 Carmine":{name:"Paint 1 Apex Cyan",color:[.012,.58,.68,1]},
@@ -30,7 +31,7 @@ function pad4(buffer,pad=0){const length=(buffer.length+3)&~3;if(length===buffer
 function encodeGlb(json,bin){const jsonChunk=pad4(Buffer.from(JSON.stringify(json)),0x20),binChunk=pad4(bin);const header=Buffer.alloc(12),jh=Buffer.alloc(8),bh=Buffer.alloc(8);header.writeUInt32LE(0x46546c67,0);header.writeUInt32LE(2,4);header.writeUInt32LE(12+8+jsonChunk.length+8+binChunk.length,8);jh.writeUInt32LE(jsonChunk.length,0);jh.writeUInt32LE(0x4e4f534a,4);bh.writeUInt32LE(binChunk.length,0);bh.writeUInt32LE(0x004e4942,4);return Buffer.concat([header,jh,jsonChunk,bh,binChunk])}
 
 const{json:source,bin}=parseGlb(inputPath);
-const keepNode=new Set(source.nodes.map((node,index)=>DROP_NODE.test(node.name||"")?null:index).filter(Number.isInteger));
+const keepNode=new Set(source.nodes.map((node,index)=>DROP_NODE.test(node.name||"")||mode==="race"&&DROP_RACE_NODE.test(node.name||"")?null:index).filter(Number.isInteger));
 const nodes=remapList(source.nodes,keepNode);
 nodes.items.forEach((node,index)=>{node.children=node.children?.filter(child=>keepNode.has(child)).map(child=>nodes.map.get(child));if(!node.children?.length)delete node.children;if(node.mesh!==undefined)node.mesh=node.mesh;const wheel=WHEELS.get(node.name);if(wheel)node.extras={...(node.extras||{}),apexWheel:wheel}});
 const usedMeshes=new Set(nodes.items.flatMap(node=>node.mesh===undefined?[]:[node.mesh]));
@@ -58,7 +59,7 @@ views.items.forEach((view,index)=>{const old=source.bufferViews[views.indices[in
 for(const accessor of accessors.items){if(accessor.bufferView!==undefined)accessor.bufferView=views.map.get(accessor.bufferView);if(accessor.sparse){accessor.sparse.indices.bufferView=views.map.get(accessor.sparse.indices.bufferView);accessor.sparse.values.bufferView=views.map.get(accessor.sparse.values.bufferView)}}
 images.items.forEach(image=>{if(image.bufferView!==undefined)image.bufferView=views.map.get(image.bufferView)});
 
-const output={asset:{...source.asset,generator:"Apex Run CarConcept exterior preparation 1.0",copyright:"CarConcept © Eric Chadwick / Darmstadt Graphics Group, CC BY 4.0; modified by Apex Run"},scene:0,scenes:[{name:"Apex CarConcept Race Exterior",nodes:source.scenes[source.scene||0].nodes.filter(node=>keepNode.has(node)).map(node=>nodes.map.get(node))}],nodes:nodes.items,meshes:meshes.items,accessors:accessors.items,bufferViews:views.items,buffers:[{byteLength:byteOffset}],materials:materials.items,textures:textures.items,images:images.items,samplers:samplers.items,extensionsUsed:source.extensionsUsed,extensionsRequired:source.extensionsRequired,extensions:{...source.extensions,KHR_materials_variants:{variants:[{name:"Apex Cyan"},{name:"Summit Gold"},{name:"Midnight Grid"}]}}};
+const output={asset:{...source.asset,generator:`Apex Run CarConcept exterior preparation 1.1 (${mode})`,copyright:"CarConcept © Eric Chadwick / Darmstadt Graphics Group, CC BY 4.0; modified by Apex Run"},scene:0,scenes:[{name:`Apex CarConcept ${mode==="race"?"Race LOD":"Showroom"}`,nodes:source.scenes[source.scene||0].nodes.filter(node=>keepNode.has(node)).map(node=>nodes.map.get(node))}],nodes:nodes.items,meshes:meshes.items,accessors:accessors.items,bufferViews:views.items,buffers:[{byteLength:byteOffset}],materials:materials.items,textures:textures.items,images:images.items,samplers:samplers.items,extensionsUsed:source.extensionsUsed,extensionsRequired:source.extensionsRequired,extensions:{...source.extensions,KHR_materials_variants:{variants:[{name:"Apex Cyan"},{name:"Summit Gold"},{name:"Midnight Grid"}]}}};
 for(const key of["textures","images","samplers","extensionsRequired"])if(!output[key]?.length)delete output[key];
 const outputBin=Buffer.concat(chunks),encoded=encodeGlb(output,outputBin);fs.mkdirSync(path.dirname(outputPath),{recursive:true});fs.writeFileSync(outputPath,encoded);
 let triangles=0,primitives=0;for(const mesh of output.meshes)for(const primitive of mesh.primitives){primitives++;const accessor=output.accessors[primitive.indices??primitive.attributes.POSITION];triangles+=Math.floor(accessor.count/3)}

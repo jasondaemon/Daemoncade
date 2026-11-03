@@ -1,6 +1,6 @@
 # Apex GT Concept asset notice
 
-`car-concept-race.glb` is derived from **CarConcept** by Eric Chadwick and the
+`car-concept-showroom.glb` and `car-concept-race.glb` are derived from **CarConcept** by Eric Chadwick and the
 Darmstadt Graphics Group. The source is distributed under Creative Commons
 Attribution 4.0 International (CC BY 4.0). The complete upstream license is in
 `car-concept-LICENSE.md`.

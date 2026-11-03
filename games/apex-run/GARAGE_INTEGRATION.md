@@ -56,11 +56,10 @@ Only the outcome produced from the live production `RaceController` is valid.
 Official source: Khronos glTF Sample Assets, CarConcept. License: CC BY 4.0,
 Eric Chadwick / Darmstadt Graphics Group. The license explicitly excludes logos
 and associated trademarks. `tools/prepare-car-concept.mjs` deterministically
-creates `assets/car-concept-race.glb` from the official 11.78 MB source. It
+creates a logo-clean showroom asset plus a reduced-detail `assets/car-concept-race.glb` from the official 11.78 MB source. It
 removes the license plate, steering emblem, detailed interior, engine, wipers
 and hidden hood pieces; unused binary buffers and logo textures are not copied.
-The prepared file is 8,318,184 bytes, 143,802 triangles, 58 primitives, 54
-nodes, 19 materials, 11 textures and 11 embedded images. The three source paint
+The showroom is 8,318,184 bytes, 143,802 triangles and 58 primitives. The race LOD is 5,775,428 bytes, 73,531 triangles and 33 primitives; it removes high-cost rims, pads and minor trim while retaining tire, brake-disc and body silhouettes. The three source paint
 variants become original Apex Cyan, Summit Gold and Midnight Grid liveries of
 one car. See `assets/CAR-CONCEPT-NOTICE.md` for attribution and modifications.
 

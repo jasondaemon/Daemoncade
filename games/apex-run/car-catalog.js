@@ -21,7 +21,7 @@ const cars=[
     name:"Apex GT Concept",
     category:"GT CONCEPT",
     description:"A logo-clean, race-optimized grand-touring concept with the same competitive physics as every Apex car.",
-    asset:{status:"ready",url:"assets/car-concept-race.glb",source:"https://github.com/KhronosGroup/glTF-Sample-Assets/tree/main/Models/CarConcept",license:"CC BY 4.0",credit:"Eric Chadwick / Darmstadt Graphics Group · exterior modified and optimized for Apex Run",metrics:{bytes:8318184,triangles:143802,primitives:58}},
+    asset:{status:"ready",url:"assets/car-concept-showroom.glb",raceUrl:"assets/car-concept-race.glb",source:"https://github.com/KhronosGroup/glTF-Sample-Assets/tree/main/Models/CarConcept",license:"CC BY 4.0",credit:"Eric Chadwick / Darmstadt Graphics Group · exterior modified and optimized for Apex Run",metrics:{showroom:{bytes:8318184,triangles:143802,primitives:58},race:{bytes:5775428,triangles:73531,primitives:33}}},
     preview:{kind:"gltf",camera:"gt",variants:["Apex Cyan","Summit Gold","Midnight Grid"]},
     unlock:"three-clean-streak",
     cosmetics:[
