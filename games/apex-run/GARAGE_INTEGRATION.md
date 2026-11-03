@@ -63,6 +63,12 @@ The showroom is 8,318,184 bytes, 143,802 triangles and 58 primitives. The race L
 variants become original Apex Cyan, Summit Gold and Midnight Grid liveries of
 one car. See `assets/CAR-CONCEPT-NOTICE.md` for attribution and modifications.
 
+At race load, `createRaceCarVisual` welds compatible static body geometry by
+material and reduces each wheel to independently animated tire and hub batches.
+The prepared GLB constructs as 16 visible race meshes (eight body, eight wheel)
+instead of 37 fragmented meshes. This is a source-verified draw-object budget;
+GPU frame timing still requires browser profiling on each quality tier.
+
 Automated checks enforce the transfer/triangle/primitive budgets, excluded
 trademark data, exact four authored wheel groups, valid accessor references and
 variant names. The isolated IAB showroom regression loaded the actual GT with no
