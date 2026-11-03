@@ -31,7 +31,8 @@ export function makeFormulaCar(THREE,assetScene){
   const group=new THREE.Group();group.name="formula-car";const model=assetScene.clone(true);removeWheels(model);style(model,THREE);orient(model);group.add(model);return group;
 }
 
-export function makeFormulaDisplayCar(THREE,assetScene){const group=new THREE.Group();group.name="formula-display-car";const model=assetScene.clone(true);style(model,THREE);orient(model);group.add(model);return group}
+function displayGeometry(THREE,assetScene,wheels=false){const model=assetScene.clone(true);orient(model);model.updateMatrixWorld(true);const geometries=[];model.traverse(object=>{if(!object.isMesh)return;let node=object,isWheel=false;while(node){if(WHEEL_NAMES.includes(node.name)){isWheel=true;break}node=node.parent}if(isWheel!==wheels)return;let geometry=object.geometry.clone().applyMatrix4(object.matrixWorld);for(const name of Object.keys(geometry.attributes))if(name!=="position"&&name!=="normal")geometry.deleteAttribute(name);if(geometry.index)geometry=geometry.toNonIndexed();geometries.push(geometry)});return mergeGeometries(geometries,false)}
+export function makeFormulaDisplayLod(THREE,assetScene){return{bodyGeometry:displayGeometry(THREE,assetScene,false),wheelGeometry:displayGeometry(THREE,assetScene,true)}}
 
 function centeredWheel(THREE,assetScene,name,ghost=false){
   const source=assetScene.getObjectByName(name);if(!source)throw new Error(`Formula asset is missing ${name}`);
@@ -50,3 +51,4 @@ export function makeFormulaWheelVisual(THREE,assetScene,index,ghost=false){
 export function makeFormulaGhost(THREE,car,wheelOffsets,assetScene){
   const ghost=car.clone(true);ghost.name="formula-ghost";style(ghost,THREE,true);wheelOffsets.forEach((offset,index)=>{const wheel=makeFormulaWheelVisual(THREE,assetScene,index,true);wheel.root.position.set(offset.x,-.4,offset.z);ghost.add(wheel.root)});ghost.visible=false;return ghost;
 }
+import {mergeGeometries} from "../vendor/three/addons/utils/BufferGeometryUtils.js";

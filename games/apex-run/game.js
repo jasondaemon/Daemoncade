@@ -5,7 +5,7 @@ import {FixedStepper,MEDALS,REPLAY_HZ,advanceInvertedStallTime,clamp,commitResul
 import {formatSplitDelta,replayCheckpointSplits,splitTone,summarizeSplits} from "./race-feedback.js?v=0.5.0-alpha49-review3";
 import {RAIL_COLLISION_GROUPS,SUSPENSION_QUERY_GROUPS,VEHICLE,applyLowSpeedSteering,applySurfaceDrag,createVehicle,driveVehicle,hasSupportingContact,stabilizeChassis} from "./vehicle-model.js?v=0.5.0-alpha25";
 import {setWheelVisualPose} from "./wheel-visual.js?v=0.5.0-alpha25";
-import {makeFormulaCar,makeFormulaDisplayCar,makeFormulaGhost,makeFormulaWheelVisual} from "./formula-car.js?v=0.5.0-alpha26";
+import {makeFormulaCar,makeFormulaDisplayLod,makeFormulaGhost,makeFormulaWheelVisual} from "./formula-car.js?v=0.5.0-alpha26";
 import {ACTIVE_TRACK_ID,TRACK_BOXES,BRANCH_JUNCTIONS,BRANCH_ROADS,CHECKPOINTS,INTENTIONAL_OBSTACLES,JUMP_ZONE,RECOVERY_SPOTS,ROAD_PATHS,ROAD_SAMPLES,ROAD_STEPS_PER_SEGMENT,PLAY_AREA,RAIL_PROFILE,SPLIT_LAYOUT,START_GATE_SAMPLE_INDEX,START_SPAWN_SAMPLE_INDEX,STUNT_RAIL_GAPS,SURFACE_GAPS,VENUE,advanceOutsidePlayTime,advanceUnderRoadTime,buildLaneRibbon,buildRailColliderMesh,buildRoadColliderMesh,buildRoadMesh,buildSupportSpecs,recoverySpotForCheckpoint,roadPoseNear,routeStage,routeTarget} from "./track-model.js?v=0.5.0-alpha54";
 import {RaceController} from "./race-controller.js?v=0.5.0-alpha49-review3";
 import {createTelemetry,sampleTelemetry} from "./telemetry.js?v=0.5.0-alpha28";
@@ -132,7 +132,7 @@ const grid=new THREE.GridHelper(largeVenue?900:320,largeVenue?45:32,0xffffff,0xf
 const{chassis,chassisCollider,vehicle,wheelOffsets}=createVehicle(RAPIER,world);
 
 const formulaAsset=(await assetLoader.loadAsync("./assets/low-poly-f1.glb")).scene,selectedGarage=resolveSelection(garageState);
-if(alpineDistrict)addAlpineDisplayCars(alpineDistrict.district,makeFormulaDisplayCar(THREE,formulaAsset),qualityProfile.id);
+if(alpineDistrict)addAlpineDisplayCars(THREE,alpineDistrict.district,makeFormulaDisplayLod(THREE,formulaAsset),qualityProfile.id);
 document.documentElement.dataset.selectedCar=selectedGarage.car.id;document.documentElement.dataset.selectedCosmetic=selectedGarage.cosmetic.id;
 const formulaCar=makeFormulaCar(THREE,formulaAsset),wheelMeshes=[];let selectedVisual=null,car=formulaCar;
 if(selectedGarage.car.id==="car-concept"){const gtAsset=(await assetLoader.loadAsync(`./${selectedGarage.car.asset.raceUrl}`)).scene;selectedVisual=createRaceCarVisual({THREE,sourceScene:gtAsset,palette:selectedGarage.cosmetic.palette});car=selectedVisual.root;scene.add(car)}else{scene.add(car);for(let index=0;index<wheelOffsets.length;index++){const wheel=makeFormulaWheelVisual(THREE,formulaAsset,index);scene.add(wheel.root);wheelMeshes.push(wheel)}}
