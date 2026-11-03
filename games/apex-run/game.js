@@ -70,7 +70,7 @@ const world=new RAPIER.World({x:0,y:VEHICLE.gravity,z:0});world.integrationParam
 const meshes=[],keys=new Set(),course=[],roadColliders=new Set(),supportColliders=[];
 const materials={road:new THREE.MeshStandardMaterial(roadMaterialParameters(THREE,{colorMap:asphaltColor,normalMap:asphaltNormal,roughnessMap:asphaltRoughness})),bank:new THREE.MeshStandardMaterial({color:0x666762,map:concreteColor,normalMap:concreteNormal,roughnessMap:concreteArm,roughness:.82}),runoff:new THREE.MeshStandardMaterial({color:0xaaa494,roughness:.95}),edge:new THREE.MeshStandardMaterial({color:0x3ad6e7,emissive:0x075565,emissiveIntensity:.42}),grass:new THREE.MeshStandardMaterial({color:0x43563b,map:grassColor,normalMap:grassNormal,roughnessMap:grassRoughness,normalScale:new THREE.Vector2(.18,.18),roughness:1,metalness:0}),stadium:new THREE.MeshStandardMaterial({color:0x62645f,map:concreteColor,normalMap:concreteNormal,roughnessMap:concreteArm,roughness:.86})};
 materials.road.envMapIntensity=.28;materials.bank.envMapIntensity=.18;materials.runoff.envMapIntensity=.12;materials.grass.envMapIntensity=.08;materials.stadium.envMapIntensity=.16;
-if(largeVenue)addEnvironmentPresentation(THREE,scene,VENUE,qualityProfile.id,ACTIVE_TRACK_ID);
+addEnvironmentPresentation(THREE,scene,VENUE,qualityProfile.id,ACTIVE_TRACK_ID);
 if(ACTIVE_TRACK_ID==="harbor-run")await addHarborVenue(THREE,scene,VENUE,qualityProfile.id,{concreteColor,concreteNormal,concreteArm,garageColor,garageNormal,garageArm,assetLoader});
 addTracksideIdentity(THREE,scene,ROAD_SAMPLES,ACTIVE_TRACK_ID,qualityProfile.id,{concreteColor,concreteNormal,concreteArm});
 if(largeVenue)addSignatureLandmarks(THREE,scene,ROAD_SAMPLES,ACTIVE_TRACK_ID,qualityProfile.id,{concreteColor,concreteNormal,concreteArm});
