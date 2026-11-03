@@ -1,6 +1,6 @@
 export const ENVIRONMENT_PALETTES=Object.freeze({
-  alpine:Object.freeze({top:0x4f8fc0,horizon:0xc2dce7,ground:0xd9d4bb,fog:0x8fb7c9,fogDensity:.00082,mountainLow:[.09,.13,.14],mountainHigh:[.27,.34,.35],reflection:["#79acd0","#c3d9df","#687261"]}),
-  harbor:Object.freeze({top:0x345f78,horizon:0xb4cdd1,ground:0x8d968c,fog:0x91adb2,fogDensity:.0009,mountainLow:[.075,.105,.11],mountainHigh:[.22,.28,.29],reflection:["#608aa0","#b4ced0","#536865"]}),
+  alpine:Object.freeze({top:0x4f8fc0,horizon:0xc2dce7,ground:0xd9d4bb,fog:0x8fb7c9,fogDensity:.00082,mountainLow:[.09,.13,.14],mountainHigh:[.27,.34,.35],snow:[.72,.77,.76],snowLine:.74,reflection:["#79acd0","#c3d9df","#687261"]}),
+  harbor:Object.freeze({top:0x345f78,horizon:0xb4cdd1,ground:0x8d968c,fog:0x91adb2,fogDensity:.0009,mountainLow:[.075,.105,.11],mountainHigh:[.22,.28,.29],snow:null,snowLine:2,reflection:["#608aa0","#b4ced0","#536865"]}),
 });
 export function environmentPalette(trackId="summit-circuit"){return trackId==="harbor-run"?ENVIRONMENT_PALETTES.harbor:ENVIRONMENT_PALETTES.alpine}
 
@@ -11,7 +11,7 @@ export function mountainGeometry(THREE,{radiusX,radiusZ,segments,height,seed=0,r
     for(let index=0;index<segments;index++){
       const angle=index/segments*Math.PI*2,wave=.58+.22*Math.sin(angle*3.1+seed)+.14*Math.sin(angle*7.3-seed*.7)+.06*Math.cos(angle*13.7),jitter=1+.025*Math.sin(angle*11.2+ring*1.7+seed),x=Math.cos(angle)*radiusX*radialScale*jitter,z=Math.sin(angle)*radiusZ*radialScale*jitter,peak=height*Math.max(.28,wave),y=ring===0||ring===rings-1?-12:profile*peak-(1-profile)*5;
       positions.push(x,y,z);
-      const haze=.78+.16*Math.sin(angle*2+seed),altitude=.28+.72*profile;for(let channel=0;channel<3;channel++)colors.push((palette.mountainLow[channel]+(palette.mountainHigh[channel]-palette.mountainLow[channel])*altitude)*haze);
+      const haze=.78+.16*Math.sin(angle*2+seed),altitude=.28+.72*profile,snowMix=palette.snow?Math.max(0,Math.min(1,(profile-palette.snowLine)/.16))*(.55+.45*Math.max(0,Math.sin(angle*5.3+seed))):0;for(let channel=0;channel<3;channel++){const rock=(palette.mountainLow[channel]+(palette.mountainHigh[channel]-palette.mountainLow[channel])*altitude)*haze,snow=palette.snow?.[channel]??rock;colors.push(rock+(snow-rock)*snowMix)}
     }
   }
   for(let ring=0;ring<rings-1;ring++)for(let index=0;index<segments;index++){const next=(index+1)%segments,a=ring*segments+index,b=(ring+1)*segments+index,c=ring*segments+next,d=(ring+1)*segments+next;indices.push(a,c,b,b,c,d)}
