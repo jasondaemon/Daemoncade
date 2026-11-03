@@ -33,6 +33,7 @@ import {addHarborFactoryComplex} from "./harbor-factory-complex.js?v=0.5.0-alpha
 import {addHarborBuoys} from "./harbor-maritime-assets.js?v=0.5.0-alpha88b";
 import {addHarborWaterfront} from "./harbor-waterfront.js?v=0.5.0-alpha89b";
 import {addHarborServiceDistrict} from "./harbor-service-district.js?v=0.5.0-alpha90e";
+import {addHarborRouteCampus} from "./harbor-route-campus.js?v=0.5.0-alpha92";
 import {addVenueTerrain} from "./venue-terrain.js?v=0.5.0-alpha64";
 import {resolveSelection} from "./car-catalog.js";
 import {createRaceCarVisual} from "./car-visual-adapter.js";
@@ -85,6 +86,7 @@ if(ACTIVE_TRACK_ID==="harbor-run")await addHarborVenue(THREE,scene,VENUE,quality
 if(ACTIVE_TRACK_ID==="harbor-run"){
   addHarborCoastalDistricts(THREE,scene,qualityProfile.id,{concreteColor,concreteNormal,concreteArm});
   addHarborWaterfront(THREE,scene,qualityProfile.id,{concreteColor,concreteNormal,concreteArm},HARBOR_WATER_Y);
+  addHarborRouteCampus(THREE,scene,ROAD_SAMPLES,qualityProfile.id,{concreteColor,concreteNormal,concreteArm});
   if(qualityProfile.id!=="low"){
     const gantrySource=await assetLoader.loadAsync("./assets/innerscene/container-gantry-crane.glb").then(result=>result.scene).catch(()=>null);
     placeHarborGantryCrane(THREE,scene,gantrySource,qualityProfile.id);
