@@ -66,3 +66,10 @@ raw 4K packages or source DCC scenes ship with the game.
 - License: CC0 dedication embedded by the publisher in the distributed GLB.
 - Runtime file: `innerscene/container-gantry-crane.glb` (6,777,512 bytes).
 - Apex Run scales and grounds the model as a Harbor shipyard landmark. Low quality omits it; Medium disables its shadows.
+
+## Poly Haven — Modular Factory Facade geometry selection
+
+- Source: https://polyhaven.com/a/modular_factory_facade
+- License: https://polyhaven.com/license (CC0)
+- The Harbor bundle retains seven named garage/window/cornice modules from the official 1K glTF and its shared geometry buffer. Apex Run arranges five Medium or seven High bays; Low omits the complex.
+- The complete 192-module source is not instantiated at runtime.
