@@ -59,3 +59,10 @@ authored shared road/obstacle geometry.
 Total included transfer size is intentionally bounded to the selected models
 and their optimized 1K JPG/PNG runtime maps (including the shrub alpha PNG); no
 raw 4K packages or source DCC scenes ship with the game.
+
+## Innerscene — Container Gantry Crane
+
+- Source: https://www.innerscene.com/tools/library/3d-parts/container-gantry-crane-c8a04a92
+- License: CC0 dedication embedded by the publisher in the distributed GLB.
+- Runtime file: `innerscene/container-gantry-crane.glb` (6,777,512 bytes).
+- Apex Run scales and grounds the model as a Harbor shipyard landmark. Low quality omits it; Medium disables its shadows.

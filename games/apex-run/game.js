@@ -28,6 +28,7 @@ import {addAlpineDisplayCars,addAlpineStartDistrict} from "./alpine-start-distri
 import {addRouteDistricts} from "./route-districts.js?v=0.5.0-alpha72";
 import {addRouteLandscapeBands} from "./route-landscape-bands.js?v=0.5.0-alpha76";
 import {addHarborCoastalDistricts} from "./harbor-coastal-districts.js?v=0.5.0-alpha82";
+import {placeHarborGantryCrane} from "./harbor-hero-assets.js?v=0.5.0-alpha83";
 import {addVenueTerrain} from "./venue-terrain.js?v=0.5.0-alpha64";
 import {resolveSelection} from "./car-catalog.js";
 import {createRaceCarVisual} from "./car-visual-adapter.js";
@@ -76,7 +77,13 @@ const materials={road:new THREE.MeshStandardMaterial(roadMaterialParameters(THRE
 materials.road.envMapIntensity=.28;materials.bank.envMapIntensity=.18;materials.runoff.envMapIntensity=.12;materials.grass.envMapIntensity=.08;materials.stadium.envMapIntensity=.16;
 addEnvironmentPresentation(THREE,scene,VENUE,qualityProfile.id,ACTIVE_TRACK_ID);
 if(ACTIVE_TRACK_ID==="harbor-run")await addHarborVenue(THREE,scene,VENUE,qualityProfile.id,{concreteColor,concreteNormal,concreteArm,garageColor,garageNormal,garageArm,assetLoader});
-if(ACTIVE_TRACK_ID==="harbor-run")addHarborCoastalDistricts(THREE,scene,qualityProfile.id,{concreteColor,concreteNormal,concreteArm});
+if(ACTIVE_TRACK_ID==="harbor-run"){
+  addHarborCoastalDistricts(THREE,scene,qualityProfile.id,{concreteColor,concreteNormal,concreteArm});
+  if(qualityProfile.id!=="low"){
+    const gantrySource=await assetLoader.loadAsync("./assets/innerscene/container-gantry-crane.glb").then(result=>result.scene).catch(()=>null);
+    placeHarborGantryCrane(THREE,scene,gantrySource,qualityProfile.id);
+  }
+}
 addTracksideIdentity(THREE,scene,ROAD_SAMPLES,ACTIVE_TRACK_ID,qualityProfile.id,{concreteColor,concreteNormal,concreteArm});
 if(ACTIVE_TRACK_ID==="alpine-sprint"||ACTIVE_TRACK_ID==="harbor-run")addRouteDistricts(THREE,scene,ROAD_SAMPLES,ACTIVE_TRACK_ID,qualityProfile.id);
 if(ACTIVE_TRACK_ID==="alpine-sprint"||ACTIVE_TRACK_ID==="harbor-run")addRouteLandscapeBands(THREE,scene,ROAD_SAMPLES,ACTIVE_TRACK_ID,qualityProfile.id);
