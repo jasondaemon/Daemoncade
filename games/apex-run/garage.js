@@ -7,6 +7,7 @@ import * as THREE from "../vendor/three/three.module.min.js";
 import {GLTFLoader} from "../vendor/three/addons/loaders/GLTFLoader.js";
 
 const $=id=>document.getElementById(id),storage=createGarageStorage(),preview=new GaragePreviewHost(createThreeGaragePreview({THREE,GLTFLoader}));let state=migrateGarage(storage).state,viewCar=resolveSelection(state).car,viewCosmetic=resolveSelection(state).cosmetic;
+const query=new URLSearchParams(location.search),returnPage=query.get("return")==="test.html"&&storage.isIsolated?"test.html":"./",returnUrl=new URL(returnPage,location.href);if(storage.isIsolated)returnUrl.searchParams.set("testStorage",query.get("testStorage"));document.querySelector("header a").href=returnUrl.href;
 await preview.mount($("garage-preview"),{reducedMotion:matchMedia("(prefers-reduced-motion: reduce)").matches});
 const announce=text=>{$("garage-status").textContent="";requestAnimationFrame(()=>$("garage-status").textContent=text)};
 function lockCopy(unlock){if(!unlock)return"AVAILABLE";const achievement=ACHIEVEMENTS.find(item=>item.id===unlock);return achievementUnlocked(state,unlock)?"UNLOCKED":`LOCKED · ${achievement?.name||unlock}`}
