@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import * as THREE from "../vendor/three/three.module.min.js";
-import {addHarborCoastalDistricts,coastalDistrictSpecs,FERRY_LAYOUT,shorelinePoint} from "./harbor-coastal-districts.js";
+import {addHarborCoastalDistricts,coastalDistrictSpecs,FERRY_APRON_PILES,FERRY_LAYOUT,shorelinePoint} from "./harbor-coastal-districts.js";
 
 globalThis.location={search:"?track=harbor-run"};
 const {ROAD_SAMPLES}=await import("./track-model.js?coastal=harbor");
@@ -9,6 +9,13 @@ const overlaps=(a,b)=>{const aa=bounds(a),bb=bounds(b);return aa.left<=bb.right&
 assert.ok(overlaps(FERRY_LAYOUT.apron,FERRY_LAYOUT.terminal),"apron joins terminal");
 assert.ok(overlaps(FERRY_LAYOUT.apron,FERRY_LAYOUT.pier),"apron joins pier");
 assert.ok(overlaps(FERRY_LAYOUT.apron,FERRY_LAYOUT.causeway),"apron joins causeway");
+assert.equal(FERRY_APRON_PILES.length,12,"apron has twelve dedicated supports");
+const apronBounds=bounds(FERRY_LAYOUT.apron);
+for(const pile of FERRY_APRON_PILES){
+  assert.ok(pile.x>=apronBounds.left&&pile.x<=apronBounds.right&&pile.z>=apronBounds.near&&pile.z<=apronBounds.far,"apron pile stays beneath deck");
+  assert.equal(pile.centerY-pile.height/2,pile.bottom,"pile bottom matches geometry");
+  assert.ok(pile.bottom<=FERRY_LAYOUT.seabedY,"apron pile reaches seabed");
+}
 
 for(const quality of ["low","medium","high"]){
   const specs=coastalDistrictSpecs(quality);
