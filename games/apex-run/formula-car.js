@@ -31,6 +31,8 @@ export function makeFormulaCar(THREE,assetScene){
   const group=new THREE.Group();group.name="formula-car";const model=assetScene.clone(true);removeWheels(model);style(model,THREE);orient(model);group.add(model);return group;
 }
 
+export function makeFormulaDisplayCar(THREE,assetScene){const group=new THREE.Group();group.name="formula-display-car";const model=assetScene.clone(true);style(model,THREE);orient(model);group.add(model);return group}
+
 function centeredWheel(THREE,assetScene,name,ghost=false){
   const source=assetScene.getObjectByName(name);if(!source)throw new Error(`Formula asset is missing ${name}`);
   // The source FBX wheel parent matrices contain opposite +/-4 degree static
