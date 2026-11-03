@@ -1,0 +1,13 @@
+import assert from "node:assert/strict";
+globalThis.location={search:"?track=harbor-run"};
+const {ROAD_SAMPLES,VENUE}=await import("./track-model.js?harbor-venue-test=1");
+const {HARBOR_DOCK_SPECS,HARBOR_WAREHOUSE_SPECS,harborStructureClearance,harborVenueBudget,isHarborWaterFailure}=await import("./harbor-venue.js");
+assert.deepEqual(harborVenueBudget("low"),{cranes:2,warehouses:2});
+assert.deepEqual(harborVenueBudget("medium"),{cranes:3,warehouses:3});
+assert.deepEqual(harborVenueBudget("high"),{cranes:4,warehouses:3});
+for(const spec of HARBOR_DOCK_SPECS)assert.ok(harborStructureClearance(spec,ROAD_SAMPLES)>20,"dock footprint must clear the complete road ribbon");
+for(const [x,z,width,,depth] of HARBOR_WAREHOUSE_SPECS)assert.ok(harborStructureClearance([x,z,width+4,depth+4],ROAD_SAMPLES)>20,"warehouse footprint must clear the complete road ribbon");
+assert.equal(isHarborWaterFailure({x:VENUE.centerX,y:.5,z:VENUE.centerZ},VENUE),true);
+assert.equal(isHarborWaterFailure({x:VENUE.centerX,y:3,z:VENUE.centerZ},VENUE),false);
+assert.equal(isHarborWaterFailure({x:VENUE.centerX+VENUE.halfX+2,y:0,z:VENUE.centerZ},VENUE),false);
+console.log("Apex Run Harbor venue budgets passed");

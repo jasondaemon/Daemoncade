@@ -9,14 +9,19 @@ const SUMMIT_WIDTHS=[16,14,12,10,14,12,10,11,12,11,14,12,22,26,20,22,24,18,12,14
 const SUMMIT_ROUTE=Object.freeze([
   {x:-380,y:0,z:-280,bank:0},{x:-270,y:1,z:-330,bank:.08},{x:-120,y:5,z:-250,bank:.18},{x:40,y:9,z:-340,bank:-.18},{x:220,y:18,z:-300,bank:-.12},{x:360,y:28,z:-180,bank:-.2},{x:410,y:38,z:20,bank:.1},{x:280,y:30,z:240,bank:.18},{x:100,y:18,z:330,bank:.14},{x:-110,y:18,z:340,bank:-.12},{x:-300,y:30,z:260,bank:-.18},{x:-410,y:25,z:100,bank:-.12},{x:-400,y:14,z:-60,bank:.1},{x:-300,y:8,z:-160,bank:.18},{x:-150,y:12,z:-180,bank:.12},{x:0,y:20,z:-120,bank:-.1},{x:140,y:28,z:-20,bank:-.18},{x:220,y:22,z:90,bank:-.1},{x:340,y:14,z:110,bank:.04},{x:450,y:8,z:20,bank:.1},{x:500,y:2,z:-120,bank:0},
 ].map((point,index)=>Object.freeze({...point,width:SUMMIT_WIDTHS[index]})));
+const HARBOR_ROUTE=Object.freeze([
+  {x:-560,y:2,z:-260,width:16,bank:0},{x:-470,y:3,z:-310,width:15,bank:.08},{x:-350,y:5,z:-285,width:13,bank:-.12},{x:-270,y:7,z:-185,width:12,bank:-.16},{x:-325,y:8,z:-75,width:11,bank:.18},{x:-220,y:11,z:15,width:13,bank:.1},{x:-55,y:14,z:-5,width:15,bank:-.08},{x:120,y:16,z:5,width:14,bank:0},{x:240,y:14,z:25,width:18,bank:-.04},{x:365,y:20,z:115,width:15,bank:-.16},{x:430,y:28,z:255,width:13,bank:-.2},{x:300,y:31,z:360,width:12,bank:.16},{x:105,y:25,z:330,width:14,bank:.12},{x:-45,y:18,z:225,width:12,bank:-.14},{x:-170,y:20,z:315,width:11,bank:-.18},{x:-345,y:17,z:285,width:13,bank:.12},{x:-510,y:11,z:165,width:15,bank:.16},{x:-455,y:8,z:20,width:12,bank:-.16},{x:-590,y:7,z:-40,width:13,bank:-.08},{x:-700,y:6,z:-150,width:14,bank:.1},{x:-680,y:9,z:-400,width:13,bank:.14},{x:-300,y:14,z:-460,width:16,bank:-.08},{x:200,y:10,z:-420,width:18,bank:-.12},{x:590,y:3,z:-25,width:20,bank:0},
+].map(point=>Object.freeze(point)));
 const TRACK_DEFINITIONS=Object.freeze({
   "alpine-sprint":Object.freeze({route:ALPINE_ROUTE,checkpointPoints:[2,6,9,11],stageRanges:[[0,2],[2,6],[6,9],[9,11]],humps:{5:14},jumpSegment:5}),
   "summit-circuit":Object.freeze({route:SUMMIT_ROUTE,checkpointPoints:[3,6,10,13,16,18,20],stageRanges:[[0,3],[3,6],[6,10],[10,13],[13,16],[16,18],[18,20]],humps:{10:12},jumpSegment:10}),
+  "harbor-run":Object.freeze({route:HARBOR_ROUTE,checkpointPoints:[3,7,9,12,15,19,23],stageRanges:[[0,3],[3,7],[7,9],[9,12],[12,15],[15,19],[19,23]],humps:{7:10},jumpSegment:7,gapSegment:7}),
 });
 export const ACTIVE_TRACK_ID=requestedTrackId();
 export const ACTIVE_TRACK_DEFINITION=TRACK_DEFINITIONS[ACTIVE_TRACK_ID]||TRACK_DEFINITIONS["alpine-sprint"];
 const summit=ACTIVE_TRACK_ID==="summit-circuit";
-export const VENUE=Object.freeze(summit?{centerX:45,centerZ:0,halfX:700,halfZ:450,stands:[{x:0,z:-418,rotation:0,length:130},{x:-508,z:30,rotation:Math.PI/2,length:108},{x:700,z:410,rotation:0,length:116}],basinRadius:680}:{centerX:0,centerZ:-20,halfX:220,halfZ:220,stands:[{x:10,z:-188,rotation:0,length:105},{x:-177,z:35,rotation:Math.PI/2,length:78},{x:212,z:62,rotation:-Math.PI/2,length:88}],basinRadius:245});
+const harbor=ACTIVE_TRACK_ID==="harbor-run",largeTrack=summit||harbor;
+export const VENUE=Object.freeze(summit?{centerX:45,centerZ:0,halfX:700,halfZ:450,stands:[{x:0,z:-418,rotation:0,length:130},{x:-508,z:30,rotation:Math.PI/2,length:108},{x:700,z:410,rotation:0,length:116}],basinRadius:680}:harbor?{centerX:15,centerZ:20,halfX:760,halfZ:500,stands:[{x:-500,z:-410,rotation:0,length:110},{x:610,z:170,rotation:-Math.PI/2,length:90}],basinRadius:720}:{centerX:0,centerZ:-20,halfX:220,halfZ:220,stands:[{x:10,z:-188,rotation:0,length:105},{x:-177,z:35,rotation:Math.PI/2,length:78},{x:212,z:62,rotation:-Math.PI/2,length:88}],basinRadius:245});
 export const TRACK_BOXES=Object.freeze([
   // The stadium floor is the only box surface. The authored road and its
   // Rapier collider are generated together by buildRoadMesh below.
@@ -38,13 +43,13 @@ export const START_EXTENSION_SAMPLES=10;
 // slice the first bend.
 export const START_SPAWN_SAMPLE_INDEX=START_EXTENSION_SAMPLES+2;
 export const START_GATE_SAMPLE_INDEX=Math.max(1,START_EXTENSION_SAMPLES-4);
-export const ROAD_STEPS_PER_SEGMENT=summit?100:88;
+export const ROAD_STEPS_PER_SEGMENT=largeTrack?100:88;
 const routeSampleIndex=(routePoint,offset=0)=>START_EXTENSION_SAMPLES+routePoint*ROAD_STEPS_PER_SEGMENT+offset;
 export const JUMP_ZONE=Object.freeze({approach:routeSampleIndex(ACTIVE_TRACK_DEFINITION.jumpSegment,8),takeoff:routeSampleIndex(ACTIVE_TRACK_DEFINITION.jumpSegment,36),landing:routeSampleIndex(ACTIVE_TRACK_DEFINITION.jumpSegment,68)});
 // Summit's reservoir jump is an honest missing section of deck.  All visual,
 // collision, lane and rail builders consume this same interval; there is no
 // invisible bridge.  Alpine remains byte-for-byte continuous.
-export const SURFACE_GAPS=Object.freeze(summit?[Object.freeze({id:"reservoir-jump",start:routeSampleIndex(10,27),end:routeSampleIndex(10,38),side:"both"})]:[]);
+export const SURFACE_GAPS=Object.freeze(summit?[Object.freeze({id:"reservoir-jump",start:routeSampleIndex(10,27),end:routeSampleIndex(10,38),side:"both"})]:harbor?[Object.freeze({id:"harbor-channel-jump",start:routeSampleIndex(7,30),end:routeSampleIndex(7,45),side:"both"})]:[]);
 const gapBetween=(index)=>SURFACE_GAPS.some(gap=>index>gap.start&&index<=gap.end);
 const gapSample=(index)=>SURFACE_GAPS.some(gap=>index>=gap.start&&index<=gap.end);
 const distance3=(a,b)=>Math.hypot(b.x-a.x,(b.y||0)-(a.y||0),b.z-a.z);
@@ -60,7 +65,7 @@ function sampleControl(index,t){
   // The crest uses a C2-continuous bump. Zero first and second derivatives at
   // both joins keep the visual ribbon and suspension collider from acquiring
   // the sharp pitch kink produced by the earlier Gaussian profile.
-  const a=ROUTE_PATH[index],b=ROUTE_PATH[index+1],humpScale=ACTIVE_TRACK_DEFINITION.humps[index]||0,jumpProfile=t<=.08?0:t<=.27?260*(t-.08)**2:t<=.38?260*.19**2:t<=.62?260*.19**2*(1-.18*smooth5((t-.38)/.24)):t<.8?260*.19**2*.82*(1-smooth5((t-.62)/.18)):0,hump=summit&&index===10?jumpProfile:humpScale*Math.sin(Math.PI*t)**4;
+  const a=ROUTE_PATH[index],b=ROUTE_PATH[index+1],humpScale=ACTIVE_TRACK_DEFINITION.humps[index]||0,jumpStrength=harbor?190:260,jumpProfile=t<=.08?0:t<=.27?jumpStrength*(t-.08)**2:t<=.38?jumpStrength*.19**2:t<=.62?jumpStrength*.19**2*(1-.18*smooth5((t-.38)/.24)):t<.8?jumpStrength*.19**2*.82*(1-smooth5((t-.62)/.18)):0,hump=(summit&&index===10)||(harbor&&index===7)?jumpProfile:humpScale*Math.sin(Math.PI*t)**4;
   return{x:hermite(a.x,b.x,tangentAt(index,"x"),tangentAt(index+1,"x"),t),y:hermite(a.y,b.y,tangentAt(index,"y"),tangentAt(index+1,"y"),t)+hump+.55,z:hermite(a.z,b.z,tangentAt(index,"z"),tangentAt(index+1,"z"),t),width:a.width+(b.width-a.width)*t,bank:a.bank+(b.bank-a.bank)*t}
 }
 function framedConnector(start){
