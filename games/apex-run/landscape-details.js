@@ -15,9 +15,28 @@ export function landscapePlacements(samples,quality="high"){
   return candidates;
 }
 
+export function landscapeServicePlacements(samples,quality="high"){
+  const target=quality==="low"?3:quality==="medium"?6:9,placements=[];
+  for(let slot=0;slot<target;slot++){
+    const centerIndex=Math.floor((slot+.65)*samples.length/target),span=Math.max(8,Math.floor(samples.length*.018)),side=slot%2?"left":"right",points=[];
+    for(let index=Math.max(0,centerIndex-span);index<=Math.min(samples.length-1,centerIndex+span);index+=3){
+      const sample=samples[index],edge=sample[side],dx=edge.x-sample.x,dz=edge.z-sample.z,length=Math.hypot(dx,dz)||1,offset=18+(slot%3)*4,x=edge.x+dx/length*offset,z=edge.z+dz/length*offset;
+      const clearance=samples.reduce((best,road)=>Math.min(best,Math.hypot(x-road.x,z-road.z)-road.width/2),Infinity);
+      if(clearance>=7)points.push({x,y:sample.y+.08,z,index,clearance});
+    }
+    if(points.length>=4)placements.push({slot,side,points});
+  }
+  return placements;
+}
+
+function serviceRibbonGeometry(THREE,points,width=5.5){
+  const positions=[],uvs=[],indices=[];let distance=0;
+  points.forEach((point,index)=>{const previous=points[Math.max(0,index-1)],next=points[Math.min(points.length-1,index+1)],dx=next.x-previous.x,dz=next.z-previous.z,length=Math.hypot(dx,dz)||1,lx=-dz/length,lz=dx/length;if(index)distance+=Math.hypot(point.x-points[index-1].x,point.z-points[index-1].z);positions.push(point.x+lx*width/2,point.y,point.z+lz*width/2,point.x-lx*width/2,point.y,point.z-lz*width/2);uvs.push(0,distance/5,1,distance/5);if(index<points.length-1){const a=index*2,b=a+1,c=a+2,d=a+3;indices.push(a,c,b,b,c,d)}});const geometry=new THREE.BufferGeometry();geometry.setAttribute("position",new THREE.Float32BufferAttribute(positions,3));geometry.setAttribute("uv",new THREE.Float32BufferAttribute(uvs,2));geometry.setIndex(indices);geometry.computeVertexNormals();return geometry
+}
+
 export async function addLandscapeDetails(THREE,scene,assetLoader,samples,quality="high"){
-  const placements=landscapePlacements(samples,quality),terrain=macroTerrainPlacements(samples,quality),loaded=await Promise.all(MODEL_PATHS.map(path=>assetLoader.loadAsync(path).then(result=>result.scene).catch(()=>null))),meshes=[];
-  const soilMaterial=new THREE.MeshStandardMaterial({color:0x786650,roughness:1}),gravelMaterial=new THREE.MeshStandardMaterial({color:0x777975,roughness:.96}),bermMaterial=new THREE.MeshStandardMaterial({color:0x69775e,roughness:1,vertexColors:true});
+  const placements=landscapePlacements(samples,quality),terrain=macroTerrainPlacements(samples,quality),services=landscapeServicePlacements(samples,quality),loaded=await Promise.all(MODEL_PATHS.map(path=>assetLoader.loadAsync(path).then(result=>result.scene).catch(()=>null))),meshes=[];
+  const soilMaterial=new THREE.MeshStandardMaterial({color:0x786650,roughness:1}),gravelMaterial=new THREE.MeshStandardMaterial({color:0x777975,roughness:.96}),bermMaterial=new THREE.MeshStandardMaterial({color:0x69775e,roughness:1,vertexColors:true}),serviceMaterial=new THREE.MeshStandardMaterial({color:0x5c6060,roughness:.96}),fenceMaterial=new THREE.MeshStandardMaterial({color:0x384246,roughness:.6,metalness:.48});
   for(const patch of terrain){const segments=quality==="low"?16:24,bedPositions=[0,.01,0],bedIndices=[];for(let segment=0;segment<segments;segment++){const angle=segment/segments*Math.PI*2,edge=patch.radius*(1.12+.12*Math.sin(segment*2.7+patch.rotation));bedPositions.push(Math.cos(angle)*edge,.01,Math.sin(angle)*edge);bedIndices.push(0,segment+1,(segment+1)%segments+1)}const bedGeometry=new THREE.BufferGeometry();bedGeometry.setAttribute("position",new THREE.Float32BufferAttribute(bedPositions,3));bedGeometry.setIndex(bedIndices);bedGeometry.computeVertexNormals();const bed=new THREE.Mesh(bedGeometry,patch.bed==="soil"?soilMaterial:gravelMaterial);bed.position.set(patch.x,.35,patch.z);bed.rotation.y=patch.rotation;bed.receiveShadow=true;scene.add(bed);meshes.push(bed);
     const rings=4,positions=[],colors=[],indices=[];for(let ring=0;ring<=rings;ring++)for(let segment=0;segment<segments;segment++){const angle=segment/segments*Math.PI*2,jitter=1+.13*Math.sin(segment*2.3+patch.rotation*3)+.06*Math.cos(segment*4.7),fraction=ring/rings,radius=patch.radius*Math.max(.075,fraction)*(ring===0?1:jitter),height=ring===0?patch.height:patch.height*Math.pow(1-fraction,1.65)*(1+.055*Math.sin(angle*3+patch.rotation));positions.push(Math.cos(angle)*radius,height,Math.sin(angle)*radius*.62);const tone=.78+.22*(1-fraction);colors.push(.5*tone,.57*tone,.45*tone)}for(let ring=0;ring<rings;ring++)for(let segment=0;segment<segments;segment++){const a=ring*segments+segment,b=ring*segments+(segment+1)%segments,c=(ring+1)*segments+segment,d=(ring+1)*segments+(segment+1)%segments;indices.push(a,c,b,b,c,d)}const geometry=new THREE.BufferGeometry();geometry.setAttribute("position",new THREE.Float32BufferAttribute(positions,3));geometry.setAttribute("color",new THREE.Float32BufferAttribute(colors,3));geometry.setIndex(indices);geometry.computeVertexNormals();const ridge=new THREE.Mesh(geometry,bermMaterial);ridge.position.set(patch.x,patch.y,patch.z);ridge.rotation.y=patch.rotation;ridge.castShadow=false;ridge.receiveShadow=true;scene.add(ridge);meshes.push(ridge)}
   for(let variant=0;variant<loaded.length;variant++){
@@ -32,5 +51,6 @@ export async function addLandscapeDetails(THREE,scene,assetLoader,samples,qualit
       const baseHeight=variant?1.7:3.6,scaleBase=baseHeight/(size.y||1),instanced=new THREE.InstancedMesh(geometry,object.material,meshPlacements.length),dummy=new THREE.Object3D();meshPlacements.forEach((placement,index)=>{const scale=scaleBase*placement.scale;dummy.position.set(placement.x,.35,placement.z);dummy.rotation.y=placement.rotation;dummy.scale.setScalar(scale);dummy.updateMatrix();instanced.setMatrixAt(index,dummy.matrix)});instanced.instanceMatrix.needsUpdate=true;instanced.castShadow=quality==="high";instanced.receiveShadow=true;scene.add(instanced);meshes.push(instanced)
     }})
   }
-  return{meshes,count:placements.length,placements,terrain};
+  const fenceGeometry=new THREE.BoxGeometry(.16,1.2,.16),fenceDummy=new THREE.Object3D();for(const service of services){const path=new THREE.Mesh(serviceRibbonGeometry(THREE,service.points),serviceMaterial);path.receiveShadow=true;scene.add(path);meshes.push(path);const posts=service.points.filter((_,index)=>index%2===0),fence=new THREE.InstancedMesh(fenceGeometry,fenceMaterial,posts.length);posts.forEach((point,index)=>{fenceDummy.position.set(point.x,point.y+.6,point.z);fenceDummy.updateMatrix();fence.setMatrixAt(index,fenceDummy.matrix)});fence.instanceMatrix.needsUpdate=true;fence.castShadow=quality==="high";fence.receiveShadow=true;scene.add(fence);meshes.push(fence)}
+  return{meshes,count:placements.length,placements,terrain,services};
 }
