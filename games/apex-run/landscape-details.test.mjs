@@ -1,5 +1,6 @@
 import assert from "node:assert/strict";
-import {landscapePlacements,macroTerrainPlacements} from "./landscape-details.js";
+import * as THREE from "../vendor/three/three.module.min.js";
+import {addLandscapeDetails,landscapePlacements,macroTerrainPlacements} from "./landscape-details.js";
 import {readFile} from "node:fs/promises";
 globalThis.location={search:"?track=summit-circuit"};
 const {ROAD_SAMPLES}=await import("./track-model.js?landscape-test");
@@ -21,6 +22,7 @@ for(const [quality,expected] of Object.entries(tiers)){
   assert.ok(terrain.every(item=>item.clearance>=20&&item.height<=8.25&&item.y+item.height<9),`${quality} terrain remains clear and below elevated road`);
 }
 const game=await readFile(new URL("game.js",import.meta.url),"utf8");
+const topologyScene=new THREE.Scene(),topology=await addLandscapeDetails(THREE,topologyScene,{loadAsync:async()=>{throw new Error("optional assets disabled")}},ROAD_SAMPLES,"high"),ridges=topology.meshes.filter(mesh=>mesh.geometry?.getAttribute("color"));assert.equal(ridges.length,topology.terrain.length);for(const ridge of ridges){const position=ridge.geometry.getAttribute("position"),seen=new Map();for(let index=0;index<position.count;index++){const key=`${position.getX(index).toFixed(5)}:${position.getZ(index).toFixed(5)}`,height=position.getY(index);assert.ok(!seen.has(key)||Math.abs(seen.get(key)-height)<1e-5,"ridge contains coincident horizontal vertices with differing heights");seen.set(key,height)}const indices=ridge.geometry.index.array;for(let index=0;index<indices.length;index+=3){const a=new THREE.Vector3().fromBufferAttribute(position,indices[index]),b=new THREE.Vector3().fromBufferAttribute(position,indices[index+1]),c=new THREE.Vector3().fromBufferAttribute(position,indices[index+2]),normal=b.sub(a).cross(c.sub(a));assert.ok(normal.lengthSq()>1e-7,"ridge contains a degenerate triangle");assert.ok(Math.abs(normal.y)/normal.length()>.025,"ridge contains a near-vertical interior sheet")}}
 assert.match(game,/const grassMetres=1\.4/);
 assert.match(game,/VENUE\.halfX\*2\/grassMetres,VENUE\.halfZ\*2\/grassMetres/);
 assert.match(game,/VENUE\.basinRadius\/VENUE\.halfX/);
