@@ -1,0 +1,2 @@
+const QA_TOKEN=/^[a-zA-Z0-9_-]{1,64}$/;
+export function createGarageStorage({storage=globalThis.localStorage,search=globalThis.location?.search||""}={}){const value=new URLSearchParams(search).get("testStorage");if(value==null)return storage;if(!QA_TOKEN.test(value))throw new Error("Invalid isolated garage storage token");const prefix=`apex-run:garage-qa:${value}:`;return{getItem:key=>storage.getItem(prefix+key),setItem:(key,item)=>storage.setItem(prefix+key,item),removeItem:key=>storage.removeItem(prefix+key),keyFor:key=>prefix+key,isIsolated:true}}

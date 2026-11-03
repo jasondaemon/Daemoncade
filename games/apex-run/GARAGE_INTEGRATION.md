@@ -66,9 +66,16 @@ one car. See `assets/CAR-CONCEPT-NOTICE.md` for attribution and modifications.
 
 Automated checks enforce the transfer/triangle/primitive budgets, excluded
 trademark data, exact four authored wheel groups, valid accessor references and
-variant names. Browser pixel inspection and GPU timing remain required before
-production integration; this isolated branch intentionally did not compete for
-the main writer's browser session.
+variant names. The isolated IAB showroom regression loaded the actual GT with no
+console warnings/errors, verified concentric wheel roll and front steering over
+multiple rotations, exercised rapid car/livery switching, and measured 120
+render frames at 16.7 ms median, 18.6 ms p95 and 18.7 ms p99 on the available
+M1 Max browser context. This is a showroom sample, not a full-race or low-end GPU
+budget. `garage-browser-test.html?car=gt` retains the visible regression.
+
+Embedded GLB textures are decoded through browser blob URLs. The garage page
+therefore adds `blob:` only to its own `img-src` and `connect-src`; the game CSP
+and every other policy remain unchanged.
 
 ## Storage behavior
 
