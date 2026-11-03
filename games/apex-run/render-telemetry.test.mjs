@@ -12,6 +12,7 @@ const [game,testEntry,productionEntry,recorder]=await Promise.all([
 assert.match(testEntry,/data-apex-test="1"/,"integration entry must retain its explicit test marker");
 assert.doesNotMatch(productionEntry,/data-apex-test|renderTelemetry|render-telemetry|practiceLoop|place-loop/,"production entry exposed test-only render or loop-practice controls");
 assert.match(game,/testParams=new URLSearchParams\(location\.search\).*renderTelemetryMode=testMode&&testParams\.get\("renderTelemetry"\)==="1"/,"render telemetry is not doubly gated by test entry and explicit query opt-in");
+assert.match(game,/qaDriveMode=testMode&&testParams\.get\("qaDrive"\)==="1"&&\/\^\[a-zA-Z0-9_\-\]\{1,64\}\$\//,"interactive QA rendering is not gated by test entry and a validated isolated namespace");
 assert.match(game,/if\(renderTelemetryMode\).*import\("\.\/render-telemetry\.js/,"recorder is not dynamically isolated from normal production");
 assert.doesNotMatch(game,/__apexRenderTelemetry|renderTelemetry\.report/,"recorder report leaked onto a production global");
 assert.match(recorder,/actual requestAnimationFrame render poses; local test page only/,"recorder output does not identify its bounded source");
