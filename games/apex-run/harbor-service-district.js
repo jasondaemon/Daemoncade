@@ -4,7 +4,7 @@ function fittedWidthClone(THREE,source,name,width){
   normalized.scale.setScalar(scale);normalized.position.set(-center.x*scale,-box.min.y*scale,-center.z*scale);wrapper.add(normalized);wrapper.userData.factoryModule=name;return wrapper;
 }
 
-export function harborServicePose(samples,index=2200,offset=53){
+export function harborServicePose(samples,index=2200,offset=-70){
   const sample=samples[index],before=samples[index-2],after=samples[index+2],tx=after.x-before.x,tz=after.z-before.z,length=Math.hypot(tx,tz)||1,nx=-tz/length,nz=tx/length;
   return{x:sample.x+nx*offset,z:sample.z+nz*offset,heading:-Math.atan2(tz,tx),sampleIndex:index,offset};
 }
