@@ -4,7 +4,10 @@ Isolated branch: `codex/apex-garage`, based on `ed4d5718747a8d17ea32a4e1ad01537e
 
 ## Modules
 
-- `car-catalog.js` owns car, livery and achievement metadata. `formula-apex`
+- `car-catalog.js` owns car, livery and achievement metadata. Every ready car
+  declares an explicit `asset.raceAdapter` (`formula` or `authored-wheels`) and
+  `raceAssetFor()` refuses unknown adapters instead of silently rendering the
+  Formula car. `formula-apex`
   and the prepared `car-concept` exterior are ready; both use identical race
   physics.
 - `garage-progression.js` owns schema-v1 storage, selection fallback,

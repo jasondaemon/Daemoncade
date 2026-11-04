@@ -36,7 +36,7 @@ import {addHarborServiceDistrict} from "./harbor-service-district.js?v=0.5.0-alp
 import {addHarborRouteCampus} from "./harbor-route-campus.js?v=0.5.0-alpha93b";
 import {addVenueTerrain} from "./venue-terrain.js?v=0.5.0-alpha103-summit-env";
 import {naturalLightingProfile,renderTrackBox} from "./scene-lighting.js?v=0.5.0-alpha102";
-import {resolveSelection} from "./car-catalog.js";
+import {raceAssetFor,resolveSelection} from "./car-catalog.js";
 import {createRaceCarVisual} from "./car-visual-adapter.js";
 import {gateCameraOpacity,gateStructureDistance} from "./camera-gate-fade.js?v=0.5.0-alpha87-camera2";
 import {createGarageStorage} from "./garage-storage.js";
@@ -165,11 +165,12 @@ const grid=new THREE.GridHelper(largeVenue?900:320,largeVenue?45:32,0xffffff,0xf
 
 const{chassis,chassisCollider,vehicle,wheelOffsets}=createVehicle(RAPIER,world);
 
-const formulaAsset=(await assetLoader.loadAsync("./assets/low-poly-f1.glb")).scene,selectedGarage=resolveSelection(garageState,rosterAccess);
+const formulaAsset=(await assetLoader.loadAsync("./assets/low-poly-f1.glb")).scene,selectedGarage=resolveSelection(garageState,rosterAccess),selectedRaceAsset=raceAssetFor(selectedGarage.car);
+if(!selectedRaceAsset)throw new Error(`Selected car ${selectedGarage.car.id} has no supported race visual adapter`);
 if(alpineDistrict)addAlpineDisplayCars(THREE,alpineDistrict.district,makeFormulaDisplayLod(THREE,formulaAsset),qualityProfile.id);
 document.documentElement.dataset.selectedCar=selectedGarage.car.id;document.documentElement.dataset.selectedCosmetic=selectedGarage.cosmetic.id;
-const formulaCar=makeFormulaCar(THREE,formulaAsset),wheelMeshes=[];let selectedVisual=null,car=formulaCar;
-if(selectedGarage.car.id==="car-concept"){const gtAsset=(await assetLoader.loadAsync(`./${selectedGarage.car.asset.raceUrl}`)).scene;selectedVisual=createRaceCarVisual({THREE,sourceScene:gtAsset,palette:selectedGarage.cosmetic.palette});car=selectedVisual.root;scene.add(car)}else{scene.add(car);for(let index=0;index<wheelOffsets.length;index++){const wheel=makeFormulaWheelVisual(THREE,formulaAsset,index);scene.add(wheel.root);wheelMeshes.push(wheel)}}
+const selectedFormulaAsset=selectedRaceAsset.adapter==="formula"&&selectedRaceAsset.url!=="assets/low-poly-f1.glb"?(await assetLoader.loadAsync(`./${selectedRaceAsset.url}`)).scene:formulaAsset,formulaCar=makeFormulaCar(THREE,selectedFormulaAsset),wheelMeshes=[];let selectedVisual=null,car=formulaCar;
+if(selectedRaceAsset.adapter==="authored-wheels"){const authoredAsset=(await assetLoader.loadAsync(`./${selectedRaceAsset.url}`)).scene;selectedVisual=createRaceCarVisual({THREE,sourceScene:authoredAsset,palette:selectedGarage.cosmetic.palette});car=selectedVisual.root;scene.add(car)}else if(selectedRaceAsset.adapter==="formula"){scene.add(car);for(let index=0;index<wheelOffsets.length;index++){const wheel=makeFormulaWheelVisual(THREE,selectedFormulaAsset,index);scene.add(wheel.root);wheelMeshes.push(wheel)}}else throw new Error(`Unsupported race visual adapter: ${selectedRaceAsset.adapter}`);
 const ghost=makeFormulaGhost(THREE,formulaCar,wheelOffsets,formulaAsset);scene.add(ghost);
 const smokeGeometry=new THREE.SphereGeometry(.25,8,5),smoke=Array.from({length:28},()=>{const s=new THREE.Mesh(smokeGeometry,new THREE.MeshBasicMaterial({color:0xd8e2e8,transparent:true,opacity:0,depthWrite:false}));s.visible=false;s.userData.life=0;scene.add(s);return s});let smokeCursor=0;function puff(p){const s=smoke[smokeCursor++%smoke.length];s.position.set(p.x,p.y+.25,p.z);s.scale.setScalar(1);s.userData.life=1;s.material.opacity=.22;s.visible=true}
 

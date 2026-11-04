@@ -7,7 +7,7 @@ const cars=[
     name:"Apex Formula",
     category:"OPEN WHEEL",
     description:"The original Apex Run formula car. Every livery uses identical race physics.",
-    asset:{status:"ready",url:"assets/low-poly-f1.glb",license:"CC BY 4.0",credit:"salasilma13 · Low Poly F1"},
+    asset:{status:"ready",url:"assets/low-poly-f1.glb",raceAdapter:"formula",license:"CC BY 4.0",credit:"salasilma13 · Low Poly F1"},
     preview:{kind:"gltf",camera:"formula"},
     cosmetics:[
       {id:DEFAULT_COSMETIC_ID,name:"Apex Cyan",description:"Factory cyan, white and charcoal.",unlock:null,palette:{primary:"#18c6d8",secondary:"#ffc83d",accent:"#eefafa"}},
@@ -21,7 +21,7 @@ const cars=[
     name:"Apex GT Concept",
     category:"GT CONCEPT",
     description:"A logo-clean, race-optimized grand-touring concept with the same competitive physics as every Apex car.",
-    asset:{status:"ready",url:"assets/car-concept-showroom.glb",raceUrl:"assets/car-concept-race.glb",source:"https://github.com/KhronosGroup/glTF-Sample-Assets/tree/main/Models/CarConcept",license:"CC BY 4.0",credit:"Eric Chadwick / Darmstadt Graphics Group · exterior modified and optimized for Apex Run",metrics:{showroom:{bytes:8318184,triangles:143802,primitives:58},race:{bytes:5775428,triangles:73531,primitives:33}}},
+    asset:{status:"ready",url:"assets/car-concept-showroom.glb",raceUrl:"assets/car-concept-race.glb",raceAdapter:"authored-wheels",source:"https://github.com/KhronosGroup/glTF-Sample-Assets/tree/main/Models/CarConcept",license:"CC BY 4.0",credit:"Eric Chadwick / Darmstadt Graphics Group · exterior modified and optimized for Apex Run",metrics:{showroom:{bytes:8318184,triangles:143802,primitives:58},race:{bytes:5775428,triangles:73531,primitives:33}}},
     preview:{kind:"gltf",camera:"gt",variants:["Apex Cyan","Summit Gold","Midnight Grid"]},
     unlock:"three-clean-streak",
     cosmetics:[
@@ -55,6 +55,12 @@ export function carById(id){return CAR_CATALOG.find(car=>car.id===id)||null}
 export function cosmeticById(car,id){return car?.cosmetics.find(cosmetic=>cosmetic.id===id)||null}
 export function achievementById(id){return ACHIEVEMENTS.find(achievement=>achievement.id===id)||null}
 export function carAssetReady(car){return car?.asset?.status==="ready"&&typeof car.asset.url==="string"&&car.asset.url.length>0}
+export function raceAssetFor(car){
+  if(!carAssetReady(car))return null;
+  if(car.asset.raceAdapter==="formula")return{adapter:"formula",url:car.asset.raceUrl||car.asset.url};
+  if(car.asset.raceAdapter==="authored-wheels"&&typeof car.asset.raceUrl==="string"&&car.asset.raceUrl.length>0)return{adapter:"authored-wheels",url:car.asset.raceUrl};
+  return null;
+}
 export function achievementUnlocked(state,id){return id==null||Boolean(state?.achievements?.[id]?.unlockedAt)}
 export function carUnlocked(state,car,access={}){return carAssetReady(car)&&(access.development===true||achievementUnlocked(state,car.unlock))}
 export function cosmeticUnlocked(state,cosmetic,access={}){return Boolean(cosmetic)&&(access.development===true||achievementUnlocked(state,cosmetic.unlock))}
