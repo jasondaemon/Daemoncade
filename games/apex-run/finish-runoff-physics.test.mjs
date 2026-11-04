@@ -4,7 +4,7 @@ import {SUSPENSION_QUERY_GROUPS,VEHICLE,createVehicle,driveVehicle,stabilizeChas
 import {FINISH_COAST_SECONDS,FINISH_RUNOFF_LENGTH,buildFinishRunoffSamples,finishBrakeForce} from "./finish-presentation.js";
 
 await RAPIER.init();
-const DT=1/120,tracks=["alpine-sprint","summit-circuit","harbor-run"],speeds=[25,31,VEHICLE.maxSpeed];
+const DT=1/120,tracks=["alpine-sprint","summit-circuit","harbor-run","skyline-gauntlet"],speeds=[20,25,31,VEHICLE.maxSpeed];
 const results=[];
 for(const track of tracks){
   globalThis.location={search:`?track=${track}`};
