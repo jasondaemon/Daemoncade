@@ -1,0 +1,20 @@
+import assert from "node:assert/strict";
+import {medalState,raceBriefing,resultNextStep,shortTime} from "./race-briefing.js";
+
+const track={difficulty:"EXPERT",checkpointCount:9,medalsProvisional:true,medals:[{name:"APEX",time:145},{name:"GOLD",time:160},{name:"SILVER",time:180},{name:"BRONZE",time:205},{name:"ROOKIE",time:235}]};
+assert.equal(shortTime(59.9996),"01:00.000");
+assert.deepEqual(medalState(track,null),{earned:null,next:track.medals.at(-1)});
+assert.deepEqual(medalState(track,190),{earned:track.medals[3],next:track.medals[2]});
+assert.deepEqual(medalState(track,140),{earned:track.medals[0],next:null});
+assert.deepEqual(raceBriefing({track,carName:"Apex GT Concept"}),{difficulty:"EXPERT",checkpoints:"8 + FINISH",pb:"NO PB",medal:"NONE",target:"ROOKIE ≤ 03:55.000",provisional:true,car:"Apex GT Concept",ghost:"NO GHOST"});
+assert.deepEqual(raceBriefing({track,best:190,replay:{time:190},carName:"Apex GT Concept"}),{difficulty:"EXPERT",checkpoints:"8 + FINISH",pb:"03:10.000",medal:"BRONZE",target:"SILVER ≤ 03:00.000",provisional:true,car:"Apex GT Concept",ghost:"GHOST READY"});
+assert.match(resultNextStep({track,time:200,practice:true}),/stay in this session/);
+assert.match(resultNextStep({track,time:200,eligible:false}),/did not change your PB/);
+assert.match(resultNextStep({track,time:190,result:{storageUnavailable:true}}),/not saved/);
+assert.match(resultNextStep({track,time:190,result:{isBest:true,bestSaved:true,replaySaved:true}}),/PB and ghost saved/);
+assert.match(resultNextStep({track,time:190,result:{isBest:true,bestSaved:true,replaySaved:false}}),/matching ghost could not be saved/);
+assert.match(resultNextStep({track,time:190,best:190,result:{isBest:false}}),/SILVER/);
+const immutableTrack=structuredClone(track),immutableReplay={time:190,frames:[[0,0,0,0,0,0,0,1]]},snapshot=JSON.stringify({immutableTrack,immutableReplay});
+raceBriefing({track:immutableTrack,best:190,replay:immutableReplay});
+assert.equal(JSON.stringify({immutableTrack,immutableReplay}),snapshot,"render-only briefing must not mutate persistence inputs");
+console.log("Apex Run race briefing passed");

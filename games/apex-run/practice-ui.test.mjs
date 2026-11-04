@@ -1,8 +1,8 @@
 import assert from "node:assert/strict";
 import {readFile} from "node:fs/promises";
 const [html,game,css]=await Promise.all(["index.html","game.js","game.css"].map(file=>readFile(new URL(file,import.meta.url),"utf8")));
-assert.match(html,/id="start-practice"[^>]*>Practice sectors</);
-assert.match(html,/session-only and never save/);
+assert.match(html,/id="start-practice"[^>]*>Sequential practice</);
+assert.match(html,/Sequential practice runs sectors in course order; its times stay in this session and never save/);
 assert.match(html,/id="practice-exit"[^>]*hidden>CLEAN RACE/);
 assert.match(html,/id="result-clean"[^>]*hidden>Start clean race/);
 assert.match(game,/practice\.active\?null:raceOutcomeFromFinish/);
