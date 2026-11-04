@@ -1,10 +1,12 @@
 import assert from "node:assert/strict";
-import {environmentBudget,environmentPalette,mountainGeometry} from "./environment-presentation.js";
+import {environmentBudget,environmentPalette,mountainGeometry,ridgeComposition} from "./environment-presentation.js";
 import * as THREE from "../vendor/three/three.module.min.js";
 assert.deepEqual(environmentBudget("low"),{layers:1,segments:56,rings:4});
 assert.deepEqual(environmentBudget("medium"),{layers:2,segments:88,rings:4});
 assert.deepEqual(environmentBudget("high"),{layers:2,segments:128,rings:5});
 assert.notEqual(environmentPalette("harbor-run").top,environmentPalette("summit-circuit").top);assert.ok(environmentPalette("harbor-run").fogDensity>environmentPalette("summit-circuit").fogDensity);
+assert.deepEqual(ridgeComposition("alpine-sprint").map(({scale,height})=>[scale,height]),[[1.62,58],[2.18,84]]);
+assert.ok(ridgeComposition("alpine-sprint")[0].scale<2,"the Alpine foreground ridge must frame normal chase views rather than disappear beyond the venue");
 const geometry=mountainGeometry(THREE,{radiusX:100,radiusZ:80,segments:32,rings:5,height:25,seed:2});
 assert.equal(geometry.getAttribute("position").count,160);
 assert.equal(geometry.index.count,32*4*6);
