@@ -12,5 +12,5 @@ export function drivingFeedback({speed=0,forward=false,reverse=false,reverseInte
 
 export function landingFeedback(impact=0){
   const strength=ramp(impact,2.5,12);
-  return{strength,shake:.08+strength*.34,pitch:150-strength*58,gain:.075+strength*.085};
+  return{strength,shake:strength*.42,pitch:150-strength*58,gain:.075+strength*.085};
 }

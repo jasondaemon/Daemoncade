@@ -12,6 +12,9 @@ const settled=drivingFeedback({speed:20,contacts:4,slipRadians:.03}),sliding=dri
 assert.equal(settled.scrub,0);assert.ok(sliding.scrub>.6&&sliding.haze>.5);
 assert.equal(drivingFeedback({speed:20,contacts:0,slipRadians:.5}).scrub,0,"airborne rotation must not make tire scrub");
 assert.ok(drivingFeedback({speed:20,contacts:4,handbrake:true}).scrub>.6);
-const soft=landingFeedback(3),hard=landingFeedback(12);
-assert.ok(hard.strength>soft.strength&&hard.shake>soft.shake&&hard.pitch<soft.pitch&&hard.gain>soft.gain);
+const none=landingFeedback(0),threshold=landingFeedback(2.5),soft=landingFeedback(3),hard=landingFeedback(12);
+assert.deepEqual({strength:none.strength,shake:none.shake},{strength:0,shake:0});
+assert.deepEqual({strength:threshold.strength,shake:threshold.shake},{strength:0,shake:0});
+assert.ok(soft.strength>0&&soft.shake>0&&soft.shake<hard.shake,"landing impulse should rise continuously above the threshold");
+assert.ok(hard.strength>soft.strength&&hard.pitch<soft.pitch&&hard.gain>soft.gain);
 console.log("PASS Apex Run driving feedback");
