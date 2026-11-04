@@ -1,5 +1,5 @@
 const MODEL_PATHS=["./assets/polyhaven/shrub-02/shrub_02_1k.gltf","./assets/polyhaven/rock-moss-set-01/rock_moss_set_01_1k.gltf"];
-import {createVenueTerrainSampler} from "./venue-terrain.js?v=0.5.0-alpha103-summit-env";
+import {createVenueTerrainSampler} from "./venue-terrain.js?v=0.5.0-alpha138-skyline-atmosphere";
 
 const SUMMIT_VENUE=Object.freeze({centerX:45,centerZ:0,halfX:700,halfZ:450});
 

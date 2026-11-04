@@ -1,4 +1,4 @@
-import {worldSunDirection} from "./environment-presentation.js?v=0.5.0-alpha108-visible-sun-integrated";
+import {worldSunDirection} from "./environment-presentation.js?v=0.5.0-alpha138-skyline-atmosphere";
 
 const clamp01=value=>Math.max(0,Math.min(1,value));
 

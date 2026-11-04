@@ -1,5 +1,5 @@
 import assert from "node:assert/strict";
-import {ALPINE_SUN_DIRECTION,WORLD_SUN_DIRECTION,alpineMassSpecs,alpineMountainGeometry,environmentBudget,environmentPalette,mountainGeometry,ridgeComposition,worldSunDirection} from "./environment-presentation.js";
+import {ALPINE_SUN_DIRECTION,WORLD_SUN_DIRECTION,alpineMassSpecs,alpineMountainGeometry,environmentBudget,environmentPalette,mountainGeometry,ridgeComposition,skylineBackdropGeometry,skylineRidgeGeometry,worldSunDirection} from "./environment-presentation.js";
 import * as THREE from "../vendor/three/three.module.min.js";
 assert.deepEqual(environmentBudget("low"),{layers:1,segments:56,rings:4});
 assert.deepEqual(environmentBudget("medium"),{layers:2,segments:88,rings:4});
@@ -7,6 +7,9 @@ assert.deepEqual(environmentBudget("high"),{layers:2,segments:128,rings:5});
 assert.notEqual(environmentPalette("harbor-run").top,environmentPalette("summit-circuit").top);assert.ok(environmentPalette("harbor-run").fogDensity>environmentPalette("summit-circuit").fogDensity);
 assert.deepEqual(WORLD_SUN_DIRECTION,{x:-60,y:110,z:35},"visible sun must stay aligned with the shadow-casting light");
 assert.deepEqual(ALPINE_SUN_DIRECTION,{x:-60,y:20,z:35});assert.equal(worldSunDirection("alpine-sprint"),ALPINE_SUN_DIRECTION);assert.equal(worldSunDirection("harbor-run"),WORLD_SUN_DIRECTION,"other tracks retain their established sun direction");
+assert.notEqual(environmentPalette("skyline-gauntlet").top,environmentPalette("summit-circuit").top,"Skyline keeps a sunny track-specific atmosphere");
+for(const quality of["low","medium","high"]){const ridge=skylineRidgeGeometry(THREE,{centerX:80,centerZ:-120,halfX:1120,halfZ:650},quality),position=ridge.getAttribute("position"),ys=Array.from({length:position.count},(_,index)=>position.getY(index));assert.equal(ridge.userData.patchCount,9);assert.ok(new Set(ys.map(Math.round)).size>12,`${quality} Skyline silhouette is too uniform`);assert.ok(Math.max(...ys)>20&&Math.max(...ys)<36,`${quality} Skyline relief must stay subtle`)}
+for(const quality of["low","medium","high"]){for(const layer of[0,1]){const backdrop=skylineBackdropGeometry(THREE,{centerX:80,centerZ:-120,halfX:1120,halfZ:650},quality,layer),position=backdrop.getAttribute("position"),crest=Array.from({length:position.count/2},(_,index)=>position.getY(index*2+1));assert.ok(backdrop.userData.segments<=128);assert.ok(Math.max(...crest)-Math.min(...crest)>20,`${quality} Skyline backdrop ${layer} lost its broken silhouette`);assert.ok(backdrop.index.count/3<=256,`${quality} Skyline backdrop exceeded its triangle budget`)}}
 assert.deepEqual(ridgeComposition("alpine-sprint").map(({scale,height})=>[scale,height]),[[1.82,46],[2.42,72]]);
 assert.ok(ridgeComposition("alpine-sprint")[0].scale>1.75,"the Alpine foreground ridge must leave breathing room around the venue");
 const geometry=mountainGeometry(THREE,{radiusX:100,radiusZ:80,segments:32,rings:5,height:25,seed:2});

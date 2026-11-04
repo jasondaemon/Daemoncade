@@ -9,14 +9,15 @@ function roadClearance(x,z,samples){
 function smoothstep(a,b,value){const t=Math.max(0,Math.min(1,(value-a)/(b-a)));return t*t*(3-2*t)}
 
 export function venueTerrainHeight(venue,samples,trackId,x,z,knownClearance=null){
-  const harbor=trackId==="harbor-run",clearance=knownClearance??roadClearance(x,z,samples),corridor=smoothstep(harbor?48:80,harbor?94:140,clearance);
+  const harbor=trackId==="harbor-run",skyline=trackId==="skyline-gauntlet",clearance=knownClearance??roadClearance(x,z,samples),corridor=smoothstep(harbor?48:80,harbor?94:140,clearance);
   const nx=(x-venue.centerX)/venue.halfX,nz=(z-venue.centerZ)/venue.halfZ,radial=Math.hypot(nx,nz);
   const macro=Math.sin(x*.011+z*.004)*.42+Math.cos(z*.014-x*.003)*.27+Math.sin((x+z)*.026)*.13;
   const landformField=Math.sin(x*.0041+z*.0017)*.46+Math.cos(z*.0053-x*.0019)*.36+Math.sin((x-z)*.0071)*.18;
   const landform=harbor?0:smoothstep(.14,.82,landformField)*smoothstep(95,165,clearance)*(7.5+2.5*Math.max(0,macro));
   const harborShelf=smoothstep(.34,.62,radial+.07*macro),enabled=!harbor||harborShelf>.035;
   const height=harbor?harborShelf*(4.4+2.4*macro)*corridor:(2.8+3.5*macro+Math.max(0,radial-.45)*5.4)*corridor+landform;
-  return enabled?(harbor?.18:.37)+Math.max(0,height):null;
+  const skylineEdgeFade=skyline?smoothstep(.7,1,radial):0;
+  return enabled?(harbor?.18:.37)+Math.max(0,height)*(1-skylineEdgeFade*.92):null;
 }
 
 export function createVenueTerrainSampler(venue,samples,trackId="alpine-sprint",quality="high"){
@@ -25,7 +26,7 @@ export function createVenueTerrainSampler(venue,samples,trackId="alpine-sprint",
 }
 
 export function buildVenueTerrainGeometry(THREE,venue,samples,trackId="alpine-sprint",quality="high"){
-  const budget=terrainBudget(quality),positions=[],colors=[],uvs=[],indices=[],active=[],harbor=trackId==="harbor-run";
+  const budget=terrainBudget(quality),positions=[],colors=[],uvs=[],indices=[],active=[],harbor=trackId==="harbor-run",skyline=trackId==="skyline-gauntlet";
   for(let zi=0;zi<=budget.z;zi++)for(let xi=0;xi<=budget.x;xi++){
     const u=xi/budget.x,v=zi/budget.z,x=venue.centerX+(u-.5)*venue.halfX*2,z=venue.centerZ+(v-.5)*venue.halfZ*2;
     const clearance=roadClearance(x,z,samples),corridor=smoothstep(harbor?48:80,harbor?94:140,clearance);
@@ -39,7 +40,11 @@ export function buildVenueTerrainGeometry(THREE,venue,samples,trackId="alpine-sp
     positions.push(x,y,z);uvs.push(x/1.4,z/1.4);active.push(enabled);
     const altitude=Math.max(0,Math.min(1,height/(harbor?7:15))),soil=Math.max(0,Math.min(1,.45+.4*macro));
     if(harbor)colors.push(.19+soil*.06,.29+altitude*.11,.23+altitude*.04);
-    else{
+    else if(skyline){
+      const edgeHaze=smoothstep(.7,1,radial),variation=.018*(secondary-.5)+.012*Math.max(-.5,Math.min(.5,macro));
+      const red=.315+variation+altitude*.018,green=.43+variation+altitude*.026,blue=.255+variation*.55+altitude*.012;
+      colors.push(red*(1-edgeHaze)+.28*edgeHaze,green*(1-edgeHaze)+.39*edgeHaze,blue*(1-edgeHaze)+.33*edgeHaze);
+    }else{
       const biome=Math.sin(x*.0067+z*.0021)*.48+Math.cos(z*.0083-x*.0017)*.34+Math.sin((x-z)*.014)*.18;
       const shoulderPattern=Math.sin(x*.041+z*.019)*.52+Math.cos(z*.057-x*.013)*.31+Math.sin((x-z)*.093)*.17;
       const shoulderCoverage=smoothstep(-.32,.42,shoulderPattern),inner=10+5*(secondary-.5),outer=34+12*(secondary-.5);
@@ -81,6 +86,7 @@ export function terrainHeightAt(geometry,venue,x,z){
 
 export function addVenueTerrain(THREE,scene,venue,samples,trackId,quality,maps={}){
   const geometry=buildVenueTerrainGeometry(THREE,venue,samples,trackId,quality);
-  const material=new THREE.MeshStandardMaterial({color:0xffffff,vertexColors:true,map:maps.color||null,normalMap:quality==="low"?null:maps.normal||null,roughnessMap:maps.roughness||null,normalScale:new THREE.Vector2(.16,.16),roughness:1,metalness:0});
-  const mesh=new THREE.Mesh(geometry,material);mesh.receiveShadow=true;mesh.castShadow=quality==="high";scene.add(mesh);return mesh;
+  const skyline=trackId==="skyline-gauntlet";
+  const material=new THREE.MeshStandardMaterial({color:0xffffff,vertexColors:true,map:maps.color||null,normalMap:quality==="low"||skyline?null:maps.normal||null,roughnessMap:skyline?null:maps.roughness||null,normalScale:new THREE.Vector2(.16,.16),roughness:1,metalness:0});
+  const mesh=new THREE.Mesh(geometry,material);mesh.receiveShadow=trackId!=="skyline-gauntlet";mesh.castShadow=quality==="high"&&trackId!=="skyline-gauntlet";scene.add(mesh);return mesh;
 }
