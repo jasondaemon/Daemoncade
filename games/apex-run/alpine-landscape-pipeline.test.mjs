@@ -5,12 +5,15 @@ import {ecologyZoneData} from "./landscape-details.js";
 
 globalThis.location={search:"?track=alpine-sprint"};
 const {ROAD_SAMPLES}=await import("./track-model.js?alpine-landscape-pipeline");
-const game=await readFile(new URL("game.js",import.meta.url),"utf8");
+const game=await readFile(new URL("game.js",import.meta.url),"utf8"),index=await readFile(new URL("index.html",import.meta.url),"utf8"),testPage=await readFile(new URL("test.html",import.meta.url),"utf8");
 
 assert.match(game,/=await Promise\.all\(\[/,"Alpine uses the shared licensed PBR texture pipeline");
 assert.doesNotMatch(game,/=largeVenue\?await Promise\.all/,"PBR maps must not be restricted to large venues");
 assert.match(game,/sampleScenario=renderTelemetryMode&&testParams\.get\("scenario"\)==="sample"/,"sample placement remains test-page-only");
 assert.match(game,/ACTIVE_TRACK_ID!=="alpine-sprint"\)scene\.add\(basin\)/,"flat legacy basin no longer masks Alpine terrain");
+assert.match(game,/landscape-details\.js\?v=0\.5\.0-alpha96d/,"game imports the current landscape revision");
+assert.match(index,/game\.js\?v=0\.5\.0-alpha96d/,"production entry loads the current game graph");
+assert.match(testPage,/game\.js\?v=0\.5\.0-alpha96d/,"test entry loads the current game graph");
 
 for(const quality of["low","medium","high"]){
   const data=ecologyZoneData(ROAD_SAMPLES,quality),geometry=new THREE.BufferGeometry();geometry.setAttribute("position",new THREE.Float32BufferAttribute(data.positions,3));geometry.setIndex(data.indices);geometry.computeVertexNormals();const normal=geometry.getAttribute("normal");

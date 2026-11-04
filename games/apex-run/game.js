@@ -18,7 +18,7 @@ import {addReservoirArchitecture,isReservoirFailure} from "./reservoir-architect
 import {ribbonUV,roadMeshUV} from "./road-uv.js?v=0.5.0-alpha53";
 import {makeBarrierLOD} from "./barrier-lod.js?v=0.5.0-alpha53";
 import {roadMaterialParameters} from "./visual-materials.js?v=0.5.0-alpha53";
-import {addLandscapeDetails} from "./landscape-details.js?v=0.5.0-alpha96c";
+import {addLandscapeDetails} from "./landscape-details.js?v=0.5.0-alpha96d";
 import {addEnvironmentPresentation} from "./environment-presentation.js?v=0.5.0-alpha53";
 import {HARBOR_WATER_Y,addHarborVenue,isHarborWaterFailure} from "./harbor-venue.js?v=0.5.0-alpha53";
 import {addTracksideIdentity} from "./trackside-identity.js?v=0.5.0-alpha55";
