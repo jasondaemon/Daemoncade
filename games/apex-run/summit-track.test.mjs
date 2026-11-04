@@ -8,14 +8,14 @@ const graphics=await import("./graphics-quality.js");
 assert.equal(model.ACTIVE_TRACK_ID,"summit-circuit");
 assert.equal(model.CHECKPOINTS.length,7);
 assert.equal(model.RECOVERY_SPOTS.length,7);
-assert.equal(catalog.trackStorageKeys("summit-circuit").pb,"apex-run:track:summit-circuit:pb:v8");
+assert.equal(catalog.trackStorageKeys("summit-circuit").pb,"apex-run:track:summit-circuit:pb:v9");
 let length=0;
 for(let index=1;index<model.ROAD_SAMPLES.length;index++){
   const a=model.ROAD_SAMPLES[index-1],b=model.ROAD_SAMPLES[index],gap=Math.hypot(b.x-a.x,b.y-a.y,b.z-a.z);
   length+=gap;
   assert.ok(gap<3.01,`road tessellation gap at ${index}: ${gap}`);
 }
-assert.ok(length>4100&&length<4300,`Summit Circuit misses its authored advanced-course scale: ${length.toFixed(1)} m`);
+assert.ok(length>4000&&length<4150,`Summit Circuit misses its authored advanced-course scale: ${length.toFixed(1)} m`);
 assert.ok(model.ROAD_SAMPLES.some(sample=>sample.phase==="loop"&&sample.up.y<-.98),"Summit Circuit lacks a genuinely inverted road section");
 assert.ok(model.ROAD_SAMPLES.some(sample=>sample.y>30),"Summit Circuit lacks a signature elevated crest");
 for(const [index,checkpoint] of model.CHECKPOINTS.entries()){

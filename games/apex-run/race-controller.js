@@ -1,4 +1,4 @@
-import {CHECKPOINTS,checkpointAdvance} from "./track-model.js?v=0.5.0-alpha148-harbor-route";
+import {CHECKPOINTS,checkpointAdvance} from "./track-model.js?v=0.5.0-alpha154-summit-descent";
 
 export class RaceController{
   constructor(){this.reset({ready:true})}

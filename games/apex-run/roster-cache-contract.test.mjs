@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import fs from "node:fs";
 
-const revision="0.5.0-dev-roster2",entryRevisions={"game.js":"0.5.0-alpha153-grounded-terminal","garage.js":"0.5.0-dev-roster3-clarity","garage-browser-test.js":revision},root=new URL("./",import.meta.url),origin=new URL("http://127.0.0.1:4173/games/apex-run/"),protectedModules=new Set([
+const revision="0.5.0-dev-roster2",entryRevisions={"game.js":"0.5.0-alpha155-summit-descent","garage.js":"0.5.0-dev-roster3-clarity","garage-browser-test.js":revision},root=new URL("./",import.meta.url),origin=new URL("http://127.0.0.1:4173/games/apex-run/"),protectedModules=new Set([
   "car-catalog.js","car-visual-adapter.js","development-roster.js","garage-preview-contract.js",
   "garage-progression.js","garage-storage.js","garage-three-preview.js","race-outcome.js","track-catalog.js",
 ]);
@@ -13,7 +13,7 @@ function imports(text){return[...text.matchAll(/from\s+["'](\.\/[^"']+)["']/g)].
 for(const entry of graphModules){
   for(const specifier of imports(source(entry))){
     const url=new URL(specifier,new URL(entry,origin)),name=url.pathname.split("/").at(-1);
-    if(protectedModules.has(name))assert.equal(url.searchParams.get("v"),name==="track-catalog.js"?"0.5.0-alpha148-harbor-route":revision,`${entry} leaves ${name} on a stale or mismatched URL`);
+    if(protectedModules.has(name))assert.equal(url.searchParams.get("v"),name==="track-catalog.js"?"0.5.0-alpha154-summit-descent":revision,`${entry} leaves ${name} on a stale or mismatched URL`);
   }
 }
 for(const [entry,html] of [["game.js","index.html"],["game.js","test.html"],["garage.js","garage.html"],["garage-browser-test.js","garage-browser-test.html"]]){

@@ -1,6 +1,6 @@
 export const FIXED_DT=1/120;
-export {checkpointAdvance,isOnRoad} from "./track-model.js?v=0.5.0-alpha148-harbor-route";
-import {activeTrack,requestedTrackId,trackStorageKeys} from "./track-catalog.js?v=0.5.0-alpha148-harbor-route";
+export {checkpointAdvance,isOnRoad} from "./track-model.js?v=0.5.0-alpha154-summit-descent";
+import {activeTrack,requestedTrackId,trackStorageKeys} from "./track-catalog.js?v=0.5.0-alpha154-summit-descent";
 export const REPLAY_VERSION=activeTrack().replayVersion;
 const REPLAY_BOUNDS=activeTrack().replayBounds;
 const REPLAY_MAX_SECONDS=activeTrack().replayMaxSeconds;

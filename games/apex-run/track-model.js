@@ -1,5 +1,5 @@
-import {requestedTrackId} from "./track-catalog.js?v=0.5.0-alpha148-harbor-route";
-import {buildStuntLoop} from "./stunt-loop.js?v=0.5.0-alpha148-harbor-route";
+import {requestedTrackId} from "./track-catalog.js?v=0.5.0-alpha154-summit-descent";
+import {buildStuntLoop} from "./stunt-loop.js?v=0.5.0-alpha154-summit-descent";
 
 const ALPINE_ROUTE=Object.freeze([
   {x:-2,y:0,z:0,width:24,bank:0},{x:62,y:.5,z:0,width:24,bank:0},{x:96,y:2,z:-24,width:25,bank:-.08},{x:96,y:6,z:-72,width:25,bank:-.16},{x:78,y:9,z:-98,width:24,bank:-.1},{x:28,y:10,z:-108,width:23,bank:0},{x:-82,y:7,z:-103,width:24,bank:0},
@@ -79,13 +79,16 @@ function sampleControl(index,t){
   return{x:hermite(a.x,b.x,tangentAt(index,"x"),tangentAt(index+1,"x"),t),y:hermite(a.y,b.y,tangentAt(index,"y"),tangentAt(index+1,"y"),t)+hump+.55,z:hermite(a.z,b.z,tangentAt(index,"z"),tangentAt(index+1,"z"),t),width:a.width+(b.width-a.width)*t,bank:a.bank+(b.bank-a.bank)*t}
 }
 function framedConnector(start){
-  // A broad authored exit replaces the old single Bezier that had to reverse
-  // direction in too little space. That curve reached a five-metre radius,
-  // folded its full-width ribbon, and produced the wall/wedge seen after the
-  // loop. These anchors keep the full road above the basin and its tightest
-  // centerline radius above 40 m.
-  const anchors=[start,{x:560,y:1.8,z:325,width:15,bank:-.03},{x:650,y:7,z:325,width:22,bank:-.09},{x:710,y:13,z:230,width:28,bank:-.14},{x:720,y:10,z:60,width:34,bank:-.08},{x:650,y:3,z:-120,width:40,bank:0}],centers=[],tangents=anchors.map((point,index)=>index===0?{x:start.tangent.x*distance3(point,anchors[1]),y:start.tangent.y*distance3(point,anchors[1]),z:start.tangent.z*distance3(point,anchors[1])}:index===anchors.length-1?{x:point.x-anchors[index-1].x,y:point.y-anchors[index-1].y,z:point.z-anchors[index-1].z}:{x:(anchors[index+1].x-anchors[index-1].x)*.5,y:(anchors[index+1].y-anchors[index-1].y)*.5,z:(anchors[index+1].z-anchors[index-1].z)*.5});
-  for(let segment=0;segment<anchors.length-1;segment++){const a=anchors[segment],b=anchors[segment+1],distance=distance3(a,b),steps=Math.ceil(distance/.5);for(let index=0;index<steps;index++){const t=index/steps,smooth=t*t*(3-2*t),ma=tangents[segment],mb=tangents[segment+1];centers.push({x:hermite(a.x,b.x,ma.x,mb.x,t),y:hermite(a.y,b.y,ma.y,mb.y,t),z:hermite(a.z,b.z,ma.z,mb.z,t),width:a.width+(b.width-a.width)*smooth,bank:a.bank+(b.bank-a.bank)*smooth,stunt:"connector"})}}centers.push({...anchors.at(-1),stunt:"connector"});
+  // Preserve the proven loop exit and the finish position/tangent, but replace
+  // the old 600 m-wide-radius cruise with a continuous three-apex descent. A
+  // single analytic ribbon avoids Catmull/Hermite anchor folds while the
+  // endpoint envelope makes both joins C1-continuous.
+  const finish={x:650,y:3,z:-120},finishForward=normalized({x:-20,y:-1.5,z:-50}),span=distance3(start,finish),startScale=span*.9,finishScale=span*.7,steps=Math.ceil(span*1.5/.5),baseAt=t=>({
+    x:hermite(start.x,finish.x,start.tangent.x*startScale,finishForward.x*finishScale,t),
+    y:start.y+(finish.y-start.y)*smooth5(t),
+    z:hermite(start.z,finish.z,start.tangent.z*startScale,finishForward.z*finishScale,t),
+  }),centerAt=t=>{const base=baseAt(t),epsilon=.001,before=baseAt(Math.max(0,t-epsilon)),after=baseAt(Math.min(1,t+epsilon)),forward=normalized({x:after.x-before.x,y:0,z:after.z-before.z}),lateral={x:-forward.z,z:forward.x},envelope=Math.sin(Math.PI*t)**4,offset=48*Math.sin(3*Math.PI*t)*envelope,crest=6.5*Math.sin(Math.PI*t)**2*(.72+.28*Math.cos(2*Math.PI*t));return{x:base.x+lateral.x*offset,y:base.y+crest,z:base.z+lateral.z*offset}},centers=[];
+  for(let index=0;index<=steps;index++){const t=index/steps,center=centerAt(t),edgeMix=smooth5(Math.min(1,t/.13)),finishMix=smooth5(Math.max(0,(t-.72)/.28)),width=9.5+(17-9.5)*edgeMix+(40-17)*finishMix,bank=-.13*Math.sin(3*Math.PI*t)*Math.sin(Math.PI*t)**4;centers.push({...center,width,bank,stunt:"connector"})}
   for(let index=0;index<centers.length;index++){const sample=centers[index],before=centers[Math.max(0,index-1)],after=centers[Math.min(centers.length-1,index+1)],forward=normalized({x:after.x-before.x,y:after.y-before.y,z:after.z-before.z}),flatLateral=normalized({x:-forward.z,y:0,z:forward.x}),flatUp=normalized(cross(flatLateral,forward)),cos=Math.cos(sample.bank),sin=Math.sin(sample.bank),lateral={x:flatLateral.x*cos+flatUp.x*sin,y:flatLateral.y*cos+flatUp.y*sin,z:flatLateral.z*cos+flatUp.z*sin},up=normalized(cross(lateral,forward)),half=sample.width/2;sample.tangent=forward;sample.up=up;sample.left={x:sample.x+lateral.x*half,y:sample.y+lateral.y*half,z:sample.z+lateral.z*half};sample.right={x:sample.x-lateral.x*half,y:sample.y-lateral.y*half,z:sample.z-lateral.z*half};sample.heading=Math.atan2(forward.z,forward.x)}return centers
 }
 export function buildRoadMesh(stepsPerSegment=ROAD_STEPS_PER_SEGMENT){let samples=[],first=sampleControl(0,0),second=sampleControl(0,1/stepsPerSegment),dx=second.x-first.x,dz=second.z-first.z,length=Math.hypot(dx,dz)||1,fx=dx/length,fz=dz/length;for(let step=START_EXTENSION_SAMPLES;step>0;step--)samples.push({...first,x:first.x-fx*step*3,z:first.z-fz*step*3});for(let segment=0;segment<ROUTE_PATH.length-1;segment++)for(let step=0;step<stepsPerSegment;step++)samples.push(sampleControl(segment,step/stepsPerSegment));samples.push(sampleControl(ROUTE_PATH.length-2,1));for(let i=0;i<samples.length;i++){const before=samples[Math.max(0,i-1)],after=samples[Math.min(samples.length-1,i+1)],dx=after.x-before.x,dz=after.z-before.z,length=Math.hypot(dx,dz)||1,rx=-dz/length,rz=dx/length,half=samples[i].width/2,cos=Math.cos(samples[i].bank),sin=Math.sin(samples[i].bank);samples[i].heading=Math.atan2(dz,dx);samples[i].left={x:samples[i].x+rx*half*cos,y:samples[i].y+half*sin,z:samples[i].z+rz*half*cos};samples[i].right={x:samples[i].x-rx*half*cos,y:samples[i].y-half*sin,z:samples[i].z-rz*half*cos}}

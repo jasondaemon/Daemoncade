@@ -9,7 +9,7 @@ globalThis.location={search:"?track=alpine-sprint"};
 const {ROAD_SAMPLES:ALPINE_SAMPLES}=await import("./track-model.js?alpine-ecology-test");
 globalThis.location={search:"?track=summit-circuit"};
 
-const tiers={high:93,medium:64,low:32};
+const tiers={high:94,medium:64,low:32};
 for(const [quality,expected] of Object.entries(tiers)){
   const placements=landscapePlacements(ROAD_SAMPLES,quality);
   assert.equal(placements.length,expected,`${quality} landscape count`);

@@ -5,7 +5,7 @@ assert.equal(addHarborFactoryComplex(THREE,new THREE.Scene(),source(),"medium"),
 {const scene=new THREE.Scene(),group=addHarborFactoryComplex(THREE,scene,source(),"high");assert.equal(group.userData.bayCount,7);assert.equal(group.userData.license,"CC0");assert.ok(group.children.length>=17,"frontage plus depth wings");group.traverse(object=>{if(object.isMesh)assert.equal(object.castShadow,true)})}
 console.log("Apex Harbor factory complex passed");
 const assetRoot=new URL("./assets/polyhaven/modular-factory-facade/modules/",import.meta.url),document=JSON.parse(fs.readFileSync(new URL("modular_factory_facade_apex.gltf",assetRoot),"utf8"));
-assert.match(fs.readFileSync(new URL("./game.js",import.meta.url),"utf8"),/harbor-factory-complex\.js\?v=0\.5\.0-alpha148-harbor-route/,"runtime cache follows factory revision");
+assert.match(fs.readFileSync(new URL("./game.js",import.meta.url),"utf8"),/harbor-factory-complex\.js\?v=0\.5\.0-alpha154-summit-descent/,"runtime cache follows factory revision");
 assert.equal(document.asset.extras.license,"CC0");
 assert.deepEqual(document.asset.extras.apexSelection,[0,10,56,57,60,68,73]);
 assert.equal(document.scenes[0].nodes.length,7,"only selected modules enter the runtime scene");

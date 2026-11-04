@@ -547,3 +547,23 @@ non-overlapping proof before it can become production course geometry.
   checkpoint recovery. It does not award progress, remains practice-only and can accelerate from
   the valid recovery pose for another attempt. Successful loop traversal remains unchanged and
   receives no artificial adhesion.
+
+## Summit Circuit v2 candidate — three-apex descent
+
+- The passive post-loop connector is replaced by one continuous 514 m analytic ribbon with three
+  alternating high-speed apexes. The physical loop, its exit, the finish position, and the final
+  camera tangent are retained. No obstacle chicane, speed gate, steering assist, or extra stunt is
+  used; line choice, lift/brake timing, banking, and the narrower 17–20 m racing surface create the
+  final-sector decisions.
+- Summit advances to course version 2 with PB v9 / replay v10. Existing v1 records stay under their
+  original keys and are never migrated into the revised timing table. Historical garage finish
+  counts, medals, and earned achievements remain, while the first valid v2 finish becomes the
+  comparable Summit best. Medal targets are explicitly provisional pending broader player laps.
+- The production Rapier vehicle completes the complete seven-sector course with the real jump and
+  loop at 30, 60, and 144 render schedules. A separate matrix drives only the new descent using
+  250 ms digital decisions at 24/30/36 m/s and -3/0/+3 m entry offsets; every case finishes without
+  recovery, stall, or a grass shortcut. This is bounded fixture evidence, not a human lap claim.
+- An actual IAB practice run used normal held W/A/D inputs from the pre-loop recovery through the
+  inversion, all three descent cues, and the finish. Observation pauses were used, and one edge
+  slowdown required steering/throttle correction, so the 00:50.192 sector result is not an
+  uninterrupted player time.
