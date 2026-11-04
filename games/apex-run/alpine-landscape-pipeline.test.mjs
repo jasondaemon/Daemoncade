@@ -18,8 +18,8 @@ assert.match(game,/environment-presentation\.js\?v=0\.5\.0-alpha138-skyline-atmo
 assert.match(game,/sun-glare\.js\?v=0\.5\.0-alpha138-skyline-atmosphere/,"game imports the current glare revision");
 assert.match(game,/scene-lighting\.js\?v=0\.5\.0-alpha108-visible-sun-integrated/,"game imports the integrated lighting revision");
 assert.match(game,/graphics-quality\.js\?v=0\.5\.0-alpha108-visible-sun-integrated/,"game imports the track-aware shadow revision");
-assert.match(index,/game\.js\?v=0\.5\.0-alpha155-summit-descent/,"production entry loads the current game graph");
-assert.match(testPage,/game\.js\?v=0\.5\.0-alpha155-summit-descent/,"test entry loads the current game graph");
+assert.match(index,/game\.js\?v=0\.5\.0-alpha156-webgl-lifecycle/,"production entry loads the current game graph");
+assert.match(testPage,/game\.js\?v=0\.5\.0-alpha156-webgl-lifecycle/,"test entry loads the current game graph");
 
 for(const quality of["low","medium","high"]){
   const data=ecologyZoneData(ROAD_SAMPLES,quality),geometry=new THREE.BufferGeometry();geometry.setAttribute("position",new THREE.Float32BufferAttribute(data.positions,3));geometry.setIndex(data.indices);geometry.computeVertexNormals();const normal=geometry.getAttribute("normal");

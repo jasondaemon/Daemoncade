@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import {readFile} from "node:fs/promises";
 
-const root=new URL("./",import.meta.url),token="v=0.5.0-alpha154-summit-descent",entryToken="v=0.5.0-alpha155-summit-descent";
+const root=new URL("./",import.meta.url),token="v=0.5.0-alpha154-summit-descent",entryToken="v=0.5.0-alpha156-webgl-lifecycle";
 const source=async file=>readFile(new URL(file,root),"utf8");
 for(const entry of ["index.html","app.html","test.html","skyline-test.html"]){
   assert.ok((await source(entry)).includes(entryToken),`${entry} reaches the Harbor v2 graph`);

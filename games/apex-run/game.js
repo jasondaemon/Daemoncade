@@ -1,4 +1,5 @@
 import * as THREE from "../vendor/three/three.module.min.js?v=0.5.0-alpha25";
+import {installGraphicsLifecycle} from "./graphics-lifecycle.js?v=0.5.0-alpha156-webgl-lifecycle";
 import {GLTFLoader} from "../vendor/three/addons/loaders/GLTFLoader.js?v=0.5.0-alpha25";
 import RAPIER from "./vendor/rapier-0.17.3.js?v=0.5.0-alpha25";
 import {FixedStepper,MEDALS,REPLAY_HZ,advanceInvertedStallTime,clamp,commitResult,formatTime,frameGapInvalidates,isOnRoad,medalFor,persistenceNote,readBest,readReplay,reconcileBest,replayForBest,replayFrameAt} from "./simulation.js?v=0.5.0-alpha154-summit-descent";
@@ -63,6 +64,7 @@ const reducedMotion=matchMedia("(prefers-reduced-motion: reduce)").matches;
 const largeVenue=VENUE.halfX>300;scene.background=new THREE.Color(0x8dc9ed);scene.fog=largeVenue?new THREE.FogExp2(0x8fb7c9,.00072):new THREE.Fog(0x8dc9ed,160,430);
 const camera=new THREE.PerspectiveCamera(68,innerWidth/innerHeight,.1,ACTIVE_TRACK_ID==="skyline-gauntlet"?4200:800);
 const renderer=new THREE.WebGLRenderer({canvas,antialias:true,powerPreference:"high-performance"});
+installGraphicsLifecycle({window,renderer});
 renderer.setSize(innerWidth,innerHeight,false);renderer.shadowMap.type=THREE.PCFShadowMap;renderer.outputColorSpace=THREE.SRGBColorSpace;
 const lighting=naturalLightingProfile(ACTIVE_TRACK_ID);renderer.toneMapping=THREE.ACESFilmicToneMapping;renderer.toneMappingExposure=lighting.exposure;
 const sunOffset=worldSunDirection(ACTIVE_TRACK_ID);scene.add(new THREE.HemisphereLight(0xd5edff,0x26331e,lighting.hemisphere));const sun=new THREE.DirectionalLight(0xffedcf,lighting.sun);sun.position.set(sunOffset.x,sunOffset.y,sunOffset.z);sun.castShadow=true;sun.shadow.bias=-.00035;sun.shadow.normalBias=.045;sun.target.position.set(0,0,0);scene.add(sun,sun.target);
