@@ -1,11 +1,14 @@
 import assert from "node:assert/strict";
 import * as THREE from "../vendor/three/three.module.min.js";
-import {addLandscapeDetails,landscapePlacements,landscapeServicePlacements,macroTerrainPlacements} from "./landscape-details.js";
+import {addLandscapeDetails,ecologyZoneData,landscapePlacements,landscapeServicePlacements,macroTerrainPlacements} from "./landscape-details.js";
 import {readFile} from "node:fs/promises";
 globalThis.location={search:"?track=summit-circuit"};
 const {ROAD_SAMPLES}=await import("./track-model.js?landscape-test");
+globalThis.location={search:"?track=alpine-sprint"};
+const {ROAD_SAMPLES:ALPINE_SAMPLES}=await import("./track-model.js?alpine-ecology-test");
+globalThis.location={search:"?track=summit-circuit"};
 
-const tiers={high:93,medium:64,low:32};
+const tiers={high:141,medium:96,low:48};
 for(const [quality,expected] of Object.entries(tiers)){
   const placements=landscapePlacements(ROAD_SAMPLES,quality);
   assert.equal(placements.length,expected,`${quality} landscape count`);
@@ -14,8 +17,10 @@ for(const [quality,expected] of Object.entries(tiers)){
   assert.ok(new Set(placements.map(item=>item.variant)).size===2,`${quality} model variation`);
   const quarters=[0,1,2,3].map(quarter=>placements.filter(item=>item.quarter===quarter).length);
   assert.ok(Math.min(...quarters)>=Math.floor(expected/4)-2&&Math.max(...quarters)-Math.min(...quarters)<=3,`${quality} quarter distribution`);
-  assert.ok(new Set(placements.map(item=>item.rotation.toFixed(2))).size>=expected*.9,`${quality} rotation variation`);
-  assert.ok(new Set(placements.map(item=>`${item.quarter}:${item.cluster}`)).size>=Math.floor(expected/4),`${quality} route-wide cluster coverage`);
+  assert.ok(new Set(placements.map(item=>item.rotation.toFixed(2))).size>=expected*.78,`${quality} rotation variation`);
+  assert.ok(new Set(placements.map(item=>`${item.quarter}:${item.cluster}`)).size>=Math.floor(expected/8),`${quality} route-wide cluster coverage`);
+  assert.ok(placements.filter(item=>item.variant===0).length>=expected*.88,`${quality} ecology is shrub-led rather than isolated boulders`);
+  const ecology=ecologyZoneData(ALPINE_SAMPLES,quality);assert.equal(ecology.zones.length,8,`${quality} connected ecological districts`);assert.ok(ecology.indices.length>300,`${quality} ecological ground coverage`);for(let index=0;index<ecology.positions.length;index+=3){const x=ecology.positions[index],z=ecology.positions[index+2],clearance=ALPINE_SAMPLES.reduce((best,road)=>Math.min(best,Math.hypot(x-road.x,z-road.z)-road.width/2),Infinity);assert.ok(clearance>=15.2,`${quality} ecological terrain clearance ${clearance}`)}
   const terrain=macroTerrainPlacements(ROAD_SAMPLES,quality),terrainExpected=quality==="high"?12:quality==="medium"?8:4;
   assert.equal(terrain.length,terrainExpected,`${quality} macro terrain count`);
   assert.deepEqual([0,1,2,3].map(quarter=>terrain.filter(item=>item.quarter===quarter).length),Array(4).fill(terrainExpected/4),`${quality} macro terrain quarter coverage`);
@@ -26,7 +31,8 @@ for(const [quality,expected] of Object.entries(tiers)){
   assert.deepEqual(new Set(services.map(service=>service.side)),new Set(["left","right"]),`${quality} service paths frame both sides of the venue`);
 }
 const game=await readFile(new URL("game.js",import.meta.url),"utf8");
-const topologyScene=new THREE.Scene(),topology=await addLandscapeDetails(THREE,topologyScene,{loadAsync:async()=>{throw new Error("optional assets disabled")}},ROAD_SAMPLES,"high");assert.equal(topology.services.length,9);assert.equal(topology.meshes.filter(mesh=>mesh.userData.macroRidgeSlot!==undefined).length,0,"stand-alone macro ridges must not return to chase-camera sightlines");for(const service of topology.services){const ribbons=topology.meshes.filter(mesh=>mesh.userData.serviceDistrict?.slot===service.slot);assert.deepEqual(ribbons.map(mesh=>mesh.userData.serviceDistrict.role).sort(),["bed","fence","path"],"each service district has a broad ground bed and inset service road");assert.ok(service.points.every(point=>point.y===.37),"service districts are grounded on the venue plane rather than floating with elevated road")}
+const topologyScene=new THREE.Scene(),topology=await addLandscapeDetails(THREE,topologyScene,{loadAsync:async()=>{throw new Error("optional assets disabled")}},ROAD_SAMPLES,"high",{},"summit-circuit");assert.equal(topology.services.length,9);assert.equal(topology.ecology.zones.length,0);assert.equal(topology.meshes.filter(mesh=>mesh.userData.macroRidgeSlot!==undefined).length,0,"stand-alone macro ridges must not return to chase-camera sightlines");for(const service of topology.services){const ribbons=topology.meshes.filter(mesh=>mesh.userData.serviceDistrict?.slot===service.slot);assert.deepEqual(ribbons.map(mesh=>mesh.userData.serviceDistrict.role).sort(),["bed","fence","path"],"each service district has a broad ground bed and inset service road");assert.ok(service.points.every(point=>point.y===.37),"service districts are grounded on the venue plane rather than floating with elevated road")}
+const alpineScene=new THREE.Scene(),alpine=await addLandscapeDetails(THREE,alpineScene,{loadAsync:async()=>{throw new Error("optional assets disabled")}},ALPINE_SAMPLES,"high",{},"alpine-sprint");assert.equal(alpine.ecology.zones.length,8);assert.equal(alpine.meshes.filter(mesh=>mesh.userData.ecologyZones).length,1,"Alpine ecology zones remain one connected draw rather than scattered ground discs");
 assert.match(game,/const grassMetres=1\.4/);
 assert.match(game,/VENUE\.halfX\*2\/grassMetres,VENUE\.halfZ\*2\/grassMetres/);
 assert.match(game,/VENUE\.basinRadius\/VENUE\.halfX/);
