@@ -1,5 +1,5 @@
-import {requestedTrackId} from "./track-catalog.js?v=0.5.0-alpha104-skyline";
-import {buildStuntLoop} from "./stunt-loop.js?v=0.5.0-alpha104-skyline";
+import {requestedTrackId} from "./track-catalog.js?v=0.5.0-alpha105-skyline";
+import {buildStuntLoop} from "./stunt-loop.js?v=0.5.0-alpha105-skyline";
 
 const ALPINE_ROUTE=Object.freeze([
   {x:-2,y:0,z:0,width:24,bank:0},{x:62,y:.5,z:0,width:24,bank:0},{x:96,y:2,z:-24,width:25,bank:-.08},{x:96,y:6,z:-72,width:25,bank:-.16},{x:78,y:9,z:-98,width:24,bank:-.1},{x:28,y:10,z:-108,width:23,bank:0},{x:-82,y:7,z:-103,width:24,bank:0},
@@ -17,7 +17,7 @@ const SKYLINE_ROUTE=Object.freeze([
   {x:-300,y:10,z:0,width:16,bank:0},{x:-90,y:12,z:0,width:18,bank:0},{x:80,y:18,z:-120,width:14,bank:-.14},{x:160,y:28,z:-300,width:13,bank:-.2},
   {x:80,y:34,z:-470,width:12,bank:.18},{x:-140,y:36,z:-500,width:13,bank:.08},{x:-340,y:38,z:-420,width:17,bank:0},{x:-520,y:36,z:-300,width:17,bank:-.06},
   {x:-620,y:42,z:-100,width:12,bank:-.18},{x:-560,y:50,z:100,width:11,bank:-.2},{x:-360,y:52,z:220,width:12,bank:.14},{x:-120,y:48,z:250,width:14,bank:.1},
-  {x:100,y:45,z:220,width:18,bank:0},{x:300,y:42,z:100,width:52,bank:-.04},{x:420,y:38,z:-80,width:64,bank:-.08},{x:520,y:18,z:-260,width:28,bank:.12},
+  {x:100,y:45,z:220,width:18,bank:0},{x:300,y:20,z:100,width:52,bank:-.04},{x:420,y:18,z:-80,width:64,bank:-.08},{x:520,y:18,z:-260,width:28,bank:.12},
   {x:650,y:18,z:-320,width:14,bank:.06},{x:760,y:18,z:-250,width:16,bank:0},
 ].map(point=>Object.freeze(point)));
 const TRACK_DEFINITIONS=Object.freeze({
