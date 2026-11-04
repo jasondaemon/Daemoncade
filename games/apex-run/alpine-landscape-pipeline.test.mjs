@@ -15,7 +15,7 @@ assert.match(game,/ACTIVE_TRACK_ID!=="alpine-sprint"\)scene\.add\(basin\)/,"flat
 for(const quality of["low","medium","high"]){
   const data=ecologyZoneData(ROAD_SAMPLES,quality),geometry=new THREE.BufferGeometry();geometry.setAttribute("position",new THREE.Float32BufferAttribute(data.positions,3));geometry.setIndex(data.indices);geometry.computeVertexNormals();const normal=geometry.getAttribute("normal");
   assert.ok(Array.from({length:normal.count},(_,index)=>normal.getY(index)).filter(value=>value<0).length<normal.count*.08,`${quality} connected ecology faces upward`);
-  assert.equal(data.zones.length,8,`${quality} covers all Alpine route quarters with paired districts`);
+  assert.equal(data.zones.length,9,`${quality} covers all Alpine route quarters with a late-sector paired district`);
 }
 
 console.log("Apex Alpine landscape pipeline passed");
