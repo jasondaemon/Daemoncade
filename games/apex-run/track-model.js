@@ -182,13 +182,18 @@ export function routeTarget(checkpoint,position,lookahead=28,minimumProgress=0){
 function wrappedAngle(value){return Math.atan2(Math.sin(value),Math.cos(value))}
 function routeHeadingAt(geometry,along){const before=pointAt(geometry,along-5),after=pointAt(geometry,along+5);return Math.atan2(after.z-before.z,after.x-before.x)}
 function featureProgress(geometry,predicate){for(const segment of geometry.segments)if(predicate(segment.a,segment.b))return segment.start;return Infinity}
-export function routePreview(checkpoint,position,minimumProgress=0){
+export function routePreview(checkpoint,position,minimumProgress=0,vehicleHeading=null){
   const geometry=stageGeometry(checkpoint),progress=projectedProgress(geometry,position,minimumProgress),remaining=Math.max(0,geometry.total-progress),next=CHECKPOINTS[Math.max(0,Math.min(checkpoint,CHECKPOINTS.length-1))];
-  const loop=featureProgress(geometry,(a,b)=>a.phase!=="loop"&&b.phase==="loop"),jump=Math.min(...SURFACE_GAPS.map(gap=>featureProgress(geometry,(a,b)=>Number.isInteger(a.sampleIndex)&&Number.isInteger(b.sampleIndex)&&a.sampleIndex<=gap.start&&b.sampleIndex>=gap.start)));
+  const loop=featureProgress(geometry,(a,b)=>a.phase==="loop"||b.phase==="loop"),loopExit=featureProgress(geometry,(a,b)=>a.phase==="loop"&&b.phase!=="loop"),jump=Math.min(...SURFACE_GAPS.map(gap=>featureProgress(geometry,(a,b)=>Number.isInteger(a.sampleIndex)&&Number.isInteger(b.sampleIndex)&&a.sampleIndex<=gap.start&&b.sampleIndex>=gap.start)));
   const hazards=[{kind:"jump",label:"JUMP AHEAD",along:jump,limit:150},{kind:"loop",label:"LOOP AHEAD",along:loop,limit:180}].map(feature=>({...feature,distance:feature.along-progress})).filter(feature=>feature.distance>=8&&feature.distance<=feature.limit).sort((a,b)=>a.distance-b.distance);
   if(hazards.length){const feature=hazards[0];return{kind:feature.kind,label:feature.label,distance:Math.round(feature.distance/5)*5,progress}}
   if(next?.finish&&remaining<=110)return{kind:"finish",label:"FINISH AHEAD",distance:Math.round(remaining/5)*5,progress};
-  for(let ahead=15;ahead<=Math.min(135,remaining-8);ahead+=5){const at=progress+ahead,delta=wrappedAngle(routeHeadingAt(geometry,at+28)-routeHeadingAt(geometry,at-8)),magnitude=Math.abs(delta);if(magnitude<.28)continue;const direction=delta<0?"LEFT":"RIGHT",severity=magnitude>=.9?"HAIRPIN":magnitude>=.5?"SHARP":"BEND";return{kind:"turn",label:severity==="BEND"?`${direction} BEND`:`${severity} ${direction}`,direction:direction.toLowerCase(),severity:severity.toLowerCase(),distance:Math.round(ahead/5)*5,progress}}
+  const insideLoop=Number.isFinite(loop)&&progress>=loop&&progress<=(Number.isFinite(loopExit)?loopExit:geometry.total);if(insideLoop)return null;
+  if(Number.isFinite(vehicleHeading)&&Math.abs(wrappedAngle(vehicleHeading-routeHeadingAt(geometry,progress)))>1.15)return null;
+  // Quantizing only the bend-analysis origin prevents tiny projection changes
+  // from alternating labels at adjacent compound-curve samples.
+  const turnProgress=Math.floor(progress/10)*10;
+  for(let ahead=15;ahead<=Math.min(135,remaining-8);ahead+=5){const at=turnProgress+ahead,delta=wrappedAngle(routeHeadingAt(geometry,at+28)-routeHeadingAt(geometry,at-8)),magnitude=Math.abs(delta);if(magnitude<.28)continue;const direction=delta<0?"LEFT":"RIGHT",severity=magnitude>=.9?"HAIRPIN":magnitude>=.5?"SHARP":"BEND";return{kind:"turn",label:severity==="BEND"?`${direction} BEND`:`${severity} ${direction}`,direction:direction.toLowerCase(),severity:severity.toLowerCase(),distance:Math.round(Math.max(0,at-progress)/5)*5,progress}}
   return null;
 }
 export function routeGuides(spacing=32){const guides=[];let carry=spacing*.5;for(let i=1;i<ROAD_SAMPLES.length;i++){const a=ROAD_SAMPLES[i-1],b=ROAD_SAMPLES[i],dx=b.x-a.x,dy=b.y-a.y,dz=b.z-a.z,length=Math.hypot(dx,dy,dz);while(carry<=length){const t=carry/length;guides.push({x:a.x+dx*t,y:a.y+dy*t,z:a.z+dz*t,heading:Math.atan2(dz,dx),segment:i-1});carry+=spacing}carry-=length}return guides}
