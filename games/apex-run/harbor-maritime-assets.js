@@ -1,4 +1,5 @@
-export const BUOY_SAMPLE_INDICES=Object.freeze([250,520,800,1050,1350,1650,1950,2200]);
+const harborRouteSample=(point,offset=0)=>10+point*100+offset;
+export const BUOY_SAMPLE_INDICES=Object.freeze([[2,40],[5,10],[7,90],[10,40],[13,40],[16,40],[19,40],[25,20]].map(([point,offset])=>harborRouteSample(point,offset)));
 export function harborWaterContains(point,venue,margin=0){const halfX=venue.halfX-3-margin,halfZ=venue.halfZ-3-margin,dx=point.x-venue.centerX,dz=point.z-venue.centerZ,angle=Math.atan2(dz/halfZ,dx/halfX),edge=1+.035*Math.sin(angle*3.1)+.022*Math.cos(angle*7.3);return Math.hypot(dx/halfX,dz/halfZ)<=edge}
 export function addHarborBuoys(THREE,scene,source,roadSamples,venue,quality="high",waterY=.39){
   if(!source||quality==="low")return[];const count=quality==="high"?8:5,box=new THREE.Box3().setFromObject(source),size=box.getSize(new THREE.Vector3()),center=box.getCenter(new THREE.Vector3()),scale=5/Math.max(size.y,.001),buoys=[];

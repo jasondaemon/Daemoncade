@@ -25,7 +25,7 @@ function makeRun(fps,recordedInputs=null){
     vehicle.updateVehicle(1/120,RAPIER.QueryFilterFlags.EXCLUDE_DYNAMIC,SUSPENSION_QUERY_GROUPS);world.step();ticks++;if(ticks%120===0&&ticks<=(CHECKPOINTS.length>4?18000:1800))trace.push([ticks,+p.x.toFixed(1),+p.y.toFixed(1),+p.z.toFixed(1),+forward.toFixed(2),+angle.toFixed(2),target,+speed.toFixed(1),+[0,1,2,3].filter(i=>vehicle.wheelIsInContact(i)).length,+(1-2*(q.x*q.x+q.z*q.z)).toFixed(3)]);maxY=Math.max(maxY,p.y);const nextCheckpoint=checkpointAdvance(checkpoint,p);stuckTicks=nextCheckpoint!==checkpoint?0:speed<.5?stuckTicks+1:0;checkpoint=nextCheckpoint;
     if(p.y<-5||!isInPlayArea(p)||stuckTicks>600){recoveries++}
   };
-  const timeLimit=CHECKPOINTS.length>4?180:70,stepper=new FixedStepper(step);for(let frame=0;frame<fps*timeLimit&&checkpoint<CHECKPOINTS.length&&recoveries===0;frame++)stepper.advance(1/fps);
+  const timeLimit=CHECKPOINTS.length>8?240:CHECKPOINTS.length>4?180:70,stepper=new FixedStepper(step);for(let frame=0;frame<fps*timeLimit&&checkpoint<CHECKPOINTS.length&&recoveries===0;frame++)stepper.advance(1/fps);
   const p=chassis.translation();return{fps,ticks,time:ticks/120,checkpoint,target,recoveries,maxSpeed,minimumFinalSpeed:Number.isFinite(minimumFinalSpeed)?minimumFinalSpeed:null,position:{x:p.x,y:p.y,z:p.z},maxY,airborne,landed,minLandingY,trace,inputTape};
 }
 export const reference=makeRun(60),runs=[30,60,144].map(fps=>makeRun(fps,reference.inputTape));console.log("Apex Run recorded-input trajectories",JSON.stringify(runs.map(({inputTape,...run})=>run),null,2));

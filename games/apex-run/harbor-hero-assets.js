@@ -1,4 +1,4 @@
-import {coastalDistrictSpecs} from "./harbor-coastal-districts.js";
+import {coastalDistrictSpecs} from "./harbor-coastal-districts.js?v=0.5.0-alpha148-harbor-route";
 
 export function placeHarborGantryCrane(THREE,scene,source,quality="high"){
   if(!source||quality==="low")return null;

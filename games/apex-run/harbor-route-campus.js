@@ -1,4 +1,8 @@
-const CAMPUS_SAMPLES=[1900,1950,2000,2050,2100,2140];
+// Route-point anchors survive centerline edits; raw sample numbers silently
+// attached these buildings to different corners when the breakwater changed.
+const harborRouteSample=(point,offset=0)=>10+point*100+offset;
+const CAMPUS_SAMPLES=[[19,-10],[19,40],[19,90],[20,40],[20,90],[21,40]].map(([point,offset])=>harborRouteSample(point,offset));
+const CAMPUS_ROAD_START=harborRouteSample(18,70),CAMPUS_ROAD_END=harborRouteSample(21,50);
 
 function frame(samples,index){
   const sample=samples[index],before=samples[Math.max(0,index-2)],after=samples[Math.min(samples.length-1,index+2)],dx=after.x-before.x,dz=after.z-before.z,length=Math.hypot(dx,dz)||1;
@@ -36,7 +40,7 @@ export function addHarborRouteCampus(THREE,scene,samples,quality="high",maps={})
   const posts=specs.flatMap(spec=>[-1,1].map(side=>compose(dummy,spec,side*(spec.width/2+2.4),4.4,-spec.depth*.35,.26,8,.26)));add(new THREE.BoxGeometry(1,1,1),graphite,posts);
   const lights=specs.flatMap(spec=>[-1,1].map(side=>compose(dummy,spec,side*(spec.width/2+2.4),8.45,-spec.depth*.35,1.6,.22,.55)));add(new THREE.BoxGeometry(1,1,1),accent,lights,false);
 
-  const positions=[],uvs=[],indices=[];for(let index=1880;index<=2160;index+=8){const f=frame(samples,index);for(const offset of[-34,-42]){positions.push(f.sample.x+f.nx*offset,.43,f.sample.z+f.nz*offset);uvs.push((index-1880)/16,offset===-34?0:1)}}for(let row=0;row<positions.length/6-1;row++){const a=row*2,b=a+1,c=a+2,d=a+3;indices.push(a,c,b,b,c,d)}const roadGeometry=new THREE.BufferGeometry();roadGeometry.setAttribute("position",new THREE.Float32BufferAttribute(positions,3));roadGeometry.setAttribute("uv",new THREE.Float32BufferAttribute(uvs,2));roadGeometry.setIndex(indices);roadGeometry.computeVertexNormals();const serviceRoad=new THREE.Mesh(roadGeometry,graphite);serviceRoad.receiveShadow=true;serviceRoad.userData.harborServiceRoad=true;group.add(serviceRoad);
-  const edgeMatrices=[];for(let index=1880;index<=2160;index+=16){const f=frame(samples,index),spec={x:f.sample.x+f.nx*-42.4,z:f.sample.z+f.nz*-42.4,heading:f.heading};edgeMatrices.push(compose(dummy,spec,0,.8,0,7.5,1.25,.34))}add(new THREE.BoxGeometry(1,1,1),concrete,edgeMatrices);
+  const positions=[],uvs=[],indices=[];for(let index=CAMPUS_ROAD_START;index<=CAMPUS_ROAD_END;index+=8){const f=frame(samples,index);for(const offset of[-34,-42]){positions.push(f.sample.x+f.nx*offset,.43,f.sample.z+f.nz*offset);uvs.push((index-CAMPUS_ROAD_START)/16,offset===-34?0:1)}}for(let row=0;row<positions.length/6-1;row++){const a=row*2,b=a+1,c=a+2,d=a+3;indices.push(a,c,b,b,c,d)}const roadGeometry=new THREE.BufferGeometry();roadGeometry.setAttribute("position",new THREE.Float32BufferAttribute(positions,3));roadGeometry.setAttribute("uv",new THREE.Float32BufferAttribute(uvs,2));roadGeometry.setIndex(indices);roadGeometry.computeVertexNormals();const serviceRoad=new THREE.Mesh(roadGeometry,graphite);serviceRoad.receiveShadow=true;serviceRoad.userData.harborServiceRoad=true;group.add(serviceRoad);
+  const edgeMatrices=[];for(let index=CAMPUS_ROAD_START;index<=CAMPUS_ROAD_END;index+=16){const f=frame(samples,index),spec={x:f.sample.x+f.nx*-42.4,z:f.sample.z+f.nz*-42.4,heading:f.heading};edgeMatrices.push(compose(dummy,spec,0,.8,0,7.5,1.25,.34))}add(new THREE.BoxGeometry(1,1,1),concrete,edgeMatrices);
   group.userData={harborRouteCampus:true,districts:specs.length,serviceRoad:true,colorDraws:group.children.length,license:"Authored geometry using existing Poly Haven CC0 concrete maps"};scene.add(group);return group;
 }

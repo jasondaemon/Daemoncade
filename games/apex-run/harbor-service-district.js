@@ -1,10 +1,11 @@
+const harborRouteSample=(point,offset=0)=>10+point*100+offset;
+
 function fittedWidthClone(THREE,source,name,width){
   const original=source.getObjectByName(name);if(!original)return null;
   const clone=original.clone(true),wrapper=new THREE.Group(),normalized=new THREE.Group();normalized.add(clone);normalized.updateMatrixWorld(true);const box=new THREE.Box3().setFromObject(normalized),size=box.getSize(new THREE.Vector3()),center=box.getCenter(new THREE.Vector3()),scale=width/Math.max(size.x,.001);
   normalized.scale.setScalar(scale);normalized.position.set(-center.x*scale,-box.min.y*scale,-center.z*scale);wrapper.add(normalized);wrapper.userData.factoryModule=name;return wrapper;
 }
-
-export function harborServicePose(samples,index=2200,offset=-70){
+export function harborServicePose(samples,index=harborRouteSample(25,-10),offset=-105){
   const sample=samples[index],before=samples[index-2],after=samples[index+2],tx=after.x-before.x,tz=after.z-before.z,length=Math.hypot(tx,tz)||1,nx=-tz/length,nz=tx/length;
   return{x:sample.x+nx*offset,z:sample.z+nz*offset,heading:-Math.atan2(tz,tx),sampleIndex:index,offset};
 }

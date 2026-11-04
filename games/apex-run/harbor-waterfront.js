@@ -1,4 +1,4 @@
-import {coastalDistrictSpecs} from "./harbor-coastal-districts.js";
+import {coastalDistrictSpecs} from "./harbor-coastal-districts.js?v=0.5.0-alpha148-harbor-route";
 
 export function waterfrontPath(quality="high"){
   const specs=coastalDistrictSpecs("high"),start=specs.find(item=>item.kind==="shipyard"),end=specs.find(item=>item.kind==="ferry-quay"),steps=quality==="high"?18:quality==="medium"?12:8,points=[];

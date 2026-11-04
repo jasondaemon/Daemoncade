@@ -5,7 +5,7 @@ import {harborWaterContains} from "./harbor-maritime-assets.js";
 
 globalThis.location={search:"?track=harbor-run"};
 const {ROAD_SAMPLES,VENUE}=await import("./track-model.js?campus=92"),specs=harborCampusSpecs(ROAD_SAMPLES);
-assert.equal(specs.length,6);assert.deepEqual(specs.map(spec=>spec.sampleIndex),[1900,1950,2000,2050,2100,2140]);
+assert.equal(specs.length,6);assert.deepEqual(specs.map(spec=>spec.sampleIndex),[1900,1950,2000,2050,2100,2150]);
 assert.equal(addHarborRouteCampus(THREE,new THREE.Scene(),ROAD_SAMPLES,"low"),null);
 for(const quality of["medium","high"]){
   const scene=new THREE.Scene(),group=addHarborRouteCampus(THREE,scene,ROAD_SAMPLES,quality);scene.updateMatrixWorld(true);assert.equal(group.userData.districts,6);assert.equal(group.userData.colorDraws,18);assert.equal(group.userData.serviceRoad,true);

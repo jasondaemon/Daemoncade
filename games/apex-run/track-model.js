@@ -1,5 +1,5 @@
-import {requestedTrackId} from "./track-catalog.js?v=0.5.0-alpha105-skyline";
-import {buildStuntLoop} from "./stunt-loop.js?v=0.5.0-alpha105-skyline";
+import {requestedTrackId} from "./track-catalog.js?v=0.5.0-alpha148-harbor-route";
+import {buildStuntLoop} from "./stunt-loop.js?v=0.5.0-alpha148-harbor-route";
 
 const ALPINE_ROUTE=Object.freeze([
   {x:-2,y:0,z:0,width:24,bank:0},{x:62,y:.5,z:0,width:24,bank:0},{x:96,y:2,z:-24,width:25,bank:-.08},{x:96,y:6,z:-72,width:25,bank:-.16},{x:78,y:9,z:-98,width:24,bank:-.1},{x:28,y:10,z:-108,width:23,bank:0},{x:-82,y:7,z:-103,width:24,bank:0},
@@ -10,7 +10,7 @@ const SUMMIT_ROUTE=Object.freeze([
   {x:-380,y:0,z:-280,bank:0},{x:-270,y:1,z:-330,bank:.08},{x:-120,y:5,z:-250,bank:.18},{x:40,y:9,z:-340,bank:-.18},{x:220,y:18,z:-300,bank:-.12},{x:360,y:28,z:-180,bank:-.2},{x:410,y:38,z:20,bank:.1},{x:280,y:30,z:240,bank:.18},{x:100,y:18,z:330,bank:.14},{x:-110,y:18,z:340,bank:-.12},{x:-300,y:30,z:260,bank:-.18},{x:-410,y:25,z:100,bank:-.12},{x:-400,y:14,z:-60,bank:.1},{x:-300,y:8,z:-160,bank:.18},{x:-150,y:12,z:-180,bank:.12},{x:0,y:20,z:-120,bank:-.1},{x:140,y:28,z:-20,bank:-.18},{x:220,y:22,z:90,bank:-.1},{x:340,y:14,z:110,bank:.04},{x:450,y:8,z:20,bank:.1},{x:500,y:2,z:-120,bank:0},
 ].map((point,index)=>Object.freeze({...point,width:SUMMIT_WIDTHS[index]})));
 const HARBOR_ROUTE=Object.freeze([
-  {x:-560,y:2,z:-260,width:16,bank:0},{x:-470,y:3,z:-310,width:15,bank:.08},{x:-350,y:5,z:-285,width:13,bank:-.12},{x:-270,y:7,z:-185,width:12,bank:-.16},{x:-325,y:8,z:-75,width:11,bank:.18},{x:-220,y:11,z:15,width:13,bank:.1},{x:-55,y:14,z:-5,width:15,bank:-.08},{x:120,y:16,z:5,width:14,bank:0},{x:240,y:14,z:25,width:18,bank:-.04},{x:365,y:20,z:115,width:15,bank:-.16},{x:430,y:28,z:255,width:13,bank:-.2},{x:300,y:31,z:360,width:12,bank:.16},{x:105,y:25,z:330,width:14,bank:.12},{x:-45,y:18,z:225,width:12,bank:-.14},{x:-170,y:20,z:315,width:11,bank:-.18},{x:-345,y:17,z:285,width:13,bank:.12},{x:-510,y:11,z:165,width:15,bank:.16},{x:-455,y:8,z:20,width:12,bank:-.16},{x:-590,y:7,z:-40,width:13,bank:-.08},{x:-700,y:6,z:-150,width:14,bank:.1},{x:-680,y:9,z:-400,width:13,bank:.14},{x:-300,y:14,z:-460,width:16,bank:-.08},{x:200,y:10,z:-420,width:18,bank:-.12},{x:590,y:3,z:-25,width:20,bank:0},
+  {x:-560,y:2,z:-260,width:16,bank:0},{x:-470,y:3,z:-310,width:15,bank:.08},{x:-350,y:5,z:-285,width:13,bank:-.12},{x:-270,y:7,z:-185,width:12,bank:-.16},{x:-325,y:8,z:-75,width:11,bank:.18},{x:-220,y:11,z:15,width:13,bank:.1},{x:-55,y:14,z:-5,width:15,bank:-.08},{x:120,y:16,z:5,width:14,bank:0},{x:240,y:14,z:25,width:18,bank:-.04},{x:365,y:20,z:115,width:15,bank:-.16},{x:430,y:28,z:255,width:13,bank:-.2},{x:300,y:31,z:360,width:12,bank:.16},{x:105,y:25,z:330,width:14,bank:.12},{x:-45,y:18,z:225,width:12,bank:-.14},{x:-170,y:20,z:315,width:11,bank:-.18},{x:-345,y:17,z:285,width:13,bank:.12},{x:-510,y:11,z:165,width:15,bank:.16},{x:-455,y:8,z:20,width:12,bank:-.16},{x:-590,y:7,z:-40,width:13,bank:-.08},{x:-700,y:6,z:-150,width:14,bank:.1},{x:-680,y:9,z:-400,width:13,bank:.14},{x:-480,y:12,z:-455,width:14,bank:-.1},{x:-260,y:14,z:-390,width:13,bank:.14},{x:-40,y:13,z:-455,width:12,bank:-.16},{x:180,y:11,z:-330,width:14,bank:.12},{x:330,y:9,z:-390,width:12,bank:-.18},{x:455,y:7,z:-170,width:15,bank:.12},{x:590,y:3,z:-25,width:20,bank:0},
 ].map(point=>Object.freeze(point)));
 const SKYLINE_ROUTE=Object.freeze([
   {x:-820,y:2,z:-320,width:18,bank:0},{x:-700,y:2,z:-320,width:17,bank:.04},{x:-560,y:4,z:-260,width:15,bank:.1},{x:-450,y:8,z:-120,width:14,bank:-.12},
@@ -23,7 +23,7 @@ const SKYLINE_ROUTE=Object.freeze([
 const TRACK_DEFINITIONS=Object.freeze({
   "alpine-sprint":Object.freeze({route:ALPINE_ROUTE,checkpointPoints:[2,6,9,11],stageRanges:[[0,2],[2,6],[6,9],[9,11]],humps:{5:14},jumpSegment:5}),
   "summit-circuit":Object.freeze({route:SUMMIT_ROUTE,checkpointPoints:[3,6,10,13,16,18,20],stageRanges:[[0,3],[3,6],[6,10],[10,13],[13,16],[16,18],[18,20]],humps:{10:12},jumpSegment:10}),
-  "harbor-run":Object.freeze({route:HARBOR_ROUTE,checkpointPoints:[3,6,9,12,15,19,23],stageRanges:[[0,3],[3,6],[6,9],[9,12],[12,15],[15,19],[19,23]],humps:{7:10},jumpSegment:7,gapSegment:7}),
+  "harbor-run":Object.freeze({route:HARBOR_ROUTE,checkpointPoints:[3,6,9,12,15,19,22,25,27],stageRanges:[[0,3],[3,6],[6,9],[9,12],[12,15],[15,19],[19,22],[22,25],[25,27]],humps:{7:10},jumpSegment:7,gapSegment:7}),
   "skyline-gauntlet":Object.freeze({route:SKYLINE_ROUTE,checkpointPoints:[3,6,9,12,15,18,20,21],stageRanges:[[0,3],[3,6],[6,9],[9,12],[12,15],[15,18],[18,20],[20,21]],humps:{4:10,10:10,16:10},jumpSegment:4,jumpSegments:{4:205,10:190,16:125}}),
 });
 export const ACTIVE_TRACK_ID=requestedTrackId();
@@ -53,7 +53,8 @@ export const START_EXTENSION_SAMPLES=10;
 export const START_SPAWN_SAMPLE_INDEX=START_EXTENSION_SAMPLES+2;
 export const START_GATE_SAMPLE_INDEX=Math.max(1,START_EXTENSION_SAMPLES-4);
 export const ROAD_STEPS_PER_SEGMENT=largeTrack?100:88;
-const routeSampleIndex=(routePoint,offset=0)=>START_EXTENSION_SAMPLES+routePoint*ROAD_STEPS_PER_SEGMENT+offset;
+export const routePointSampleIndex=(routePoint,offset=0)=>START_EXTENSION_SAMPLES+routePoint*ROAD_STEPS_PER_SEGMENT+offset;
+const routeSampleIndex=routePointSampleIndex;
 export const JUMP_ZONE=Object.freeze({approach:routeSampleIndex(ACTIVE_TRACK_DEFINITION.jumpSegment,8),takeoff:routeSampleIndex(ACTIVE_TRACK_DEFINITION.jumpSegment,36),landing:routeSampleIndex(ACTIVE_TRACK_DEFINITION.jumpSegment,68)});
 // Summit's reservoir jump is an honest missing section of deck.  All visual,
 // collision, lane and rail builders consume this same interval; there is no
@@ -166,8 +167,8 @@ export function roadPoseNear(position,lift=1.7){
 // Four meaningful sectors replace the inherited square-track doorway cadence:
 // opening sweeper, crest/landing, elevated return, and the finish descent.
 export const ROUTE_STAGE_RANGES=Object.freeze(ACTIVE_TRACK_DEFINITION.stageRanges.map(range=>Object.freeze([...range])));
-const routePointSampleIndex=point=>(summit||skyline)&&point===ROUTE_PATH.length-1?ROAD_SAMPLES.length-1:Math.min(ROAD_SAMPLES.length-1,routeSampleIndex(point));
-export function routeStage(checkpoint){const range=ROUTE_STAGE_RANGES[Math.max(0,Math.min(checkpoint,ROUTE_STAGE_RANGES.length-1))],start=routePointSampleIndex(range[0]),end=routePointSampleIndex(range[1]),points=ROAD_SAMPLES.slice(start,end+1).map(({x,y,z,phase},offset)=>({x,y,z,phase,sampleIndex:start+offset})),gate=CHECKPOINTS[Math.max(0,Math.min(checkpoint,CHECKPOINTS.length-1))];return points.concat(gate?{x:gate.x,y:gate.y,z:gate.z,sampleIndex:gate.sampleIndex}:[])}
+const routeStageSampleIndex=point=>(summit||skyline)&&point===ROUTE_PATH.length-1?ROAD_SAMPLES.length-1:Math.min(ROAD_SAMPLES.length-1,routeSampleIndex(point));
+export function routeStage(checkpoint){const range=ROUTE_STAGE_RANGES[Math.max(0,Math.min(checkpoint,ROUTE_STAGE_RANGES.length-1))],start=routeStageSampleIndex(range[0]),end=routeStageSampleIndex(range[1]),points=ROAD_SAMPLES.slice(start,end+1).map(({x,y,z,phase},offset)=>({x,y,z,phase,sampleIndex:start+offset})),gate=CHECKPOINTS[Math.max(0,Math.min(checkpoint,CHECKPOINTS.length-1))];return points.concat(gate?{x:gate.x,y:gate.y,z:gate.z,sampleIndex:gate.sampleIndex}:[])}
 const stageGeometryCache=new Map();
 function stageGeometry(checkpoint){if(stageGeometryCache.has(checkpoint))return stageGeometryCache.get(checkpoint);const points=routeStage(checkpoint),segments=[];let total=0;for(let i=0;i<points.length-1;i++){const a=points[i],b=points[i+1],dx=b.x-a.x,dy=(b.y||0)-(a.y||0),dz=b.z-a.z,length=Math.hypot(dx,dy,dz);if(length<.001)continue;segments.push({a,b,dx,dy,dz,length,start:total});total+=length}const geometry={segments,total};stageGeometryCache.set(checkpoint,geometry);return geometry}
 function pointAt(geometry,along){const wanted=Math.max(0,Math.min(geometry.total,along));for(const segment of geometry.segments)if(wanted<=segment.start+segment.length){const t=(wanted-segment.start)/segment.length;return{x:segment.a.x+segment.dx*t,y:(segment.a.y||0)+segment.dy*t,z:segment.a.z+segment.dz*t}}const last=geometry.segments.at(-1)?.b||{x:0,y:0,z:0};return{x:last.x,y:last.y||0,z:last.z}}

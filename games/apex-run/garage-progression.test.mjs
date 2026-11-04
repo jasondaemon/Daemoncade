@@ -3,7 +3,7 @@ import {DEFAULT_CAR_ID,DEFAULT_COSMETIC_ID,resolveSelection} from "./car-catalog
 import {GARAGE_KEY,achievementProgress,createGarageState,garageCompatibility,migrateGarage,readGarage,recordInvalidatedRun,recordRaceEligibilityTransition,recordRaceOutcome,saveGarage,selectGarageItem,validateRaceOutcome} from "./garage-progression.js";
 
 class Storage{constructor(seed={}){this.data=new Map(Object.entries(seed));this.fail=false}getItem(key){if(this.fail)throw Error("denied");return this.data.get(key)??null}setItem(key,value){if(this.fail)throw Error("quota");this.data.set(key,String(value))}}
-const outcome=(overrides={})=>({schema:1,source:"apex-run-race",runId:"run:20261103:0001",trackId:"alpine-sprint",time:47,finished:true,eligible:true,practice:false,debug:false,recoveryCount:0,checkpointCount:4,checkpointTimes:[10,21,34,47],...overrides});
+const outcome=(overrides={})=>({schema:1,source:"apex-run-race",runId:"run:20261103:0001",trackId:"alpine-sprint",courseVersion:1,time:47,finished:true,eligible:true,practice:false,debug:false,recoveryCount:0,checkpointCount:4,checkpointTimes:[10,21,34,47],...overrides});
 assert.equal(validateRaceOutcome(outcome()).medal,"APEX");
 for(const invalid of[{debug:true},{eligible:false},{practice:true},{recoveryCount:1},{finished:false},{checkpointCount:3},{checkpointTimes:[10,9,34,47]},{trackId:"missing"},{runId:"short"}])assert.equal(validateRaceOutcome(outcome(invalid)),null,`accepted invalid outcome ${JSON.stringify(invalid)}`);
 
