@@ -34,7 +34,7 @@ import {addHarborBuoys} from "./harbor-maritime-assets.js?v=0.5.0-alpha88b";
 import {addHarborWaterfront} from "./harbor-waterfront.js?v=0.5.0-alpha89b";
 import {addHarborServiceDistrict} from "./harbor-service-district.js?v=0.5.0-alpha90e";
 import {addHarborRouteCampus} from "./harbor-route-campus.js?v=0.5.0-alpha93b";
-import {addVenueTerrain} from "./venue-terrain.js?v=0.5.0-alpha94b";
+import {addVenueTerrain} from "./venue-terrain.js?v=0.5.0-alpha97";
 import {resolveSelection} from "./car-catalog.js";
 import {createRaceCarVisual} from "./car-visual-adapter.js";
 import {gateCameraOpacity,gateStructureDistance} from "./camera-gate-fade.js?v=0.5.0-alpha87-camera2";
