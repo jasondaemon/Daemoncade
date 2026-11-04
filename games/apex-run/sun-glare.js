@@ -1,4 +1,4 @@
-import {WORLD_SUN_DIRECTION} from "./environment-presentation.js?v=0.5.0-alpha103-sky-lighting";
+import {worldSunDirection} from "./environment-presentation.js?v=0.5.0-alpha107-visible-sun";
 
 const clamp01=value=>Math.max(0,Math.min(1,value));
 
@@ -14,8 +14,8 @@ function glareTexture(THREE){
   const texture=new THREE.CanvasTexture(canvas);texture.colorSpace=THREE.SRGBColorSpace;return texture;
 }
 
-export function addSunGlare(THREE,scene,quality="high"){
-  const direction=new THREE.Vector3(WORLD_SUN_DIRECTION.x,WORLD_SUN_DIRECTION.y,WORLD_SUN_DIRECTION.z).normalize(),material=new THREE.SpriteMaterial({map:glareTexture(THREE),color:0xffd9a0,transparent:true,opacity:0,depthTest:true,depthWrite:false,blending:THREE.AdditiveBlending,toneMapped:false}),sprite=new THREE.Sprite(material),projected=new THREE.Vector3();
+export function addSunGlare(THREE,scene,quality="high",trackId="summit-circuit"){
+  const offset=worldSunDirection(trackId),direction=new THREE.Vector3(offset.x,offset.y,offset.z).normalize(),material=new THREE.SpriteMaterial({map:glareTexture(THREE),color:0xffd9a0,transparent:true,opacity:0,depthTest:true,depthWrite:false,blending:THREE.AdditiveBlending,toneMapped:false}),sprite=new THREE.Sprite(material),projected=new THREE.Vector3();
   sprite.name="sun-angle-glare";sprite.scale.setScalar(quality==="low"?21:27);sprite.renderOrder=1;scene.add(sprite);
   return{sprite,direction,update(camera){sprite.position.copy(camera.position).addScaledVector(direction,620);projected.copy(sprite.position).project(camera);material.opacity=sunGlareOpacity(projected.x,projected.y,projected.z);sprite.visible=material.opacity>.003},dispose(){scene.remove(sprite);material.map.dispose();material.dispose()}};
 }

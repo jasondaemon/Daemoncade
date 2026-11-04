@@ -1,11 +1,12 @@
 import assert from "node:assert/strict";
-import {WORLD_SUN_DIRECTION,alpineMassSpecs,alpineMountainGeometry,environmentBudget,environmentPalette,mountainGeometry,ridgeComposition} from "./environment-presentation.js";
+import {ALPINE_SUN_DIRECTION,WORLD_SUN_DIRECTION,alpineMassSpecs,alpineMountainGeometry,environmentBudget,environmentPalette,mountainGeometry,ridgeComposition,worldSunDirection} from "./environment-presentation.js";
 import * as THREE from "../vendor/three/three.module.min.js";
 assert.deepEqual(environmentBudget("low"),{layers:1,segments:56,rings:4});
 assert.deepEqual(environmentBudget("medium"),{layers:2,segments:88,rings:4});
 assert.deepEqual(environmentBudget("high"),{layers:2,segments:128,rings:5});
 assert.notEqual(environmentPalette("harbor-run").top,environmentPalette("summit-circuit").top);assert.ok(environmentPalette("harbor-run").fogDensity>environmentPalette("summit-circuit").fogDensity);
 assert.deepEqual(WORLD_SUN_DIRECTION,{x:-60,y:110,z:35},"visible sun must stay aligned with the shadow-casting light");
+assert.deepEqual(ALPINE_SUN_DIRECTION,{x:-60,y:20,z:35});assert.equal(worldSunDirection("alpine-sprint"),ALPINE_SUN_DIRECTION);assert.equal(worldSunDirection("harbor-run"),WORLD_SUN_DIRECTION,"other tracks retain their established sun direction");
 assert.deepEqual(ridgeComposition("alpine-sprint").map(({scale,height})=>[scale,height]),[[1.82,46],[2.42,72]]);
 assert.ok(ridgeComposition("alpine-sprint")[0].scale>1.75,"the Alpine foreground ridge must leave breathing room around the venue");
 const geometry=mountainGeometry(THREE,{radiusX:100,radiusZ:80,segments:32,rings:5,height:25,seed:2});

@@ -17,6 +17,7 @@ assert.match(game,/venue-terrain\.js\?v=0\.5\.0-alpha103-summit-env/,"game impor
 assert.match(game,/environment-presentation\.js\?v=0\.5\.0-alpha107-visible-sun/,"game imports the current horizon revision");
 assert.match(game,/sun-glare\.js\?v=0\.5\.0-alpha107-visible-sun/,"game imports the current glare revision");
 assert.match(game,/scene-lighting\.js\?v=0\.5\.0-alpha107-visible-sun/,"game imports the integrated lighting revision");
+assert.match(game,/graphics-quality\.js\?v=0\.5\.0-alpha107-visible-sun/,"game imports the track-aware shadow revision");
 assert.match(index,/game\.js\?v=0\.5\.0-alpha107-visible-sun/,"production entry loads the current game graph");
 assert.match(testPage,/game\.js\?v=0\.5\.0-alpha107-visible-sun/,"test entry loads the current game graph");
 

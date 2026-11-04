@@ -15,5 +15,6 @@ for(const profile of Object.values(QUALITY_PROFILES)){
   const direction={x:a.light.x-a.target.x,y:a.light.y-a.target.y,z:a.light.z-a.target.z};
   assert.deepEqual(direction,{x:-60,y:110,z:35},"player following changed the world sun direction");
   assert.ok(a.texel<.56,"local car shadow is no sharper than the old giant map");
+  const alpineOffset={x:-60,y:20,z:35},alpine=shadowPlacement({x:410,y:31,z:-280},profile,alpineOffset),alpineDirection={x:alpine.light.x-alpine.target.x,y:alpine.light.y-alpine.target.y,z:alpine.light.z-alpine.target.z};assert.deepEqual(alpineDirection,alpineOffset,"Alpine visible sun and shadow light diverged");
 }
 console.log("Apex Run graphics quality profiles",JSON.stringify(QUALITY_PROFILES));
