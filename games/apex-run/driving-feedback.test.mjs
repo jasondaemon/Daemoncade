@@ -1,0 +1,17 @@
+import assert from "node:assert/strict";
+import {drivingFeedback,landingFeedback} from "./driving-feedback.js";
+
+assert.deepEqual(drivingFeedback({speed:30,forward:true,contacts:4,racing:false}),{engineLoad:0,brake:0,scrub:0,haze:0,fov:0});
+const acceleration=drivingFeedback({speed:24,forward:true,contacts:4});
+assert.equal(acceleration.engineLoad,1);assert.equal(acceleration.brake,0);assert.ok(acceleration.fov>0&&acceleration.fov<1);
+const braking=drivingFeedback({speed:24,reverse:true,reverseIntent:false,contacts:4});
+assert.equal(braking.brake,1);assert.ok(braking.fov<0);
+const reversing=drivingFeedback({speed:4,reverse:true,reverseIntent:true,contacts:4});
+assert.equal(reversing.brake,0,"reverse propulsion must not sound like braking");assert.ok(reversing.engineLoad>0);
+const settled=drivingFeedback({speed:20,contacts:4,slipRadians:.03}),sliding=drivingFeedback({speed:20,contacts:4,slipRadians:.24});
+assert.equal(settled.scrub,0);assert.ok(sliding.scrub>.6&&sliding.haze>.5);
+assert.equal(drivingFeedback({speed:20,contacts:0,slipRadians:.5}).scrub,0,"airborne rotation must not make tire scrub");
+assert.ok(drivingFeedback({speed:20,contacts:4,handbrake:true}).scrub>.6);
+const soft=landingFeedback(3),hard=landingFeedback(12);
+assert.ok(hard.strength>soft.strength&&hard.shake>soft.shake&&hard.pitch<soft.pitch&&hard.gain>soft.gain);
+console.log("PASS Apex Run driving feedback");
