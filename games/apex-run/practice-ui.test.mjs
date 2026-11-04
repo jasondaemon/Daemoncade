@@ -1,0 +1,15 @@
+import assert from "node:assert/strict";
+import {readFile} from "node:fs/promises";
+const [html,game,css]=await Promise.all(["index.html","game.js","game.css"].map(file=>readFile(new URL(file,import.meta.url),"utf8")));
+assert.match(html,/id="start-practice"[^>]*>Practice sectors</);
+assert.match(html,/session-only and never save/);
+assert.match(html,/id="practice-exit"[^>]*hidden>CLEAN RACE/);
+assert.match(html,/id="result-clean"[^>]*hidden>Start clean race/);
+assert.match(game,/practice\.active\?null:raceOutcomeFromFinish/);
+assert.match(game,/eligible:race\.eligible&&!practice\.active/);
+assert.match(game,/practice\.active\?retryCurrentSector\(reason\):recover\(reason\)/);
+assert.match(game,/invalidating&&!practice\.active/);
+assert.match(game,/bestReplay&&!practice\.active/);
+assert.match(game,/function startCleanRace\(\)\{restart\(\{ready:true\}\)/);
+assert.match(css,/\.start-actions \.secondary/);
+console.log("Apex Run discoverable practice UI and save isolation passed");
