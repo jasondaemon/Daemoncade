@@ -9,7 +9,7 @@ export function mountainGeometry(THREE,{radiusX,radiusZ,segments,height,seed=0,r
   for(let ring=0;ring<rings;ring++){
     const t=ring/(rings-1),profile=Math.sin(Math.PI*t),radialScale=.82+t*.36;
     for(let index=0;index<segments;index++){
-      const angle=index/segments*Math.PI*2,wave=.58+.22*Math.sin(angle*3.1+seed)+.14*Math.sin(angle*7.3-seed*.7)+.06*Math.cos(angle*13.7),jitter=1+.025*Math.sin(angle*11.2+ring*1.7+seed),x=Math.cos(angle)*radiusX*radialScale*jitter,z=Math.sin(angle)*radiusZ*radialScale*jitter,peak=height*Math.max(.28,wave),y=ring===0||ring===rings-1?-12:profile*peak-(1-profile)*5;
+      const angle=index/segments*Math.PI*2,wave=.58+.22*Math.sin(angle*3.1+seed)+.14*Math.sin(angle*7.3-seed*.7)+.06*Math.cos(angle*13.7),jitter=1+.025*Math.sin(angle*11.2+ring*1.7+seed),x=Math.cos(angle)*radiusX*radialScale*jitter,z=Math.sin(angle)*radiusZ*radialScale*jitter,rise=Math.max(0,Math.min(1,(wave-.18)/.5)),mass=rise*rise*(3-2*rise),peak=height*mass,y=ring===0||ring===rings-1?-12:profile*peak-(1-profile)*5;
       positions.push(x,y,z);
       const haze=.78+.16*Math.sin(angle*2+seed),altitude=.28+.72*profile,snowMix=palette.snow?Math.max(0,Math.min(1,(profile-palette.snowLine)/.16))*(.55+.45*Math.max(0,Math.sin(angle*5.3+seed))):0;for(let channel=0;channel<3;channel++){const rock=(palette.mountainLow[channel]+(palette.mountainHigh[channel]-palette.mountainLow[channel])*altitude)*haze,snow=palette.snow?.[channel]??rock;colors.push(rock+(snow-rock)*snowMix)}
     }
@@ -21,8 +21,8 @@ export function mountainGeometry(THREE,{radiusX,radiusZ,segments,height,seed=0,r
 export function environmentBudget(quality="high"){return quality==="low"?{layers:1,segments:56,rings:4}:{layers:2,segments:quality==="medium"?88:128,rings:quality==="medium"?4:5}}
 export function ridgeComposition(trackId="summit-circuit"){
   if(trackId==="alpine-sprint")return Object.freeze([
-    Object.freeze({scale:1.62,height:58,seed:1.7}),
-    Object.freeze({scale:2.18,height:84,seed:4}),
+    Object.freeze({scale:1.82,height:46,seed:1.7}),
+    Object.freeze({scale:2.42,height:72,seed:4}),
   ]);
   if(trackId==="harbor-run")return Object.freeze([
     Object.freeze({scale:1.72,height:25,seed:1.7}),
