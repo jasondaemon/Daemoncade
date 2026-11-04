@@ -1,4 +1,4 @@
-const budgets={low:{stations:5,beacons:3},medium:{stations:8,beacons:5},high:{stations:11,beacons:7}};
+const budgets={low:{stations:5,beacons:3,terminalBlocks:6},medium:{stations:8,beacons:5,terminalBlocks:10},high:{stations:11,beacons:7,terminalBlocks:14}};
 const serviceStride={low:14,medium:9,high:6};
 function servicePoint(sample,side,distance){const edge=sample[side],dx=edge.x-sample.x,dz=edge.z-sample.z,length=Math.hypot(dx,dz)||1;return{x:edge.x+dx/length*distance,z:edge.z+dz/length*distance}}
 function segmentIntersection(first,second){const ax=first.b.x-first.a.x,az=first.b.z-first.a.z,bx=second.b.x-second.a.x,bz=second.b.z-second.a.z,den=ax*bz-az*bx;if(Math.abs(den)<1e-7)return null;const dx=second.a.x-first.a.x,dz=second.a.z-first.a.z,t=(dx*bz-dz*bx)/den,u=(dx*az-dz*ax)/den;return t>.025&&t<.975&&u>.025&&u<.975?{x:first.a.x+ax*t,z:first.a.z+az*t,t,u}:null}
@@ -16,14 +16,16 @@ export function skylineServiceRoadData(samples,quality="high",stations=[]){
   return{positions,colors,indices,strips,stride,junctions,stationConnections,unresolvedIntersections,unresolvedSpurIntersections,degenerateSegments:segments.filter(segment=>Math.hypot(segment.b.x-segment.a.x,segment.b.z-segment.a.z)<=.25).length};
 }
 export function skylineEnvironmentSpecs(samples,quality="high"){
-  const budget=budgets[quality]||budgets.high,stations=[],beacons=[];
+  const budget=budgets[quality]||budgets.high,stations=[],beacons=[],terminalBlocks=[];
   for(let slot=0;slot<budget.stations;slot++){
     const fraction=.08+slot/(budget.stations-1)*.82,index=Math.min(samples.length-2,Math.round(fraction*(samples.length-1))),sample=samples[index];
     if(sample.phase==="loop")continue;const side=slot%2?"left":"right",edge=sample[side],dx=edge.x-sample.x,dz=edge.z-sample.z,length=Math.hypot(dx,dz)||1,offset=32+(slot%3)*8;
     stations.push(Object.freeze({index,x:edge.x+dx/length*offset,z:edge.z+dz/length*offset,roadY:sample.y,heading:sample.heading,side,kind:slot%3===0?"jump-tower":slot%3===1?"shelf-hub":"marshal-deck"}));
   }
   for(let slot=0;slot<budget.beacons;slot++){const angle=(slot+.35)/budget.beacons*Math.PI*2,radius=520+slot%2*105;beacons.push(Object.freeze({x:80+Math.cos(angle)*radius,z:-120+Math.sin(angle)*radius,height:22+(slot%3)*7,rotation:-angle}));}
-  return Object.freeze({stations:Object.freeze(stations),beacons:Object.freeze(beacons),budget});
+  const finish=samples.at(-1),before=samples[Math.max(0,samples.length-32)],dx=finish.x-before.x,dz=finish.z-before.z,length=Math.hypot(dx,dz)||1,forwardX=dx/length,forwardZ=dz/length,lateralX=-forwardZ,lateralZ=forwardX;
+  for(let slot=0;slot<budget.terminalBlocks;slot++){const rank=Math.floor(slot/2),side=slot%2?1:-1,distance=125+(rank%3)*55,lateral=68+rank*25,height=36+(slot%4)*10,width=11+(slot%3)*4;terminalBlocks.push(Object.freeze({x:finish.x+forwardX*distance+lateralX*lateral*side,z:finish.z+forwardZ*distance+lateralZ*lateral*side,height,width,depth:10+(slot%2)*4,rotation:-Math.atan2(forwardZ,forwardX),shade:slot%3}));}
+  return Object.freeze({stations:Object.freeze(stations),beacons:Object.freeze(beacons),terminalBlocks:Object.freeze(terminalBlocks),budget});
 }
 export function addSkylineEnvironment(THREE,scene,samples,quality="high"){
   const specs=skylineEnvironmentSpecs(samples,quality),concrete=new THREE.MeshStandardMaterial({color:0x777c78,roughness:.88,metalness:.06}),dark=new THREE.MeshStandardMaterial({color:0x263238,roughness:.5,metalness:.42}),glass=new THREE.MeshPhysicalMaterial({color:0x5c94a2,roughness:.18,metalness:.14,clearcoat:.65,transparent:true,opacity:.84}),accent=new THREE.MeshStandardMaterial({color:0x45e3f2,emissive:0x0a5964,emissiveIntensity:.75,roughness:.3,metalness:.4}),groups=[];
@@ -31,5 +33,6 @@ export function addSkylineEnvironment(THREE,scene,samples,quality="high"){
   const beaconGeometry=new THREE.CylinderGeometry(.7,1.4,1,8),beacons=new THREE.InstancedMesh(beaconGeometry,dark,specs.beacons.length),dummy=new THREE.Object3D();specs.beacons.forEach((spec,index)=>{dummy.position.set(spec.x,spec.height/2,spec.z);dummy.scale.set(1,spec.height,1);dummy.rotation.y=spec.rotation;dummy.updateMatrix();beacons.setMatrixAt(index,dummy.matrix)});beacons.instanceMatrix.needsUpdate=true;beacons.castShadow=quality==="high";beacons.receiveShadow=true;scene.add(beacons);groups.push(beacons);
   const serviceData=skylineServiceRoadData(samples,quality,specs.stations),serviceGeometry=new THREE.BufferGeometry();serviceGeometry.setAttribute("position",new THREE.Float32BufferAttribute(serviceData.positions,3));serviceGeometry.setAttribute("color",new THREE.Float32BufferAttribute(serviceData.colors,3));serviceGeometry.setIndex(serviceData.indices);serviceGeometry.computeVertexNormals();const serviceMaterial=new THREE.MeshStandardMaterial({color:0x778181,vertexColors:true,roughness:.92,metalness:.05}),serviceRoads=new THREE.Mesh(serviceGeometry,serviceMaterial);serviceRoads.receiveShadow=true;scene.add(serviceRoads);groups.push(serviceRoads);
   const padGeometry=new THREE.CylinderGeometry(15,17,.55,12),pads=new THREE.InstancedMesh(padGeometry,concrete,specs.stations.length);specs.stations.forEach((spec,index)=>{dummy.position.set(spec.x,.62,spec.z);dummy.scale.set(spec.kind==="jump-tower"?1.25:1,1,spec.kind==="marshal-deck"?.82:1);dummy.rotation.set(0,-spec.heading,0);dummy.updateMatrix();pads.setMatrixAt(index,dummy.matrix)});pads.instanceMatrix.needsUpdate=true;pads.receiveShadow=true;pads.castShadow=quality==="high";scene.add(pads);groups.push(pads);
-  return{...specs,groups,serviceData,serviceRoads,pads,drawCalls:specs.stations.length*4+3};
+  const terminalMaterial=new THREE.MeshStandardMaterial({color:0xffffff,roughness:.82,metalness:.14}),terminal=new THREE.InstancedMesh(new THREE.BoxGeometry(1,1,1),terminalMaterial,specs.terminalBlocks.length),terminalColors=[0x39484c,0x526165,0x29383d];specs.terminalBlocks.forEach((spec,index)=>{dummy.position.set(spec.x,spec.height/2+.4,spec.z);dummy.scale.set(spec.width,spec.height,spec.depth);dummy.rotation.set(0,spec.rotation,0);dummy.updateMatrix();terminal.setMatrixAt(index,dummy.matrix);terminal.setColorAt(index,new THREE.Color(terminalColors[spec.shade]))});terminal.instanceMatrix.needsUpdate=true;terminal.instanceColor.needsUpdate=true;terminal.castShadow=quality==="high";terminal.receiveShadow=true;scene.add(terminal);groups.push(terminal);
+  return{...specs,groups,serviceData,serviceRoads,pads,terminal,drawCalls:specs.stations.length*4+4};
 }
