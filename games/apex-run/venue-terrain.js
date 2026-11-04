@@ -8,6 +8,22 @@ function roadClearance(x,z,samples){
 }
 function smoothstep(a,b,value){const t=Math.max(0,Math.min(1,(value-a)/(b-a)));return t*t*(3-2*t)}
 
+export function venueTerrainHeight(venue,samples,trackId,x,z,knownClearance=null){
+  const harbor=trackId==="harbor-run",clearance=knownClearance??roadClearance(x,z,samples),corridor=smoothstep(harbor?48:80,harbor?94:140,clearance);
+  const nx=(x-venue.centerX)/venue.halfX,nz=(z-venue.centerZ)/venue.halfZ,radial=Math.hypot(nx,nz);
+  const macro=Math.sin(x*.011+z*.004)*.42+Math.cos(z*.014-x*.003)*.27+Math.sin((x+z)*.026)*.13;
+  const landformField=Math.sin(x*.0041+z*.0017)*.46+Math.cos(z*.0053-x*.0019)*.36+Math.sin((x-z)*.0071)*.18;
+  const landform=harbor?0:smoothstep(.14,.82,landformField)*smoothstep(95,165,clearance)*(7.5+2.5*Math.max(0,macro));
+  const harborShelf=smoothstep(.34,.62,radial+.07*macro),enabled=!harbor||harborShelf>.035;
+  const height=harbor?harborShelf*(4.4+2.4*macro)*corridor:(2.8+3.5*macro+Math.max(0,radial-.45)*5.4)*corridor+landform;
+  return enabled?(harbor?.18:.37)+Math.max(0,height):null;
+}
+
+export function createVenueTerrainSampler(venue,samples,trackId="alpine-sprint",quality="high"){
+  const budget=terrainBudget(quality),stride=budget.x+1,vertices=new Map(),vertex=(xi,zi)=>{const key=zi*stride+xi;if(vertices.has(key))return vertices.get(key);const x=venue.centerX+(xi/budget.x-.5)*venue.halfX*2,z=venue.centerZ+(zi/budget.z-.5)*venue.halfZ*2,value=Math.fround(venueTerrainHeight(venue,samples,trackId,x,z)??.18);vertices.set(key,value);return value};
+  return(x,z)=>{const u=(x-(venue.centerX-venue.halfX))/(venue.halfX*2)*budget.x,v=(z-(venue.centerZ-venue.halfZ))/(venue.halfZ*2)*budget.z,xi=Math.max(0,Math.min(budget.x-1,Math.floor(u))),zi=Math.max(0,Math.min(budget.z-1,Math.floor(v))),fx=Math.max(0,Math.min(1,u-xi)),fz=Math.max(0,Math.min(1,v-zi)),a=vertex(xi,zi),b=vertex(xi+1,zi),c=vertex(xi,zi+1),d=vertex(xi+1,zi+1);return fx+fz<=1?a*(1-fx-fz)+b*fx+c*fz:d*(fx+fz-1)+b*(1-fz)+c*(1-fx)};
+}
+
 export function buildVenueTerrainGeometry(THREE,venue,samples,trackId="alpine-sprint",quality="high"){
   const budget=terrainBudget(quality),positions=[],colors=[],uvs=[],indices=[],active=[],harbor=trackId==="harbor-run";
   for(let zi=0;zi<=budget.z;zi++)for(let xi=0;xi<=budget.x;xi++){
@@ -19,7 +35,7 @@ export function buildVenueTerrainGeometry(THREE,venue,samples,trackId="alpine-sp
     const landform=harbor?0:smoothstep(.14,.82,landformField)*smoothstep(95,165,clearance)*(7.5+2.5*Math.max(0,macro));
     const secondary=Math.sin(x*.031-z*.017)*.5+.5,harborShelf=smoothstep(.34,.62,radial+.07*macro);
     const enabled=!harbor||harborShelf>.035,height=harbor?harborShelf*(4.4+2.4*macro)*corridor:(2.8+3.5*macro+Math.max(0,radial-.45)*5.4)*corridor+landform;
-    const y=(harbor?.18:.37)+Math.max(0,height);
+    const y=venueTerrainHeight(venue,samples,trackId,x,z,clearance)??.18;
     positions.push(x,y,z);uvs.push(x/1.4,z/1.4);active.push(enabled);
     const altitude=Math.max(0,Math.min(1,height/(harbor?7:15))),soil=Math.max(0,Math.min(1,.45+.4*macro));
     if(harbor)colors.push(.19+soil*.06,.29+altitude*.11,.23+altitude*.04);

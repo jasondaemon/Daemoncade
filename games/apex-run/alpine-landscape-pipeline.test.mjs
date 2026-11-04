@@ -11,11 +11,11 @@ assert.match(game,/=await Promise\.all\(\[/,"Alpine uses the shared licensed PBR
 assert.doesNotMatch(game,/=largeVenue\?await Promise\.all/,"PBR maps must not be restricted to large venues");
 assert.match(game,/sampleScenario=renderTelemetryMode&&testParams\.get\("scenario"\)==="sample"/,"sample placement remains test-page-only");
 assert.match(game,/ACTIVE_TRACK_ID!=="alpine-sprint"\)scene\.add\(basin\)/,"flat legacy basin no longer masks Alpine terrain");
-assert.match(game,/landscape-details\.js\?v=0\.5\.0-alpha96d/,"game imports the current landscape revision");
-assert.match(game,/venue-terrain\.js\?v=0\.5\.0-alpha99/,"game imports the current terrain revision");
+assert.match(game,/landscape-details\.js\?v=0\.5\.0-alpha103-summit-env/,"game imports the current landscape revision");
+assert.match(game,/venue-terrain\.js\?v=0\.5\.0-alpha103-summit-env/,"game imports the current terrain revision");
 assert.match(game,/environment-presentation\.js\?v=0\.5\.0-alpha100c/,"game imports the current horizon revision");
-assert.match(index,/game\.js\?v=0\.5\.0-alpha102/,"production entry loads the current game graph");
-assert.match(testPage,/game\.js\?v=0\.5\.0-alpha102/,"test entry loads the current game graph");
+assert.match(index,/game\.js\?v=0\.5\.0-alpha103-summit-env/,"production entry loads the current game graph");
+assert.match(testPage,/game\.js\?v=0\.5\.0-alpha103-summit-env/,"test entry loads the current game graph");
 
 for(const quality of["low","medium","high"]){
   const data=ecologyZoneData(ROAD_SAMPLES,quality),geometry=new THREE.BufferGeometry();geometry.setAttribute("position",new THREE.Float32BufferAttribute(data.positions,3));geometry.setIndex(data.indices);geometry.computeVertexNormals();const normal=geometry.getAttribute("normal");

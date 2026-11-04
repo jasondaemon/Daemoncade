@@ -18,14 +18,14 @@ import {addReservoirArchitecture,isReservoirFailure} from "./reservoir-architect
 import {ribbonUV,roadMeshUV} from "./road-uv.js?v=0.5.0-alpha53";
 import {makeBarrierLOD} from "./barrier-lod.js?v=0.5.0-alpha53";
 import {roadMaterialParameters} from "./visual-materials.js?v=0.5.0-alpha53";
-import {addLandscapeDetails} from "./landscape-details.js?v=0.5.0-alpha96d";
+import {addLandscapeDetails} from "./landscape-details.js?v=0.5.0-alpha103-summit-env";
 import {addEnvironmentPresentation} from "./environment-presentation.js?v=0.5.0-alpha100c";
 import {HARBOR_WATER_Y,addHarborVenue,isHarborWaterFailure} from "./harbor-venue.js?v=0.5.0-alpha53";
 import {addTracksideIdentity} from "./trackside-identity.js?v=0.5.0-alpha55";
 import {addSignatureLandmarks} from "./signature-landmarks.js?v=0.5.0-alpha56";
 import {addStadiumFill} from "./stadium-fill.js?v=0.5.0-alpha64";
 import {addAlpineDisplayCars,addAlpineStartDistrict} from "./alpine-start-district.js?v=0.5.0-alpha67";
-import {addRouteDistricts} from "./route-districts.js?v=0.5.0-alpha72";
+import {addRouteDistricts} from "./route-districts.js?v=0.5.0-alpha103-summit-env";
 import {addRouteLandscapeBands} from "./route-landscape-bands.js?v=0.5.0-alpha94";
 import {addHarborCoastalDistricts} from "./harbor-coastal-districts.js?v=0.5.0-alpha82";
 import {placeHarborGantryCrane} from "./harbor-hero-assets.js?v=0.5.0-alpha85";
@@ -34,7 +34,7 @@ import {addHarborBuoys} from "./harbor-maritime-assets.js?v=0.5.0-alpha88b";
 import {addHarborWaterfront} from "./harbor-waterfront.js?v=0.5.0-alpha89b";
 import {addHarborServiceDistrict} from "./harbor-service-district.js?v=0.5.0-alpha90e";
 import {addHarborRouteCampus} from "./harbor-route-campus.js?v=0.5.0-alpha93b";
-import {addVenueTerrain} from "./venue-terrain.js?v=0.5.0-alpha99";
+import {addVenueTerrain} from "./venue-terrain.js?v=0.5.0-alpha103-summit-env";
 import {naturalLightingProfile,renderTrackBox} from "./scene-lighting.js?v=0.5.0-alpha102";
 import {resolveSelection} from "./car-catalog.js";
 import {createRaceCarVisual} from "./car-visual-adapter.js";
@@ -103,7 +103,7 @@ if(ACTIVE_TRACK_ID==="harbor-run"){
   }
 }
 addTracksideIdentity(THREE,scene,ROAD_SAMPLES,ACTIVE_TRACK_ID,qualityProfile.id,{concreteColor,concreteNormal,concreteArm});
-if(ACTIVE_TRACK_ID==="alpine-sprint"||ACTIVE_TRACK_ID==="harbor-run")addRouteDistricts(THREE,scene,ROAD_SAMPLES,ACTIVE_TRACK_ID,qualityProfile.id);
+addRouteDistricts(THREE,scene,ROAD_SAMPLES,ACTIVE_TRACK_ID,qualityProfile.id);
 if(ACTIVE_TRACK_ID==="alpine-sprint"||ACTIVE_TRACK_ID==="harbor-run")addRouteLandscapeBands(THREE,scene,ROAD_SAMPLES,ACTIVE_TRACK_ID,qualityProfile.id);
 if(largeVenue)addSignatureLandmarks(THREE,scene,ROAD_SAMPLES,ACTIVE_TRACK_ID,qualityProfile.id,{concreteColor,concreteNormal,concreteArm});
 
