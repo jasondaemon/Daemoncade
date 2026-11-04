@@ -1,5 +1,5 @@
 import {ACHIEVEMENTS,DEFAULT_CAR_ID,DEFAULT_COSMETIC_ID,achievementById,carAssetReady,carById,carUnlocked,cosmeticById,cosmeticUnlocked,resolveSelection} from "./car-catalog.js?v=0.5.0-dev-roster2";
-import {resolveTrack} from "./track-catalog.js";
+import {resolveTrack} from "./track-catalog.js?v=0.5.0-alpha105-skyline";
 
 export const GARAGE_KEY="apex-run:garage:v1";
 export const GARAGE_VERSION=1;

@@ -1,4 +1,4 @@
-import {resolveTrack} from "./track-catalog.js";
+import {resolveTrack} from "./track-catalog.js?v=0.5.0-alpha105-skyline";
 
 export function createRunId(cryptoObject=globalThis.crypto){const uuid=cryptoObject?.randomUUID?.();if(typeof uuid==="string")return`race:${uuid}`;const bytes=new Uint32Array(4);cryptoObject?.getRandomValues?.(bytes);if(bytes.some(Boolean))return`race:${[...bytes].map(value=>value.toString(16).padStart(8,"0")).join("")}`;throw new Error("Secure run ID generation is unavailable")}
 export function raceOutcomeFromFinish({race,trackId,splits,runId,testMode=false,isolatedTest=false}){
