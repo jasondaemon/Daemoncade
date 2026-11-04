@@ -36,13 +36,13 @@ import {addHarborServiceDistrict} from "./harbor-service-district.js?v=0.5.0-alp
 import {addHarborRouteCampus} from "./harbor-route-campus.js?v=0.5.0-alpha93b";
 import {addVenueTerrain} from "./venue-terrain.js?v=0.5.0-alpha103-summit-env";
 import {naturalLightingProfile,renderTrackBox} from "./scene-lighting.js?v=0.5.0-alpha102";
-import {raceAssetFor,resolveSelection} from "./car-catalog.js";
-import {createRaceCarVisual} from "./car-visual-adapter.js";
+import {raceAssetFor,resolveSelection} from "./car-catalog.js?v=0.5.0-dev-roster2";
+import {createRaceCarVisual} from "./car-visual-adapter.js?v=0.5.0-dev-roster2";
 import {gateCameraOpacity,gateStructureDistance} from "./camera-gate-fade.js?v=0.5.0-alpha87-camera2";
-import {createGarageStorage} from "./garage-storage.js";
-import {migrateGarage,recordRaceEligibilityTransition,recordRaceOutcome,saveGarage} from "./garage-progression.js";
-import {createRunId,raceOutcomeFromFinish} from "./race-outcome.js";
-import {carryDevelopmentRoster,developmentRosterAccess} from "./development-roster.js";
+import {createGarageStorage} from "./garage-storage.js?v=0.5.0-dev-roster2";
+import {migrateGarage,recordRaceEligibilityTransition,recordRaceOutcome,saveGarage} from "./garage-progression.js?v=0.5.0-dev-roster2";
+import {createRunId,raceOutcomeFromFinish} from "./race-outcome.js?v=0.5.0-dev-roster2";
+import {carryDevelopmentRoster,developmentRosterAccess} from "./development-roster.js?v=0.5.0-dev-roster2";
 
 const $=id=>document.getElementById(id),canvas=$("view"),scene=new THREE.Scene(),testMode=document.documentElement.dataset.apexTest==="1",testParams=new URLSearchParams(location.search),renderTelemetryMode=testMode&&testParams.get("renderTelemetry")==="1",loopPracticeMode=testMode&&testParams.get("practiceLoop")==="1",waterPracticeMode=testMode&&testParams.get("waterFailure")==="1",qaDriveMode=testMode&&testParams.get("qaDrive")==="1"&&/^[a-zA-Z0-9_-]{1,64}$/.test(testParams.get("testStorage")||""),interactiveTestMode=renderTelemetryMode||loopPracticeMode||waterPracticeMode||qaDriveMode,splitScenario=renderTelemetryMode&&testParams.get("scenario")==="split",splitLine=splitScenario?testParams.get("line"):null;
 const sampleScenario=renderTelemetryMode&&testParams.get("scenario")==="sample";
