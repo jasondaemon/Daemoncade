@@ -14,12 +14,12 @@ assert.match(game,/finishCaptureMode=testMode&&testParams\.get\("finishCapture"\
 assert.match(game,/ACTIVE_TRACK_ID!=="alpine-sprint"\)scene\.add\(basin\)/,"flat legacy basin no longer masks Alpine terrain");
 assert.match(game,/landscape-details\.js\?v=0\.5\.0-alpha103-summit-env/,"game imports the current landscape revision");
 assert.match(game,/venue-terrain\.js\?v=0\.5\.0-alpha103-summit-env/,"game imports the current terrain revision");
-assert.match(game,/environment-presentation\.js\?v=0\.5\.0-alpha107-visible-sun/,"game imports the current horizon revision");
-assert.match(game,/sun-glare\.js\?v=0\.5\.0-alpha107-visible-sun/,"game imports the current glare revision");
-assert.match(game,/scene-lighting\.js\?v=0\.5\.0-alpha107-visible-sun/,"game imports the integrated lighting revision");
-assert.match(game,/graphics-quality\.js\?v=0\.5\.0-alpha107-visible-sun/,"game imports the track-aware shadow revision");
-assert.match(index,/game\.js\?v=0\.5\.0-alpha107-visible-sun/,"production entry loads the current game graph");
-assert.match(testPage,/game\.js\?v=0\.5\.0-alpha107-visible-sun/,"test entry loads the current game graph");
+assert.match(game,/environment-presentation\.js\?v=0\.5\.0-alpha108-visible-sun-integrated/,"game imports the current horizon revision");
+assert.match(game,/sun-glare\.js\?v=0\.5\.0-alpha108-visible-sun-integrated/,"game imports the current glare revision");
+assert.match(game,/scene-lighting\.js\?v=0\.5\.0-alpha108-visible-sun-integrated/,"game imports the integrated lighting revision");
+assert.match(game,/graphics-quality\.js\?v=0\.5\.0-alpha108-visible-sun-integrated/,"game imports the track-aware shadow revision");
+assert.match(index,/game\.js\?v=0\.5\.0-alpha108-visible-sun-integrated/,"production entry loads the current game graph");
+assert.match(testPage,/game\.js\?v=0\.5\.0-alpha108-visible-sun-integrated/,"test entry loads the current game graph");
 
 for(const quality of["low","medium","high"]){
   const data=ecologyZoneData(ROAD_SAMPLES,quality),geometry=new THREE.BufferGeometry();geometry.setAttribute("position",new THREE.Float32BufferAttribute(data.positions,3));geometry.setIndex(data.indices);geometry.computeVertexNormals();const normal=geometry.getAttribute("normal");

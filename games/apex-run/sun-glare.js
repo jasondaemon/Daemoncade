@@ -1,4 +1,4 @@
-import {worldSunDirection} from "./environment-presentation.js?v=0.5.0-alpha107-visible-sun";
+import {worldSunDirection} from "./environment-presentation.js?v=0.5.0-alpha108-visible-sun-integrated";
 
 const clamp01=value=>Math.max(0,Math.min(1,value));
 
