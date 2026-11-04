@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import fs from "node:fs";
 
-const revision="0.5.0-dev-roster2",entryRevisions={"game.js":"0.5.0-alpha156-webgl-lifecycle","garage.js":"0.5.0-dev-roster3-clarity","garage-browser-test.js":revision},root=new URL("./",import.meta.url),origin=new URL("http://127.0.0.1:4173/games/apex-run/"),protectedModules=new Set([
+const revision="0.5.0-dev-roster2",entryRevisions={"game.js":"0.5.0-alpha157-summit-render","garage.js":"0.5.0-dev-roster3-clarity","garage-browser-test.js":revision},root=new URL("./",import.meta.url),origin=new URL("http://127.0.0.1:4173/games/apex-run/"),protectedModules=new Set([
   "car-catalog.js","car-visual-adapter.js","development-roster.js","garage-preview-contract.js",
   "garage-progression.js","garage-storage.js","garage-three-preview.js","race-outcome.js","track-catalog.js",
 ]);

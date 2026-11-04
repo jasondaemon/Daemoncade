@@ -21,7 +21,7 @@ function roadProjection(position,samples){
   return{center,up};
 }
 
-export function createRenderTelemetry({THREE,renderer,camera,car,wheels,vehicle,chassis,roadSamples,jumpZone}){
+export function createRenderTelemetry({THREE,renderer,scene,camera,car,wheels,vehicle,chassis,roadSamples,jumpZone}){
   const output=document.createElement("pre");output.id="render-telemetry";output.setAttribute("aria-live","polite");
   Object.assign(output.style,{position:"fixed",right:"8px",bottom:"8px",zIndex:"50",maxWidth:"42rem",maxHeight:"45vh",overflow:"auto",margin:"0",padding:"8px",color:"#dff",background:"#071521e8",font:"11px/1.35 ui-monospace,monospace",whiteSpace:"pre-wrap",pointerEvents:"none"});
   document.body.append(output);
@@ -50,7 +50,8 @@ export function createRenderTelemetry({THREE,renderer,camera,car,wheels,vehicle,
       renderedWheelBodyRelativeVelocityRms:+rms(supported.map(frame=>frame.wheelBodyVelocity)).toFixed(4),
       chassisWorldVerticalVelocityRms:+rms(supported.map(frame=>frame.verticalVelocity)).toFixed(4)};
   }
-  function report(){const intervals=frames.map(frame=>frame.frameMs).filter(value=>value>0&&value<100);return{source:"actual requestAnimationFrame render poses; local test page only",frameCount:frames.length,frameMs:{median:+percentile(intervals,.5).toFixed(2),p95:+percentile(intervals,.95).toFixed(2),p99:+percentile(intervals,.99).toFixed(2)},renderer:{calls:renderer.info.render.calls,triangles:renderer.info.render.triangles,...renderer.info.memory},
+  function inventory(){const rows=[];scene?.traverse(object=>{if(!object.isMesh||!object.geometry)return;let visible=true,parent=object,root="scene";while(parent){if(parent.visible===false)visible=false;if(parent.name)root=parent.name;parent=parent.parent}const index=object.geometry.index?.count,position=object.geometry.attributes?.position?.count,instances=object.isInstancedMesh?object.count:1,triangles=Math.floor((index||position||0)/3)*instances;if(!triangles)return;rows.push({name:object.name||object.userData?.summitLandscapeRole||object.userData?.alpineLandscapeRole||object.userData?.serviceDistrict?.role||object.type,root,material:object.material?.name||object.material?.type,triangles,instances,castShadow:object.castShadow,visible})});return rows.filter(row=>row.visible).sort((a,b)=>b.triangles-a.triangles).slice(0,30)}
+  function report(){const intervals=frames.map(frame=>frame.frameMs).filter(value=>value>0&&value<100);return{source:"actual requestAnimationFrame render poses; local test page only",frameCount:frames.length,frameMs:{median:+percentile(intervals,.5).toFixed(2),p95:+percentile(intervals,.95).toFixed(2),p99:+percentile(intervals,.99).toFixed(2)},renderer:{calls:renderer.info.render.calls,triangles:renderer.info.render.triangles,...renderer.info.memory},inventory:inventory(),
     accelerating38to55:summarize(frames.filter(frame=>frame.speed>=38&&frame.speed<=55&&frame.speedRate>.5)),
     all38to55:summarize(frames.filter(frame=>frame.speed>=38&&frame.speed<=55)),
     speed56to100:summarize(frames.filter(frame=>frame.speed>55&&frame.speed<=100)),
