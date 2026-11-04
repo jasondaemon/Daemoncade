@@ -23,8 +23,16 @@ export function skylineEnvironmentSpecs(samples,quality="high"){
     stations.push(Object.freeze({index,x:edge.x+dx/length*offset,z:edge.z+dz/length*offset,roadY:sample.y,heading:sample.heading,side,kind:slot%3===0?"jump-tower":slot%3===1?"shelf-hub":"marshal-deck"}));
   }
   for(let slot=0;slot<budget.beacons;slot++){const angle=(slot+.35)/budget.beacons*Math.PI*2,radius=520+slot%2*105;beacons.push(Object.freeze({x:80+Math.cos(angle)*radius,z:-120+Math.sin(angle)*radius,height:22+(slot%3)*7,rotation:-angle}));}
-  const finish=samples.at(-1),before=samples[Math.max(0,samples.length-32)],dx=finish.x-before.x,dz=finish.z-before.z,length=Math.hypot(dx,dz)||1,forwardX=dx/length,forwardZ=dz/length,lateralX=-forwardZ,lateralZ=forwardX;
-  for(let slot=0;slot<budget.terminalBlocks;slot++){const rank=Math.floor(slot/2),side=slot%2?1:-1,distance=125+(rank%3)*55,lateral=68+rank*25,height=36+(slot%4)*10,width=11+(slot%3)*4;terminalBlocks.push(Object.freeze({x:finish.x+forwardX*distance+lateralX*lateral*side,z:finish.z+forwardZ*distance+lateralZ*lateral*side,height,width,depth:10+(slot%2)*4,rotation:-Math.atan2(forwardZ,forwardX),shade:slot%3}));}
+  const finish=samples.at(-1),before=samples[Math.max(0,samples.length-32)],dx=finish.x-before.x,dz=finish.z-before.z,length=Math.hypot(dx,dz)||1,forwardX=dx/length,forwardZ=dz/length,lateralX=-forwardZ,lateralZ=forwardX,terminalLayout=[
+    {distance:275,lateral:-104,height:13,width:58,depth:30,turn:-.04,shade:1},{distance:286,lateral:-116,height:47,width:15,depth:18,turn:-.08,shade:0},
+    {distance:310,lateral:82,height:15,width:66,depth:32,turn:.04,shade:1},{distance:324,lateral:101,height:39,width:18,depth:20,turn:.08,shade:2},
+    {distance:372,lateral:-8,height:11,width:78,depth:34,turn:.01,shade:0},{distance:386,lateral:18,height:31,width:24,depth:22,turn:.05,shade:1},
+    {distance:420,lateral:-143,height:16,width:48,depth:29,turn:-.06,shade:1},{distance:432,lateral:-154,height:55,width:14,depth:17,turn:-.1,shade:2},
+    {distance:462,lateral:132,height:12,width:57,depth:31,turn:.07,shade:0},{distance:476,lateral:146,height:44,width:17,depth:19,turn:.11,shade:1},
+    {distance:520,lateral:-54,height:14,width:62,depth:30,turn:-.03,shade:1},{distance:532,lateral:-69,height:36,width:20,depth:20,turn:-.07,shade:0},
+    {distance:565,lateral:63,height:10,width:72,depth:34,turn:.03,shade:0},{distance:578,lateral:87,height:49,width:15,depth:18,turn:.09,shade:2},
+  ];
+  for(const layout of terminalLayout.slice(0,budget.terminalBlocks))terminalBlocks.push(Object.freeze({x:finish.x+forwardX*layout.distance+lateralX*layout.lateral,z:finish.z+forwardZ*layout.distance+lateralZ*layout.lateral,height:layout.height,width:layout.width,depth:layout.depth,rotation:-Math.atan2(forwardZ,forwardX)+layout.turn,shade:layout.shade}));
   return Object.freeze({stations:Object.freeze(stations),beacons:Object.freeze(beacons),terminalBlocks:Object.freeze(terminalBlocks),budget});
 }
 export function addSkylineEnvironment(THREE,scene,samples,quality="high"){
