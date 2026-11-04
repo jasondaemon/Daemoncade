@@ -15,11 +15,13 @@ export function buildVenueTerrainGeometry(THREE,venue,samples,trackId="alpine-sp
     const clearance=roadClearance(x,z,samples),corridor=smoothstep(harbor?48:80,harbor?94:140,clearance);
     const nx=(x-venue.centerX)/venue.halfX,nz=(z-venue.centerZ)/venue.halfZ,radial=Math.hypot(nx,nz);
     const macro=Math.sin(x*.011+z*.004)*.42+Math.cos(z*.014-x*.003)*.27+Math.sin((x+z)*.026)*.13;
+    const landformField=Math.sin(x*.0041+z*.0017)*.46+Math.cos(z*.0053-x*.0019)*.36+Math.sin((x-z)*.0071)*.18;
+    const landform=harbor?0:smoothstep(.14,.82,landformField)*smoothstep(95,165,clearance)*(7.5+2.5*Math.max(0,macro));
     const secondary=Math.sin(x*.031-z*.017)*.5+.5,harborShelf=smoothstep(.34,.62,radial+.07*macro);
-    const enabled=!harbor||harborShelf>.035,height=harbor?harborShelf*(4.4+2.4*macro)*corridor:(2.8+3.5*macro+Math.max(0,radial-.45)*5.4)*corridor;
+    const enabled=!harbor||harborShelf>.035,height=harbor?harborShelf*(4.4+2.4*macro)*corridor:(2.8+3.5*macro+Math.max(0,radial-.45)*5.4)*corridor+landform;
     const y=(harbor?.18:.37)+Math.max(0,height);
     positions.push(x,y,z);uvs.push(x/1.4,z/1.4);active.push(enabled);
-    const altitude=Math.max(0,Math.min(1,height/(harbor?7:9))),soil=Math.max(0,Math.min(1,.45+.4*macro));
+    const altitude=Math.max(0,Math.min(1,height/(harbor?7:15))),soil=Math.max(0,Math.min(1,.45+.4*macro));
     if(harbor)colors.push(.19+soil*.06,.29+altitude*.11,.23+altitude*.04);
     else{
       const biome=Math.sin(x*.0067+z*.0021)*.48+Math.cos(z*.0083-x*.0017)*.34+Math.sin((x-z)*.014)*.18;
@@ -30,7 +32,7 @@ export function buildVenueTerrainGeometry(THREE,venue,samples,trackId="alpine-sp
       const macroDz=Math.cos(x*.011+z*.004)*.00168-Math.sin(z*.014-x*.003)*.00378+Math.cos((x+z)*.026)*.00338;
       const slopeMask=smoothstep(.012,.026,Math.hypot(macroDx,macroDz))*(1-shoulderMask);
       const soilMask=smoothstep(.28,.72,biome)*(1-shoulderMask),meadowMask=smoothstep(-.55,.2,biome)*(1-soilMask)*(1-shoulderMask);
-      const rockMask=Math.max(smoothstep(.72,1.05,radial+altitude*.18),slopeMask)*(1-soilMask)*(1-shoulderMask);
+      const succession=smoothstep(4,11,height),rockMask=Math.max(smoothstep(.72,1.05,radial+altitude*.18),slopeMask,smoothstep(.58,.95,succession+biome*.18))*(1-soilMask)*(1-shoulderMask);
       const grass=[.34+.07*secondary,.5+.08*secondary,.24+.04*secondary],earth=[.46,.36,.23],stone=[.44,.45,.4],gravel=[.54,.45,.32];
       const base=1-soilMask-rockMask-shoulderMask;
       const red=grass[0]*base+earth[0]*soilMask+stone[0]*rockMask+gravel[0]*shoulderMask;

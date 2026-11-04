@@ -14,12 +14,13 @@ function average(values){return values.reduce((sum,value)=>sum+value,0)/values.l
 
 for(const quality of ["low","medium","high"]){
   const geometry=buildVenueTerrainGeometry(THREE,model.VENUE,model.ROAD_SAMPLES,"alpine-sprint",quality);
-  const position=geometry.getAttribute("position"),color=geometry.getAttribute("color"),shoulder=[],field=[];
+  const position=geometry.getAttribute("position"),color=geometry.getAttribute("color"),shoulder=[],field=[],distantHeights=[];
   for(let index=0;index<position.count;index++){
     const clearance=edgeDistance(position.getX(index),position.getZ(index));
     const sample={red:color.getX(index),green:color.getY(index)};
     if(clearance>=22&&clearance<=36)shoulder.push(sample);
     if(clearance>=70&&clearance<=115)field.push(sample);
+    if(clearance>=120)distantHeights.push(position.getY(index));
   }
   assert.ok(shoulder.length>20&&field.length>20,`${quality} lost terrain transition coverage`);
   const shoulderWarmth=average(shoulder.map(({red,green})=>red-green));
@@ -27,6 +28,7 @@ for(const quality of ["low","medium","high"]){
   const shoulderValues=shoulder.map(({red,green})=>red-green);
   assert.ok(shoulderWarmth-fieldWarmth>.02&&Math.min(...shoulderValues)<-.12&&Math.max(...shoulderValues)>.1,`${quality} road shoulder lost broken gravel/vegetation transitions`);
   assert.ok(Math.max(...field.map(({green})=>green))-Math.min(...field.map(({green})=>green))>.14,`${quality} field lost ecological color breakup`);
+  assert.ok(Math.max(...distantHeights)>10&&Math.max(...distantHeights)-Math.min(...distantHeights)>6.5,`${quality} distant landforms lost readable relief`);
   for(let index=0;index<model.ROAD_SAMPLES.length;index+=25){
     const road=model.ROAD_SAMPLES[index];
     for(const side of ["left","right"]){
