@@ -30,6 +30,7 @@ import {addAlpineDisplayCars,addAlpineStartDistrict} from "./alpine-start-distri
 import {addRouteDistricts} from "./route-districts.js?v=0.5.0-alpha103-summit-env";
 import {addRouteLandscapeBands} from "./route-landscape-bands.js?v=0.5.0-alpha94";
 import {addSkylineEnvironment} from "./skyline-environment.js?v=0.5.0-alpha108-skyline-junctions";
+import {addSkylineJumpIdentity} from "./skyline-jump-identity.js?v=0.5.0-alpha149-skyline-legibility";
 import {addHarborCoastalDistricts} from "./harbor-coastal-districts.js?v=0.5.0-alpha148-harbor-route";
 import {placeHarborGantryCrane} from "./harbor-hero-assets.js?v=0.5.0-alpha148-harbor-route";
 import {addHarborFactoryComplex} from "./harbor-factory-complex.js?v=0.5.0-alpha148-harbor-route";
@@ -112,7 +113,7 @@ addTracksideIdentity(THREE,scene,ROAD_SAMPLES,ACTIVE_TRACK_ID,qualityProfile.id,
 addRouteDistricts(THREE,scene,ROAD_SAMPLES,ACTIVE_TRACK_ID,qualityProfile.id);
 if(ACTIVE_TRACK_ID==="alpine-sprint"||ACTIVE_TRACK_ID==="harbor-run"||ACTIVE_TRACK_ID==="skyline-gauntlet")addRouteLandscapeBands(THREE,scene,ROAD_SAMPLES,ACTIVE_TRACK_ID,qualityProfile.id);
 if(largeVenue)addSignatureLandmarks(THREE,scene,ROAD_SAMPLES,ACTIVE_TRACK_ID,qualityProfile.id,{concreteColor,concreteNormal,concreteArm});
-if(ACTIVE_TRACK_ID==="skyline-gauntlet")addSkylineEnvironment(THREE,scene,ROAD_SAMPLES,qualityProfile.id);
+if(ACTIVE_TRACK_ID==="skyline-gauntlet"){addSkylineEnvironment(THREE,scene,ROAD_SAMPLES,qualityProfile.id);addSkylineJumpIdentity(THREE,scene,ROAD_SAMPLES,SURFACE_GAPS,qualityProfile.id)}
 
 function metreScaleBoxUV(geometry,metres=2.4){const position=geometry.attributes.position,normal=geometry.attributes.normal,uv=geometry.attributes.uv;for(let index=0;index<position.count;index++){const nx=Math.abs(normal.getX(index)),ny=Math.abs(normal.getY(index)),nz=Math.abs(normal.getZ(index));if(nx>=ny&&nx>=nz)uv.setXY(index,position.getZ(index)/metres,position.getY(index)/metres);else if(ny>=nz)uv.setXY(index,position.getX(index)/metres,position.getZ(index)/metres);else uv.setXY(index,position.getX(index)/metres,position.getY(index)/metres)}uv.needsUpdate=true;return geometry}
 
