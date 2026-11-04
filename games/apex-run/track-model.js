@@ -17,8 +17,8 @@ const SKYLINE_ROUTE=Object.freeze([
   {x:-300,y:10,z:0,width:16,bank:0},{x:-90,y:12,z:0,width:18,bank:0},{x:80,y:18,z:-120,width:14,bank:-.14},{x:160,y:28,z:-300,width:13,bank:-.2},
   {x:80,y:34,z:-470,width:12,bank:.18},{x:-140,y:36,z:-500,width:13,bank:.08},{x:-340,y:38,z:-420,width:17,bank:0},{x:-520,y:36,z:-300,width:17,bank:-.06},
   {x:-620,y:42,z:-100,width:12,bank:-.18},{x:-560,y:50,z:100,width:11,bank:-.2},{x:-360,y:52,z:220,width:12,bank:.14},{x:-120,y:48,z:250,width:14,bank:.1},
-  {x:100,y:45,z:220,width:18,bank:0},{x:300,y:42,z:100,width:18,bank:-.04},{x:500,y:38,z:-20,width:16,bank:0},{x:650,y:18,z:-110,width:12,bank:.12},
-  {x:780,y:18,z:-170,width:14,bank:.06},{x:900,y:18,z:-100,width:16,bank:0},
+  {x:100,y:45,z:220,width:18,bank:0},{x:300,y:42,z:100,width:52,bank:-.04},{x:420,y:38,z:-80,width:64,bank:-.08},{x:520,y:18,z:-260,width:28,bank:.12},
+  {x:650,y:18,z:-320,width:14,bank:.06},{x:760,y:18,z:-250,width:16,bank:0},
 ].map(point=>Object.freeze(point)));
 const TRACK_DEFINITIONS=Object.freeze({
   "alpine-sprint":Object.freeze({route:ALPINE_ROUTE,checkpointPoints:[2,6,9,11],stageRanges:[[0,2],[2,6],[6,9],[9,11]],humps:{5:14},jumpSegment:5}),
