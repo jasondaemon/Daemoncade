@@ -1,5 +1,5 @@
-import {requestedTrackId} from "./track-catalog.js?v=0.5.0-alpha49-review3";
-import {buildStuntLoop} from "./stunt-loop.js?v=0.5.0-alpha49-review3";
+import {requestedTrackId} from "./track-catalog.js?v=0.5.0-alpha103-skyline";
+import {buildStuntLoop} from "./stunt-loop.js?v=0.5.0-alpha103-skyline";
 
 const ALPINE_ROUTE=Object.freeze([
   {x:-2,y:0,z:0,width:24,bank:0},{x:62,y:.5,z:0,width:24,bank:0},{x:96,y:2,z:-24,width:25,bank:-.08},{x:96,y:6,z:-72,width:25,bank:-.16},{x:78,y:9,z:-98,width:24,bank:-.1},{x:28,y:10,z:-108,width:23,bank:0},{x:-82,y:7,z:-103,width:24,bank:0},
@@ -12,16 +12,25 @@ const SUMMIT_ROUTE=Object.freeze([
 const HARBOR_ROUTE=Object.freeze([
   {x:-560,y:2,z:-260,width:16,bank:0},{x:-470,y:3,z:-310,width:15,bank:.08},{x:-350,y:5,z:-285,width:13,bank:-.12},{x:-270,y:7,z:-185,width:12,bank:-.16},{x:-325,y:8,z:-75,width:11,bank:.18},{x:-220,y:11,z:15,width:13,bank:.1},{x:-55,y:14,z:-5,width:15,bank:-.08},{x:120,y:16,z:5,width:14,bank:0},{x:240,y:14,z:25,width:18,bank:-.04},{x:365,y:20,z:115,width:15,bank:-.16},{x:430,y:28,z:255,width:13,bank:-.2},{x:300,y:31,z:360,width:12,bank:.16},{x:105,y:25,z:330,width:14,bank:.12},{x:-45,y:18,z:225,width:12,bank:-.14},{x:-170,y:20,z:315,width:11,bank:-.18},{x:-345,y:17,z:285,width:13,bank:.12},{x:-510,y:11,z:165,width:15,bank:.16},{x:-455,y:8,z:20,width:12,bank:-.16},{x:-590,y:7,z:-40,width:13,bank:-.08},{x:-700,y:6,z:-150,width:14,bank:.1},{x:-680,y:9,z:-400,width:13,bank:.14},{x:-300,y:14,z:-460,width:16,bank:-.08},{x:200,y:10,z:-420,width:18,bank:-.12},{x:590,y:3,z:-25,width:20,bank:0},
 ].map(point=>Object.freeze(point)));
+const SKYLINE_ROUTE=Object.freeze([
+  {x:-820,y:2,z:-320,width:18,bank:0},{x:-700,y:2,z:-320,width:17,bank:.04},{x:-560,y:4,z:-260,width:15,bank:.1},{x:-450,y:8,z:-120,width:14,bank:-.12},
+  {x:-300,y:10,z:0,width:16,bank:0},{x:-90,y:12,z:0,width:18,bank:0},{x:80,y:18,z:-120,width:14,bank:-.14},{x:160,y:28,z:-300,width:13,bank:-.2},
+  {x:80,y:34,z:-470,width:12,bank:.18},{x:-140,y:36,z:-500,width:13,bank:.08},{x:-340,y:38,z:-420,width:17,bank:0},{x:-520,y:36,z:-300,width:17,bank:-.06},
+  {x:-620,y:42,z:-100,width:12,bank:-.18},{x:-560,y:50,z:100,width:11,bank:-.2},{x:-360,y:52,z:220,width:12,bank:.14},{x:-120,y:48,z:250,width:14,bank:.1},
+  {x:100,y:45,z:220,width:18,bank:0},{x:300,y:42,z:100,width:18,bank:-.08},{x:420,y:38,z:-80,width:12,bank:-.2},{x:520,y:18,z:-260,width:11,bank:.18},
+  {x:650,y:18,z:-320,width:13,bank:.08},{x:760,y:18,z:-250,width:15,bank:0},
+].map(point=>Object.freeze(point)));
 const TRACK_DEFINITIONS=Object.freeze({
   "alpine-sprint":Object.freeze({route:ALPINE_ROUTE,checkpointPoints:[2,6,9,11],stageRanges:[[0,2],[2,6],[6,9],[9,11]],humps:{5:14},jumpSegment:5}),
   "summit-circuit":Object.freeze({route:SUMMIT_ROUTE,checkpointPoints:[3,6,10,13,16,18,20],stageRanges:[[0,3],[3,6],[6,10],[10,13],[13,16],[16,18],[18,20]],humps:{10:12},jumpSegment:10}),
   "harbor-run":Object.freeze({route:HARBOR_ROUTE,checkpointPoints:[3,6,9,12,15,19,23],stageRanges:[[0,3],[3,6],[6,9],[9,12],[12,15],[15,19],[19,23]],humps:{7:10},jumpSegment:7,gapSegment:7}),
+  "skyline-gauntlet":Object.freeze({route:SKYLINE_ROUTE,checkpointPoints:[3,6,9,12,15,18,20,21],stageRanges:[[0,3],[3,6],[6,9],[9,12],[12,15],[15,18],[18,20],[20,21]],humps:{4:10,10:10,16:10},jumpSegment:4,jumpSegments:{4:205,10:190,16:180}}),
 });
 export const ACTIVE_TRACK_ID=requestedTrackId();
 export const ACTIVE_TRACK_DEFINITION=TRACK_DEFINITIONS[ACTIVE_TRACK_ID]||TRACK_DEFINITIONS["alpine-sprint"];
 const summit=ACTIVE_TRACK_ID==="summit-circuit";
-const harbor=ACTIVE_TRACK_ID==="harbor-run",largeTrack=summit||harbor;
-export const VENUE=Object.freeze(summit?{centerX:45,centerZ:0,halfX:700,halfZ:450,stands:[{x:0,z:-418,rotation:0,length:130},{x:-508,z:30,rotation:Math.PI/2,length:108},{x:700,z:410,rotation:0,length:116}],basinRadius:680}:harbor?{centerX:15,centerZ:20,halfX:760,halfZ:500,stands:[{x:-500,z:-410,rotation:0,length:110},{x:610,z:170,rotation:-Math.PI/2,length:90}],basinRadius:720}:{centerX:0,centerZ:-20,halfX:220,halfZ:220,stands:[{x:10,z:-188,rotation:0,length:105},{x:-177,z:35,rotation:Math.PI/2,length:78}],basinRadius:245});
+const harbor=ACTIVE_TRACK_ID==="harbor-run",skyline=ACTIVE_TRACK_ID==="skyline-gauntlet",largeTrack=summit||harbor||skyline;
+export const VENUE=Object.freeze(summit?{centerX:45,centerZ:0,halfX:700,halfZ:450,stands:[{x:0,z:-418,rotation:0,length:130},{x:-508,z:30,rotation:Math.PI/2,length:108},{x:700,z:410,rotation:0,length:116}],basinRadius:680}:harbor?{centerX:15,centerZ:20,halfX:760,halfZ:500,stands:[{x:-500,z:-410,rotation:0,length:110},{x:610,z:170,rotation:-Math.PI/2,length:90}],basinRadius:720}:skyline?{centerX:80,centerZ:-120,halfX:1120,halfZ:650,stands:[{x:-730,z:-385,rotation:0,length:120},{x:-680,z:120,rotation:Math.PI/2,length:96},{x:620,z:-390,rotation:0,length:110}],basinRadius:1080}:{centerX:0,centerZ:-20,halfX:220,halfZ:220,stands:[{x:10,z:-188,rotation:0,length:105},{x:-177,z:35,rotation:Math.PI/2,length:78}],basinRadius:245});
 export const TRACK_BOXES=Object.freeze([
   // The stadium floor is the only box surface. The authored road and its
   // Rapier collider are generated together by buildRoadMesh below.
@@ -49,7 +58,7 @@ export const JUMP_ZONE=Object.freeze({approach:routeSampleIndex(ACTIVE_TRACK_DEF
 // Summit's reservoir jump is an honest missing section of deck.  All visual,
 // collision, lane and rail builders consume this same interval; there is no
 // invisible bridge.  Alpine remains byte-for-byte continuous.
-export const SURFACE_GAPS=Object.freeze(summit?[Object.freeze({id:"reservoir-jump",start:routeSampleIndex(10,27),end:routeSampleIndex(10,38),side:"both"})]:harbor?[Object.freeze({id:"harbor-channel-jump",start:routeSampleIndex(7,30),end:routeSampleIndex(7,45),side:"both"})]:[]);
+export const SURFACE_GAPS=Object.freeze(summit?[Object.freeze({id:"reservoir-jump",start:routeSampleIndex(10,27),end:routeSampleIndex(10,38),side:"both"})]:harbor?[Object.freeze({id:"harbor-channel-jump",start:routeSampleIndex(7,30),end:routeSampleIndex(7,45),side:"both"})]:skyline?[4,10,16].map((segment,index)=>Object.freeze({id:`skyline-jump-${index+1}`,start:routeSampleIndex(segment,32),end:routeSampleIndex(segment,45),side:"both"})):[]);
 const gapBetween=(index)=>SURFACE_GAPS.some(gap=>index>gap.start&&index<=gap.end);
 const gapSample=(index)=>SURFACE_GAPS.some(gap=>index>=gap.start&&index<=gap.end);
 const distance3=(a,b)=>Math.hypot(b.x-a.x,(b.y||0)-(a.y||0),b.z-a.z);
@@ -65,7 +74,7 @@ function sampleControl(index,t){
   // The crest uses a C2-continuous bump. Zero first and second derivatives at
   // both joins keep the visual ribbon and suspension collider from acquiring
   // the sharp pitch kink produced by the earlier Gaussian profile.
-  const a=ROUTE_PATH[index],b=ROUTE_PATH[index+1],humpScale=ACTIVE_TRACK_DEFINITION.humps[index]||0,jumpStrength=harbor?190:260,jumpProfile=t<=.08?0:t<=.27?jumpStrength*(t-.08)**2:t<=.38?jumpStrength*.19**2:t<=.62?jumpStrength*.19**2*(1-.18*smooth5((t-.38)/.24)):t<.8?jumpStrength*.19**2*.82*(1-smooth5((t-.62)/.18)):0,hump=(summit&&index===10)||(harbor&&index===7)?jumpProfile:humpScale*Math.sin(Math.PI*t)**4;
+  const a=ROUTE_PATH[index],b=ROUTE_PATH[index+1],humpScale=ACTIVE_TRACK_DEFINITION.humps[index]||0,jumpStrength=ACTIVE_TRACK_DEFINITION.jumpSegments?.[index]??(harbor?190:260),jumpProfile=t<=.08?0:t<=.27?jumpStrength*(t-.08)**2:t<=.38?jumpStrength*.19**2:t<=.62?jumpStrength*.19**2*(1-.18*smooth5((t-.38)/.24)):t<.8?jumpStrength*.19**2*.82*(1-smooth5((t-.62)/.18)):0,hump=(summit&&index===10)||(harbor&&index===7)||skyline&&index in ACTIVE_TRACK_DEFINITION.jumpSegments?jumpProfile:humpScale*Math.sin(Math.PI*t)**4;
   return{x:hermite(a.x,b.x,tangentAt(index,"x"),tangentAt(index+1,"x"),t),y:hermite(a.y,b.y,tangentAt(index,"y"),tangentAt(index+1,"y"),t)+hump+.55,z:hermite(a.z,b.z,tangentAt(index,"z"),tangentAt(index+1,"z"),t),width:a.width+(b.width-a.width)*t,bank:a.bank+(b.bank-a.bank)*t}
 }
 function framedConnector(start){
@@ -80,6 +89,7 @@ function framedConnector(start){
 }
 export function buildRoadMesh(stepsPerSegment=ROAD_STEPS_PER_SEGMENT){let samples=[],first=sampleControl(0,0),second=sampleControl(0,1/stepsPerSegment),dx=second.x-first.x,dz=second.z-first.z,length=Math.hypot(dx,dz)||1,fx=dx/length,fz=dz/length;for(let step=START_EXTENSION_SAMPLES;step>0;step--)samples.push({...first,x:first.x-fx*step*3,z:first.z-fz*step*3});for(let segment=0;segment<ROUTE_PATH.length-1;segment++)for(let step=0;step<stepsPerSegment;step++)samples.push(sampleControl(segment,step/stepsPerSegment));samples.push(sampleControl(ROUTE_PATH.length-2,1));for(let i=0;i<samples.length;i++){const before=samples[Math.max(0,i-1)],after=samples[Math.min(samples.length-1,i+1)],dx=after.x-before.x,dz=after.z-before.z,length=Math.hypot(dx,dz)||1,rx=-dz/length,rz=dx/length,half=samples[i].width/2,cos=Math.cos(samples[i].bank),sin=Math.sin(samples[i].bank);samples[i].heading=Math.atan2(dz,dx);samples[i].left={x:samples[i].x+rx*half*cos,y:samples[i].y+half*sin,z:samples[i].z+rz*half*cos};samples[i].right={x:samples[i].x-rx*half*cos,y:samples[i].y-half*sin,z:samples[i].z-rz*half*cos}}
   if(summit){const splice=routeSampleIndex(17),entry=samples[splice],before=samples[splice-1],after=samples[splice+1],forward=normalized({x:after.x-before.x,y:after.y-before.y,z:after.z-before.z}),lateral=normalized({x:entry.left.x-entry.right.x,y:entry.left.y-entry.right.y,z:entry.left.z-entry.right.z}),up=normalized(cross(lateral,forward)),loop=buildStuntLoop({height:28,width:9.5,entryWidth:entry.width,exitWidth:9.5,approach:220,exit:80,step:.5,separation:10,origin:entry,forward,up}),connector=framedConnector(loop.samples.at(-1));samples=[...samples.slice(0,splice+1),...loop.samples.slice(1).map(sample=>({...sample,right:{...sample.rightEdge},stunt:"loop"})),...connector.slice(1)];}
+  if(skyline){const splice=routeSampleIndex(20),entry=samples[splice],before=samples[splice-1],after=samples[splice+1],forward=normalized({x:after.x-before.x,y:after.y-before.y,z:after.z-before.z}),lateral=normalized({x:entry.left.x-entry.right.x,y:entry.left.y-entry.right.y,z:entry.left.z-entry.right.z}),up=normalized(cross(lateral,forward)),loop=buildStuntLoop({height:30,width:10,entryWidth:entry.width,exitWidth:14,approach:220,exit:150,step:.5,separation:10,origin:entry,forward,up});samples=[...samples.slice(0,splice+1),...loop.samples.slice(1).map(sample=>({...sample,right:{...sample.rightEdge},stunt:"loop"}))];}
   // Keep the road top, underside, and edge-wall vertices separate. The old
   // shared vertices averaged normals across hard corners, making each curved
   // side quad reveal its diagonal as a sawtooth under chase-view lighting.
@@ -156,7 +166,7 @@ export function roadPoseNear(position,lift=1.7){
 // Four meaningful sectors replace the inherited square-track doorway cadence:
 // opening sweeper, crest/landing, elevated return, and the finish descent.
 export const ROUTE_STAGE_RANGES=Object.freeze(ACTIVE_TRACK_DEFINITION.stageRanges.map(range=>Object.freeze([...range])));
-const routePointSampleIndex=point=>summit&&point===ROUTE_PATH.length-1?ROAD_SAMPLES.length-1:Math.min(ROAD_SAMPLES.length-1,routeSampleIndex(point));
+const routePointSampleIndex=point=>(summit||skyline)&&point===ROUTE_PATH.length-1?ROAD_SAMPLES.length-1:Math.min(ROAD_SAMPLES.length-1,routeSampleIndex(point));
 export function routeStage(checkpoint){const range=ROUTE_STAGE_RANGES[Math.max(0,Math.min(checkpoint,ROUTE_STAGE_RANGES.length-1))],start=routePointSampleIndex(range[0]),end=routePointSampleIndex(range[1]),points=ROAD_SAMPLES.slice(start,end+1).map(({x,y,z})=>({x,y,z})),gate=CHECKPOINTS[Math.max(0,Math.min(checkpoint,CHECKPOINTS.length-1))];return points.concat(gate?{x:gate.x,y:gate.y,z:gate.z}:[])}
 function stageGeometry(checkpoint){const points=routeStage(checkpoint),segments=[];let total=0;for(let i=0;i<points.length-1;i++){const a=points[i],b=points[i+1],dx=b.x-a.x,dy=(b.y||0)-(a.y||0),dz=b.z-a.z,length=Math.hypot(dx,dy,dz);if(length<.001)continue;segments.push({a,b,dx,dy,dz,length,start:total});total+=length}return{segments,total}}
 function pointAt(geometry,along){const wanted=Math.max(0,Math.min(geometry.total,along));for(const segment of geometry.segments)if(wanted<=segment.start+segment.length){const t=(wanted-segment.start)/segment.length;return{x:segment.a.x+segment.dx*t,y:(segment.a.y||0)+segment.dy*t,z:segment.a.z+segment.dz*t}}const last=geometry.segments.at(-1)?.b||{x:0,y:0,z:0};return{x:last.x,y:last.y||0,z:last.z}}

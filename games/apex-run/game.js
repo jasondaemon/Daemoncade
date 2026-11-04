@@ -6,10 +6,10 @@ import {formatSplitDelta,replayCheckpointSplits,splitTone,summarizeSplits} from 
 import {RAIL_COLLISION_GROUPS,SUSPENSION_QUERY_GROUPS,VEHICLE,applyLowSpeedSteering,applySurfaceDrag,createVehicle,driveVehicle,hasSupportingContact,stabilizeChassis} from "./vehicle-model.js?v=0.5.0-alpha25";
 import {setWheelVisualPose} from "./wheel-visual.js?v=0.5.0-alpha25";
 import {makeFormulaCar,makeFormulaDisplayLod,makeFormulaGhost,makeFormulaWheelVisual} from "./formula-car.js?v=0.5.0-alpha26";
-import {ACTIVE_TRACK_ID,TRACK_BOXES,BRANCH_JUNCTIONS,BRANCH_ROADS,CHECKPOINTS,INTENTIONAL_OBSTACLES,JUMP_ZONE,RECOVERY_SPOTS,ROAD_PATHS,ROAD_SAMPLES,ROAD_STEPS_PER_SEGMENT,PLAY_AREA,RAIL_PROFILE,SPLIT_LAYOUT,START_GATE_SAMPLE_INDEX,START_SPAWN_SAMPLE_INDEX,STUNT_RAIL_GAPS,SURFACE_GAPS,VENUE,advanceOutsidePlayTime,advanceUnderRoadTime,buildLaneRibbon,buildRailColliderMesh,buildRoadColliderMesh,buildRoadMesh,buildSupportSpecs,recoverySpotForCheckpoint,roadPoseNear,routeStage,routeTarget} from "./track-model.js?v=0.5.0-alpha54";
+import {ACTIVE_TRACK_ID,TRACK_BOXES,BRANCH_JUNCTIONS,BRANCH_ROADS,CHECKPOINTS,INTENTIONAL_OBSTACLES,JUMP_ZONE,RECOVERY_SPOTS,ROAD_PATHS,ROAD_SAMPLES,ROAD_STEPS_PER_SEGMENT,PLAY_AREA,RAIL_PROFILE,SPLIT_LAYOUT,START_GATE_SAMPLE_INDEX,START_SPAWN_SAMPLE_INDEX,STUNT_RAIL_GAPS,SURFACE_GAPS,VENUE,advanceOutsidePlayTime,advanceUnderRoadTime,buildLaneRibbon,buildRailColliderMesh,buildRoadColliderMesh,buildRoadMesh,buildSupportSpecs,recoverySpotForCheckpoint,roadPoseNear,routeStage,routeTarget} from "./track-model.js?v=0.5.0-alpha103-skyline";
 import {RaceController} from "./race-controller.js?v=0.5.0-alpha49-review3";
 import {createTelemetry,sampleTelemetry} from "./telemetry.js?v=0.5.0-alpha28";
-import {activeTrack,TRACK_CATALOG} from "./track-catalog.js?v=0.5.0-alpha53";
+import {activeTrack,TRACK_CATALOG} from "./track-catalog.js?v=0.5.0-alpha103-skyline";
 import {resolveQuality,shadowPlacement,verticalCameraMode} from "./graphics-quality.js?v=0.5.0-alpha49-review3";
 import {loadOptionalAssets} from "./optional-assets.js?v=0.5.0-alpha49-review3";
 import {gantryLayout} from "./scenery-layout.js?v=0.5.0-alpha49-review3";
@@ -104,7 +104,7 @@ if(ACTIVE_TRACK_ID==="harbor-run"){
 }
 addTracksideIdentity(THREE,scene,ROAD_SAMPLES,ACTIVE_TRACK_ID,qualityProfile.id,{concreteColor,concreteNormal,concreteArm});
 addRouteDistricts(THREE,scene,ROAD_SAMPLES,ACTIVE_TRACK_ID,qualityProfile.id);
-if(ACTIVE_TRACK_ID==="alpine-sprint"||ACTIVE_TRACK_ID==="harbor-run")addRouteLandscapeBands(THREE,scene,ROAD_SAMPLES,ACTIVE_TRACK_ID,qualityProfile.id);
+if(ACTIVE_TRACK_ID==="alpine-sprint"||ACTIVE_TRACK_ID==="harbor-run"||ACTIVE_TRACK_ID==="skyline-gauntlet")addRouteLandscapeBands(THREE,scene,ROAD_SAMPLES,ACTIVE_TRACK_ID,qualityProfile.id);
 if(largeVenue)addSignatureLandmarks(THREE,scene,ROAD_SAMPLES,ACTIVE_TRACK_ID,qualityProfile.id,{concreteColor,concreteNormal,concreteArm});
 
 function metreScaleBoxUV(geometry,metres=2.4){const position=geometry.attributes.position,normal=geometry.attributes.normal,uv=geometry.attributes.uv;for(let index=0;index<position.count;index++){const nx=Math.abs(normal.getX(index)),ny=Math.abs(normal.getY(index)),nz=Math.abs(normal.getZ(index));if(nx>=ny&&nx>=nz)uv.setXY(index,position.getZ(index)/metres,position.getY(index)/metres);else if(ny>=nz)uv.setXY(index,position.getX(index)/metres,position.getZ(index)/metres);else uv.setXY(index,position.getX(index)/metres,position.getY(index)/metres)}uv.needsUpdate=true;return geometry}
