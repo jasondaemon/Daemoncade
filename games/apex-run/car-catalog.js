@@ -56,10 +56,10 @@ export function cosmeticById(car,id){return car?.cosmetics.find(cosmetic=>cosmet
 export function achievementById(id){return ACHIEVEMENTS.find(achievement=>achievement.id===id)||null}
 export function carAssetReady(car){return car?.asset?.status==="ready"&&typeof car.asset.url==="string"&&car.asset.url.length>0}
 export function achievementUnlocked(state,id){return id==null||Boolean(state?.achievements?.[id]?.unlockedAt)}
-export function carUnlocked(state,car){return carAssetReady(car)&&achievementUnlocked(state,car.unlock)}
-export function cosmeticUnlocked(state,cosmetic){return Boolean(cosmetic)&&achievementUnlocked(state,cosmetic.unlock)}
-export function resolveSelection(state){
-  const fallbackCar=carById(DEFAULT_CAR_ID),requestedCar=carById(state?.selection?.carId),car=carUnlocked(state,requestedCar)?requestedCar:fallbackCar;
-  const requestedCosmetic=cosmeticById(car,state?.selection?.cosmeticId),cosmetic=cosmeticUnlocked(state,requestedCosmetic)?requestedCosmetic:cosmeticById(car,DEFAULT_COSMETIC_ID)||car.cosmetics.find(item=>cosmeticUnlocked(state,item));
+export function carUnlocked(state,car,access={}){return carAssetReady(car)&&(access.development===true||achievementUnlocked(state,car.unlock))}
+export function cosmeticUnlocked(state,cosmetic,access={}){return Boolean(cosmetic)&&(access.development===true||achievementUnlocked(state,cosmetic.unlock))}
+export function resolveSelection(state,access={}){
+  const fallbackCar=carById(DEFAULT_CAR_ID),requestedCar=carById(state?.selection?.carId),car=carUnlocked(state,requestedCar,access)?requestedCar:fallbackCar;
+  const requestedCosmetic=cosmeticById(car,state?.selection?.cosmeticId),cosmetic=cosmeticUnlocked(state,requestedCosmetic,access)?requestedCosmetic:cosmeticById(car,DEFAULT_COSMETIC_ID)||car.cosmetics.find(item=>cosmeticUnlocked(state,item,access));
   return{car,cosmetic};
 }
