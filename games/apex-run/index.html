@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
   <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'wasm-unsafe-eval'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; connect-src 'self' blob:; object-src 'none'; base-uri 'none'">
   <title>Apex Run</title>
-  <link rel="stylesheet" href="game.css?v=0.5.0-alpha49-review3">
+  <link rel="stylesheet" href="game.css?v=0.5.0-alpha144-route-preview">
 </head>
 <body>
   <main id="game">
@@ -17,7 +17,7 @@
       <div class="speed"><strong id="speed">000</strong><span>KM/H</span></div>
     </header>
     <div id="run-status">PB ELIGIBLE</div>
-    <aside id="nav-guide" aria-label="Course navigation"><canvas id="minimap" width="180" height="150"></canvas><div class="bearing"><span id="bearing-arrow">↑</span><b id="bearing-label">GATE 1</b></div></aside>
+    <aside id="nav-guide" aria-label="Course navigation"><div id="route-preview" aria-label="Upcoming route" hidden><b></b><span></span></div><canvas id="minimap" width="180" height="150"></canvas><div class="bearing"><span id="bearing-arrow">↑</span><b id="bearing-label">GATE 1</b></div></aside>
     <div id="countdown" aria-live="polite"></div>
     <div id="split" role="status" aria-live="polite" hidden></div>
     <nav class="quick-actions" aria-label="Game controls"><button id="practice-exit" type="button" hidden>CLEAN RACE</button><a id="garage-link" href="garage.html">GARAGE</a><button id="settings" type="button">SETTINGS</button></nav>
@@ -32,6 +32,6 @@
     </section>
   </main>
   <script src="load-guard.js?v=0.5.0-alpha25"></script>
-  <script type="module" src="game.js?v=0.5.0-alpha145-driving-feedback"></script>
+  <script type="module" src="game.js?v=0.5.0-alpha144-route-preview"></script>
 </body>
 </html>

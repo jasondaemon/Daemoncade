@@ -1,5 +1,5 @@
 export const FIXED_DT=1/120;
-export {checkpointAdvance,isOnRoad} from "./track-model.js?v=0.5.0-alpha105-skyline";
+export {checkpointAdvance,isOnRoad} from "./track-model.js?v=0.5.0-alpha144-route-preview";
 import {activeTrack,requestedTrackId,trackStorageKeys} from "./track-catalog.js?v=0.5.0-alpha105-skyline";
 export const REPLAY_VERSION=activeTrack().replayVersion;
 const REPLAY_BOUNDS=activeTrack().replayBounds;
