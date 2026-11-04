@@ -14,7 +14,7 @@ assert.match(game,/ACTIVE_TRACK_ID!=="alpine-sprint"\)scene\.add\(basin\)/,"flat
 assert.match(game,/landscape-details\.js\?v=0\.5\.0-alpha103-summit-env/,"game imports the current landscape revision");
 assert.match(game,/venue-terrain\.js\?v=0\.5\.0-alpha103-summit-env/,"game imports the current terrain revision");
 assert.match(game,/environment-presentation\.js\?v=0\.5\.0-alpha100c/,"game imports the current horizon revision");
-assert.match(index,/game\.js\?v=0\.5\.0-alpha103-skyline/,"production entry loads the current game graph");
+assert.match(index,/game\.js\?v=0\.5\.0-alpha104-skyline/,"production entry loads the current game graph");
 assert.match(testPage,/game\.js\?v=0\.5\.0-alpha100c/,"test entry loads the current game graph");
 
 for(const quality of["low","medium","high"]){
