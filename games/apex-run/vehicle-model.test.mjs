@@ -20,4 +20,18 @@ assert.equal(drift.calls.grip[2],VEHICLE.driftGrip);assert.equal(drift.calls.bra
 const braking=mockVehicle(),brakeState={steer:0};driveVehicle(braking,brakeState,{reverse:true},1/120,true);assert.equal(braking.calls.brake[0],VEHICLE.serviceBrake);assert.equal(braking.calls.engine[0],0);braking.currentVehicleSpeed=()=>0;for(let i=0;i<120;i++)driveVehicle(braking,brakeState,{reverse:true},1/120,true);assert.equal(braking.calls.engine[0],0,"holding service brake through zero must not reverse");driveVehicle(braking,brakeState,{},1/120,true);driveVehicle(braking,brakeState,{reverse:true},1/120,true);assert.ok(braking.calls.engine[0]<0,"release and repress at rest must select reverse");
 const slipping=mockVehicle(.51),slippingState={steer:0};driveVehicle(slipping,slippingState,{reverse:true},1/120,true,.08);assert.ok(slipping.calls.engine[0]<0,"stationary chassis must select reverse despite residual wheel speed");
 const boundary=mockVehicle(),boundaryState={steer:0};driveVehicle(boundary,boundaryState,{forward:true},1/120,true);const before=boundary.calls.engine[0];driveVehicle(boundary,boundaryState,{forward:true},1/120,false);assert.ok(before-boundary.calls.engine[0]<VEHICLE.engine*.03);for(let i=0;i<40;i++)driveVehicle(boundary,boundaryState,{forward:true},1/120,false);assert.ok(boundary.calls.engine[0]<before*.85);
+
+// Digital steering should build deliberately enough for readable half-second
+// corrections, still reach full lock for hairpins, and unwind/countersteer
+// promptly. These are controller-state checks, independent of a route tape.
+const digital=mockVehicle(50/3.6),digitalState={steer:0};
+for(let i=0;i<60;i++)driveVehicle(digital,digitalState,{forward:true,left:true},1/120,true,50/3.6);
+assert.ok(digitalState.steer>.58&&digitalState.steer<.62,`half-second steering build left its player envelope: ${digitalState.steer}`);
+for(let i=0;i<60;i++)driveVehicle(digital,digitalState,{forward:true,left:true},1/120,true,50/3.6);
+assert.equal(digitalState.steer,1,"one-second hold must retain full hairpin authority");
+for(let i=0;i<24;i++)driveVehicle(digital,digitalState,{forward:true},1/120,true,50/3.6);
+assert.ok(Math.abs(digitalState.steer)<1e-9,"released steering did not self-center within 200 ms");
+for(let i=0;i<120;i++)driveVehicle(digital,digitalState,{forward:true,left:true},1/120,true,50/3.6);
+for(let i=0;i<60;i++)driveVehicle(digital,digitalState,{forward:true,right:true},1/120,true,50/3.6);
+assert.ok(digitalState.steer<-.3,"half-second countersteer did not cross center decisively");
 console.log("Apex Run shared vehicle tests passed");

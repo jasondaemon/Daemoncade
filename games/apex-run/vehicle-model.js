@@ -1,7 +1,7 @@
 // Rapier's vehicle axes are local +X forward, +Y up and +Z axle. The forces
 // below target a ~900 kg arcade car: stronger launch torque tapers into the
 // original cruise response, while braking stays in the established arcade tune.
-export const VEHICLE={gravity:-16,maxSpeed:38,reverseMaxSpeed:10,reverseEngageSpeed:.75,engine:1200,launchEngine:1550,launchFadeSpeed:25,reverseScale:-.75,serviceBrake:35,handbrakeFront:250,handbrakeRear:1900,roadGrip:2.35,driftGrip:1.05,offroadGrip:1.55,steerLow:.48,steerHigh:.065,steerRise:1.3,steerRelease:5.2,steerCounter:3.8};
+export const VEHICLE={gravity:-16,maxSpeed:38,reverseMaxSpeed:10,reverseEngageSpeed:.75,engine:1200,launchEngine:1550,launchFadeSpeed:25,reverseScale:-.75,serviceBrake:35,handbrakeFront:250,handbrakeRear:1900,roadGrip:2.35,driftGrip:1.05,offroadGrip:1.55,steerLow:.48,steerHigh:.065,steerRise:1.2,steerRelease:5.6,steerCounter:4.2};
 // Suspension rays should see the road group, never the physical guardrail.
 // The chassis retains its default all-groups mask, so rails still block it.
 export const SUSPENSION_QUERY_GROUPS=(1<<16)|1;
