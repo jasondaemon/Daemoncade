@@ -15,7 +15,7 @@ assert.match(game,/landscape-details\.js\?v=0\.5\.0-alpha103-summit-env/,"game i
 assert.match(game,/venue-terrain\.js\?v=0\.5\.0-alpha103-summit-env/,"game imports the current terrain revision");
 assert.match(game,/environment-presentation\.js\?v=0\.5\.0-alpha100c/,"game imports the current horizon revision");
 assert.match(index,/game\.js\?v=0\.5\.0-alpha105-skyline/,"production entry loads the current game graph");
-assert.match(testPage,/game\.js\?v=0\.5\.0-alpha100c/,"test entry loads the current game graph");
+assert.match(testPage,/game\.js\?v=0\.5\.0-alpha105-skyline/,"test entry loads the current game graph");
 
 for(const quality of["low","medium","high"]){
   const data=ecologyZoneData(ROAD_SAMPLES,quality),geometry=new THREE.BufferGeometry();geometry.setAttribute("position",new THREE.Float32BufferAttribute(data.positions,3));geometry.setIndex(data.indices);geometry.computeVertexNormals();const normal=geometry.getAttribute("normal");
