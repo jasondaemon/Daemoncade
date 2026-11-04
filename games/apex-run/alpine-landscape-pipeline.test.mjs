@@ -9,7 +9,8 @@ const game=await readFile(new URL("game.js",import.meta.url),"utf8"),index=await
 
 assert.match(game,/=await Promise\.all\(\[/,"Alpine uses the shared licensed PBR texture pipeline");
 assert.doesNotMatch(game,/=largeVenue\?await Promise\.all/,"PBR maps must not be restricted to large venues");
-assert.match(game,/sampleScenario=renderTelemetryMode&&testParams\.get\("scenario"\)==="sample"/,"sample placement remains test-page-only");
+assert.match(game,/sampleScenario=finishCaptureMode\|\|renderTelemetryMode&&testParams\.get\("scenario"\)==="sample"/,"sample placement remains test-page-only");
+assert.match(game,/finishCaptureMode=testMode&&testParams\.get\("finishCapture"\)==="1"/,"finish capture remains test-page-only");
 assert.match(game,/ACTIVE_TRACK_ID!=="alpine-sprint"\)scene\.add\(basin\)/,"flat legacy basin no longer masks Alpine terrain");
 assert.match(game,/landscape-details\.js\?v=0\.5\.0-alpha103-summit-env/,"game imports the current landscape revision");
 assert.match(game,/venue-terrain\.js\?v=0\.5\.0-alpha103-summit-env/,"game imports the current terrain revision");

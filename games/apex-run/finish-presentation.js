@@ -1,6 +1,9 @@
 export const FINISH_RUNOFF_LENGTH=82;
 export const FINISH_RESULT_DELAY=1.25;
 export const FINISH_COAST_SECONDS=4.25;
+export const FINISH_BRAKE_DELAY=.45;
+export const FINISH_BRAKE_RAMP=.4;
+export const FINISH_BRAKE_FORCE=80;
 
 function normalized(vector,fallback={x:1,y:0,z:0}){
   const length=Math.hypot(vector?.x||0,vector?.y||0,vector?.z||0);
@@ -30,4 +33,9 @@ export function advanceFinishPresentation(state,dt){
   if(!state.active)return state;
   const elapsed=state.elapsed+Math.max(0,dt);
   return{...state,elapsed,showResult:elapsed>=FINISH_RESULT_DELAY,active:elapsed<FINISH_COAST_SECONDS};
+}
+
+export function finishBrakeForce(elapsed){
+  if(elapsed<=FINISH_BRAKE_DELAY)return 0;
+  return FINISH_BRAKE_FORCE*Math.min(1,(elapsed-FINISH_BRAKE_DELAY)/FINISH_BRAKE_RAMP);
 }
