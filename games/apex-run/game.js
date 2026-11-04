@@ -19,7 +19,8 @@ import {ribbonUV,roadMeshUV} from "./road-uv.js?v=0.5.0-alpha53";
 import {makeBarrierLOD} from "./barrier-lod.js?v=0.5.0-alpha53";
 import {roadMaterialParameters} from "./visual-materials.js?v=0.5.0-alpha53";
 import {addLandscapeDetails} from "./landscape-details.js?v=0.5.0-alpha103-summit-env";
-import {addEnvironmentPresentation} from "./environment-presentation.js?v=0.5.0-alpha100c";
+import {addEnvironmentPresentation,WORLD_SUN_DIRECTION} from "./environment-presentation.js?v=0.5.0-alpha107-visible-sun";
+import {addSunGlare} from "./sun-glare.js?v=0.5.0-alpha107-visible-sun";
 import {advanceFinishPresentation,buildFinishRunoffSamples,finishBrakeForce,finishCameraPose} from "./finish-presentation.js?v=0.5.0-alpha104-finish";
 import {HARBOR_WATER_Y,addHarborVenue,isHarborWaterFailure} from "./harbor-venue.js?v=0.5.0-alpha53";
 import {addTracksideIdentity} from "./trackside-identity.js?v=0.5.0-alpha55";
@@ -37,7 +38,7 @@ import {addHarborWaterfront} from "./harbor-waterfront.js?v=0.5.0-alpha89b";
 import {addHarborServiceDistrict} from "./harbor-service-district.js?v=0.5.0-alpha90e";
 import {addHarborRouteCampus} from "./harbor-route-campus.js?v=0.5.0-alpha93b";
 import {addVenueTerrain} from "./venue-terrain.js?v=0.5.0-alpha103-summit-env";
-import {naturalLightingProfile,renderTrackBox} from "./scene-lighting.js?v=0.5.0-alpha102";
+import {naturalLightingProfile,renderTrackBox} from "./scene-lighting.js?v=0.5.0-alpha107-visible-sun";
 import {raceAssetFor,resolveSelection} from "./car-catalog.js?v=0.5.0-dev-roster2";
 import {createRaceCarVisual} from "./car-visual-adapter.js?v=0.5.0-dev-roster2";
 import {gateCameraOpacity,gateStructureDistance} from "./camera-gate-fade.js?v=0.5.0-alpha87-camera2";
@@ -58,7 +59,7 @@ const camera=new THREE.PerspectiveCamera(68,innerWidth/innerHeight,.1,800);
 const renderer=new THREE.WebGLRenderer({canvas,antialias:true,powerPreference:"high-performance"});
 renderer.setSize(innerWidth,innerHeight,false);renderer.shadowMap.type=THREE.PCFShadowMap;renderer.outputColorSpace=THREE.SRGBColorSpace;
 const lighting=naturalLightingProfile(ACTIVE_TRACK_ID);renderer.toneMapping=THREE.ACESFilmicToneMapping;renderer.toneMappingExposure=lighting.exposure;
-scene.add(new THREE.HemisphereLight(0xd5edff,0x26331e,lighting.hemisphere));const sun=new THREE.DirectionalLight(0xffedcf,lighting.sun);sun.position.set(-60,110,35);sun.castShadow=true;sun.shadow.bias=-.00035;sun.shadow.normalBias=.045;sun.target.position.set(0,0,0);scene.add(sun,sun.target);
+scene.add(new THREE.HemisphereLight(0xd5edff,0x26331e,lighting.hemisphere));const sun=new THREE.DirectionalLight(0xffedcf,lighting.sun);sun.position.set(WORLD_SUN_DIRECTION.x,WORLD_SUN_DIRECTION.y,WORLD_SUN_DIRECTION.z);sun.castShadow=true;sun.shadow.bias=-.00035;sun.shadow.normalBias=.045;sun.target.position.set(0,0,0);scene.add(sun,sun.target);
 const rim=new THREE.DirectionalLight(0x4bdcff,lighting.rim);rim.position.set(90,35,-130);scene.add(rim);
 function readQuality(){try{return resolveQuality(localStorage.getItem("apex-run:quality:v1")).id}catch{return "high"}}let quality=readQuality(),qualityProfile=resolveQuality(quality);function applyQuality(){qualityProfile=resolveQuality(quality);renderer.setPixelRatio(Math.min(devicePixelRatio,qualityProfile.pixelRatio));renderer.shadowMap.enabled=true;sun.castShadow=true;if(sun.shadow.mapSize.x!==qualityProfile.shadowMap){sun.shadow.map?.dispose();sun.shadow.map=null;sun.shadow.mapSize.set(qualityProfile.shadowMap,qualityProfile.shadowMap)}const shadowCamera=sun.shadow.camera,extent=qualityProfile.shadowExtent;shadowCamera.left=-extent;shadowCamera.right=extent;shadowCamera.top=extent;shadowCamera.bottom=-extent;shadowCamera.near=1;shadowCamera.far=420;shadowCamera.updateProjectionMatrix();try{localStorage.setItem("apex-run:quality:v1",qualityProfile.id)}catch{}const select=$("pause-quality");if(select)select.value=qualityProfile.id}applyQuality();
 
@@ -86,7 +87,7 @@ const world=new RAPIER.World({x:0,y:VEHICLE.gravity,z:0});world.integrationParam
 const meshes=[],keys=new Set(),course=[],roadColliders=new Set(),supportColliders=[];
 const alpineNatural=ACTIVE_TRACK_ID==="alpine-sprint",materials={road:new THREE.MeshStandardMaterial(roadMaterialParameters(THREE,{colorMap:asphaltColor,normalMap:asphaltNormal,roughnessMap:alpineNatural?null:asphaltRoughness})),bank:new THREE.MeshStandardMaterial({color:0x666762,map:concreteColor,normalMap:concreteNormal,roughnessMap:concreteArm,roughness:.82}),runoff:new THREE.MeshStandardMaterial({color:0xaaa494,roughness:.95}),edge:new THREE.MeshStandardMaterial({color:0x3ad6e7,emissive:0x075565,emissiveIntensity:.42}),grass:new THREE.MeshStandardMaterial({color:0x43563b,map:grassColor,normalMap:grassNormal,roughnessMap:alpineNatural?null:grassRoughness,normalScale:new THREE.Vector2(.18,.18),roughness:1,metalness:0}),stadium:new THREE.MeshStandardMaterial({color:0x62645f,map:concreteColor,normalMap:concreteNormal,roughnessMap:concreteArm,roughness:.86})};
 materials.road.envMapIntensity=.28;materials.bank.envMapIntensity=.18;materials.runoff.envMapIntensity=.12;materials.grass.envMapIntensity=.08;materials.stadium.envMapIntensity=.16;
-addEnvironmentPresentation(THREE,scene,VENUE,qualityProfile.id,ACTIVE_TRACK_ID);
+addEnvironmentPresentation(THREE,scene,VENUE,qualityProfile.id,ACTIVE_TRACK_ID);const sunGlare=addSunGlare(THREE,scene,qualityProfile.id);
 if(ACTIVE_TRACK_ID==="harbor-run")await addHarborVenue(THREE,scene,VENUE,qualityProfile.id,{concreteColor,concreteNormal,concreteArm,garageColor,garageNormal,garageArm,assetLoader});
 if(ACTIVE_TRACK_ID==="harbor-run"){
   addHarborCoastalDistricts(THREE,scene,qualityProfile.id,{concreteColor,concreteNormal,concreteArm});
@@ -237,7 +238,7 @@ function render(alpha,renderDt=1/60){
   updateNavigation(position,rotation);
   updateHud();
   if(telemetryEnabled){$("telemetry-lateral").textContent=`${drivingTelemetry.lateralG>=0?"+":""}${drivingTelemetry.lateralG.toFixed(2)} G`;$("telemetry-longitudinal").textContent=`${drivingTelemetry.longitudinalG>=0?"+":""}${drivingTelemetry.longitudinalG.toFixed(2)} G`;$("telemetry-slip").textContent=`${Math.round(drivingTelemetry.slipDegrees)}°`;$("telemetry-contact").textContent=drivingTelemetry.airborne?"AIRBORNE":`${drivingTelemetry.contacts} / 4`}
-  $("countdown").textContent=race.state==="countdown"?(race.countdown>.7?String(Math.ceil(race.countdown)):"GO!"):"";updateGateCameraFade();for(const badge of gateBadges){badge.getWorldPosition(badgeWorldPosition);badge.visible=badgeWorldPosition.distanceTo(camera.position)>14}renderer.render(scene,camera);renderTelemetry?.record(performance.now())
+  $("countdown").textContent=race.state==="countdown"?(race.countdown>.7?String(Math.ceil(race.countdown)):"GO!"):"";updateGateCameraFade();sunGlare.update(camera);for(const badge of gateBadges){badge.getWorldPosition(badgeWorldPosition);badge.visible=badgeWorldPosition.distanceTo(camera.position)>14}renderer.render(scene,camera);renderTelemetry?.record(performance.now())
 }
 let previous=performance.now();function frame(now){const elapsed=(now-previous)/1000;previous=now;if(race.state==="paused"){render(0,0);requestAnimationFrame(frame);return}if(frameGapInvalidates(elapsed)&&["countdown","racing"].includes(race.state)){setPaused(true,"timing");render(0,0);requestAnimationFrame(frame);return}const{alpha}=stepper.advance(elapsed);render(alpha,Math.min(elapsed,.1));requestAnimationFrame(frame)}
   function handleVisibility(hidden){if(hidden&&["countdown","racing"].includes(race.state))setPaused(true)}addEventListener("keydown",event=>{if(["ArrowUp","ArrowDown","ArrowLeft","ArrowRight","Space","Backspace","Escape"].includes(event.code))event.preventDefault();if(!$("quality-confirm").hidden){if(event.code==="Escape"&&!event.repeat)cancelQualityChange();return}const driving=["ArrowUp","ArrowDown","ArrowLeft","ArrowRight","KeyW","KeyA","KeyS","KeyD","Space"].includes(event.code);if(driving){startAudio();if(race.state==="ready"&&!event.repeat)beginRace()}if(event.code==="KeyP"||event.code==="Escape"){if(!event.repeat)(race.state==="paused"||settingsFromReady?closeSettings():openSettings());return}if(event.code==="KeyM"){if(!event.repeat)toggleMute();return}if(event.code==="KeyG"){if(!event.repeat)toggleGhost();return}keys.add(event.code);if(event.code==="KeyR"&&!event.repeat)(loopPracticeMode?placeLoopPractice():restart());if(event.code==="Backspace"&&!event.repeat&&race.state==="racing")recover()});addEventListener("keyup",event=>keys.delete(event.code));addEventListener("blur",()=>{if(["countdown","racing"].includes(race.state))setPaused(true)});document.addEventListener("visibilitychange",()=>handleVisibility(document.hidden));
