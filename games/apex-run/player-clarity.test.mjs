@@ -18,6 +18,7 @@ assert.doesNotMatch(html,/Practice sectors/);
 assert.match(css,/\.race-briefing\{/);
 assert.match(game,/panel\.hidden=!telemetryEnabled\|\|race\.state!=="racing"/,"ready/countdown/result telemetry must remain hidden");
 assert.match(game,/resultNextStep\(\{track:activeTrack\(\)/,"result screen must explain the next action");
+assert.match(html,/id=["']route-announcer["'][^>]*role=["']status["'][^>]*aria-live=["']polite["']/,"route changes need a restrained live announcement");
 assert.match(garage,/CAR_CATALOG\.filter\(carAssetReady\)/,"preview-only catalog slots must not be player-facing");
 assert.doesNotMatch(garage,/PREVIEW · ASSET NOT INTEGRATED/);
 console.log("Apex Run player clarity source contract passed");
