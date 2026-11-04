@@ -19,7 +19,7 @@ import {addReservoirArchitecture,isReservoirFailure} from "./reservoir-architect
 import {ribbonUV,roadMeshUV} from "./road-uv.js?v=0.5.0-alpha53";
 import {makeBarrierLOD} from "./barrier-lod.js?v=0.5.0-alpha53";
 import {roadMaterialParameters} from "./visual-materials.js?v=0.5.0-alpha53";
-import {addLandscapeDetails} from "./landscape-details.js?v=0.5.0-alpha157-summit-render";
+import {addLandscapeDetails} from "./landscape-details.js?v=0.5.0-alpha158-summit-render-scope";
 import {addEnvironmentPresentation,worldSunDirection} from "./environment-presentation.js?v=0.5.0-alpha138-skyline-atmosphere";
 import {addSunGlare} from "./sun-glare.js?v=0.5.0-alpha138-skyline-atmosphere";
 import {advanceFinishPresentation,buildFinishRunoffSamples,finishBrakeForce,finishCameraPose} from "./finish-presentation.js?v=0.5.0-alpha104-finish";
@@ -52,7 +52,7 @@ import {beginPractice,completePracticeSector,createPracticeSession,currentPracti
 import {raceBriefing,resultNextStep} from "./race-briefing.js?v=0.5.0-alpha150-player-clarity";
 import {drivingFeedback,landingFeedback} from "./driving-feedback.js?v=0.5.0-alpha145-driving-feedback";
 import {routeAnnouncement} from "./route-announcer.js?v=0.5.0-alpha151-player-clarity";
-import {detailedStartBarrierCastsShadow} from "./render-budget.js?v=0.5.0-alpha157-summit-render2";
+import {detailedStartBarrierCastsShadow} from "./render-budget.js?v=0.5.0-alpha158-summit-render-scope2";
 
 const $=id=>document.getElementById(id),canvas=$("view"),scene=new THREE.Scene(),testMode=document.documentElement.dataset.apexTest==="1",testParams=new URLSearchParams(location.search),lifecyclePhase=testParams.get("lifecycle"),deterministicLifecyclePhase=["run","verify"].includes(lifecyclePhase),renderTelemetryMode=testMode&&testParams.get("renderTelemetry")==="1",loopPracticeMode=testMode&&testParams.get("practiceLoop")==="1",waterPracticeMode=testMode&&testParams.get("waterFailure")==="1",finishCaptureMode=testMode&&testParams.get("finishCapture")==="1",qaDriveMode=testMode&&!deterministicLifecyclePhase&&testParams.get("qaDrive")==="1"&&/^[a-zA-Z0-9_-]{1,64}$/.test(testParams.get("testStorage")||""),interactiveTestMode=renderTelemetryMode||loopPracticeMode||waterPracticeMode||finishCaptureMode||qaDriveMode,splitScenario=renderTelemetryMode&&testParams.get("scenario")==="split",splitLine=splitScenario?testParams.get("line"):null;
 const sampleScenario=finishCaptureMode||renderTelemetryMode&&testParams.get("scenario")==="sample";

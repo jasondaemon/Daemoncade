@@ -24,7 +24,7 @@ const game=readFileSync(new URL("./game.js",import.meta.url),"utf8");
 assert.match(game,/graphics-lifecycle\.js\?v=0\.5\.0-alpha156-webgl-lifecycle/);
 for(const entry of["index.html","test.html","skyline-test.html"]){
   const html=readFileSync(new URL(`./${entry}`,import.meta.url),"utf8");
-  assert.match(html,/game\.js\?v=0\.5\.0-alpha157-summit-render/,`${entry} must invalidate the runtime cache`);
+  assert.match(html,/game\.js\?v=0\.5\.0-alpha158-summit-render-scope/,`${entry} must invalidate the runtime cache`);
 }
-assert.match(readFileSync(new URL("./app.html",import.meta.url),"utf8"),/index\.html\?v=0\.5\.0-alpha157-summit-render/);
+assert.match(readFileSync(new URL("./app.html",import.meta.url),"utf8"),/index\.html\?v=0\.5\.0-alpha158-summit-render-scope/);
 console.log("Apex Run graphics lifecycle passed");
