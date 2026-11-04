@@ -9,13 +9,42 @@ export function mountainGeometry(THREE,{radiusX,radiusZ,segments,height,seed=0,r
   for(let ring=0;ring<rings;ring++){
     const t=ring/(rings-1),profile=Math.sin(Math.PI*t),radialScale=.82+t*.36;
     for(let index=0;index<segments;index++){
-      const angle=index/segments*Math.PI*2,wave=.58+.22*Math.sin(angle*3.1+seed)+.14*Math.sin(angle*7.3-seed*.7)+.06*Math.cos(angle*13.7),jitter=1+.025*Math.sin(angle*11.2+ring*1.7+seed),x=Math.cos(angle)*radiusX*radialScale*jitter,z=Math.sin(angle)*radiusZ*radialScale*jitter,rise=Math.max(0,Math.min(1,(wave-.18)/.5)),mass=rise*rise*(3-2*rise),peak=height*mass,y=ring===0||ring===rings-1?-12:profile*peak-(1-profile)*5;
+      const angle=index/segments*Math.PI*2,wave=.58+.22*Math.sin(angle*3.1+seed)+.14*Math.sin(angle*7.3-seed*.7)+.06*Math.cos(angle*13.7),jitter=1+.025*Math.sin(angle*11.2+ring*1.7+seed),x=Math.cos(angle)*radiusX*radialScale*jitter,z=Math.sin(angle)*radiusZ*radialScale*jitter,peak=height*Math.max(.28,wave),y=ring===0||ring===rings-1?-12:profile*peak-(1-profile)*5;
       positions.push(x,y,z);
       const haze=.78+.16*Math.sin(angle*2+seed),altitude=.28+.72*profile,snowMix=palette.snow?Math.max(0,Math.min(1,(profile-palette.snowLine)/.16))*(.55+.45*Math.max(0,Math.sin(angle*5.3+seed))):0;for(let channel=0;channel<3;channel++){const rock=(palette.mountainLow[channel]+(palette.mountainHigh[channel]-palette.mountainLow[channel])*altitude)*haze,snow=palette.snow?.[channel]??rock;colors.push(rock+(snow-rock)*snowMix)}
     }
   }
   for(let ring=0;ring<rings-1;ring++)for(let index=0;index<segments;index++){const next=(index+1)%segments,a=ring*segments+index,b=(ring+1)*segments+index,c=ring*segments+next,d=(ring+1)*segments+next;indices.push(a,c,b,b,c,d)}
   const geometry=new THREE.BufferGeometry();geometry.setAttribute("position",new THREE.Float32BufferAttribute(positions,3));geometry.setAttribute("color",new THREE.Float32BufferAttribute(colors,3));geometry.setIndex(indices);geometry.computeVertexNormals();return geometry;
+}
+
+export function alpineMassSpecs(quality="high"){
+  const specs=[
+    {x:-1.48,z:-1.18,rx:.62,rz:.43,height:42,seed:.7},
+    {x:1.58,z:.28,rx:.5,rz:.38,height:35,seed:2.1},
+    {x:.28,z:1.58,rx:.57,rz:.4,height:46,seed:3.7},
+    {x:-1.7,z:.62,rx:.42,rz:.34,height:31,seed:5.2},
+    {x:.92,z:-1.68,rx:.46,rz:.32,height:37,seed:6.4},
+  ];
+  return specs.slice(0,quality==="low"?3:quality==="medium"?4:5).map(spec=>Object.freeze(spec));
+}
+
+export function alpineMountainGeometry(THREE,venue,quality="high"){
+  const positions=[],colors=[],indices=[],specs=alpineMassSpecs(quality),rings=quality==="low"?4:quality==="medium"?5:6,segments=quality==="low"?16:quality==="medium"?24:32;
+  for(const spec of specs){
+    const start=positions.length/3,cx=venue.centerX+spec.x*venue.halfX,cz=venue.centerZ+spec.z*venue.halfZ,rx=spec.rx*venue.halfX,rz=spec.rz*venue.halfZ;
+    positions.push(cx,spec.height,cz);colors.push(.43,.45,.43);
+    for(let ring=1;ring<=rings;ring++){
+      const t=ring/rings,profile=Math.pow(1-t,1.35);
+      for(let index=0;index<segments;index++){
+        const angle=index/segments*Math.PI*2,jitter=1+.045*Math.sin(angle*3+spec.seed)+.025*Math.sin(angle*7-spec.seed),x=cx+Math.cos(angle)*rx*t*jitter,z=cz+Math.sin(angle)*rz*t*jitter,y=-5+(spec.height+5)*profile*(.9+.1*Math.sin(angle*4.2+spec.seed)*(1-t));
+        positions.push(x,y,z);const altitude=Math.max(0,Math.min(1,(y+5)/(spec.height+5))),aspect=.88+.12*Math.max(0,Math.sin(angle+spec.seed));colors.push((.22+.23*altitude)*aspect,(.25+.22*altitude)*aspect,(.23+.2*altitude)*aspect);
+      }
+    }
+    for(let index=0;index<segments;index++){const current=start+1+index,next=start+1+(index+1)%segments;indices.push(start,next,current)}
+    for(let ring=1;ring<rings;ring++)for(let index=0;index<segments;index++){const a=start+1+(ring-1)*segments+index,b=start+1+(ring-1)*segments+(index+1)%segments,c=start+1+ring*segments+index,d=start+1+ring*segments+(index+1)%segments;indices.push(a,b,c,b,d,c)}
+  }
+  const geometry=new THREE.BufferGeometry();geometry.setAttribute("position",new THREE.Float32BufferAttribute(positions,3));geometry.setAttribute("color",new THREE.Float32BufferAttribute(colors,3));geometry.setIndex(indices);geometry.computeVertexNormals();geometry.userData={massCount:specs.length,rings,segments,specs};return geometry;
 }
 
 export function environmentBudget(quality="high"){return quality==="low"?{layers:1,segments:56,rings:4}:{layers:2,segments:quality==="medium"?88:128,rings:quality==="medium"?4:5}}
@@ -37,7 +66,7 @@ export function ridgeComposition(trackId="summit-circuit"){
 export function addEnvironmentPresentation(THREE,scene,venue,quality="high",trackId="summit-circuit"){
   const budget=environmentBudget(quality),palette=environmentPalette(trackId),meshes=[];if(scene.fog?.isFogExp2){scene.fog.color.setHex(palette.fog);scene.fog.density=palette.fogDensity}
   const sky=new THREE.Mesh(new THREE.SphereGeometry(Math.max(venue.halfX,venue.halfZ)*2.45,quality==="low"?24:36,quality==="low"?14:20),new THREE.ShaderMaterial({side:THREE.BackSide,depthWrite:false,uniforms:{top:{value:new THREE.Color(palette.top)},horizon:{value:new THREE.Color(palette.horizon)},ground:{value:new THREE.Color(palette.ground)},sunDirection:{value:new THREE.Vector3(-.42,.72,.3).normalize()}},vertexShader:`varying vec3 vDirection;void main(){vDirection=normalize(position);gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.0);}`,fragmentShader:`uniform vec3 top;uniform vec3 horizon;uniform vec3 ground;uniform vec3 sunDirection;varying vec3 vDirection;float hash(vec2 p){return fract(sin(dot(p,vec2(127.1,311.7)))*43758.5453);}float noise(vec2 p){vec2 i=floor(p),f=fract(p);f=f*f*(3.0-2.0*f);return mix(mix(hash(i),hash(i+vec2(1,0)),f.x),mix(hash(i+vec2(0,1)),hash(i+vec2(1)),f.x),f.y);}float fbm(vec2 p){float value=0.0,weight=.55;for(int i=0;i<4;i++){value+=noise(p)*weight;p=p*2.03+vec2(17.7,9.2);weight*=.5;}return value;}void main(){vec3 direction=normalize(vDirection);float h=smoothstep(-.12,.72,direction.y);vec3 color=mix(ground,mix(horizon,top,h),smoothstep(-.18,.12,direction.y));float sun=pow(max(dot(direction,sunDirection),0.0),220.0);vec2 cloudUV=direction.xz*3.2+vec2(direction.y*1.1);float field=fbm(cloudUV)+.32*fbm(cloudUV*2.1+4.7);float band=smoothstep(.035,.11,direction.y)*(1.0-smoothstep(.44,.61,direction.y));float clouds=smoothstep(.57,.76,field)*band;float rim=smoothstep(.49,.68,field)*band;color=mix(color,vec3(.93,.955,.965),rim*.24);color=mix(color,vec3(.99),clouds*.62);color+=vec3(1.0,.73,.38)*sun*.72;gl_FragColor=vec4(color,1.0);}`}));sky.position.set(venue.centerX,0,venue.centerZ);sky.frustumCulled=false;scene.add(sky);meshes.push(sky);
-  const ridges=ridgeComposition(trackId);for(let layer=0;layer<budget.layers;layer++){const ridge=ridges[layer],geometry=mountainGeometry(THREE,{radiusX:venue.halfX*ridge.scale,radiusZ:venue.halfZ*ridge.scale,segments:Math.max(40,Math.round(budget.segments/(layer+1))),rings:budget.rings,height:ridge.height,seed:ridge.seed,palette}),material=new THREE.MeshBasicMaterial({vertexColors:true,fog:true,side:THREE.FrontSide}),mountains=new THREE.Mesh(geometry,material);mountains.position.set(venue.centerX,0,venue.centerZ);mountains.receiveShadow=false;scene.add(mountains);meshes.push(mountains)}
+  if(trackId==="alpine-sprint"){const geometry=alpineMountainGeometry(THREE,venue,quality),material=new THREE.MeshBasicMaterial({vertexColors:true,fog:true,side:THREE.FrontSide}),mountains=new THREE.Mesh(geometry,material);mountains.receiveShadow=false;scene.add(mountains);meshes.push(mountains)}else{const ridges=ridgeComposition(trackId);for(let layer=0;layer<budget.layers;layer++){const ridge=ridges[layer],geometry=mountainGeometry(THREE,{radiusX:venue.halfX*ridge.scale,radiusZ:venue.halfZ*ridge.scale,segments:Math.max(40,Math.round(budget.segments/(layer+1))),rings:budget.rings,height:ridge.height,seed:ridge.seed,palette}),material=new THREE.MeshBasicMaterial({vertexColors:true,fog:true,side:THREE.FrontSide}),mountains=new THREE.Mesh(geometry,material);mountains.position.set(venue.centerX,0,venue.centerZ);mountains.receiveShadow=false;scene.add(mountains);meshes.push(mountains)}}
   const faces=Array.from({length:6},()=>{const canvas=document.createElement("canvas");canvas.width=canvas.height=32;const context=canvas.getContext("2d"),gradient=context.createLinearGradient(0,0,0,32);gradient.addColorStop(0,palette.reflection[0]);gradient.addColorStop(.55,palette.reflection[1]);gradient.addColorStop(1,palette.reflection[2]);context.fillStyle=gradient;context.fillRect(0,0,32,32);return canvas}),environment=new THREE.CubeTexture(faces);environment.colorSpace=THREE.SRGBColorSpace;environment.needsUpdate=true;scene.environment=environment;scene.environmentIntensity=trackId==="harbor-run"?.3:.24;
   return{meshes,budget,environment,palette};
 }
