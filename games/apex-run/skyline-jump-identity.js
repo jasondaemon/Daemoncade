@@ -16,7 +16,7 @@ function gatePost(samples,index,side,palette,gapId){const{sample,forward,lateral
 export function skylineJumpIdentitySpecs(samples,gaps){
   const markings=[],pylons=[],jumps=[];
   gaps.forEach((gap,jumpIndex)=>{
-    const palette=palettes[jumpIndex%palettes.length],approachIndices=[gap.start-30,gap.start-20,gap.start-10],landingIndices=[gap.end+8,gap.end+18,gap.end+28],landingGate=Math.min(samples.length-1,gap.end+38);
+    const palette=palettes[jumpIndex%palettes.length],approachIndices=[gap.start-30,gap.start-20,gap.start-10],landingIndices=[gap.end+8,gap.end+18,gap.end+28],landingGate=Math.min(samples.length-1,gap.end+12);
     approachIndices.forEach((index,step)=>markings.push(marker(samples,index,{length:1.05,width:samples[index].width*(.48+step*.17),kind:"approach-chevron",palette,zone:"approach",gapId:gap.id})));
     landingIndices.forEach(index=>markings.push(marker(samples,index,{length:1.3,width:samples[index].width*.82,kind:"landing-bar",palette,zone:"landing",gapId:gap.id})));
     for(const side of[-1,1])markings.push(marker(samples,gap.end+18,{length:24,width:.48,lateralOffset:side*(samples[gap.end+18].width/2-1),kind:"landing-bracket",palette,zone:"landing",gapId:gap.id}));
@@ -31,9 +31,9 @@ function instanceMatrix(THREE,spec,dummy){
   dummy.position.set(spec.x,spec.y,spec.z);dummy.quaternion.setFromRotationMatrix(basis);dummy.scale.set(spec.length,spec.height,spec.width);dummy.updateMatrix();return dummy.matrix;
 }
 export function addSkylineJumpIdentity(THREE,scene,samples,gaps,quality="high"){
-  const specs=skylineJumpIdentitySpecs(samples,gaps),dummy=new THREE.Object3D(),surfaceMaterial=new THREE.MeshStandardMaterial({color:0xffffff,emissive:0x202020,emissiveIntensity:quality==="low"?.25:.48,roughness:.45,metalness:.12}),surface=new THREE.InstancedMesh(new THREE.BoxGeometry(1,1,1),surfaceMaterial,specs.markings.length);
+  const specs=skylineJumpIdentitySpecs(samples,gaps),dummy=new THREE.Object3D(),surfaceMaterial=new THREE.MeshBasicMaterial({color:0xffffff,toneMapped:false}),surface=new THREE.InstancedMesh(new THREE.BoxGeometry(1,1,1),surfaceMaterial,specs.markings.length);
   specs.markings.forEach((spec,index)=>{surface.setMatrixAt(index,instanceMatrix(THREE,spec,dummy));surface.setColorAt(index,new THREE.Color(spec.color))});surface.instanceMatrix.needsUpdate=true;surface.instanceColor.needsUpdate=true;surface.receiveShadow=true;scene.add(surface);
-  const pylonMaterial=new THREE.MeshStandardMaterial({color:0xffffff,emissive:0x303030,emissiveIntensity:quality==="low"?.38:.72,roughness:.32,metalness:.38}),pylons=new THREE.InstancedMesh(new THREE.BoxGeometry(1,1,1),pylonMaterial,specs.pylons.length);
+  const pylonMaterial=new THREE.MeshBasicMaterial({color:0xffffff,toneMapped:false}),pylons=new THREE.InstancedMesh(new THREE.BoxGeometry(1,1,1),pylonMaterial,specs.pylons.length);
   specs.pylons.forEach((spec,index)=>{pylons.setMatrixAt(index,instanceMatrix(THREE,spec,dummy));pylons.setColorAt(index,new THREE.Color(spec.color))});pylons.instanceMatrix.needsUpdate=true;pylons.instanceColor.needsUpdate=true;pylons.castShadow=quality==="high";pylons.receiveShadow=true;scene.add(pylons);
   return{...specs,surface,pylons,quality};
 }
