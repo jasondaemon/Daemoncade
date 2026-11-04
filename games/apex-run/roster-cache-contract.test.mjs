@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import fs from "node:fs";
 
-const revision="0.5.0-dev-roster2",root=new URL("./",import.meta.url),origin=new URL("http://127.0.0.1:4173/games/apex-run/"),protectedModules=new Set([
+const revision="0.5.0-dev-roster2",gameRevision="0.5.0-alpha106-roster2-skyline-art",root=new URL("./",import.meta.url),origin=new URL("http://127.0.0.1:4173/games/apex-run/"),protectedModules=new Set([
   "car-catalog.js","car-visual-adapter.js","development-roster.js","garage-preview-contract.js",
   "garage-progression.js","garage-storage.js","garage-three-preview.js","race-outcome.js","track-catalog.js",
 ]);
@@ -17,7 +17,8 @@ for(const entry of graphModules){
   }
 }
 for(const [entry,html] of [["game.js","index.html"],["game.js","test.html"],["garage.js","garage.html"],["garage-browser-test.js","garage-browser-test.html"]]){
-  assert.match(source(html),new RegExp(`${entry.replace(".","\\.")}\\?v=${revision.replaceAll(".","\\.")}`),`${html} does not bust the ${entry} entry cache`);
+  const entryRevision=entry==="game.js"?gameRevision:revision;
+  assert.match(source(html),new RegExp(`${entry.replace(".","\\.")}\\?v=${entryRevision.replaceAll(".","\\.")}`),`${html} does not bust the ${entry} entry cache`);
 }
 
 // Model a same-origin browser cache already holding the previous bare modules.
