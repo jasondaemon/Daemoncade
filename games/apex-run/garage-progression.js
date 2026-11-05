@@ -1,4 +1,4 @@
-import {ACHIEVEMENTS,DEFAULT_CAR_ID,DEFAULT_COSMETIC_ID,achievementById,carAssetReady,carById,carUnlocked,cosmeticById,cosmeticUnlocked,resolveSelection} from "./car-catalog.js?v=0.5.0-alpha184-cybertruck-attribution";
+import {ACHIEVEMENTS,DEFAULT_CAR_ID,DEFAULT_COSMETIC_ID,achievementById,carAssetReady,carById,carUnlocked,cosmeticById,cosmeticUnlocked,resolveSelection} from "./car-catalog.js?v=0.5.0-alpha185-utility-cars";
 import {resolveTrack} from "./track-catalog.js?v=0.5.0-alpha154-summit-descent";
 
 export const GARAGE_KEY="apex-run:garage:v1";

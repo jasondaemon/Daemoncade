@@ -1,0 +1,15 @@
+Model Information:
+* title: Generic passenger car pack
+* source: https://sketchfab.com/3d-models/generic-passenger-car-pack-20f9af9b8a404d5cb022ac6fe87f21f5
+* author: Comrade1280 (https://sketchfab.com/comrade1280)
+
+Model License:
+* license type: CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)
+* requirements: Author must be credited. Commercial use is allowed.
+
+This asset contains the independently-authored Offroad body and its four corresponding
+wheel nodes extracted from the official pack. Its body color texture was removed so
+Apex Run can apply runtime livery palettes; remaining geometry and textures are preserved.
+
+Attribution:
+This work is based on "Generic passenger car pack" by Comrade1280, licensed under CC-BY-4.0.

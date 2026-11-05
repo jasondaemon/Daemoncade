@@ -12,8 +12,8 @@ assert.match(game,/concrete_road_barrier_1k\.gltf[\s\S]*?castShadow:detailedStar
 assert.match(game,/marker=fitAsset\(asset,\{x:obstacle\.x[\s\S]*?depth:\.8\}\)/,"racing obstacle markers keep the default shadow policy");
 assert.match(game,/roadMesh\.castShadow=true/,"road shadows remain enabled");
 assert.match(game,/sun\.castShadow=true/,"directional lighting shadows remain enabled");
-for(const [name,entry] of [["index",index],["test",testPage],["skyline test",skylinePage]]){assert.match(entry,/game\.js\?v=0\.5\.0-alpha184-cybertruck-attribution/,`${name} loads the corrected render-budget graph`);assert.doesNotMatch(entry,/game\.js\?v=0\.5\.0-alpha157-summit-render(?:["&])/,`${name} cannot reuse the stale first-candidate runtime`) }
-assert.match(app,/index\.html\?v=0\.5\.0-alpha184-cybertruck-attribution/,"app shell invalidates its cached production entry");
+for(const [name,entry] of [["index",index],["test",testPage],["skyline test",skylinePage]]){assert.match(entry,/game\.js\?v=0\.5\.0-alpha185-utility-cars/,`${name} loads the corrected render-budget graph`);assert.doesNotMatch(entry,/game\.js\?v=0\.5\.0-alpha157-summit-render(?:["&])/,`${name} cannot reuse the stale first-candidate runtime`) }
+assert.match(app,/index\.html\?v=0\.5\.0-alpha185-utility-cars/,"app shell invalidates its cached production entry");
 assert.doesNotMatch(app,/index\.html\?v=0\.5\.0-alpha157-summit-render/,"app shell cannot reuse the stale first-candidate entry");
 assert.match(game,/landscape-details\.js\?v=0\.5\.0-alpha158-summit-render-scope/,"corrected runtime invalidates the optimized landscape module");
 assert.match(game,/render-budget\.js\?v=0\.5\.0-alpha158-summit-render-scope2/,"corrected runtime invalidates the track-scoped barrier policy");

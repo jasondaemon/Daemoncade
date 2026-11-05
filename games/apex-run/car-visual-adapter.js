@@ -3,7 +3,7 @@ import {mergeGeometries} from "../vendor/three/addons/utils/BufferGeometryUtils.
 const WHEEL_ORDER=["WheelFrontL","WheelFrontR","WheelRearL","WheelRearR"];
 const RACE_WHEEL_ORDER=["WheelFrontR","WheelFrontL","WheelRearR","WheelRearL"];
 export const RACE_WHEEL_TARGETS=Object.freeze([{x:1.55,y:-.4,z:1.02},{x:1.55,y:-.4,z:-1.02},{x:-1.45,y:-.4,z:1.02},{x:-1.45,y:-.4,z:-1.02}]);
-export const RACE_VISUAL_PROFILES=Object.freeze({cybertruck:Object.freeze({wheelOrder:Object.freeze(["Circle002_9","Circle001_8","Circle003_10","Circle_7"]),rotationY:Math.PI/2,recenter:true,lateralFactor:1.08,targetLength:4.8})});
+export const RACE_VISUAL_PROFILES=Object.freeze({cybertruck:Object.freeze({wheelOrder:Object.freeze(["Circle002_9","Circle001_8","Circle003_10","Circle_7"]),rotationY:Math.PI/2,recenter:true,lateralFactor:1.08,targetLength:4.8}),trail:Object.freeze({lateralFactor:.9}),tourer:Object.freeze({lateralFactor:1})});
 
 function cloneMaterial(material){if(Array.isArray(material))return material.map(item=>item.clone());return material?.clone?.()||material}
 function setColor(material,value){if(material?.color&&value)material.color.set(value)}

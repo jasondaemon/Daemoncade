@@ -58,6 +58,34 @@ const cars=[
       {id:"cyber-midnight",name:"Midnight Grid",description:"Near-black steel with electric cyan details.",unlock:"two-track-finisher",palette:{primary:"#10171b",secondary:"#10a3b8",accent:"#dcebf0"}},
     ],
   },
+  {
+    id:"generic-offroad",
+    name:"Apex Trail",
+    category:"OFF-ROAD",
+    description:"A compact, trademark-neutral trail vehicle prepared from Comrade1280's generic vehicle pack. It uses the same competitive physics as every Apex car.",
+    asset:{status:"ready",url:"assets/cars/generic-offroad.glb",raceUrl:"assets/cars/generic-offroad.glb",raceAdapter:"authored-wheels",raceProfile:"trail",source:"https://sketchfab.com/3d-models/generic-passenger-car-pack-20f9af9b8a404d5cb022ac6fe87f21f5",license:"CC BY 4.0",credit:"Comrade1280 · Generic passenger car pack · off-road vehicle extracted and prepared for Apex Run",metrics:{showroom:{bytes:1579832,triangles:6502,primitives:7},race:{bytes:1579832,triangles:6502,primitives:7}}},
+    preview:{kind:"gltf",camera:"gt"},
+    unlock:"first-clean-finish",
+    cosmetics:[
+      {id:"trail-cyan",name:"Apex Cyan",description:"Factory cyan for the trail bodywork.",unlock:null,palette:{primary:"#0794ad",secondary:"#f5c41f",accent:"#effcfe"}},
+      {id:"trail-sand",name:"Summit Sand",description:"A warm ochre expedition finish.",unlock:"first-clean-finish",palette:{primary:"#a76519",secondary:"#172126",accent:"#f4e8c7"}},
+      {id:"trail-midnight",name:"Midnight Grid",description:"Near-black paint with cool trim.",unlock:"two-track-finisher",palette:{primary:"#05070c",secondary:"#10a3b8",accent:"#dcebf0"}},
+    ],
+  },
+  {
+    id:"generic-minivan",
+    name:"Apex Tourer",
+    category:"MINIVAN",
+    description:"A roomy, trademark-neutral minivan prepared from Comrade1280's generic vehicle pack. It uses the same competitive physics as every Apex car.",
+    asset:{status:"ready",url:"assets/cars/generic-minivan.glb",raceUrl:"assets/cars/generic-minivan.glb",raceAdapter:"authored-wheels",raceProfile:"tourer",source:"https://sketchfab.com/3d-models/generic-passenger-car-pack-20f9af9b8a404d5cb022ac6fe87f21f5",license:"CC BY 4.0",credit:"Comrade1280 · Generic passenger car pack · minivan extracted and prepared for Apex Run",metrics:{showroom:{bytes:1618892,triangles:7450,primitives:7},race:{bytes:1618892,triangles:7450,primitives:7}}},
+    preview:{kind:"gltf",camera:"gt"},
+    unlock:"two-track-finisher",
+    cosmetics:[
+      {id:"tourer-cyan",name:"Apex Cyan",description:"Bright cyan for the practical racer.",unlock:null,palette:{primary:"#0794ad",secondary:"#f5c41f",accent:"#effcfe"}},
+      {id:"tourer-coral",name:"Harbor Coral",description:"A warm coral touring finish.",unlock:"first-clean-finish",palette:{primary:"#b94e3f",secondary:"#172126",accent:"#f4e8c7"}},
+      {id:"tourer-midnight",name:"Midnight Grid",description:"Near-black paint for the late shuttle.",unlock:"two-track-finisher",palette:{primary:"#05070c",secondary:"#10a3b8",accent:"#dcebf0"}},
+    ],
+  },
 ];
 
 export const CAR_CATALOG=Object.freeze(cars.map(car=>Object.freeze({...car,asset:Object.freeze({...car.asset}),preview:Object.freeze({...car.preview}),cosmetics:Object.freeze(car.cosmetics.map(cosmetic=>Object.freeze({...cosmetic,palette:Object.freeze({...cosmetic.palette})})))})));
