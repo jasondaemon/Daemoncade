@@ -3,7 +3,7 @@ import fs from "node:fs";
 import * as THREE from "../vendor/three/three.module.min.js";
 import {GLTFLoader} from "../vendor/three/addons/loaders/GLTFLoader.js";
 import {carById} from "./car-catalog.js";
-import {RACE_WHEEL_TARGETS,createRaceCarVisual} from "./car-visual-adapter.js";
+import {createRaceCarVisual} from "./car-visual-adapter.js";
 
 const url=new URL("./assets/tesla-cybertruck.glb",import.meta.url),bytes=fs.readFileSync(url);
 assert.ok(bytes.length<450_000,"Cybertruck runtime asset lost its lightweight budget");
@@ -26,8 +26,8 @@ assert.deepEqual(visual.wheels.map(wheel=>wheel.name),["Circle002_9","Circle001_
 for(let index=0;index<4;index++)visual.setWheelState(index,{steering:index<2?.22:0,rotation:.7,suspensionOffset:0});
 visual.model.updateMatrixWorld(true);
 for(let index=0;index<4;index++){
-  const center=new THREE.Box3().setFromObject(visual.wheels[index].root).getCenter(new THREE.Vector3()),target=RACE_WHEEL_TARGETS[index];
-  assert.ok(Math.abs(center.x-target.x)<.1&&Math.abs(center.y-target.y)<.08&&Math.abs(center.z-target.z)<.1,`Cybertruck wheel ${index} misses the physical axle`);
+  const wheel=visual.wheels[index];
+  assert.ok(wheel.root.position.distanceTo(wheel.center)<1e-9,`Cybertruck wheel ${index} left its authored wheel arch`);
   assert.equal(visual.wheels[index].roll.rotation.x,.7);
 }
 assert.equal(visual.wheels[0].root.rotation.y,.22,"front Cybertruck wheels do not steer independently");

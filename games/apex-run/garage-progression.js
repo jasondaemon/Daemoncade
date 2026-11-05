@@ -1,4 +1,4 @@
-import {ACHIEVEMENTS,DEFAULT_CAR_ID,DEFAULT_COSMETIC_ID,achievementById,carAssetReady,carById,carUnlocked,cosmeticById,cosmeticUnlocked,resolveSelection} from "./car-catalog.js?v=0.5.0-alpha186-pickup-compact";
+import {ACHIEVEMENTS,DEFAULT_CAR_ID,DEFAULT_COSMETIC_ID,achievementById,carAssetReady,carById,carUnlocked,cosmeticById,cosmeticUnlocked,resolveSelection} from "./car-catalog.js?v=0.5.0-alpha189-pause-continuity";
 import {resolveTrack} from "./track-catalog.js?v=0.5.0-alpha154-summit-descent";
 
 export const GARAGE_KEY="apex-run:garage:v1";

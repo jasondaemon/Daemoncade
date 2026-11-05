@@ -12,5 +12,8 @@ for(const page of [testPage,skylinePage])assert.match(page,/test-lifecycle-ui\.j
 assert.match(game,/handleVisibility\(hidden\)\{if\(hidden&&!deterministicLifecycleMode&&\["countdown","racing"\]/,"deterministic lifecycle visibility changes must not pause the synthetic race");
 assert.match(game,/addEventListener\("blur",\(\)=>\{if\(!deterministicLifecycleMode&&\["countdown","racing"\]/,"deterministic lifecycle focus changes must not pause the synthetic race");
 assert.match(game,/if\(frameGapInvalidates\(elapsed\)&&\["countdown","racing"\]/,"production frame-gap protection must remain enabled");
+assert.match(game,/function invalidateFrameGap\(\)\{if\(practice\.active\|\|!race\.eligible\)return;race\.eligible=false;invalidateGarage\("frame-gap"\);updateHud\(\)\}/,"a slow render frame must invalidate competitive timing without opening a pause modal");
+assert.doesNotMatch(game,/setPaused\(true,"timing"\)/,"render stalls must not interrupt driving with the settings modal");
+assert.match(game,/setPaused\(true,"visibility"\)/,"real focus or visibility loss must retain the intentional invalidating pause");
 assert.match(game,/if\(!testMode\|\|interactiveTestMode\)requestAnimationFrame\(frame\)/,"deterministic lifecycle must remain outside the animation-frame loop");
 console.log("Apex Run deterministic lifecycle focus isolation passed");

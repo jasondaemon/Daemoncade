@@ -1,4 +1,4 @@
-import {createRaceCarVisual,createStaticCarVisual} from "./car-visual-adapter.js?v=0.5.0-alpha186-pickup-compact";
+import {createRaceCarVisual,createStaticCarVisual} from "./car-visual-adapter.js?v=0.5.0-alpha189-pause-continuity";
 
 export function createThreeGaragePreview({THREE,GLTFLoader,quality="high"}){
   let host,renderer,scene,camera,car,frame=0,reducedMotion=false,currentUrl=null,lastFrame=performance.now(),showroomTime=0;const cache=new Map();

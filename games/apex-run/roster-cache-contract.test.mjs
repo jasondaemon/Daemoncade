@@ -1,13 +1,13 @@
 import assert from "node:assert/strict";
 import fs from "node:fs";
 
-const revision="0.5.0-alpha186-pickup-compact",entryRevisions={"game.js":"0.5.0-alpha186-pickup-compact","garage.js":"0.5.0-alpha186-pickup-compact","garage-browser-test.js":"0.5.0-alpha186-pickup-compact"},root=new URL("./",import.meta.url),origin=new URL("http://127.0.0.1:4173/games/apex-run/"),protectedModules=new Set([
+const revision="0.5.0-alpha189-pause-continuity",entryRevisions={"game.js":"0.5.0-alpha189-pause-continuity","garage.js":"0.5.0-alpha189-pause-continuity","garage-browser-test.js":"0.5.0-alpha189-pause-continuity"},root=new URL("./",import.meta.url),origin=new URL("http://127.0.0.1:4173/games/apex-run/"),protectedModules=new Set([
   "car-catalog.js","car-visual-adapter.js","development-roster.js","garage-preview-contract.js",
   "garage-progression.js","garage-storage.js","garage-three-preview.js","race-outcome.js","track-catalog.js",
 ]);
 const entryModules=["game.js","garage.js","garage-browser-test.js"];
 const graphModules=[...entryModules,...protectedModules];
-const moduleRevisions={"car-visual-adapter.js":"0.5.0-alpha186-pickup-compact","garage-three-preview.js":"0.5.0-alpha186-pickup-compact"};
+const moduleRevisions={"car-visual-adapter.js":"0.5.0-alpha189-pause-continuity","garage-three-preview.js":"0.5.0-alpha189-pause-continuity"};
 function source(name){return fs.readFileSync(new URL(name,root),"utf8")}
 function imports(text){return[...text.matchAll(/from\s+["'](\.\/[^"']+)["']/g)].map(match=>match[1])}
 
