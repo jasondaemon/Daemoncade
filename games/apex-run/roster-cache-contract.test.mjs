@@ -1,13 +1,13 @@
 import assert from "node:assert/strict";
 import fs from "node:fs";
 
-const revision="0.5.0-alpha183-four-car",entryRevisions={"game.js":"0.5.0-alpha183-four-car","garage.js":"0.5.0-alpha183-four-car","garage-browser-test.js":"0.5.0-alpha183-four-car"},root=new URL("./",import.meta.url),origin=new URL("http://127.0.0.1:4173/games/apex-run/"),protectedModules=new Set([
+const revision="0.5.0-alpha184-cybertruck-attribution",entryRevisions={"game.js":"0.5.0-alpha184-cybertruck-attribution","garage.js":"0.5.0-alpha184-cybertruck-attribution","garage-browser-test.js":"0.5.0-alpha184-cybertruck-attribution"},root=new URL("./",import.meta.url),origin=new URL("http://127.0.0.1:4173/games/apex-run/"),protectedModules=new Set([
   "car-catalog.js","car-visual-adapter.js","development-roster.js","garage-preview-contract.js",
   "garage-progression.js","garage-storage.js","garage-three-preview.js","race-outcome.js","track-catalog.js",
 ]);
 const entryModules=["game.js","garage.js","garage-browser-test.js"];
 const graphModules=[...entryModules,...protectedModules];
-const moduleRevisions={"car-visual-adapter.js":"0.5.0-alpha183-four-car","garage-three-preview.js":"0.5.0-alpha183-four-car"};
+const moduleRevisions={"car-visual-adapter.js":"0.5.0-alpha184-cybertruck-attribution","garage-three-preview.js":"0.5.0-alpha184-cybertruck-attribution"};
 function source(name){return fs.readFileSync(new URL(name,root),"utf8")}
 function imports(text){return[...text.matchAll(/from\s+["'](\.\/[^"']+)["']/g)].map(match=>match[1])}
 

@@ -2,6 +2,7 @@ import assert from "node:assert/strict";
 import fs from "node:fs";
 import * as THREE from "../vendor/three/three.module.min.js";
 import {GLTFLoader} from "../vendor/three/addons/loaders/GLTFLoader.js";
+import {carById} from "./car-catalog.js";
 import {RACE_WHEEL_TARGETS,createRaceCarVisual} from "./car-visual-adapter.js";
 
 const url=new URL("./assets/tesla-cybertruck.glb",import.meta.url),bytes=fs.readFileSync(url);
@@ -10,7 +11,10 @@ const jsonLength=bytes.readUInt32LE(12),gltf=JSON.parse(bytes.subarray(20,20+jso
 assert.equal(gltf.asset.extras?.license,"CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)");
 assert.equal(gltf.asset.extras?.author,"Lexyc16 (https://sketchfab.com/Lexyc16)");
 assert.equal(gltf.meshes.reduce((sum,mesh)=>sum+mesh.primitives.length,0),14);
-assert.match(fs.readFileSync(new URL("./assets/TESLA-CYBERTRUCK-NOTICE.md",import.meta.url),"utf8"),/Lexyc16[\s\S]*CC BY 4\.0/);
+const notice=fs.readFileSync(new URL("./assets/TESLA-CYBERTRUCK-NOTICE.md",import.meta.url),"utf8"),catalogSource=carById("cybertruck").asset.source;
+assert.match(notice,/Lexyc16[\s\S]*CC BY 4\.0/);
+assert.ok(notice.includes(catalogSource),"Cybertruck catalog source drifted from its bundled attribution notice");
+assert.equal(catalogSource,"https://sketchfab.com/3d-models/tesla-cybertruck-f12e67159f75486bb21213e573520612");
 
 globalThis.self=globalThis;globalThis.createImageBitmap=async()=>({width:1,height:1,close(){}});
 const buffer=bytes.buffer.slice(bytes.byteOffset,bytes.byteOffset+bytes.byteLength),source=await new Promise((resolve,reject)=>new GLTFLoader().parse(buffer,"",result=>resolve(result.scene),reject));

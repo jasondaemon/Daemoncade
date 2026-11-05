@@ -1,10 +1,10 @@
-import {ACHIEVEMENTS,CAR_CATALOG,achievementUnlocked,carAssetReady,carUnlocked,cosmeticUnlocked,resolveSelection} from "./car-catalog.js?v=0.5.0-alpha183-four-car";
-import {achievementProgress,createGarageState,garageCompatibility,migrateGarage,saveGarage,selectGarageItem} from "./garage-progression.js?v=0.5.0-alpha183-four-car";
-import {GaragePreviewHost} from "./garage-preview-contract.js?v=0.5.0-alpha183-four-car";
-import {createThreeGaragePreview} from "./garage-three-preview.js?v=0.5.0-alpha183-four-car";
-import {createGarageStorage} from "./garage-storage.js?v=0.5.0-alpha183-four-car";
+import {ACHIEVEMENTS,CAR_CATALOG,achievementUnlocked,carAssetReady,carUnlocked,cosmeticUnlocked,resolveSelection} from "./car-catalog.js?v=0.5.0-alpha184-cybertruck-attribution";
+import {achievementProgress,createGarageState,garageCompatibility,migrateGarage,saveGarage,selectGarageItem} from "./garage-progression.js?v=0.5.0-alpha184-cybertruck-attribution";
+import {GaragePreviewHost} from "./garage-preview-contract.js?v=0.5.0-alpha184-cybertruck-attribution";
+import {createThreeGaragePreview} from "./garage-three-preview.js?v=0.5.0-alpha184-cybertruck-attribution";
+import {createGarageStorage} from "./garage-storage.js?v=0.5.0-alpha184-cybertruck-attribution";
 import {resolveTrack} from "./track-catalog.js?v=0.5.0-alpha154-summit-descent";
-import {carryDevelopmentRoster,developmentRosterAccess} from "./development-roster.js?v=0.5.0-alpha183-four-car";
+import {carryDevelopmentRoster,developmentRosterAccess} from "./development-roster.js?v=0.5.0-alpha184-cybertruck-attribution";
 import * as THREE from "../vendor/three/three.module.min.js";
 import {GLTFLoader} from "../vendor/three/addons/loaders/GLTFLoader.js";
 

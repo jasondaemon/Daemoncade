@@ -49,7 +49,7 @@ const cars=[
     name:"Cybertruck",
     category:"ELECTRIC TRUCK",
     description:"A lightweight angular electric truck with the same competitive physics as every Apex car.",
-    asset:{status:"ready",url:"assets/tesla-cybertruck.glb",raceUrl:"assets/tesla-cybertruck.glb",raceAdapter:"authored-wheels",raceProfile:"cybertruck",source:"https://sketchfab.com/3d-models/tesla-cybertruck-f12e414d32d044b18d5041ec37831642",license:"CC BY 4.0",credit:"Lexyc16 · Tesla Cybertruck",metrics:{showroom:{bytes:407140,primitives:14},race:{bytes:407140,primitives:14}}},
+    asset:{status:"ready",url:"assets/tesla-cybertruck.glb",raceUrl:"assets/tesla-cybertruck.glb",raceAdapter:"authored-wheels",raceProfile:"cybertruck",source:"https://sketchfab.com/3d-models/tesla-cybertruck-f12e67159f75486bb21213e573520612",license:"CC BY 4.0",credit:"Lexyc16 · Tesla Cybertruck",metrics:{showroom:{bytes:407140,primitives:14},race:{bytes:407140,primitives:14}}},
     preview:{kind:"gltf",camera:"gt",variants:["Apex Steel","Summit Gold","Midnight Grid"]},
     unlock:"apex-medal",
     cosmetics:[

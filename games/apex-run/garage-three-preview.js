@@ -1,4 +1,4 @@
-import {createRaceCarVisual,createStaticCarVisual} from "./car-visual-adapter.js?v=0.5.0-alpha183-four-car";
+import {createRaceCarVisual,createStaticCarVisual} from "./car-visual-adapter.js?v=0.5.0-alpha184-cybertruck-attribution";
 
 export function createThreeGaragePreview({THREE,GLTFLoader,quality="high"}){
   let host,renderer,scene,camera,car,frame=0,reducedMotion=false,currentUrl=null,lastFrame=performance.now(),showroomTime=0;const cache=new Map();
