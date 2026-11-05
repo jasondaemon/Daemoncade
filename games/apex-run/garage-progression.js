@@ -1,4 +1,4 @@
-import {ACHIEVEMENTS,DEFAULT_CAR_ID,DEFAULT_COSMETIC_ID,achievementById,carAssetReady,carById,carUnlocked,cosmeticById,cosmeticUnlocked,resolveSelection} from "./car-catalog.js?v=0.5.0-dev-roster2";
+import {ACHIEVEMENTS,DEFAULT_CAR_ID,DEFAULT_COSMETIC_ID,achievementById,carAssetReady,carById,carUnlocked,cosmeticById,cosmeticUnlocked,resolveSelection} from "./car-catalog.js?v=0.5.0-alpha177-generic-sport";
 import {resolveTrack} from "./track-catalog.js?v=0.5.0-alpha154-summit-descent";
 
 export const GARAGE_KEY="apex-run:garage:v1";

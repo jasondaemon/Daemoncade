@@ -1,0 +1,17 @@
+Model Information:
+* title: Generic passenger car pack
+* source: https://sketchfab.com/3d-models/generic-passenger-car-pack-20f9af9b8a404d5cb022ac6fe87f21f5
+* author: Comrade1280 (https://sketchfab.com/comrade1280)
+
+Model License:
+* license type: CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)
+* requirements: Author must be credited. Commercial use is allowed.
+
+This asset contains the independently-authored Sport body and four corresponding
+wheel nodes extracted from the original pack, with the body color texture removed
+so Apex Run's runtime livery palette can be applied. Geometry and remaining texture
+assets are otherwise preserved from the official Sketchfab download.
+
+Attribution:
+This work is based on "Generic passenger car pack" by Comrade1280, licensed under
+CC-BY-4.0.

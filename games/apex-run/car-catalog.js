@@ -31,6 +31,20 @@ const cars=[
     ],
   },
   {
+    id:"generic-sport",
+    name:"Apex Sport",
+    category:"SPORT COUPE",
+    description:"A lightweight, trademark-neutral sport coupe prepared from Comrade1280's generic vehicle pack. It uses the same competitive physics as every Apex car.",
+    asset:{status:"ready",url:"assets/cars/generic-sport.glb",raceUrl:"assets/cars/generic-sport.glb",raceAdapter:"authored-wheels",source:"https://sketchfab.com/3d-models/generic-passenger-car-pack-20f9af9b8a404d5cb022ac6fe87f21f5",license:"CC BY 4.0",credit:"Comrade1280 · Generic passenger car pack · sport coupe extracted and prepared for Apex Run",metrics:{showroom:{bytes:1730476,triangles:6268,primitives:7},race:{bytes:1730476,triangles:6268,primitives:7}}},
+    preview:{kind:"gltf",camera:"gt"},
+    unlock:"two-track-finisher",
+    cosmetics:[
+      {id:"sport-cyan",name:"Apex Cyan",description:"Bright cyan over the coupe's clean bodywork.",unlock:null,palette:{primary:"#0794ad",secondary:"#f5c41f",accent:"#effcfe"}},
+      {id:"sport-gold",name:"Summit Gold",description:"Warm gold for the lightweight coupe.",unlock:"first-clean-finish",palette:{primary:"#b56b0e",secondary:"#0e1b21",accent:"#f4e8c7"}},
+      {id:"sport-midnight",name:"Midnight Grid",description:"Near-black paint for a restrained race finish.",unlock:"two-track-finisher",palette:{primary:"#05070c",secondary:"#10a3b8",accent:"#dcebf0"}},
+    ],
+  },
+  {
     id:"licensed-prototype-slot",
     name:"Licensed Prototype · Preview Slot",
     category:"PROTOTYPE",

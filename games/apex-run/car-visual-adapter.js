@@ -11,17 +11,13 @@ export function configureCarMaterial(material){
   // Full source transmission is too clear for the optimized cabin, but the
   // exterior pane should still read as glass over the cabin backing below.
   material.color?.set?.(0x0b2028);
-  material.transmission=.72;
   material.opacity=1;
   material.transparent=false;
   material.depthWrite=true;
   material.depthTest=true;
   material.roughness=.14;
   material.metalness=0;
-  material.ior=1.45;
-  material.thickness=.1;
-  material.clearcoat=.42;
-  material.clearcoatRoughness=.14;
+  if(material.isMeshPhysicalMaterial){material.transmission=.72;material.ior=1.45;material.thickness=.1;material.clearcoat=.42;material.clearcoatRoughness=.14}
   material.needsUpdate=true;
   return material;
 }
@@ -34,9 +30,10 @@ export function addCockpitBackings(THREE,root){
   if(panes.length){root.updateMatrixWorld(true);const bounds=new THREE.Box3();for(const pane of panes)bounds.expandByObject(pane);const size=bounds.getSize(new THREE.Vector3()),center=root.worldToLocal(bounds.getCenter(new THREE.Vector3())),minimum=root.worldToLocal(bounds.min.clone()),tub=new THREE.Mesh(new THREE.SphereGeometry(1,16,8),material),floor=new THREE.Mesh(new THREE.CircleGeometry(1,24),material);tub.name="CockpitTub";tub.scale.set(size.x*.44,Math.max(.075,size.y*.3),size.z*.56);tub.position.set(center.x,minimum.y-size.y*.12,center.z);floor.name="CockpitFloor";floor.rotation.x=-Math.PI/2;floor.scale.set(size.x*.48,size.z*.59,1);floor.position.set(center.x,minimum.y-size.y*.035,center.z);for(const part of[tub,floor]){part.castShadow=false;part.receiveShadow=false;root.add(part)}}
   return panes.length;
 }
-function normalizeMergeGeometry(THREE,geometry){for(const name of Object.keys(geometry.attributes))if(!["position","normal","uv"].includes(name))geometry.deleteAttribute(name);if(!geometry.getAttribute("normal"))geometry.computeVertexNormals();if(!geometry.getAttribute("uv"))geometry.setAttribute("uv",new THREE.BufferAttribute(new Float32Array(geometry.getAttribute("position").count*2),2));return geometry}
+function floatAttribute(THREE,attribute){const values=new Float32Array(attribute.count*attribute.itemSize);for(let index=0;index<attribute.count;index++)for(let component=0;component<attribute.itemSize;component++)values[index*attribute.itemSize+component]=attribute.getComponent(index,component);return new THREE.Float32BufferAttribute(values,attribute.itemSize)}
+function normalizeMergeGeometry(THREE,geometry){for(const name of Object.keys(geometry.attributes))if(!["position","normal","uv"].includes(name))geometry.deleteAttribute(name);if(!geometry.getAttribute("normal"))geometry.computeVertexNormals();if(!geometry.getAttribute("uv"))geometry.setAttribute("uv",new THREE.BufferAttribute(new Float32Array(geometry.getAttribute("position").count*2),2));for(const name of["position","normal","uv"]){const attribute=geometry.getAttribute(name);if(attribute)geometry.setAttribute(name,floatAttribute(THREE,attribute))}return geometry}
 export function applyCarPalette(root,palette){
-  const materials=new Map(),clone=material=>{if(!material)return material;if(!materials.has(material))materials.set(material,configureCarMaterial(cloneMaterial(material)));return materials.get(material)};root.traverse(object=>{if(!object.isMesh)return;object.geometry=object.geometry.clone();object.material=Array.isArray(object.material)?object.material.map(clone):clone(object.material);for(const material of(Array.isArray(object.material)?object.material:[object.material])){const name=material?.name||"";if(name.startsWith("Paint 1")||name.includes("BaseColor"))setColor(material,palette?.primary);else if(name.startsWith("Paint 2")||name.includes("2ndColor"))setColor(material,palette?.secondary);else if(name==="Brake"||name.includes("3rdColor"))setColor(material,palette?.accent);material.needsUpdate=true}});return root;
+  const materials=new Map(),clone=material=>{if(!material)return material;if(!materials.has(material))materials.set(material,configureCarMaterial(cloneMaterial(material)));return materials.get(material)};root.traverse(object=>{if(!object.isMesh)return;object.geometry=object.geometry.clone();object.material=Array.isArray(object.material)?object.material.map(clone):clone(object.material);for(const material of(Array.isArray(object.material)?object.material:[object.material])){const name=material?.name||"";if(name.startsWith("Paint 1")||name.includes("BaseColor")||/^Body(?:_|$)/.test(name))setColor(material,palette?.primary);else if(name.startsWith("Paint 2")||name.includes("2ndColor"))setColor(material,palette?.secondary);else if(name==="Brake"||name.includes("3rdColor"))setColor(material,palette?.accent);material.needsUpdate=true}});return root;
 }
 export function inspectAuthoredCar(scene,THREE){
   scene.updateMatrixWorld(true);const box=new THREE.Box3().setFromObject(scene),size=box.getSize(new THREE.Vector3()),wheels=WHEEL_ORDER.map(name=>{const node=scene.getObjectByName(name);if(!node)throw new Error(`Missing authored wheel group: ${name}`);const bounds=new THREE.Box3().setFromObject(node),center=bounds.getCenter(new THREE.Vector3()),wheelSize=bounds.getSize(new THREE.Vector3());return{name,center:[center.x,center.y,center.z],size:[wheelSize.x,wheelSize.y,wheelSize.z]}});return{bounds:{min:box.min.toArray(),max:box.max.toArray(),size:size.toArray()},wheels};

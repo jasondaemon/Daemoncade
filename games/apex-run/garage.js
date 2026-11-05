@@ -1,10 +1,10 @@
-import {ACHIEVEMENTS,CAR_CATALOG,achievementUnlocked,carAssetReady,carUnlocked,cosmeticUnlocked,resolveSelection} from "./car-catalog.js?v=0.5.0-dev-roster2";
-import {achievementProgress,createGarageState,garageCompatibility,migrateGarage,saveGarage,selectGarageItem} from "./garage-progression.js?v=0.5.0-dev-roster2";
-import {GaragePreviewHost} from "./garage-preview-contract.js?v=0.5.0-dev-roster2";
-import {createThreeGaragePreview} from "./garage-three-preview.js?v=0.5.0-alpha176-gt-visible-wheels";
-import {createGarageStorage} from "./garage-storage.js?v=0.5.0-dev-roster2";
+import {ACHIEVEMENTS,CAR_CATALOG,achievementUnlocked,carAssetReady,carUnlocked,cosmeticUnlocked,resolveSelection} from "./car-catalog.js?v=0.5.0-alpha177-generic-sport";
+import {achievementProgress,createGarageState,garageCompatibility,migrateGarage,saveGarage,selectGarageItem} from "./garage-progression.js?v=0.5.0-alpha177-generic-sport";
+import {GaragePreviewHost} from "./garage-preview-contract.js?v=0.5.0-alpha177-generic-sport";
+import {createThreeGaragePreview} from "./garage-three-preview.js?v=0.5.0-alpha177-generic-sport";
+import {createGarageStorage} from "./garage-storage.js?v=0.5.0-alpha177-generic-sport";
 import {resolveTrack} from "./track-catalog.js?v=0.5.0-alpha154-summit-descent";
-import {carryDevelopmentRoster,developmentRosterAccess} from "./development-roster.js?v=0.5.0-dev-roster2";
+import {carryDevelopmentRoster,developmentRosterAccess} from "./development-roster.js?v=0.5.0-alpha177-generic-sport";
 import * as THREE from "../vendor/three/three.module.min.js";
 import {GLTFLoader} from "../vendor/three/addons/loaders/GLTFLoader.js";
 

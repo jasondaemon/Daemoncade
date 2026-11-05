@@ -2,7 +2,7 @@ import assert from "node:assert/strict";
 import * as THREE from "../vendor/three/three.module.min.js";
 import {addCockpitBackings,configureCarMaterial} from "./car-visual-adapter.js";
 
-function material(name){return{name,color:{value:null,set(value){this.value=value}},transmission:1,opacity:.4,transparent:true,depthWrite:false,depthTest:false,roughness:0,metalness:.3,ior:1,thickness:0,clearcoat:0,clearcoatRoughness:0,needsUpdate:false}}
+function material(name){return{name,isMeshPhysicalMaterial:true,color:{value:null,set(value){this.value=value}},transmission:1,opacity:.4,transparent:true,depthWrite:false,depthTest:false,roughness:0,metalness:.3,ior:1,thickness:0,clearcoat:0,clearcoatRoughness:0,needsUpdate:false}}
 
 const glass=configureCarMaterial(material("Glass"));
 assert.equal(glass.color.value,0x0b2028);
@@ -18,6 +18,7 @@ assert.equal(glass.thickness,.1);
 assert.equal(glass.clearcoat,.42);
 assert.equal(glass.clearcoatRoughness,.14);
 assert.equal(glass.needsUpdate,true);
+const standardGlass=new THREE.MeshStandardMaterial({name:"Glass_6",color:0xffffff});configureCarMaterial(standardGlass);assert.equal("transmission" in standardGlass,false,"standard glass must not enable unsupported physical-material shader features");assert.equal(standardGlass.color.getHex(),0x0b2028);
 
 const paint=material("Paint 1 Apex Cyan"),before={...paint};
 assert.equal(configureCarMaterial(paint),paint);
