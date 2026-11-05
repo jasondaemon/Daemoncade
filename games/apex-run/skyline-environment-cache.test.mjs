@@ -3,7 +3,7 @@ import {readFile} from "node:fs/promises";
 
 const root=new URL("./",import.meta.url);
 const [game,index,test,skyline,app,sunGlare,landscape,venueTerrain]=await Promise.all(["game.js","index.html","test.html","skyline-test.html","app.html","sun-glare.js","landscape-details.js","venue-terrain.js"].map(file=>readFile(new URL(file,root),"utf8")));
-const moduleVersion="0.5.0-alpha155-summit-descent",entryVersion="0.5.0-alpha189-pause-continuity";
+const moduleVersion="0.5.0-alpha155-summit-descent",entryVersion="0.5.0-alpha190-gate-program-warmup";
 assert.match(game,new RegExp(`skyline-environment\\.js\\?v=${moduleVersion}`));
 assert.match(game,/skyline-jump-identity\.js\?v=0\.5\.0-alpha159-skyline-marker-grounding/,"Skyline landing identity must invalidate with its road-following geometry");
 for(const[source,name]of[[index,"production"],[test,"integration"],[skyline,"Skyline lifecycle"]])assert.match(source,new RegExp(`game\\.js\\?v=${entryVersion}`),`${name} entry can reuse stale game.js`);

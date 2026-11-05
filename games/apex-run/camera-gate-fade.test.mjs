@@ -1,4 +1,5 @@
 import assert from "node:assert/strict";
+import fs from "node:fs";
 import {gateCameraOpacity,gateStructureDistance} from "./camera-gate-fade.js";
 
 const gate={halfWidth:9.15,height:5,thickness:.38};
@@ -19,4 +20,11 @@ assert.equal(crossing[0],1,"the approach must begin fully visible");
 assert.equal(crossing.at(-1),1,"the departure must restore full visibility");
 const maxStep=Math.max(...crossing.slice(1).map((value,index)=>Math.abs(value-crossing[index])));
 assert.ok(maxStep<.04,`crossing fade jumped by ${maxStep}`);
-console.log("camera gate fade tests passed");
+let previousTransparent=false,oldProgramInvalidations=0;
+for(const opacity of crossing){const transparent=opacity<.999;if(transparent!==previousTransparent){previousTransparent=transparent;oldProgramInvalidations++}}
+assert.equal(oldProgramInvalidations,2,"the previous gate crossing path should reproduce two mid-race shader invalidations");
+const runtime=fs.readFileSync(new URL("./game.js",import.meta.url),"utf8");
+assert.match(runtime,/cameraMaterials[\s\S]*material\.transparent=true;material\.depthWrite=true/,"gate fade shader must be selected before the race begins");
+assert.doesNotMatch(runtime,/material\.transparent!==transparent|material\.needsUpdate=true/,"gate crossings must not rebuild material programs during a race");
+assert.match(runtime,/material\.opacity=opacity;material\.depthWrite=opacity>=\.999/,"gate fade must retain its opaque-depth behavior without shader churn");
+console.log("camera gate fade tests passed",{oldProgramInvalidations,newProgramInvalidations:0});
