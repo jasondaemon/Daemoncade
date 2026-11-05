@@ -1,5 +1,5 @@
 export const FIXED_DT=1/120;
-export {checkpointAdvance,isOnRoad} from "./track-model.js?v=0.5.0-alpha154-summit-descent";
+export {checkpointAdvance,isOnRoad} from "./track-model.js?v=0.5.0-alpha191-surface-layering";
 import {activeTrack,requestedTrackId,trackStorageKeys} from "./track-catalog.js?v=0.5.0-alpha154-summit-descent";
 export const REPLAY_VERSION=activeTrack().replayVersion;
 const REPLAY_BOUNDS=activeTrack().replayBounds;

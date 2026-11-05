@@ -23,6 +23,10 @@ assert.ok(sourceWheels.every(Boolean),"original four Cybertruck wheel pivots wer
 assert.equal(new Set(sourceWheels.map(node=>node.uuid)).size,4,"Cybertruck wheels do not have independent pivots");
 const visual=createRaceCarVisual({THREE,sourceScene:source,palette:{primary:"#8e9da3",secondary:"#17242a",accent:"#bff7ff"},profile:"cybertruck"});
 assert.deepEqual(visual.wheels.map(wheel=>wheel.name),["Circle002_9","Circle001_8","Circle003_10","Circle_7"]);
+for(let index=0;index<4;index++){
+  const size=new THREE.Box3().setFromObject(visual.wheels[index].roll).getSize(new THREE.Vector3());
+  assert.ok(size.x<size.y*.55&&size.x<size.z*.55,`Cybertruck wheel ${index} axle is not aligned laterally`);
+}
 for(let index=0;index<4;index++)visual.setWheelState(index,{steering:index<2?.22:0,rotation:.7,suspensionOffset:0});
 visual.model.updateMatrixWorld(true);
 for(let index=0;index<4;index++){

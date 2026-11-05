@@ -1,4 +1,4 @@
-import {CHECKPOINTS,checkpointAdvance} from "./track-model.js?v=0.5.0-alpha154-summit-descent";
+import {CHECKPOINTS,checkpointAdvance} from "./track-model.js?v=0.5.0-alpha191-surface-layering";
 
 export class RaceController{
   constructor(){this.reset({ready:true})}

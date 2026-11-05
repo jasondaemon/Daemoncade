@@ -1,4 +1,4 @@
-const GROUND_Y=.43,INNER=5,OUTER=18;
+const GROUND_Y=.48,INNER=5,OUTER=18;
 export function landscapeBandBudget(quality="high"){return quality==="low"?{stride:10,fence:28,lights:0}:quality==="medium"?{stride:6,fence:18,lights:54}:{stride:4,fence:12,lights:36}}
 function offsetPoint(sample,side,distance){const edge=sample[side],dx=edge.x-sample.x,dz=edge.z-sample.z,length=Math.hypot(dx,dz)||1;return{x:edge.x+dx/length*distance,z:edge.z+dz/length*distance}}
 export function isInsideHarborWater(x,z){const nx=(x-15)/757,nz=(z-20)/497,angle=Math.atan2(nz,nx),edge=1+.035*Math.sin(angle*3.1)+.022*Math.cos(angle*7.3);return Math.hypot(nx,nz)<=edge+.002}

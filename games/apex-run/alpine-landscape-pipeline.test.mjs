@@ -12,14 +12,14 @@ assert.doesNotMatch(game,/=largeVenue\?await Promise\.all/,"PBR maps must not be
 assert.match(game,/sampleScenario=finishCaptureMode\|\|renderTelemetryMode&&testParams\.get\("scenario"\)==="sample"/,"sample placement remains test-page-only");
 assert.match(game,/finishCaptureMode=testMode&&testParams\.get\("finishCapture"\)==="1"/,"finish capture remains test-page-only");
 assert.match(game,/ACTIVE_TRACK_ID!=="alpine-sprint"&&ACTIVE_TRACK_ID!=="skyline-gauntlet"\)scene\.add\(basin\)/,"flat legacy basin no longer masks Alpine or overlaps Skyline terrain");
-assert.match(game,/landscape-details\.js\?v=0\.5\.0-alpha158-summit-render-scope/,"game imports the current landscape revision");
+assert.match(game,/landscape-details\.js\?v=0\.5\.0-alpha191-surface-layering/,"game imports the current landscape revision");
 assert.match(game,/venue-terrain\.js\?v=0\.5\.0-alpha138-skyline-atmosphere/,"game imports the current terrain revision");
 assert.match(game,/environment-presentation\.js\?v=0\.5\.0-alpha138-skyline-atmosphere/,"game imports the current horizon revision");
 assert.match(game,/sun-glare\.js\?v=0\.5\.0-alpha138-skyline-atmosphere/,"game imports the current glare revision");
 assert.match(game,/scene-lighting\.js\?v=0\.5\.0-alpha108-visible-sun-integrated/,"game imports the integrated lighting revision");
 assert.match(game,/graphics-quality\.js\?v=0\.5\.0-alpha108-visible-sun-integrated/,"game imports the track-aware shadow revision");
-assert.match(index,/game\.js\?v=0\.5\.0-alpha190-gate-program-warmup/,"production entry loads the current game graph");
-assert.match(testPage,/game\.js\?v=0\.5\.0-alpha190-gate-program-warmup/,"test entry loads the current game graph");
+assert.match(index,/game\.js\?v=0\.5\.0-alpha191-surface-layering/,"production entry loads the current game graph");
+assert.match(testPage,/game\.js\?v=0\.5\.0-alpha191-surface-layering/,"test entry loads the current game graph");
 
 for(const quality of["low","medium","high"]){
   const data=ecologyZoneData(ROAD_SAMPLES,quality),geometry=new THREE.BufferGeometry();geometry.setAttribute("position",new THREE.Float32BufferAttribute(data.positions,3));geometry.setIndex(data.indices);geometry.computeVertexNormals();const normal=geometry.getAttribute("normal");
