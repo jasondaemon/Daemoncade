@@ -15,7 +15,7 @@ import {resolveQuality,shadowPlacement,verticalCameraMode} from "./graphics-qual
 import {loadOptionalAssets} from "./optional-assets.js?v=0.5.0-alpha49-review3";
 import {gantryLayout} from "./scenery-layout.js?v=0.5.0-alpha49-review3";
 import {addPaddockArchitecture} from "./paddock-architecture.js?v=0.5.0-alpha50";
-import {addReservoirArchitecture,isReservoirFailure} from "./reservoir-architecture.js?v=0.5.0-alpha53";
+import {addReservoirArchitecture,isReservoirFailure,reservoirTrackEnabled} from "./reservoir-architecture.js?v=0.5.0-alpha160-skyline-wall-marker";
 import {ribbonUV,roadMeshUV} from "./road-uv.js?v=0.5.0-alpha53";
 import {makeBarrierLOD} from "./barrier-lod.js?v=0.5.0-alpha53";
 import {roadMaterialParameters} from "./visual-materials.js?v=0.5.0-alpha53";
@@ -155,7 +155,7 @@ const basinMat=materials.grass,basinGeometry=new THREE.CircleGeometry(VENUE.basi
 let alpineDistrict=null;if(!largeVenue){const start=ROAD_SAMPLES[START_SPAWN_SAMPLE_INDEX],paddockPose=roadPoseNear(start),heroSample={...start,width:start.width+46};addPaddockArchitecture(THREE,scene,heroSample,paddockPose.rotation,{garageColor,garageNormal,garageArm});alpineDistrict=addAlpineStartDistrict(THREE,scene,start,paddockPose.rotation,qualityProfile.id)}
 addVenueTerrain(THREE,scene,VENUE,ROAD_SAMPLES,ACTIVE_TRACK_ID,qualityProfile.id,{color:grassColor,normal:grassNormal,roughness:alpineNatural?null:grassRoughness});
 if(ACTIVE_TRACK_ID!=="harbor-run")addStadiumFill(THREE,scene,VENUE,ROAD_SAMPLES,qualityProfile.id,{concreteColor,concreteNormal,concreteArm});
-let reservoirLayout=null;if(SURFACE_GAPS.length&&ACTIVE_TRACK_ID!=="harbor-run"){const gap=SURFACE_GAPS[0],start=ROAD_SAMPLES[gap.start],end=ROAD_SAMPLES[gap.end];reservoirLayout=addReservoirArchitecture(THREE,scene,start,end,.35,{concreteColor,concreteNormal,concreteArm}).layout}
+let reservoirLayout=null;if(SURFACE_GAPS.length&&reservoirTrackEnabled(ACTIVE_TRACK_ID)){const gap=SURFACE_GAPS[0],start=ROAD_SAMPLES[gap.start],end=ROAD_SAMPLES[gap.end];reservoirLayout=addReservoirArchitecture(THREE,scene,start,end,.35,{concreteColor,concreteNormal,concreteArm}).layout}
 if(ACTIVE_TRACK_ID!=="harbor-run")await addLandscapeDetails(THREE,scene,assetLoader,ROAD_SAMPLES,qualityProfile.id,{color:grassColor,normal:grassNormal,roughness:grassRoughness},ACTIVE_TRACK_ID);
 const mastCount=qualityProfile.id==="low"?2:4;for(let i=0;i<mastCount;i++){const angle=i/mastCount*Math.PI*2,x=VENUE.centerX+Math.cos(angle)*VENUE.halfX*.86,z=VENUE.centerZ+Math.sin(angle)*VENUE.halfZ*.81;addBox({x,y:18,z,hx:.5,hy:18,hz:.5,material:materials.stadium,collider:false});const light=new THREE.PointLight(0xe6f4f2,8,65,2);light.position.set(x,37,z);scene.add(light)}
 // A low perimeter makes the end of supported terrain readable before the

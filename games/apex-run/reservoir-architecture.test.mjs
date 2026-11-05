@@ -1,7 +1,13 @@
 import assert from "node:assert/strict";
-import {isReservoirFailure,reservoirLayout} from "./reservoir-architecture.js";
+import {readFileSync} from "node:fs";
+import {isReservoirFailure,reservoirLayout,reservoirTrackEnabled} from "./reservoir-architecture.js";
 
 const terrain=.35,start={x:-338.03,y:39.91,z:222.47},end={x:-352.55,y:39.46,z:204.44},layout=reservoirLayout(start,end,terrain);
+assert.equal(reservoirTrackEnabled("summit-circuit"),true,"Summit's reservoir jump keeps its authored basin");
+for(const trackId of["alpine-sprint","harbor-run","skyline-gauntlet"])assert.equal(reservoirTrackEnabled(trackId),false,`${trackId} must not inherit Summit's reservoir basin`);
+const game=readFileSync(new URL("game.js",import.meta.url),"utf8");
+assert.match(game,/reservoir-architecture\.js\?v=0\.5\.0-alpha160-skyline-wall-marker/,"runtime cache must include the reservoir scope fix");
+assert.match(game,/SURFACE_GAPS\.length&&reservoirTrackEnabled\(ACTIVE_TRACK_ID\)/,"runtime must apply the track scope before constructing reservoir scenery");
 assert.ok(layout.bankBottom<=terrain,"reservoir embankment does not connect to terrain");
 assert.ok(layout.bankTop<layout.waterY&&layout.waterY-layout.bankTop<.3,"water is not contained by the authored bank top");
 assert.ok(layout.topRadius-layout.waterRadius>=8,"shoreline is too thin to cover the water perimeter from oblique views");

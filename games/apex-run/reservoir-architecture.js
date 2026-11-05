@@ -1,5 +1,7 @@
 import {addRadialServiceBays,addServiceCauseway,venueMaterials} from "./venue-models.js";
 
+export function reservoirTrackEnabled(trackId){return trackId==="summit-circuit"}
+
 export function reservoirLayout(start,end,terrainTop=.35){
   const waterY=Math.min(start.y,end.y)-12,waterRadius=62,shoreWidth=9,topRadius=waterRadius+shoreWidth,bottomRadius=topRadius+24;
   return Object.freeze({centerX:(start.x+end.x)/2,centerZ:(start.z+end.z)/2,waterY,waterRadius,shoreWidth,topRadius,bottomRadius,bankBottom:terrainTop-.4,bankTop:waterY-.22,wallHeight:4.5,terraces:[{radius:bottomRadius,height:8},{radius:bottomRadius-8,height:17},{radius:topRadius+3,height:waterY-terrainTop-.22}]});
