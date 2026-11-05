@@ -86,6 +86,34 @@ const cars=[
       {id:"tourer-midnight",name:"Midnight Grid",description:"Near-black paint for the late shuttle.",unlock:"two-track-finisher",palette:{primary:"#05070c",secondary:"#10a3b8",accent:"#dcebf0"}},
     ],
   },
+  {
+    id:"generic-pickup",
+    name:"Apex Hauler",
+    category:"PICKUP",
+    description:"A trademark-neutral pickup prepared from Comrade1280's generic vehicle pack. It uses the same competitive physics as every Apex car.",
+    asset:{status:"ready",url:"assets/cars/generic-pickup.glb",raceUrl:"assets/cars/generic-pickup.glb",raceAdapter:"authored-wheels",raceProfile:"pickup",source:"https://sketchfab.com/3d-models/generic-passenger-car-pack-20f9af9b8a404d5cb022ac6fe87f21f5",license:"CC BY 4.0",credit:"Comrade1280 · Generic passenger car pack · pickup extracted and prepared for Apex Run",metrics:{showroom:{bytes:1637772,triangles:6918,primitives:7},race:{bytes:1637772,triangles:6918,primitives:7}}},
+    preview:{kind:"gltf",camera:"gt"},
+    unlock:"first-clean-finish",
+    cosmetics:[
+      {id:"pickup-cyan",name:"Apex Cyan",description:"Bright cyan for the practical pickup.",unlock:null,palette:{primary:"#0794ad",secondary:"#f5c41f",accent:"#effcfe"}},
+      {id:"pickup-rust",name:"Harbor Copper",description:"Warm copper bodywork for the service road.",unlock:"first-clean-finish",palette:{primary:"#a95322",secondary:"#172126",accent:"#f4e8c7"}},
+      {id:"pickup-midnight",name:"Midnight Grid",description:"Near-black paint with cool technical trim.",unlock:"two-track-finisher",palette:{primary:"#05070c",secondary:"#10a3b8",accent:"#dcebf0"}},
+    ],
+  },
+  {
+    id:"generic-compact",
+    name:"Apex Pocket",
+    category:"COMPACT",
+    description:"A small trademark-neutral city car prepared from Comrade1280's generic vehicle pack. It uses the same competitive physics as every Apex car.",
+    asset:{status:"ready",url:"assets/cars/generic-compact.glb",raceUrl:"assets/cars/generic-compact.glb",raceAdapter:"authored-wheels",raceProfile:"compact",source:"https://sketchfab.com/3d-models/generic-passenger-car-pack-20f9af9b8a404d5cb022ac6fe87f21f5",license:"CC BY 4.0",credit:"Comrade1280 · Generic passenger car pack · compact extracted and prepared for Apex Run",metrics:{showroom:{bytes:1621632,triangles:7257,primitives:7},race:{bytes:1621632,triangles:7257,primitives:7}}},
+    preview:{kind:"gltf",camera:"gt"},
+    unlock:"two-track-finisher",
+    cosmetics:[
+      {id:"compact-cyan",name:"Apex Cyan",description:"Bright cyan for the compact racer.",unlock:null,palette:{primary:"#0794ad",secondary:"#f5c41f",accent:"#effcfe"}},
+      {id:"compact-lime",name:"Pocket Lime",description:"A vivid lime finish for the short wheelbase.",unlock:"first-clean-finish",palette:{primary:"#65a821",secondary:"#172126",accent:"#eff8d7"}},
+      {id:"compact-midnight",name:"Midnight Grid",description:"Near-black paint with cool technical trim.",unlock:"two-track-finisher",palette:{primary:"#05070c",secondary:"#10a3b8",accent:"#dcebf0"}},
+    ],
+  },
 ];
 
 export const CAR_CATALOG=Object.freeze(cars.map(car=>Object.freeze({...car,asset:Object.freeze({...car.asset}),preview:Object.freeze({...car.preview}),cosmetics:Object.freeze(car.cosmetics.map(cosmetic=>Object.freeze({...cosmetic,palette:Object.freeze({...cosmetic.palette})})))})));
