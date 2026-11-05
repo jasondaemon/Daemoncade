@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import fs from "node:fs";
 
-const revision="0.5.0-alpha191-surface-layering",entryRevisions={"game.js":"0.5.0-alpha191-surface-layering","garage.js":"0.5.0-alpha191-surface-layering","garage-browser-test.js":"0.5.0-alpha191-surface-layering"},root=new URL("./",import.meta.url),origin=new URL("http://127.0.0.1:4173/games/apex-run/"),protectedModules=new Set([
+const revision="0.5.0-alpha191-surface-layering",entryRevisions={"game.js":"0.5.0-alpha192-buttons","garage.js":"0.5.0-alpha191-surface-layering","garage-browser-test.js":"0.5.0-alpha191-surface-layering"},root=new URL("./",import.meta.url),origin=new URL("http://127.0.0.1:4173/games/apex-run/"),protectedModules=new Set([
   "car-catalog.js","car-visual-adapter.js","development-roster.js","garage-preview-contract.js",
   "garage-progression.js","garage-storage.js","garage-three-preview.js","race-outcome.js","track-catalog.js",
 ]);

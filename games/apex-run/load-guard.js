@@ -10,5 +10,12 @@ function showLoadFailure(){
   low.onclick=()=>{try{localStorage.setItem("apex-run:quality:v1","low")}catch{}location.reload()};
   retry.focus();
 }
-addEventListener("error",showLoadFailure,true);
+function isApexStartupError(event){
+  if(event instanceof ErrorEvent)return true;
+  const target=event.target;
+  if(!(target instanceof HTMLScriptElement)||!target.src)return false;
+  const source=new URL(target.src,location.href);
+  return source.origin===location.origin&&/(?:^|\/)(?:game|load-guard)\.js$/.test(source.pathname);
+}
+addEventListener("error",event=>{if(isApexStartupError(event))showLoadFailure()},true);
 addEventListener("unhandledrejection",showLoadFailure);
