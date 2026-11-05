@@ -45,14 +45,18 @@ const cars=[
     ],
   },
   {
-    id:"licensed-prototype-slot",
-    name:"Licensed Prototype · Preview Slot",
-    category:"PROTOTYPE",
-    description:"Reserved for a verified browser-ready prototype model. This placeholder is not selectable.",
-    asset:{status:"pending-verification",url:null,license:null,credit:null},
-    preview:{kind:"silhouette",camera:"prototype"},
+    id:"cybertruck",
+    name:"Cybertruck",
+    category:"ELECTRIC TRUCK",
+    description:"A lightweight angular electric truck with the same competitive physics as every Apex car.",
+    asset:{status:"ready",url:"assets/tesla-cybertruck.glb",raceUrl:"assets/tesla-cybertruck.glb",raceAdapter:"authored-wheels",raceProfile:"cybertruck",source:"https://sketchfab.com/3d-models/tesla-cybertruck-f12e414d32d044b18d5041ec37831642",license:"CC BY 4.0",credit:"Lexyc16 · Tesla Cybertruck",metrics:{showroom:{bytes:407140,primitives:14},race:{bytes:407140,primitives:14}}},
+    preview:{kind:"gltf",camera:"gt",variants:["Apex Steel","Summit Gold","Midnight Grid"]},
     unlock:"apex-medal",
-    cosmetics:[],
+    cosmetics:[
+      {id:"cyber-steel",name:"Apex Steel",description:"Brushed silver with a restrained cyan accent.",unlock:null,palette:{primary:"#a9b8bd",secondary:"#18c6d8",accent:"#edfafa"}},
+      {id:"cyber-gold",name:"Summit Gold",description:"Warm metallic gold over dark technical trim.",unlock:"first-clean-finish",palette:{primary:"#b58a3a",secondary:"#18272d",accent:"#f4e8c7"}},
+      {id:"cyber-midnight",name:"Midnight Grid",description:"Near-black steel with electric cyan details.",unlock:"two-track-finisher",palette:{primary:"#10171b",secondary:"#10a3b8",accent:"#dcebf0"}},
+    ],
   },
 ];
 
@@ -72,7 +76,7 @@ export function carAssetReady(car){return car?.asset?.status==="ready"&&typeof c
 export function raceAssetFor(car){
   if(!carAssetReady(car))return null;
   if(car.asset.raceAdapter==="formula")return{adapter:"formula",url:car.asset.raceUrl||car.asset.url};
-  if(car.asset.raceAdapter==="authored-wheels"&&typeof car.asset.raceUrl==="string"&&car.asset.raceUrl.length>0)return{adapter:"authored-wheels",url:car.asset.raceUrl};
+  if(car.asset.raceAdapter==="authored-wheels"&&typeof car.asset.raceUrl==="string"&&car.asset.raceUrl.length>0){const result={adapter:"authored-wheels",url:car.asset.raceUrl};if(car.asset.raceProfile)result.profile=car.asset.raceProfile;return result}
   return null;
 }
 export function achievementUnlocked(state,id){return id==null||Boolean(state?.achievements?.[id]?.unlockedAt)}

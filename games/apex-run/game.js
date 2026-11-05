@@ -41,13 +41,13 @@ import {addHarborServiceDistrict} from "./harbor-service-district.js?v=0.5.0-alp
 import {addHarborRouteCampus} from "./harbor-route-campus.js?v=0.5.0-alpha154-summit-descent";
 import {addVenueTerrain} from "./venue-terrain.js?v=0.5.0-alpha138-skyline-atmosphere";
 import {naturalLightingProfile,renderTrackBox} from "./scene-lighting.js?v=0.5.0-alpha108-visible-sun-integrated";
-import {raceAssetFor,resolveSelection} from "./car-catalog.js?v=0.5.0-alpha177-generic-sport";
-import {createRaceCarVisual} from "./car-visual-adapter.js?v=0.5.0-alpha177-generic-sport";
+import {raceAssetFor,resolveSelection} from "./car-catalog.js?v=0.5.0-alpha183-four-car";
+import {createRaceCarVisual} from "./car-visual-adapter.js?v=0.5.0-alpha183-four-car";
 import {gateCameraOpacity,gateStructureDistance} from "./camera-gate-fade.js?v=0.5.0-alpha87-camera2";
-import {createGarageStorage} from "./garage-storage.js?v=0.5.0-alpha177-generic-sport";
-import {migrateGarage,recordRaceEligibilityTransition,recordRaceOutcome,saveGarage} from "./garage-progression.js?v=0.5.0-alpha177-generic-sport";
-import {createRunId,raceOutcomeFromFinish} from "./race-outcome.js?v=0.5.0-alpha177-generic-sport";
-import {carryDevelopmentRoster,developmentRosterAccess} from "./development-roster.js?v=0.5.0-alpha177-generic-sport";
+import {createGarageStorage} from "./garage-storage.js?v=0.5.0-alpha183-four-car";
+import {migrateGarage,recordRaceEligibilityTransition,recordRaceOutcome,saveGarage} from "./garage-progression.js?v=0.5.0-alpha183-four-car";
+import {createRunId,raceOutcomeFromFinish} from "./race-outcome.js?v=0.5.0-alpha183-four-car";
+import {carryDevelopmentRoster,developmentRosterAccess} from "./development-roster.js?v=0.5.0-alpha183-four-car";
 import {beginPractice,completePracticeSector,createPracticeSession,currentPracticeTime,endPractice,retryPracticeSector as resetPracticeSector} from "./practice-session.js?v=0.5.0-alpha141-practice";
 import {raceBriefing,resultNextStep} from "./race-briefing.js?v=0.5.0-alpha150-player-clarity";
 import {drivingFeedback,landingFeedback} from "./driving-feedback.js?v=0.5.0-alpha145-driving-feedback";
@@ -186,7 +186,7 @@ if(!selectedRaceAsset)throw new Error(`Selected car ${selectedGarage.car.id} has
 if(alpineDistrict)addAlpineDisplayCars(THREE,alpineDistrict.district,makeFormulaDisplayLod(THREE,formulaAsset),qualityProfile.id);
 document.documentElement.dataset.selectedCar=selectedGarage.car.id;document.documentElement.dataset.selectedCosmetic=selectedGarage.cosmetic.id;
 const selectedFormulaAsset=selectedRaceAsset.adapter==="formula"&&selectedRaceAsset.url!=="assets/low-poly-f1.glb"?(await assetLoader.loadAsync(`./${selectedRaceAsset.url}`)).scene:formulaAsset,formulaCar=makeFormulaCar(THREE,selectedFormulaAsset,selectedGarage.cosmetic.palette),wheelMeshes=[];let selectedVisual=null,car=formulaCar;
-if(selectedRaceAsset.adapter==="authored-wheels"){const authoredAsset=(await assetLoader.loadAsync(`./${selectedRaceAsset.url}`)).scene;selectedVisual=createRaceCarVisual({THREE,sourceScene:authoredAsset,palette:selectedGarage.cosmetic.palette});car=selectedVisual.root;scene.add(car)}else if(selectedRaceAsset.adapter==="formula"){scene.add(car);for(let index=0;index<wheelOffsets.length;index++){const wheel=makeFormulaWheelVisual(THREE,selectedFormulaAsset,index);scene.add(wheel.root);wheelMeshes.push(wheel)}}else throw new Error(`Unsupported race visual adapter: ${selectedRaceAsset.adapter}`);
+if(selectedRaceAsset.adapter==="authored-wheels"){const authoredAsset=(await assetLoader.loadAsync(`./${selectedRaceAsset.url}`)).scene;selectedVisual=createRaceCarVisual({THREE,sourceScene:authoredAsset,palette:selectedGarage.cosmetic.palette,profile:selectedRaceAsset.profile});car=selectedVisual.root;scene.add(car)}else if(selectedRaceAsset.adapter==="formula"){scene.add(car);for(let index=0;index<wheelOffsets.length;index++){const wheel=makeFormulaWheelVisual(THREE,selectedFormulaAsset,index);scene.add(wheel.root);wheelMeshes.push(wheel)}}else throw new Error(`Unsupported race visual adapter: ${selectedRaceAsset.adapter}`);
 const ghost=makeFormulaGhost(THREE,formulaCar,wheelOffsets,formulaAsset);scene.add(ghost);
 const smokeGeometry=new THREE.SphereGeometry(.25,8,5),smoke=Array.from({length:28},()=>{const s=new THREE.Mesh(smokeGeometry,new THREE.MeshBasicMaterial({color:0xd8e2e8,transparent:true,opacity:0,depthWrite:false}));s.visible=false;s.userData.life=0;scene.add(s);return s});let smokeCursor=0;function puff(p,intensity=1){const s=smoke[smokeCursor++%smoke.length];s.position.set(p.x,p.y+.25,p.z);s.scale.setScalar(.72+intensity*.42);s.userData.life=.72+intensity*.28;s.material.opacity=.12+intensity*.1;s.visible=true}
 
