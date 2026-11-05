@@ -11,6 +11,7 @@ function frameAt(samples,index){
   return{sample,forward,lateral,up};
 }
 function marker(samples,index,{length,width,lift=.075,lateralOffset=0,kind,palette,zone,gapId}){const{sample,forward,lateral,up}=frameAt(samples,index);return Object.freeze({index,kind,zone,gapId,palette:palette.id,color:palette.color,emissive:palette.emissive,length,width,height:.035,lift,lateralOffset,x:sample.x+up.x*lift+lateral.x*lateralOffset,y:sample.y+up.y*lift+lateral.y*lateralOffset,z:sample.z+up.z*lift+lateral.z*lateralOffset,forward:Object.freeze(forward),lateral:Object.freeze(lateral),up:Object.freeze(up)});}
+function localSegmentLength(samples,index){const before=samples[Math.max(0,index-1)],after=samples[Math.min(samples.length-1,index+1)];return Math.hypot(after.x-before.x,after.y-before.y,after.z-before.z)*1.015;}
 function gatePost(samples,index,side,palette,gapId){const{sample,forward,lateral,up}=frameAt(samples,index),edge=sample[side],sign=side==="left"?1:-1,offset=1.25,height=side==="left"?6.4:4.8;return Object.freeze({index,kind:"landing-pylon",zone:"landing",gapId,palette:palette.id,color:palette.color,emissive:palette.emissive,length:.55,width:.55,height,x:edge.x+lateral.x*sign*offset+up.x*height/2,y:edge.y+lateral.y*sign*offset+up.y*height/2,z:edge.z+lateral.z*sign*offset+up.z*height/2,forward:Object.freeze(forward),lateral:Object.freeze(lateral),up:Object.freeze(up)});}
 
 export function skylineJumpIdentitySpecs(samples,gaps){
@@ -19,7 +20,8 @@ export function skylineJumpIdentitySpecs(samples,gaps){
     const palette=palettes[jumpIndex%palettes.length],approachIndices=[gap.start-30,gap.start-20,gap.start-10],landingIndices=[gap.end+8,gap.end+18,gap.end+28],landingGate=Math.min(samples.length-1,gap.end+12);
     approachIndices.forEach((index,step)=>markings.push(marker(samples,index,{length:1.05,width:samples[index].width*(.48+step*.17),kind:"approach-chevron",palette,zone:"approach",gapId:gap.id})));
     landingIndices.forEach(index=>markings.push(marker(samples,index,{length:1.3,width:samples[index].width*.82,kind:"landing-bar",palette,zone:"landing",gapId:gap.id})));
-    for(const side of[-1,1])markings.push(marker(samples,gap.end+18,{length:24,width:.48,lateralOffset:side*(samples[gap.end+18].width/2-1),kind:"landing-bracket",palette,zone:"landing",gapId:gap.id}));
+    const bracketIndices=[];for(let index=gap.end+13;index<=gap.end+23;index+=2)bracketIndices.push(index);
+    for(const side of[-1,1])for(const index of bracketIndices)markings.push(marker(samples,index,{length:localSegmentLength(samples,index),width:.48,lateralOffset:side*(samples[index].width/2-1),kind:"landing-bracket",palette,zone:"landing",gapId:gap.id}));
     pylons.push(gatePost(samples,landingGate,"left",palette,gap.id),gatePost(samples,landingGate,"right",palette,gap.id));
     jumps.push(Object.freeze({id:gap.id,palette:palette.id,color:palette.color,approach:Object.freeze(approachIndices),landing:Object.freeze(landingIndices),landingGate}));
   });
