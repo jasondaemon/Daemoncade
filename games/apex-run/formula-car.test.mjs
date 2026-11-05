@@ -13,9 +13,11 @@ assert.ok(FORMULA_VISUAL.rearWingX<FORMULA_VISUAL.rearAxle-.6);
 assert.ok(FORMULA_VISUAL.width>FORMULA_VISUAL.trackHalf*2+.35);
 assert.ok(FORMULA_VISUAL.height<1.5);
 assert.ok(FORMULA_VISUAL.length<5.6);
-const [bytes,indexHtml]=await Promise.all([readFile(new URL(FORMULA_VISUAL.asset,import.meta.url)),readFile(new URL("index.html",import.meta.url),"utf8")]);
+const [bytes,indexHtml,game]=await Promise.all([readFile(new URL(FORMULA_VISUAL.asset,import.meta.url)),readFile(new URL("index.html",import.meta.url),"utf8"),readFile(new URL("game.js",import.meta.url),"utf8")]);
 assert.equal(bytes.length,632028);
 assert.equal(bytes.toString("ascii",0,4),"glTF");
+assert.match(game,/formula-car\.js\?v=0\.5\.0-alpha161-race-livery/);
+assert.match(game,/makeFormulaCar\(THREE,selectedFormulaAsset,selectedGarage\.cosmetic\.palette\)/,"race must pass the equipped Formula palette to its visual adapter");
 assert.equal(bytes.readUInt32LE(8),bytes.length);
 const jsonLength=bytes.readUInt32LE(12),metadata=JSON.parse(bytes.toString("utf8",20,20+jsonLength).replace(/\0| +$/g,""));
 assert.equal(metadata.asset.extras.title,"Low Poly-F1");
@@ -25,9 +27,10 @@ assert.equal(metadata.asset.extras.source,"https://sketchfab.com/3d-models/low-p
 assert.match(indexHtml,/connect-src 'self'/,"same-origin GLB fetch is not allowed by CSP");
 assert.doesNotMatch(indexHtml,/connect-src[^;]*(?:\*|https?:)/,"CSP unexpectedly allows an external asset destination");
 for(const name of["FR_Tire","FL_Tire","RR_Tire","RL_Tire"])assert.ok(metadata.nodes.some(node=>node.name===name),`asset is missing ${name}`);
-const arrayBuffer=bytes.buffer.slice(bytes.byteOffset,bytes.byteOffset+bytes.byteLength),asset=(await new GLTFLoader().parseAsync(arrayBuffer,"")).scene,car=makeFormulaCar(THREE,asset),carSize=new THREE.Box3().setFromObject(car).getSize(new THREE.Vector3());
+const arrayBuffer=bytes.buffer.slice(bytes.byteOffset,bytes.byteOffset+bytes.byteLength),asset=(await new GLTFLoader().parseAsync(arrayBuffer,"")).scene,colors={primary:"#d9a629",secondary:"#10232c",accent:"#f7efd7"},car=makeFormulaCar(THREE,asset,colors),carSize=new THREE.Box3().setFromObject(car).getSize(new THREE.Vector3());
 assert.ok(carSize.x>4.7&&carSize.x<5.2&&carSize.z>2.2&&carSize.z<2.7&&carSize.y<1.35,`fitted body bounds changed: ${carSize.toArray()}`);
 for(const name of["FR_Tire","FL_Tire","RR_Tire","RL_Tire"])assert.equal(car.getObjectByName(name),undefined,`static duplicate ${name} remained in body`);const display=makeFormulaDisplayLod(THREE,asset);assert.ok(display.bodyGeometry.attributes.position.count>1000);assert.ok(display.wheelGeometry.attributes.position.count>100);
+const styled={};car.traverse(object=>{if(object.isMesh&&object.material?.name)styled[object.material.name]=`#${object.material.color.getHexString()}`});assert.equal(styled.BaseColor,colors.primary);assert.equal(styled["2ndColor"],colors.secondary);assert.equal(styled["3rdColor"],colors.accent);
 const wheelBounds=[];for(let index=0;index<4;index++){const wheel=makeFormulaWheelVisual(THREE,asset,index),box=new THREE.Box3().setFromObject(wheel.root),center=box.getCenter(new THREE.Vector3()),size=box.getSize(new THREE.Vector3());assert.ok(center.length()<1e-5,`wheel ${index} pivot is not centered: ${center.toArray()}`);assert.ok(size.x>.84&&size.x<.9&&size.y>.84&&size.y<.9&&size.z>.43&&size.z<.47,`wheel ${index} dimensions changed: ${size.toArray()}`);const mesh=wheel.tire.getObjectByProperty("isMesh",true),referenceAxle=new THREE.Vector3(1,0,0);for(const steering of[0,.48,-.48])for(let step=0;step<=16;step++){wheel.steer.rotation.y=steering;wheel.roll.rotation.z=step*Math.PI/8;wheel.root.updateMatrixWorld(true);const axle=referenceAxle.clone().transformDirection(mesh.matrixWorld),expected=new THREE.Vector3(0,0,-1).applyAxisAngle(new THREE.Vector3(0,1,0),steering);assert.ok(Math.abs(axle.dot(expected))>.999999,`wheel ${index} axle cones at steer ${steering}, roll step ${step}: ${axle.toArray()}`);const hub=wheel.roll.getWorldPosition(new THREE.Vector3());assert.ok(hub.length()<1e-8,`wheel ${index} hub orbited at roll step ${step}: ${hub.toArray()}`)}wheelBounds.push(size.toArray())}
 const ghost=makeFormulaGhost(THREE,car,WHEEL_OFFSETS,asset);assert.equal(ghost.visible,false);assert.equal(ghost.children.length,car.children.length+4);assert.equal(ghost.getObjectByName("formula-ghost")?.name,"formula-ghost");
 console.log("Apex Run Formula visual invariants passed",{visual:FORMULA_VISUAL,carSize:carSize.toArray(),wheelBounds});
