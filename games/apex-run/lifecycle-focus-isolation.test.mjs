@@ -8,7 +8,7 @@ assert.match(game,/qaDriveMode=testMode&&!deterministicLifecyclePhase&&testParam
 assert.match(game,/deterministicLifecycleMode=testMode&&garageStorage\.isIsolated&&deterministicLifecyclePhase/,"focus isolation must require the test entry, isolated storage and an exact lifecycle phase");
 assert.match(lifecycle,/startIsolated\(\).*url\.searchParams\.delete\("qaDrive"\).*url\.searchParams\.set\("testStorage",token\).*url\.searchParams\.set\("lifecycle","run"\)/,"the lifecycle launcher must remove inherited interactive QA mode");
 assert.match(lifecycle,/yieldLifecycle=\(\)=>globalThis\.scheduler\?\.yield\?globalThis\.scheduler\.yield\(\):Promise\.resolve\(\)/,"hidden lifecycle progress must not depend on throttled timers");
-for(const page of [testPage,skylinePage])assert.match(page,/test-lifecycle-ui\.js\?v=0\.5\.0-alpha149-skyline-legibility/,"lifecycle entry must not reuse a stale launcher");
+for(const page of [testPage,skylinePage])assert.match(page,/test-lifecycle-ui\.js\?v=0\.5\.0-alpha192-skyline-loop-harness/,"lifecycle entry must not reuse a stale launcher");
 assert.match(game,/handleVisibility\(hidden\)\{if\(hidden&&!deterministicLifecycleMode&&\["countdown","racing"\]/,"deterministic lifecycle visibility changes must not pause the synthetic race");
 assert.match(game,/addEventListener\("blur",\(\)=>\{if\(!deterministicLifecycleMode&&\["countdown","racing"\]/,"deterministic lifecycle focus changes must not pause the synthetic race");
 assert.match(game,/if\(frameGapInvalidates\(elapsed\)&&\["countdown","racing"\]/,"production frame-gap protection must remain enabled");

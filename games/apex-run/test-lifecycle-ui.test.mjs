@@ -14,6 +14,8 @@ assert.match(runner,/bestReplayTime/,"runner does not verify the newly saved rep
 assert.doesNotMatch(runner,/localStorage\.setItem|localStorage\.clear/,"runner synthesizes or destroys PB storage instead of finishing the race");
 assert.match(runner,/localStorage\.removeItem\(keys\.pb\)/,"runner does not clean only its isolated PB key");
 assert.match(runner,/controller\.placeLoopPractice\(\)/,"visible loop practice control does not use the real runtime recovery pose");
+assert.match(runner,/hasLoop=ROAD_SAMPLES\.some\(sample=>sample\.stunt==="loop"\)/,"loop practice does not preserve loop-capable tracks such as Skyline");
+assert.match(testPage,/test-lifecycle-ui\.js\?v=0\.5\.0-alpha192-skyline-loop-harness/,"test harness cache token is stale");
 assert.match(runner,/snapshot\.eligible\|\|snapshot\.checkpoint!==CHECKPOINTS\.length-1/,"loop practice control does not require a PB-ineligible pre-loop state");
 assert.match(await readFile(new URL("./game.js",import.meta.url),"utf8"),/loopPracticeMode\?placeLoopPractice\(\):practice\.active\?retryCurrentSector\(\):restart\(\)/,"R does not preserve the visible loop-practice lifecycle");
 console.log("Apex Run visible test-only lifecycle runner passed");
