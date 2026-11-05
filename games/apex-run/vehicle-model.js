@@ -1,7 +1,7 @@
 // Rapier's vehicle axes are local +X forward, +Y up and +Z axle. The forces
 // below target a ~900 kg arcade car: stronger launch torque tapers into the
 // original cruise response, while braking stays in the established arcade tune.
-export const VEHICLE={gravity:-16,maxSpeed:38,reverseMaxSpeed:10,reverseEngageSpeed:.75,engine:1200,launchEngine:1550,launchFadeSpeed:25,reverseScale:-.75,serviceBrake:35,handbrakeFront:250,handbrakeRear:1900,roadGrip:2.35,driftGrip:1.05,offroadGrip:1.55,steerLow:.48,steerHigh:.065,steerRise:1.2,steerRelease:5.6,steerCounter:4.2};
+export const VEHICLE={suspensionRest:.48,gravity:-16,maxSpeed:38,reverseMaxSpeed:10,reverseEngageSpeed:.75,engine:1200,launchEngine:1550,launchFadeSpeed:25,reverseScale:-.75,serviceBrake:35,handbrakeFront:250,handbrakeRear:1900,roadGrip:2.35,driftGrip:1.05,offroadGrip:1.55,steerLow:.48,steerHigh:.065,steerRise:1.2,steerRelease:5.6,steerCounter:4.2};
 // Suspension rays should see the road group, never the physical guardrail.
 // The chassis retains its default all-groups mask, so rails still block it.
 export const SUSPENSION_QUERY_GROUPS=(1<<16)|1;
@@ -33,7 +33,7 @@ export function createVehicle(RAPIER,world,start={x:-2,y:2.2,z:0}){
   // on asphalt. The 22 cm radius gives glancing contacts a separating normal.
   const chassisCollider=world.createCollider(RAPIER.ColliderDesc.roundCuboid(2.08,.02,.8,.22).setTranslation(0,-.08,0).setMass(1080).setFriction(.62),chassis);
   const vehicle=world.createVehicleController(chassis);
-  for(const p of WHEEL_OFFSETS){vehicle.addWheel(p,{x:0,y:-1,z:0},{x:0,y:0,z:1},.42,.48);const i=vehicle.numWheels()-1;vehicle.setWheelSuspensionStiffness(i,72);vehicle.setWheelSuspensionCompression(i,5.2);vehicle.setWheelSuspensionRelaxation(i,6.4);vehicle.setWheelMaxSuspensionTravel(i,.38);vehicle.setWheelMaxSuspensionForce(i,18000);vehicle.setWheelSideFrictionStiffness(i,1.35);vehicle.setWheelFrictionSlip(i,VEHICLE.roadGrip)}
+  for(const p of WHEEL_OFFSETS){vehicle.addWheel(p,{x:0,y:-1,z:0},{x:0,y:0,z:1},.42,VEHICLE.suspensionRest);const i=vehicle.numWheels()-1;vehicle.setWheelSuspensionStiffness(i,72);vehicle.setWheelSuspensionCompression(i,5.2);vehicle.setWheelSuspensionRelaxation(i,6.4);vehicle.setWheelMaxSuspensionTravel(i,.38);vehicle.setWheelMaxSuspensionForce(i,18000);vehicle.setWheelSideFrictionStiffness(i,1.35);vehicle.setWheelFrictionSlip(i,VEHICLE.roadGrip)}
   return{chassis,chassisCollider,vehicle,wheelOffsets:WHEEL_OFFSETS};
 }
 export function driveVehicle(vehicle,state,input,dt,onRoad=true,motionSpeed=null){

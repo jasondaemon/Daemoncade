@@ -1,6 +1,8 @@
 import assert from "node:assert/strict";
 import {VEHICLE,driveVehicle} from "./vehicle-model.js";
 
+assert.equal(VEHICLE.suspensionRest,.48,"race visuals and Rapier wheels must share a finite suspension rest length");
+
 function mockVehicle(speed=20){
   const calls={engine:[],brake:[],steering:[],grip:[]};
   return{calls,currentVehicleSpeed:()=>speed,setWheelEngineForce:(i,v)=>calls.engine[i]=v,setWheelBrake:(i,v)=>calls.brake[i]=v,setWheelSteering:(i,v)=>calls.steering[i]=v,setWheelFrictionSlip:(i,v)=>calls.grip[i]=v};
