@@ -1,0 +1,22 @@
+export const RESOURCE_TYPES=Object.freeze(["forest","mine"]);
+export const STARTING_STOCK=Object.freeze({food:120,wood:70,stone:35});
+export const UPGRADE_COSTS=Object.freeze([
+  Object.freeze({wood:0,stone:0}),
+  Object.freeze({wood:22,stone:8}),
+  Object.freeze({wood:38,stone:24}),
+  Object.freeze({wood:64,stone:58}),
+  Object.freeze({wood:110,stone:120})
+]);
+
+export function createEconomy(factionIds){return Object.fromEntries(factionIds.map(id=>[id,{food:STARTING_STOCK.food,wood:STARTING_STOCK.wood,stone:STARTING_STOCK.stone,priorities:{food:35,wood:30,stone:20,build:15}}]));}
+export function canAffordUpgrade(level,stock){const cost=UPGRADE_COSTS[level+1];if(!cost)return{ok:false,reason:"maximum stage"};const missing=Object.fromEntries(["wood","stone"].map(key=>[key,Math.max(0,cost[key]-(stock[key]||0))]).filter(([,value])=>value));return Object.keys(missing).length?{ok:false,cost,missing}:{ok:true,cost,missing:{}};}
+export function spendUpgrade(level,stock){const verdict=canAffordUpgrade(level,stock);if(!verdict.ok)return{...verdict,stock:{...stock}};return{...verdict,stock:{...stock,wood:stock.wood-verdict.cost.wood,stone:stock.stone-verdict.cost.stone}};}
+export function purchaseUpgradePath(currentLevel,targetLevel,stock){let level=currentLevel,next={...stock};while(level<targetLevel){const purchase=spendUpgrade(level,next);if(!purchase.ok)return{ok:false,level,stock:next,missing:purchase.missing};next=purchase.stock;level++;}return{ok:true,level,stock:next,missing:{}};}
+export function normalizedPriorities(value={}){const keys=["food","wood","stone","build"],entries=keys.map(key=>[key,Math.max(0,Number(value[key])||0)]),total=entries.reduce((sum,[,amount])=>sum+amount,0)||1;return Object.fromEntries(entries.map(([key,amount])=>[key,amount/total]));}
+export function workerJob(workerId,priorities){const weights=normalizedPriorities(priorities),ticket=((workerId*2654435761)>>>0)/4294967296;let cursor=0;for(const key of ["food","wood","stone","build"]){cursor+=weights[key];if(ticket<cursor)return key;}return"build";}
+export function resourceForJob(job){return job==="wood"?"forest":job==="stone"?"mine":null;}
+export function nearestReachableNode(person,nodes,type,pathLength){return nodes.filter(node=>node.type===type&&node.amount>0).map(node=>({node,pathLength:pathLength(person,node)})).filter(candidate=>Number.isFinite(candidate.pathLength)&&candidate.pathLength>=0).sort((a,b)=>a.pathLength-b.pathLength||a.node.id-b.node.id)[0]?.node||null;}
+export function harvest(node,stock,dt,rate=1){if(!node||node.amount<=0||dt<=0)return 0;const key=node.type==="forest"?"wood":"stone",taken=Math.min(node.amount,dt*rate);node.amount-=taken;stock[key]=(stock[key]||0)+taken;return taken;}
+export function generateNodes({size,starts,random,isValid}){const nodes=[];let nextId=1;const place=(type,x,y,amount)=>{if(!isValid(x,y)||nodes.some(node=>Math.hypot(node.x-x,node.y-y)<2.2))return false;nodes.push({id:nextId++,type,x:x+.5,y:y+.5,amount});return true;};for(const start of starts)for(const [type,angle] of [["forest",.7],["mine",2.25]]){let placed=false;for(let ring=4;ring<=8&&!placed;ring++)for(let step=0;step<12&&!placed;step++){const theta=angle+step*Math.PI/6,x=Math.floor(start.x+Math.cos(theta)*ring),y=Math.floor(start.y+Math.sin(theta)*ring);placed=place(type,x,y,type==="forest"?180:140);}if(!placed)throw new Error(`No fair ${type} site near start`);}for(let attempt=0;attempt<size*5;attempt++){const type=random()<.65?"forest":"mine",x=Math.floor(random()*size),y=Math.floor(random()*size);place(type,x,y,type==="forest"?120+Math.floor(random()*121):90+Math.floor(random()*91));}return nodes;}
+export function revealFog(explored,size,x,y,radius){for(let yy=Math.max(0,Math.floor(y-radius));yy<Math.min(size,Math.ceil(y+radius)+1);yy++)for(let xx=Math.max(0,Math.floor(x-radius));xx<Math.min(size,Math.ceil(x+radius)+1);xx++)if(Math.hypot(xx+.5-x,yy+.5-y)<=radius)explored[yy*size+xx]=1;return explored;}
+export function validEconomySave(value,factions,size){return !!value&&factions.every(id=>["food","wood","stone"].every(key=>Number.isFinite(value.stock?.[id]?.[key])&&value.stock[id][key]>=0))&&Array.isArray(value.nodes)&&value.nodes.every(node=>RESOURCE_TYPES.includes(node.type)&&Number.isFinite(node.amount)&&node.amount>=0)&&Array.isArray(value.farms)&&value.farms.every(farm=>factions.includes(farm.faction)&&Number.isFinite(farm.x)&&Number.isFinite(farm.y))&&Array.isArray(value.explored)&&value.explored.length===size*size&&value.explored.every(cell=>cell===0||cell===1);}

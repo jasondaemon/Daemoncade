@@ -397,7 +397,7 @@ export function isValidGameSave(value, size = 34, allowedFactions = size > 34 ? 
   if (![value.mana, value.rivalMana, value.water, value.elapsed, value.simElapsed, value.nextId].every(Number.isFinite)) return false;
   if (!value.beacon || !value.camera || !value.factionStarts) return false;
   const point = item => item && Number.isFinite(item.x) && Number.isFinite(item.y) && item.x >= 0 && item.y >= 0 && item.x <= size && item.y <= size;
-  if (!point(value.beacon) || !point(value.camera) || !point(value.factionStarts.player) || !point(value.factionStarts.rival)) return false;
+  if (!point(value.beacon) || !point(value.camera) || !allowedFactions.every(faction=>point(value.factionStarts[faction]))) return false;
   if (!value.houses.every(house => point(house) && allowedFactions.includes(house.faction) && Number.isInteger(house.level) && house.level >= 1 && house.level <= 4 && Number.isFinite(house.pop))) return false;
   if (!value.people.every(person => point(person) && allowedFactions.includes(person.faction) && Number.isFinite(person.hp))) return false;
   return true;
