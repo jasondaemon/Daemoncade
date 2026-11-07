@@ -355,7 +355,7 @@ import { musicRequestCurrent } from "./music-state.mjs?v=20261107-1";
 
   function findPath(sx,sy,gx,gy,maxSlope=1.6){return findTerrainPath({heights,landmarks,bogs,water,size:N,start:{x:sx,y:sy},goal:{x:gx,y:gy},maxSlope});}
 
-  function findLocalFightTarget(p,radius=6,maxPathSteps=8){const candidates=[...people.filter(q=>q.faction!==p.faction),...houses.filter(h=>h.faction!==p.faction)].filter(target=>dist(p,target)<=radius).map(target=>{const distance=dist(p,target),path=findPath(p.x,p.y,target.x,target.y,p.champion?3:1.6);return{target,distance,path,pathLength:path.length,reachable:path.length>0};});const selected=chooseLocalFightTarget(candidates,radius,maxPathSteps);return selected?{target:selected.target,path:selected.path}:null;}
+  function findLocalFightTarget(p,radius=6,maxPathSteps=8){const nearby=[...people.filter(q=>q.faction!==p.faction),...houses.filter(h=>h.faction!==p.faction)].map(target=>({target,distance:dist(p,target)})).filter(candidate=>candidate.distance<=radius).sort((a,b)=>a.distance-b.distance).slice(0,6),candidates=[];for(const candidate of nearby){if(pathBudget<=0)break;pathBudget-=1;const path=findPath(p.x,p.y,candidate.target.x,candidate.target.y,p.champion?3:1.6);candidates.push({...candidate,path,pathLength:path.length,reachable:path.length>0});if(path.length&&path.length<=maxPathSteps)break;}const selected=chooseLocalFightTarget(candidates,radius,maxPathSteps);return selected?{target:selected.target,path:selected.path}:null;}
 
   function chooseTarget(p){
     if(pathBudget<=0){p.retarget=.2;return;}pathBudget-=1;
