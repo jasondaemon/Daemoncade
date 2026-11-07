@@ -6,10 +6,10 @@
   <meta name="theme-color" content="#171a24">
   <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; media-src 'self'; connect-src 'none'; object-src 'none'; base-uri 'none'; form-action 'none'; frame-ancestors 'self'">
   <title>Meddle</title>
-  <link rel="icon" href="icon.webp?v=0.2.0-beta.2">
+  <link rel="icon" href="icon.webp?v=0.2.0-beta.3">
   <link rel="stylesheet" href="game.css?v=20261106-7">
   <link rel="stylesheet" href="refinements.css?v=20261106-9">
-  <link rel="stylesheet" href="controls.css?v=20261107-18">
+  <link rel="stylesheet" href="controls.css?v=20261107-19">
 </head>
 <body>
   <main class="game-shell">
@@ -90,6 +90,16 @@
     </section>
   </main>
 
+  <dialog id="studio-intro" class="studio-intro" aria-labelledby="studio-title" aria-describedby="studio-note">
+    <div class="studio-ident">
+      <img src="assets/daemoncade-logo.webp" width="656" height="600" alt="">
+      <h2 id="studio-title">Daemoncade</h2>
+      <p id="studio-note">Independent browser games, open source under GPLv3.</p>
+      <nav aria-label="Daemoncade links"><a href="https://www.jasondaemon.net/" target="_blank" rel="noopener">jasondaemon.net</a><a href="https://github.com/jasondaemon/Daemoncade" target="_blank" rel="noopener">GitHub repository</a></nav>
+      <button id="studio-continue" type="button">Continue</button>
+    </div>
+  </dialog>
+
   <dialog id="launch" class="modal launch-modal">
     <div class="launch-card">
       <div class="launch-art" role="img" aria-label="An isometric island realm with a castle, village, rival settlement, and divine light reshaping the land."></div>
@@ -107,6 +117,6 @@
   <dialog id="events-dialog" class="modal"><div class="modal-card events-card"><p class="eyebrow">Chronicle</p><h2>Important events</h2><ol id="modal-event-history" class="event-history modal-event-history" aria-label="Important event history"></ol><button id="close-events" type="button">Return to the world</button></div></dialog>
   <dialog id="world-dialog" class="modal"><div class="modal-card world-card"><p class="eyebrow">World rules</p><h2 id="world-details-title">Verdant Reach</h2><p id="world-details-meta" class="world-details-meta"></p><p id="world-details-copy"></p><button id="close-world-details" type="button">Return to the world</button></div></dialog>
   <dialog id="outcome" class="modal"><div class="modal-card"><p id="outcome-kicker" class="eyebrow">The world remembers</p><h2 id="outcome-title">Victory</h2><p id="outcome-copy"></p><p id="outcome-save-warning" class="save-warning outcome-save-warning" hidden></p><button id="play-again" type="button">Shape another world</button><button id="outcome-continue-unsaved" type="button" hidden>Continue without saving</button><button id="outcome-reload" type="button" hidden>Reload newer saved world</button></div></dialog>
-  <script type="module" src="game.js?v=20261107-156"></script>
+  <script type="module" src="game.js?v=20261107-157"></script>
 </body>
 </html>
