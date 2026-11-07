@@ -387,7 +387,7 @@ export function onboardingDecision({ profileRaw = null, legacyCampaignRaw = null
   return { showTutorial: !returning, returning, validLegacy, profile };
 }
 
-export function isValidGameSave(value, size = 34, allowedFactions = ["player", "rival"]) {
+export function isValidGameSave(value, size = 34, allowedFactions = size > 34 ? ["player", "rival", "rival2"] : ["player", "rival"]) {
   if (!value || typeof value !== "object" || value.version !== 1 || value.complete === true) return false;
   if (!Number.isInteger(value.currentWorld) || value.currentWorld < 0 || value.currentWorld > 3) return false;
   if (!Number.isInteger(value.worldSeed) || value.worldSeed < 0) return false;
