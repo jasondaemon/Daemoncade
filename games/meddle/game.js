@@ -1,6 +1,6 @@
 import { advanceDwelling, alertAction, applyLandmarkShaping, applySettlementSupport, captureDwelling, chooseLocalFightTarget, chooseReachableRivalTarget, chooseRivalTarget, clusterFollowerGroups, diagonalStepClear, dwellingGrowthInterval, findTerrainPath, followerGroupStatus, followerReadout, isValidGameSave, landmarkBlocksPath, landmarkBlocksSettlementSite, landmarkPathPenalty, landmarkPlacementClear, manaIncome, matchVariantRule, multiFactionOutcome, nearestSafeTile, nextInspectable, nextWorldIndex, onboardingDecision, operationAvailability, placeWorldLandmarks, populationOf, powerAffectedCells, releaseForReckoning, resolveCombatTick, restoreEventHistory, rivalDoctrineAt, seededRandom, separatedFactionStarts, separatedStarts, SETTLEMENT_STAGES, settlementPlotsOverlap, settlementReadout, settlementSiteClear, settlementStageForSupport, terrainHazardDamage, terrainShapePlan, viableRouteCells, windscarHeight, worldRule } from "./rules.mjs?v=20261107-63";
 import { chooseReckoningLoss } from "./faction-state.mjs?v=20261107-1";
-import { advanceFoodEconomy, boundedFarmRoute, boundedGridPath, causewayCells, causewayDeckCells, chooseFarmForWorker, createEconomy, frontierSaveCompatible, generateNodes, harvest, oceanChannels, purchaseUpgradePath, refreshFarmBatch, resourceForJob, revealFog, validEconomySave, workerJob } from "./frontier-economy.mjs?v=20261107-10";
+import { advanceFoodEconomy, boundedFarmRoute, boundedGridPath, causewayCells, causewayDeckCells, chooseFarmForWorker, createEconomy, frontierRenderScale, frontierSaveCompatible, generateNodes, harvest, oceanChannels, purchaseUpgradePath, refreshFarmBatch, resourceForJob, revealFog, validEconomySave, workerJob } from "./frontier-economy.mjs?v=20261107-11";
 import { terminalOutcome } from "./rules.mjs?v=20261107-63";
 import { musicRequestCurrent } from "./music-state.mjs?v=20261107-1";
 
@@ -142,7 +142,7 @@ import { musicRequestCurrent } from "./music-state.mjs?v=20261107-1";
 
   function resize() {
     const rect = canvas.getBoundingClientRect();
-    view.dpr = Math.min(2, window.devicePixelRatio || 1); view.w = rect.width; view.h = rect.height;
+    view.dpr = frontierEconomy?frontierRenderScale(rect.width,rect.height,window.devicePixelRatio||1):Math.min(2,window.devicePixelRatio||1); view.w = rect.width; view.h = rect.height;
     canvas.width = Math.round(rect.width * view.dpr); canvas.height = Math.round(rect.height * view.dpr);
     view.baseTw = clamp(Math.min(rect.width / 12, rect.height / 8), 42, 72);applyZoom();
     view.ox = rect.width * .5; view.oy = rect.height * .5;
