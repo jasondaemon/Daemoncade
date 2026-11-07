@@ -1,0 +1,108 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#171a24">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; connect-src 'none'; object-src 'none'; base-uri 'none'; form-action 'none'; frame-ancestors 'self'">
+  <title>Meddle</title>
+  <link rel="stylesheet" href="game.css?v=20261106-7">
+  <link rel="stylesheet" href="refinements.css?v=20261106-9">
+  <link rel="stylesheet" href="controls.css?v=20261106-17">
+</head>
+<body>
+  <main class="game-shell">
+    <header class="topbar">
+      <div class="brand"><span class="sigil">M</span><div><p>Daemoncade · Worldcraft</p><h1>Meddle</h1></div></div>
+      <div class="top-actions"><button id="sound" type="button" aria-pressed="false">Sound off</button><label class="volume-control">Volume <input id="volume" type="range" min="0" max="100" step="5" value="65" aria-label="Sound volume"></label><button id="events" type="button">Events</button><button id="help" type="button">How to play</button><button id="pause" type="button">Pause</button><button id="new-world" type="button">New world</button></div>
+    </header>
+
+    <section class="command-deck" aria-label="Divine command deck">
+      <div class="faction player"><span>Your people</span><strong id="player-pop">0</strong><small id="player-homes">0 dwellings</small></div>
+      <div class="mana-panel"><div><span>Influence</span><strong id="mana-value">0</strong></div><div class="mana-track"><i id="mana-fill"></i></div><button id="world-name" class="world-name" type="button" title="View world rules and seed">World I · Verdant Reach</button><p id="world-rule" hidden></p><p id="world-state" class="world-state"><i></i> Active · 1×</p></div>
+      <div class="faction rival"><span>Veyra's people</span><strong id="rival-pop">0</strong><small id="rival-homes">0 dwellings</small></div>
+    </section>
+
+    <section class="play-area">
+      <div class="world-wrap">
+        <canvas id="world" width="1280" height="760" aria-label="Isometric world. Click terrain corners to raise or lower the land."></canvas>
+        <button id="toast" class="toast" type="button" aria-live="polite"></button>
+        <div id="focus-cue" class="focus-cue" role="status" aria-live="polite"></div>
+        <p id="inspect-readout" class="inspect-readout" aria-live="polite"></p>
+        <p id="save-warning" class="save-warning" role="alert" hidden></p>
+        <div class="map-key"><span><i class="cyan"></i>Your tribe</span><span><i class="crimson"></i>Veyra</span><span><i class="gold"></i>Beacon</span></div>
+      </div>
+
+      <aside class="sidebar">
+        <section class="tool-panel">
+          <p class="eyebrow">Shape the world</p>
+          <div class="tool-grid" role="group" aria-label="Terrain tools">
+            <button class="tool active" data-tool="raise" type="button"><b>▲</b><span>Raise</span><small>8</small></button>
+            <button class="tool" data-tool="lower" type="button"><b>▼</b><span>Lower</span><small>8</small></button>
+            <button class="tool" data-tool="inspect" type="button"><b>◇</b><span>Inspect</span><small>free</small></button>
+          </div>
+          <p id="tool-hint" class="tool-hint">Raise a terrain corner. Broad, level ground invites your walkers to settle.</p>
+        </section>
+
+        <section class="camera-panel">
+          <p class="eyebrow">Survey the realm</p>
+          <div class="camera-grid" aria-label="Camera controls"><button data-pan="up" type="button">▲</button><button data-pan="left" type="button">◀</button><button id="home-view" type="button">⌂</button><button data-pan="right" type="button">▶</button><button data-pan="down" type="button">▼</button><button id="rotate-left" type="button" title="Rotate view left">↺</button><button id="zoom-out" type="button">−</button><button id="zoom-in" type="button">＋</button><button id="rotate-right" type="button" title="Rotate view right">↻</button></div>
+          <div class="focus-row"><button id="focus-people" type="button">◎ People <small>H</small></button><button id="focus-battle" type="button">⚔ Battle <small>B</small></button></div>
+          <p class="camera-help">Drag · WASD / arrows · wheel zoom · Z/X rotate<br>H people · B battle · hover a joint: R raise · F lower</p>
+          <p id="camera-readout" class="camera-readout">View 7, 9 · 180%</p>
+        </section>
+
+        <section class="overview-panel">
+          <p class="eyebrow">Realm overview</p>
+          <canvas id="overview" width="240" height="128" tabindex="0" role="img" aria-describedby="overview-legend overview-help" aria-label="Strategic map of terrain, settlements, separated follower groups, beacon, obstacles, and the current rotated camera view."></canvas>
+          <div id="overview-legend" class="overview-legend"><span><i class="cyan"></i>You</span><span><i class="crimson"></i>Veyra</span><span><i class="battle-ring"></i>Battle</span><span><i class="gold-ring"></i>Beacon</span><span><i class="view-box"></i>View</span></div>
+          <p id="overview-help" class="overview-help">Click to survey · arrows move view · Home finds your leader</p>
+          <p id="rival-intent" class="rival-intent">Veyra is surveying the wilderness.</p>
+        </section>
+
+        <section class="orders-panel">
+          <p class="eyebrow">People's will</p>
+          <div class="orders" role="group" aria-label="Follower behavior">
+            <button class="order active" data-order="settle" type="button"><b>⌂</b><span>Settle</span></button>
+            <button class="order" data-order="gather" type="button"><b>✦</b><span>Gather</span></button>
+            <button class="order" data-order="roam" type="button"><b>➤</b><span>Roam</span></button>
+            <button class="order" data-order="fightsettle" type="button" title="Fight enemies within six tiles and eight route steps; ordinary walkers settle when clear, while champions patrol the beacon"><b>⚔</b><span>Fight + settle</span></button>
+          </div>
+          <p id="order-state" class="order-state">Current will · Settle</p><p id="order-help" class="order-help">Walkers seek open flat land and build.</p>
+          <button id="beacon" class="beacon" type="button"><b>⌖</b><span>Place beacon</span><small>Guide your leader and followers · 45</small></button>
+        </section>
+
+        <section class="powers-panel">
+          <p class="eyebrow">Acts of power</p>
+          <div class="powers">
+            <button data-power="quake" type="button"><b>≋</b><span>Quake</span><small>140</small></button>
+            <button data-power="bog" type="button"><b>◉</b><span>Bog</span><small>210</small></button>
+            <button data-power="champion" type="button"><b>♞</b><span>Champion</span><small>300</small></button>
+            <button data-power="flood" type="button"><b>≈</b><span>Deluge</span><small>360</small></button>
+            <button data-power="volcano" type="button"><b>♨</b><span>Volcano</span><small>520</small></button>
+            <button data-power="armageddon" type="button"><b>⚔</b><span>Reckoning</span><small>760</small></button>
+          </div>
+        </section>
+
+        <section class="chronicle"><p class="eyebrow">Chronicle</p><p id="status">The first walkers seek a home.</p><ol id="event-history" class="event-history" aria-label="Important event history" aria-live="polite"></ol><div class="speed-row"><span>World speed</span><button data-speed="1" class="active" type="button">1×</button><button data-speed="2" type="button">2×</button><button data-speed="4" type="button">4×</button></div></section>
+      </aside>
+    </section>
+  </main>
+
+  <dialog id="launch" class="modal launch-modal">
+    <div class="modal-card"><p class="eyebrow">Daemoncade · Worldcraft</p><h2>The world waits for you.</h2><p>Choose rules for a new realm. Resume always keeps the saved world's existing rules.</p><fieldset class="variant-choice"><legend>New game rules only</legend><label><input type="radio" name="match-variant" value="classic" checked><span><b>Classic contest</b><small>All powers; conquest or Reckoning can end the world.</small></span></label><label><input type="radio" name="match-variant" value="mortal"><span><b>Mortal contest</b><small>Reckoning is sealed. Win through ordinary conquest.</small></span></label></fieldset><div class="launch-actions"><button id="launch-new" type="button">New game</button><button id="launch-resume" type="button">Resume game</button></div><p id="resume-detail" class="save-detail" aria-live="polite"></p></div>
+  </dialog>
+  <dialog id="confirm-new" class="modal">
+    <div class="modal-card"><p class="eyebrow">Begin again?</p><h2 id="confirm-new-title">Your current world is resumable.</h2><p id="confirm-new-copy">Starting a new game will replace that saved world. Your campaign progress and preferences will remain.</p><fieldset class="variant-choice"><legend>Replacement world's rules</legend><label><input type="radio" name="confirm-variant" value="classic" checked><span><b>Classic contest</b><small>All powers, including Reckoning.</small></span></label><label><input type="radio" name="confirm-variant" value="mortal"><span><b>Mortal contest</b><small>Reckoning sealed; win through ordinary conquest.</small></span></label></fieldset><div class="launch-actions"><button id="cancel-new" type="button">Keep saved game</button><button id="confirm-new-game" type="button">Start new game</button></div></div>
+  </dialog>
+
+  <dialog id="intro" class="modal">
+    <div class="modal-card"><p class="eyebrow">A world awaits your touch</p><h2>Shape land. Raise a people.</h2><p>Your followers act on their own. Level ground gives them room to build; larger settlements grow your influence faster. Guide them with orders and the beacon, counter the rival deity, and overwhelm her people.</p><p id="intro-save-warning" class="intro-save-warning" role="alert" hidden></p><div class="primer"><span><b>1</b> Sculpt plateaus; clear trees and stone by reshaping their plots</span><span><b>2</b> Let walkers settle, then choose how they explore or fight</span><span><b>3</b> Survey the overview and focus controls when action moves offscreen</span><span><b>4</b> Preview powers before committing influence; progress autosaves</span></div><button id="begin" type="button">Enter the world</button></div>
+  </dialog>
+  <dialog id="help-dialog" class="modal"><div class="modal-card help-card"><p class="eyebrow">How to play</p><h2>The land is your command.</h2><button id="close-help" class="help-return" type="button">Return to the world</button><h3>Essentials</h3><ul class="help-essentials"><li><strong>Shape and settle:</strong> raise or lower terrain corners to make broad, dry plateaus. Autonomous walkers build the largest dwelling that local flat land supports.</li><li><strong>Direct your people:</strong> Settle builds, Gather follows the beacon, Roam fights across the realm, and Fight + Settle attacks locally before building.</li><li><strong>Keep watch:</strong> drag or use WASD to move, Z/X to rotate, and the overview to survey. H finds your largest group; B finds the largest active battle.</li><li><strong>Win or lose:</strong> eliminate Veyra's people through ordinary conquest, or invoke Reckoning in Classic Contest. You lose when none of your people remain.</li></ul><details><summary>Landscape and settlements</summary><ul><li><strong>Raise / Lower:</strong> hover a joint for its coordinates and exact change. Click with a tool, or press R and F.</li><li><strong>Fields:</strong> ordinary buildings occupy one plot. A Castle occupies 3×3 plots and needs a complete contiguous 5×5 field.</li><li><strong>Obstacles:</strong> sink trees and dark stone to the waterline. Light stone must first be raised, then lowered. All block settlement sites and routes.</li><li><strong>Damage and recovery:</strong> disturb or flood a supporting field and its dwelling downgrades or falls. Surplus residents emerge as walkers; restoring the field allows recovery.</li></ul></details><details><summary>Orders, beacon, and champions</summary><ul><li><strong>Gather:</strong> the leader follows the golden beacon and the tribe follows the leader.</li><li><strong>Roam:</strong> people pursue reachable enemies across the world.</li><li><strong>Fight + Settle:</strong> ordinary walkers pursue enemies within six tiles and eight route steps, then settle when clear. Champions patrol around the beacon instead of founding settlements.</li></ul></details><details><summary>Powers and world rules</summary><ul><li><strong>Previews:</strong> select a targeted power and hover to see its footprint, cost, and any reason it cannot fire. Click to commit; select again or press Escape to cancel.</li><li><strong>Immediate powers:</strong> Deluge and Champion act immediately. Reckoning is unavailable in Mortal Contest.</li><li><strong>World rules:</strong> select the world name for its full rule. Windscar Vale warns 12 simulated seconds before each tide; low ground then harms both peoples.</li></ul></details><details><summary>Saving and returning</summary><ul><li>Active worlds autosave. Resume preserves the saved contest and world rules.</li><li>New game replaces the current slot only after confirmation. Storage and cross-tab conflicts warn and pause saving instead of silently overwriting progress.</li></ul></details><button id="replay-intro" type="button">Replay introduction</button></div></dialog>
+  <dialog id="events-dialog" class="modal"><div class="modal-card events-card"><p class="eyebrow">Chronicle</p><h2>Important events</h2><ol id="modal-event-history" class="event-history modal-event-history" aria-label="Important event history"></ol><button id="close-events" type="button">Return to the world</button></div></dialog>
+  <dialog id="world-dialog" class="modal"><div class="modal-card world-card"><p class="eyebrow">World rules</p><h2 id="world-details-title">Verdant Reach</h2><p id="world-details-meta" class="world-details-meta"></p><p id="world-details-copy"></p><button id="close-world-details" type="button">Return to the world</button></div></dialog>
+  <dialog id="outcome" class="modal"><div class="modal-card"><p id="outcome-kicker" class="eyebrow">The world remembers</p><h2 id="outcome-title">Victory</h2><p id="outcome-copy"></p><p id="outcome-save-warning" class="save-warning outcome-save-warning" hidden></p><button id="play-again" type="button">Shape another world</button><button id="outcome-continue-unsaved" type="button" hidden>Continue without saving</button><button id="outcome-reload" type="button" hidden>Reload newer saved world</button></div></dialog>
+  <script type="module" src="game.js?v=20261107-154"></script>
+</body>
+</html>

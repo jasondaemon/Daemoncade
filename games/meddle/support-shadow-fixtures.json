@@ -1,0 +1,71 @@
+[
+  {
+    "name": "open allied fields",
+    "seed": 101,
+    "width": 19,
+    "height": 19,
+    "terrainDamage": 0,
+    "obstacleCount": 0,
+    "settlements": [
+      { "id": "a", "faction": "player", "x": 7, "y": 9, "level": 3, "pop": 11 },
+      { "id": "b", "faction": "player", "x": 10, "y": 9, "level": 3, "pop": 11 }
+    ]
+  },
+  {
+    "name": "open rival frontier",
+    "seed": 202,
+    "width": 19,
+    "height": 19,
+    "terrainDamage": 0,
+    "obstacleCount": 0,
+    "settlements": [
+      { "id": "a", "faction": "player", "x": 7, "y": 9, "level": 3, "pop": 11 },
+      { "id": "b", "faction": "rival", "x": 10, "y": 9, "level": 3, "pop": 11 }
+    ]
+  },
+  {
+    "name": "castle and rival town",
+    "seed": 303,
+    "width": 21,
+    "height": 21,
+    "terrainDamage": 0,
+    "obstacleCount": 0,
+    "settlements": [
+      { "id": "a", "faction": "player", "x": 8, "y": 10, "level": 4, "pop": 14 },
+      { "id": "b", "faction": "rival", "x": 12, "y": 10, "level": 3, "pop": 11 }
+    ]
+  },
+  {
+    "name": "wooded and rocky recovery",
+    "seed": 404,
+    "width": 19,
+    "height": 19,
+    "terrainDamage": 0,
+    "obstacleCount": 10,
+    "settlements": [
+      { "id": "a", "faction": "player", "x": 9, "y": 9, "level": 4, "pop": 14 }
+    ]
+  },
+  {
+    "name": "quake broken field",
+    "seed": 505,
+    "width": 19,
+    "height": 19,
+    "terrainDamage": 12,
+    "obstacleCount": 6,
+    "settlements": [
+      { "id": "a", "faction": "rival", "x": 9, "y": 9, "level": 4, "pop": 14 }
+    ]
+  },
+  {
+    "name": "world edge settlement",
+    "seed": 606,
+    "width": 15,
+    "height": 15,
+    "terrainDamage": 3,
+    "obstacleCount": 3,
+    "settlements": [
+      { "id": "a", "faction": "player", "x": 1, "y": 1, "level": 2, "pop": 8 }
+    ]
+  }
+]

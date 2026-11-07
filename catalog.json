@@ -18,6 +18,24 @@
       "metric": "time"
     },
     {
+      "title": "Meddle",
+      "slug": "meddle",
+      "version": "0.1.0-alpha.1",
+      "release_stage": "alpha",
+      "order": 28,
+      "category": "Strategy",
+      "source": "Daemoncade",
+      "players": "Solo",
+      "controls": "Mouse or touch",
+      "mobile_ready": true,
+      "orientation": "landscape",
+      "summary": "Sculpt an isometric world, shelter an autonomous tribe, challenge a rival deity, and turn influence into world-shaking power.",
+      "accent": "gold",
+      "mark": "M",
+      "icon": "icon.svg",
+      "metric": "score"
+    },
+    {
       "title": "Circuit Rush",
       "slug": "circuit-rush",
       "version": "1.2.0",
