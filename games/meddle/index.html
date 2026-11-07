@@ -21,7 +21,7 @@
     <section class="command-deck" aria-label="Divine command deck">
       <div class="faction player"><span>Your people</span><strong id="player-pop">0</strong><small id="player-homes">0 dwellings</small></div>
       <div class="mana-panel"><div><span>Influence</span><strong id="mana-value">0</strong></div><div class="mana-track"><i id="mana-fill"></i></div><div id="frontier-economy" hidden><strong id="frontier-stock">Food 0 · Wood 0 · Stone 0</strong><div aria-label="Worker priorities"><label>Food <input data-priority="food" type="range" min="0" max="60" value="35"></label><label>Wood <input data-priority="wood" type="range" min="0" max="60" value="30"></label><label>Stone <input data-priority="stone" type="range" min="0" max="60" value="20"></label><label>Build <input data-priority="build" type="range" min="0" max="60" value="15"></label></div></div><button id="world-name" class="world-name" type="button" title="View world rules and seed">World I · Verdant Reach</button><p id="world-rule" hidden></p><p id="world-state" class="world-state"><i></i> Active · 1×</p></div>
-      <div class="faction rival"><span id="rival-label">Veyra's people</span><strong id="rival-pop">0</strong><small id="rival-homes">0 dwellings</small></div>
+      <div class="faction rival"><span id="rival-label">Veyra's people</span><strong id="rival-pop">0</strong><small id="rival-homes">0 dwellings</small><small id="perf-readout" hidden></small></div>
     </section>
 
     <section class="play-area">
@@ -117,6 +117,6 @@
   <dialog id="events-dialog" class="modal"><div class="modal-card events-card"><p class="eyebrow">Chronicle</p><h2>Important events</h2><ol id="modal-event-history" class="event-history modal-event-history" aria-label="Important event history"></ol><button id="close-events" type="button">Return to the world</button></div></dialog>
   <dialog id="world-dialog" class="modal"><div class="modal-card world-card"><p class="eyebrow">World rules</p><h2 id="world-details-title">Verdant Reach</h2><p id="world-details-meta" class="world-details-meta"></p><p id="world-details-copy"></p><button id="close-world-details" type="button">Return to the world</button></div></dialog>
   <dialog id="outcome" class="modal"><div class="modal-card"><p id="outcome-kicker" class="eyebrow">The world remembers</p><h2 id="outcome-title">Victory</h2><p id="outcome-copy"></p><p id="outcome-save-warning" class="save-warning outcome-save-warning" hidden></p><button id="play-again" type="button">Shape another world</button><button id="outcome-continue-unsaved" type="button" hidden>Continue without saving</button><button id="outcome-reload" type="button" hidden>Reload newer saved world</button></div></dialog>
-  <script type="module" src="game.js?v=20261107-165"></script>
+  <script type="module" src="game.js?v=20261107-166"></script>
 </body>
 </html>
