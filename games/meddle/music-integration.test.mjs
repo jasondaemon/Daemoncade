@@ -22,11 +22,15 @@ assert.match(html, /open source under GPLv3/, "studio ident accurately summarize
 assert.match(html, /class="launch-art"/, "launch screen contains the splash artwork");
 assert.match(html, /id="launch-music"/, "launch screen exposes a music mute control");
 assert.match(html, /id="launch-music-volume"/, "launch screen exposes music volume");
+assert.doesNotMatch(html, /name="confirm-variant"/, "replacement confirmation does not repeat game-mode controls");
+assert.match(html, /id="confirm-new-rules"/, "replacement confirmation summarizes the selected mode");
 assert.match(script, /GAMEPLAY_MUSIC=\["assets\/music\/gameplay-1\.mp3","assets\/music\/gameplay-2\.mp3","assets\/music\/gameplay-3\.mp3"\]/);
 assert.match(script, /await musicPlayer\.play\(\)/, "music start honors the browser play promise");
 assert.match(script, /studio-continue[\s\S]+showModal\(\)[\s\S]+playMusic\(\)/, "Continue reveals Meddle and starts title music from the trusted gesture");
 assert.doesNotMatch(script, /addEventListener\("pointerdown",unlockMusic/, "unrelated pointer gestures do not start the title theme");
 assert.match(script, /setMusicScene\("gameplay"\)/, "launch actions transition to gameplay music");
+assert.doesNotMatch(script, /selectedConfirmVariant/, "confirmation preserves the mode already selected on the splash");
+assert.match(script, /matchVariant=pendingMatchVariant/, "new worlds use the pending splash or current-session mode");
 assert.match(script, /musicPlayer\.addEventListener\("ended"/, "gameplay music advances after a track ends");
 assert.ok(splash.size > 100_000 && splash.size < 1_000_000, "splash is optimized for web delivery");
 assert.ok(logo.size > 20_000 && logo.size < 150_000, "transparent studio logo is optimized for web delivery");
