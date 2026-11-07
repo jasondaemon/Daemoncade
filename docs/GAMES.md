@@ -27,6 +27,7 @@ This page is generated from the per-game `game.json` files by `./scripts/build-c
 
 | Icon | Game | Version | Mobile | About |
 | --- | --- | --- | --- | --- |
+| <img src="../games/meddle/icon.webp" width="48" height="48" alt=""> | [Meddle](../games/meddle/) | `0.2.0-beta.1` | Yes | Sculpt an isometric world, shelter an autonomous tribe, challenge a rival deity, and turn influence into world-shaking power. |
 | <img src="../games/racecar/icon.webp" width="48" height="48" alt=""> | [Racecar](../games/racecar/) | `1.0.0-beta.2` | — | Build a racing career across five circuits and twenty tracks. Earn cash, collect 25 vehicles, tune performance, and qualify for tougher championships. |
 | <img src="../games/dots-and-boxes/icon.webp" width="48" height="48" alt=""> | [Dots and Boxes](../games/dots-and-boxes/) | `1.0.0-beta.1` | Yes | Draw one line at a time, close boxes, and hold the turn long enough to own the board. |
 | <img src="../games/pinball/icon.webp" width="48" height="48" alt=""> | [Pinball](../games/pinball/) | `1.0.0-beta.3.1` | Yes | Midnight Run: a 3D arcade pinball table with animated dot-matrix scoring, ramps, missions, and three-ball multiball. |
@@ -35,8 +36,7 @@ This page is generated from the per-game `game.json` files by `./scripts/build-c
 
 | Icon | Game | Version | Mobile | About |
 | --- | --- | --- | --- | --- |
-| <img src="../games/apex-run/app-icon.png" width="48" height="48" alt=""> | [Apex Run](../games/apex-run/) | `0.5.0-alpha.36` | — | Attack a gravity-bending 3D stadium course, master momentum, and chase your personal best. |
-| <img src="../games/meddle/icon.svg" width="48" height="48" alt=""> | [Meddle](../games/meddle/) | `0.1.0-alpha.1` | Yes | Sculpt an isometric world, shelter an autonomous tribe, challenge a rival deity, and turn influence into world-shaking power. |
+| <img src="../games/apex-run/icon.webp" width="48" height="48" alt=""> | [Apex Run](../games/apex-run/) | `0.5.0-alpha.37` | — | Attack a gravity-bending 3D stadium course, master momentum, and chase your personal best. |
 | <img src="../games/spacefighter/icon.webp" width="48" height="48" alt=""> | [Spacefighter](../games/spacefighter/) | `0.1.0-alpha.1` | — | Thread a nimble fighter through dense enemy patterns, collect weapon upgrades, and unleash missiles and bombs. |
 | <img src="../games/canyon-crawler/icon.webp" width="48" height="48" alt=""> | [Canyon Crawler](../games/canyon-crawler/) | `0.1.0-alpha.1` | — | Defend your rover from segmented trail worms and the hazards filling the canyon wash. |
 | <img src="../games/orbit-run/icon.webp" width="48" height="48" alt=""> | [Orbit Run](../games/orbit-run/) | `0.1.0-alpha.1` | — | Circle the tunnel, fire inward, and survive enemies spiraling out from its center. |

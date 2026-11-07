@@ -3,7 +3,7 @@
     {
       "title": "Apex Run",
       "slug": "apex-run",
-      "version": "0.5.0-alpha.36",
+      "version": "0.5.0-alpha.37",
       "release_stage": "alpha",
       "order": 28,
       "category": "Racing",
@@ -14,14 +14,14 @@
       "summary": "Attack a gravity-bending 3D stadium course, master momentum, and chase your personal best.",
       "accent": "cyan",
       "mark": "▲",
-      "icon": "app-icon.png",
+      "icon": "icon.webp",
       "metric": "time"
     },
     {
       "title": "Meddle",
       "slug": "meddle",
-      "version": "0.1.0-alpha.1",
-      "release_stage": "alpha",
+      "version": "0.2.0-beta.1",
+      "release_stage": "beta",
       "order": 28,
       "category": "Strategy",
       "source": "Daemoncade",
@@ -32,7 +32,7 @@
       "summary": "Sculpt an isometric world, shelter an autonomous tribe, challenge a rival deity, and turn influence into world-shaking power.",
       "accent": "gold",
       "mark": "M",
-      "icon": "icon.svg",
+      "icon": "icon.webp",
       "metric": "score"
     },
     {

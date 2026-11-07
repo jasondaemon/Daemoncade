@@ -1,8 +1,8 @@
 {
   "title": "Meddle",
   "slug": "meddle",
-  "version": "0.1.0-alpha.1",
-  "release_stage": "alpha",
+  "version": "0.2.0-beta.1",
+  "release_stage": "beta",
   "order": 28,
   "category": "Strategy",
   "source": "Daemoncade",
@@ -13,6 +13,6 @@
   "summary": "Sculpt an isometric world, shelter an autonomous tribe, challenge a rival deity, and turn influence into world-shaking power.",
   "accent": "gold",
   "mark": "M",
-  "icon": "icon.svg",
+  "icon": "icon.webp",
   "metric": "score"
 }
