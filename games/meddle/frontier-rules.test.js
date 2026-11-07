@@ -1,0 +1,11 @@
+import assert from "node:assert/strict";
+import {assignJobs,canUpgrade,DEFAULT_PRIORITIES,factionStarts,FRONTIER_SIZE,normalizedPriorities,reveal,spendUpgrade,startFairness,validFrontierSave} from "./frontier-rules.js";
+assert.ok(Math.abs(Object.values(normalizedPriorities(DEFAULT_PRIORITIES)).reduce((a,b)=>a+b,0)-1)<1e-9);
+assert.deepEqual(assignJobs(20,DEFAULT_PRIORITIES),{food:7,wood:6,stone:4,build:3});
+assert.equal(canUpgrade(1,{wood:23,stone:99}).ok,false);
+assert.deepEqual(spendUpgrade(1,{food:2,wood:30,stone:20}).resources,{food:2,wood:6,stone:6});
+const starts=factionStarts(),nodes=starts.flatMap((s,i)=>[{id:`f${i}`,type:"forest",x:s.x+2,y:s.y},{id:`m${i}`,type:"mine",x:s.x,y:s.y+2}]);
+assert.ok(startFairness(starts,nodes).every(x=>x.forest&&x.mine));
+const explored=Array(FRONTIER_SIZE*FRONTIER_SIZE).fill(0);reveal(explored,FRONTIER_SIZE,10,10,3);assert.ok(explored.some(Boolean));assert.equal(explored[0],0);
+assert.equal(validFrontierSave({version:1,mode:"frontier",size:52,factions:[1,2,3],workers:[],nodes:[],structures:[],explored:Array(2704).fill(0)}),true);
+console.log("frontier rules: 7 assertions passed");

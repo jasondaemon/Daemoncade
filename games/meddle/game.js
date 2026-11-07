@@ -8,6 +8,7 @@ import { musicRequestCurrent } from "./music-state.mjs?v=20261107-1";
   const $$ = (s) => [...document.querySelectorAll(s)];
   const canvas = $("#world");
   const ctx = canvas.getContext("2d");
+  $("#launch-new").addEventListener("click",event=>{if(document.querySelector('input[name="match-variant"]:checked')?.value!=="frontier")return;event.preventDefault();event.stopImmediatePropagation();location.href="frontier.html?new=1";},true);
   const overview=$("#overview"),overviewCtx=overview.getContext("2d");
   const N = 34;
   const COST = { raise: 8, lower: 8, beacon: 45, quake: 140, bog: 210, champion: 300, flood: 360, volcano: 520, armageddon: 760 };

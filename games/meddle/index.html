@@ -6,7 +6,7 @@
   <meta name="theme-color" content="#171a24">
   <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; media-src 'self'; connect-src 'none'; object-src 'none'; base-uri 'none'; form-action 'none'; frame-ancestors 'self'">
   <title>Meddle</title>
-  <link rel="icon" href="icon.webp?v=0.2.0-beta.4">
+  <link rel="icon" href="icon.webp?v=0.3.0-beta.1">
   <link rel="stylesheet" href="game.css?v=20261106-7">
   <link rel="stylesheet" href="refinements.css?v=20261106-9">
   <link rel="stylesheet" href="controls.css?v=20261107-20">
@@ -103,7 +103,7 @@
   <dialog id="launch" class="modal launch-modal">
     <div class="launch-card">
       <div class="launch-art" role="img" aria-label="An isometric island realm with a castle, village, rival settlement, and divine light reshaping the land."></div>
-      <div class="launch-copy"><h2>Meddle</h2><p>Raise the land. Rule what rises.</p><fieldset class="variant-choice"><legend>New game rules only</legend><label><input type="radio" name="match-variant" value="classic" checked><span><b>Classic contest</b><small>All powers; conquest or Reckoning can end the world.</small></span></label><label><input type="radio" name="match-variant" value="mortal"><span><b>Mortal contest</b><small>Reckoning is sealed. Win through ordinary conquest.</small></span></label></fieldset><div class="launch-actions"><button id="launch-new" type="button">New game</button><button id="launch-resume" type="button">Resume game</button></div><p id="resume-detail" class="save-detail" aria-live="polite"></p><div class="launch-audio" aria-label="Title music controls"><button id="launch-music" type="button" aria-pressed="true">Music on</button><label>Volume <input id="launch-music-volume" type="range" min="0" max="100" step="5" value="55" aria-label="Title music volume"></label></div></div>
+      <div class="launch-copy"><h2>Meddle</h2><p>Raise the land. Rule what rises.</p><fieldset class="variant-choice"><legend>New game rules only</legend><label><input type="radio" name="match-variant" value="classic" checked><span><b>Classic contest</b><small>All powers; conquest or Reckoning can end the world.</small></span></label><label><input type="radio" name="match-variant" value="mortal"><span><b>Mortal contest</b><small>Reckoning is sealed. Win through ordinary conquest.</small></span></label><label><input id="frontier-mode" type="radio" name="match-variant" value="frontier"><span><b>Frontier <em>experimental</em></b><small>A larger realm with fog, resources, autonomous workers, and two rival gods.</small></span></label></fieldset><div class="launch-actions"><button id="launch-new" type="button">New game</button><button id="launch-resume" type="button">Resume game</button></div><p id="resume-detail" class="save-detail" aria-live="polite"></p><p class="frontier-resume"><a href="frontier.html">Resume Frontier</a></p><div class="launch-audio" aria-label="Title music controls"><button id="launch-music" type="button" aria-pressed="true">Music on</button><label>Volume <input id="launch-music-volume" type="range" min="0" max="100" step="5" value="55" aria-label="Title music volume"></label></div></div>
     </div>
   </dialog>
   <dialog id="confirm-new" class="modal">
