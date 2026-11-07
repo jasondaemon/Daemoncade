@@ -1,5 +1,6 @@
 import assert from "node:assert/strict";
-import {canAffordUpgrade,causewayCells,createEconomy,generateNodes,harvest,nearestReachableNode,normalizedPriorities,oceanChannels,purchaseUpgradePath,revealFog,spendUpgrade,validEconomySave,workerJob} from "./frontier-economy.mjs";
+import {canAffordUpgrade,causewayCells,causewayDeckCells,createEconomy,generateNodes,harvest,nearestReachableNode,normalizedPriorities,oceanChannels,purchaseUpgradePath,revealFog,spendUpgrade,validEconomySave,workerJob} from "./frontier-economy.mjs";
+import {findTerrainPath} from "./rules.mjs";
 
 const factions=["player","rival","rival2"],stock=createEconomy(factions);
 assert.deepEqual(Object.keys(stock),factions);
@@ -14,5 +15,7 @@ const chosen=nearestReachableNode({x:0,y:0},[{id:1,type:"forest",x:2,y:0,amount:
 const before=stock.player.wood,taken=harvest(nodes.find(node=>node.type==="forest"),stock.player,2,1.5);assert.equal(taken,3);assert.equal(stock.player.wood,before+3);
 const explored=Array(52*52).fill(0);revealFog(explored,52,6,6,4);assert.ok(explored.reduce((a,b)=>a+b,0)>35);assert.equal(explored[51*52+51],0);
 const ocean=Array.from({length:105},()=>Array(105).fill(4));oceanChannels(ocean,(()=>{const values=[.2,.4,.7];let index=0;return()=>values[index++%values.length];})());assert.ok(ocean.flat().some(height=>height===0));const causeway=causewayCells({x:5,y:5},{x:95,y:95},104);assert.deepEqual(causeway[0],{x:5,y:5});assert.deepEqual(causeway.at(-1),{x:95,y:95});assert.ok(causeway.length>90);const reachable=()=>{const queue=[[5,5]],seen=new Set(["5,5"]);while(queue.length){const [x,y]=queue.shift();if(x===95&&y===95)return true;for(const [dx,dy] of [[1,0],[-1,0],[0,1],[0,-1]]){const nx=x+dx,ny=y+dy,key=`${nx},${ny}`;if(nx<0||ny<0||nx>104||ny>104||seen.has(key)||ocean[ny][nx]<=1.4)continue;seen.add(key);queue.push([nx,ny]);}}return false;};assert.equal(reachable(),false);for(const cell of causeway)ocean[cell.y][cell.x]=3;assert.equal(reachable(),true);
+const deck=causewayDeckCells([0,1,2,3,4,5,6,7,8].map(x=>({x,y:0})),cell=>cell.x>=3&&cell.x<=5,2);assert.deepEqual(deck.map(cell=>cell.x),[1,2,3,4,5,6,7]);assert.deepEqual(causewayDeckCells(causeway,()=>false),[]);
+const bridgeHeights=Array.from({length:12},()=>Array(12).fill(4));for(let y=0;y<12;y++)for(let x=4;x<=6;x++)bridgeHeights[y][x]=0;const bridgeLine=causewayCells({x:1,y:5},{x:9,y:5},11),bridgeDeck=causewayDeckCells(bridgeLine,cell=>bridgeHeights[cell.y][cell.x]<=1.4,2);for(const cell of bridgeDeck)for(const [vx,vy] of [[cell.x,cell.y],[cell.x+1,cell.y],[cell.x,cell.y+1],[cell.x+1,cell.y+1]])bridgeHeights[vy][vx]=3;const routeArgs={heights:bridgeHeights,landmarks:[],bogs:new Set(),water:1.4,size:11,maxSlope:1.6};assert.ok(findTerrainPath({...routeArgs,start:{x:1,y:5},goal:{x:9,y:5}}).length);assert.ok(findTerrainPath({...routeArgs,start:{x:9,y:5},goal:{x:1,y:5}}).length);
 assert.equal(validEconomySave({stock,nodes,farms:[],explored},factions,52),true);assert.equal(validEconomySave({stock,nodes,farms:[],explored:[]},factions,52),false);
 console.log("Meddle Frontier economy: fair nodes, deterministic jobs, harvesting, upgrade gates, fog, and save validation OK");
