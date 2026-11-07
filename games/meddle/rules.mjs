@@ -438,3 +438,21 @@ export function separatedStarts(size, random, minimumDistance = size * .58) {
   }
   return best;
 }
+
+// Deterministic farthest-point placement for modes with more than two factions.
+// Classic continues to use separatedStarts() unchanged.
+export function separatedFactionStarts(size, random, count = 3, minimumDistance = size * .42) {
+  const margin = Math.max(5, Math.round(size * .13)), candidates = [];
+  for (let y = margin; y <= size - margin; y += 2) for (let x = margin; x <= size - margin; x += 2) candidates.push({ x: x + .5, y: y + .5 });
+  const starts = [candidates[Math.floor(random() * candidates.length)]];
+  while (starts.length < count) {
+    let best = null, bestDistance = -1;
+    for (const point of candidates) {
+      const nearest = Math.min(...starts.map(start => Math.hypot(point.x - start.x, point.y - start.y)));
+      if (nearest > bestDistance) { best = point; bestDistance = nearest; }
+    }
+    if (!best || bestDistance < minimumDistance) return null;
+    starts.push(best);
+  }
+  return starts;
+}
