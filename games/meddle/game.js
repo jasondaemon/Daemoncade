@@ -162,12 +162,12 @@ import { musicRequestCurrent } from "./music-state.mjs?v=20261107-1";
     const quake=battleFx.find(fx=>fx.type==="quake"||fx.type==="volcano"),reducedMotion=matchMedia?.("(prefers-reduced-motion: reduce)").matches,shake=quake&&!reducedMotion?Math.max(0,1-quake.age/quake.life)*(quake.type==="volcano"?7:5):0;view.shakeX=shake?Math.sin(elapsed*53)*shake:0;view.shakeY=shake?Math.cos(elapsed*47)*shake*.55:0;const sky = ctx.createLinearGradient(0, 0, 0, view.h); sky.addColorStop(0, "#315f70"); sky.addColorStop(1, "#204c5f"); ctx.fillStyle = sky; ctx.fillRect(0, 0, view.w, view.h);
     const tiles=[];for(let y=0;y<N;y++)for(let x=0;x<N;x++){const screen=iso(x+.5,y+.5,tileHeight(x,y));if(screen.x<-view.tw||screen.x>view.w+view.tw||screen.y<-view.th*4||screen.y>view.h+view.th*4)continue;const p=rotated(x+.5,y+.5);tiles.push({x,y,d:p.x+p.y});}tiles.sort((a,b)=>a.d-b.d);for(const tile of tiles)drawTile(tile.x,tile.y);if(frontierEconomy)drawFrontierFog(tiles);if(!power&&(tool==="raise"||tool==="lower"))drawInfluenceFrontier();
     if(!power)drawTerrainCursor();
-    const depth=v=>{const p=rotated(v.x,v.y);return p.x+p.y;},sprites = [
-      ...houses.filter(visibleFrontierObject).map(h => ({ type: "house", y: depth(h), v: h })),
-      ...people.filter(visibleFrontierObject).map(p => ({ type: "person", y: depth(p), v: p })),
-      ...landmarks.filter(visibleFrontierObject).map(item=>({type:"landmark",y:depth(item),v:item})),
-      ...(frontierEconomy?.nodes||[]).filter(node=>node.amount>0&&visibleFrontierObject(node)).map(node=>({type:"resource",y:depth(node),v:node})),
-      ...(frontierEconomy?.farms||[]).filter(visibleFrontierObject).map(farm=>({type:"resource",y:depth(farm),v:{...farm,type:"farm",amount:100}})),
+    const depth=v=>{const p=rotated(v.x,v.y);return p.x+p.y;},onScreen=v=>{const z=tileHeight(clamp(Math.floor(v.x),0,N-1),clamp(Math.floor(v.y),0,N-1)),p=iso(v.x,v.y,z);return p.x>-160&&p.x<view.w+160&&p.y>-180&&p.y<view.h+140;},sprites = [
+      ...houses.filter(h=>visibleFrontierObject(h)&&onScreen(h)).map(h => ({ type: "house", y: depth(h), v: h })),
+      ...people.filter(p=>visibleFrontierObject(p)&&onScreen(p)).map(p => ({ type: "person", y: depth(p), v: p })),
+      ...landmarks.filter(item=>visibleFrontierObject(item)&&onScreen(item)).map(item=>({type:"landmark",y:depth(item),v:item})),
+      ...(frontierEconomy?.nodes||[]).filter(node=>node.amount>0&&visibleFrontierObject(node)&&onScreen(node)).map(node=>({type:"resource",y:depth(node),v:node})),
+      ...(frontierEconomy?.farms||[]).filter(farm=>visibleFrontierObject(farm)&&onScreen(farm)).map(farm=>({type:"resource",y:depth(farm),v:{...farm,type:"farm",amount:100}})),
       ...casualtyGroups().map(group=>({type:"casualty",y:depth(group),v:group})),
       { type: "beacon", y: depth(beacon), v: beacon }
     ].sort((a, b) => a.y - b.y);
