@@ -387,7 +387,7 @@ export function onboardingDecision({ profileRaw = null, legacyCampaignRaw = null
   return { showTutorial: !returning, returning, validLegacy, profile };
 }
 
-export function isValidGameSave(value, size = 34) {
+export function isValidGameSave(value, size = 34, allowedFactions = ["player", "rival"]) {
   if (!value || typeof value !== "object" || value.version !== 1 || value.complete === true) return false;
   if (!Number.isInteger(value.currentWorld) || value.currentWorld < 0 || value.currentWorld > 3) return false;
   if (!Number.isInteger(value.worldSeed) || value.worldSeed < 0) return false;
@@ -398,9 +398,17 @@ export function isValidGameSave(value, size = 34) {
   if (!value.beacon || !value.camera || !value.factionStarts) return false;
   const point = item => item && Number.isFinite(item.x) && Number.isFinite(item.y) && item.x >= 0 && item.y >= 0 && item.x <= size && item.y <= size;
   if (!point(value.beacon) || !point(value.camera) || !point(value.factionStarts.player) || !point(value.factionStarts.rival)) return false;
-  if (!value.houses.every(house => point(house) && ["player", "rival"].includes(house.faction) && Number.isInteger(house.level) && house.level >= 1 && house.level <= 4 && Number.isFinite(house.pop))) return false;
-  if (!value.people.every(person => point(person) && ["player", "rival"].includes(person.faction) && Number.isFinite(person.hp))) return false;
+  if (!value.houses.every(house => point(house) && allowedFactions.includes(house.faction) && Number.isInteger(house.level) && house.level >= 1 && house.level <= 4 && Number.isFinite(house.pop))) return false;
+  if (!value.people.every(person => point(person) && allowedFactions.includes(person.faction) && Number.isFinite(person.hp))) return false;
   return true;
+}
+
+export function multiFactionOutcome(populations, elapsed, grace = 10) {
+  if (elapsed <= grace) return null;
+  const player = Number(populations.player) || 0;
+  if (player <= 0) return false;
+  const enemies = Object.entries(populations).filter(([id]) => id !== "player").reduce((sum, [,count]) => sum + Math.max(0, Number(count) || 0), 0);
+  return enemies <= 0 ? true : null;
 }
 
 export function dwellingGrowthInterval(level) {
