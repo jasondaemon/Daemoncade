@@ -1,5 +1,6 @@
 .camera-grid #rotate-left{grid-column:1}.camera-grid #zoom-out{grid-column:2}.camera-grid #zoom-in{grid-column:4}.camera-grid #rotate-right{grid-column:5}
 .world-name{text-align:center;margin-top:5px;color:#c9b77d;font:9px ui-monospace,SFMono-Regular,monospace;text-transform:uppercase;letter-spacing:.12em}
+#frontier-economy{margin-top:4px;padding:4px 6px;border:1px solid #4d4a42;background:#11151b;color:#d8cda9;font:8px/1.2 ui-monospace,SFMono-Regular,monospace}#frontier-economy>div{display:grid;grid-template-columns:repeat(4,1fr);gap:4px;margin-top:3px}#frontier-economy label{display:grid;grid-template-columns:auto 1fr;align-items:center;gap:3px}#frontier-economy input{width:100%;accent-color:var(--gold)}
 .top-actions{align-items:center}.volume-control{display:flex;align-items:center;gap:6px;color:var(--muted);font:9px ui-monospace,SFMono-Regular,monospace;text-transform:uppercase;letter-spacing:.08em}.volume-control input{width:64px;accent-color:var(--gold)}
 @media(max-width:850px){.volume-control{font-size:0;gap:0}.volume-control input{width:52px}}
 @media(max-width:620px){.volume-control{display:none}}
