@@ -4,18 +4,18 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
   <meta name="theme-color" content="#171a24">
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; connect-src 'none'; object-src 'none'; base-uri 'none'; form-action 'none'; frame-ancestors 'self'">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; media-src 'self'; connect-src 'none'; object-src 'none'; base-uri 'none'; form-action 'none'; frame-ancestors 'self'">
   <title>Meddle</title>
-  <link rel="icon" href="icon.webp?v=0.2.0-beta.1">
+  <link rel="icon" href="icon.webp?v=0.2.0-beta.2">
   <link rel="stylesheet" href="game.css?v=20261106-7">
   <link rel="stylesheet" href="refinements.css?v=20261106-9">
-  <link rel="stylesheet" href="controls.css?v=20261106-17">
+  <link rel="stylesheet" href="controls.css?v=20261107-18">
 </head>
 <body>
   <main class="game-shell">
     <header class="topbar">
-      <div class="brand"><span class="sigil">M</span><div><p>Daemoncade · Worldcraft</p><h1>Meddle</h1></div></div>
-      <div class="top-actions"><button id="sound" type="button" aria-pressed="false">Sound off</button><label class="volume-control">Volume <input id="volume" type="range" min="0" max="100" step="5" value="65" aria-label="Sound volume"></label><button id="events" type="button">Events</button><button id="help" type="button">How to play</button><button id="pause" type="button">Pause</button><button id="new-world" type="button">New world</button></div>
+      <div class="brand"><span class="sigil">M</span><h1>Meddle</h1></div>
+      <div class="top-actions"><button id="sound" type="button" aria-pressed="false">Sound off</button><label class="volume-control">SFX <input id="volume" type="range" min="0" max="100" step="5" value="65" aria-label="Sound effects volume"></label><button id="music" type="button" aria-pressed="true">Music on</button><label class="volume-control music-volume-control">Music <input id="music-volume" type="range" min="0" max="100" step="5" value="55" aria-label="Music volume"></label><button id="events" type="button">Events</button><button id="help" type="button">How to play</button><button id="pause" type="button">Pause</button><button id="new-world" type="button">New world</button></div>
     </header>
 
     <section class="command-deck" aria-label="Divine command deck">
@@ -91,7 +91,10 @@
   </main>
 
   <dialog id="launch" class="modal launch-modal">
-    <div class="modal-card"><p class="eyebrow">Daemoncade · Worldcraft</p><h2>The world waits for you.</h2><p>Choose rules for a new realm. Resume always keeps the saved world's existing rules.</p><fieldset class="variant-choice"><legend>New game rules only</legend><label><input type="radio" name="match-variant" value="classic" checked><span><b>Classic contest</b><small>All powers; conquest or Reckoning can end the world.</small></span></label><label><input type="radio" name="match-variant" value="mortal"><span><b>Mortal contest</b><small>Reckoning is sealed. Win through ordinary conquest.</small></span></label></fieldset><div class="launch-actions"><button id="launch-new" type="button">New game</button><button id="launch-resume" type="button">Resume game</button></div><p id="resume-detail" class="save-detail" aria-live="polite"></p></div>
+    <div class="launch-card">
+      <div class="launch-art" role="img" aria-label="An isometric island realm with a castle, village, rival settlement, and divine light reshaping the land."></div>
+      <div class="launch-copy"><h2>Meddle</h2><p>Raise the land. Rule what rises.</p><fieldset class="variant-choice"><legend>New game rules only</legend><label><input type="radio" name="match-variant" value="classic" checked><span><b>Classic contest</b><small>All powers; conquest or Reckoning can end the world.</small></span></label><label><input type="radio" name="match-variant" value="mortal"><span><b>Mortal contest</b><small>Reckoning is sealed. Win through ordinary conquest.</small></span></label></fieldset><div class="launch-actions"><button id="launch-new" type="button">New game</button><button id="launch-resume" type="button">Resume game</button></div><p id="resume-detail" class="save-detail" aria-live="polite"></p><div class="launch-audio" aria-label="Title music controls"><button id="launch-music" type="button" aria-pressed="true">Music on</button><label>Volume <input id="launch-music-volume" type="range" min="0" max="100" step="5" value="55" aria-label="Title music volume"></label></div></div>
+    </div>
   </dialog>
   <dialog id="confirm-new" class="modal">
     <div class="modal-card"><p class="eyebrow">Begin again?</p><h2 id="confirm-new-title">Your current world is resumable.</h2><p id="confirm-new-copy">Starting a new game will replace that saved world. Your campaign progress and preferences will remain.</p><fieldset class="variant-choice"><legend>Replacement world's rules</legend><label><input type="radio" name="confirm-variant" value="classic" checked><span><b>Classic contest</b><small>All powers, including Reckoning.</small></span></label><label><input type="radio" name="confirm-variant" value="mortal"><span><b>Mortal contest</b><small>Reckoning sealed; win through ordinary conquest.</small></span></label></fieldset><div class="launch-actions"><button id="cancel-new" type="button">Keep saved game</button><button id="confirm-new-game" type="button">Start new game</button></div></div>
@@ -104,6 +107,6 @@
   <dialog id="events-dialog" class="modal"><div class="modal-card events-card"><p class="eyebrow">Chronicle</p><h2>Important events</h2><ol id="modal-event-history" class="event-history modal-event-history" aria-label="Important event history"></ol><button id="close-events" type="button">Return to the world</button></div></dialog>
   <dialog id="world-dialog" class="modal"><div class="modal-card world-card"><p class="eyebrow">World rules</p><h2 id="world-details-title">Verdant Reach</h2><p id="world-details-meta" class="world-details-meta"></p><p id="world-details-copy"></p><button id="close-world-details" type="button">Return to the world</button></div></dialog>
   <dialog id="outcome" class="modal"><div class="modal-card"><p id="outcome-kicker" class="eyebrow">The world remembers</p><h2 id="outcome-title">Victory</h2><p id="outcome-copy"></p><p id="outcome-save-warning" class="save-warning outcome-save-warning" hidden></p><button id="play-again" type="button">Shape another world</button><button id="outcome-continue-unsaved" type="button" hidden>Continue without saving</button><button id="outcome-reload" type="button" hidden>Reload newer saved world</button></div></dialog>
-  <script type="module" src="game.js?v=20261107-154"></script>
+  <script type="module" src="game.js?v=20261107-156"></script>
 </body>
 </html>
