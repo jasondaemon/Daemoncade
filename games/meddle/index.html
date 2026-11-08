@@ -49,6 +49,7 @@
           <p class="eyebrow">Survey the realm</p>
           <div class="camera-grid" aria-label="Camera controls"><button data-pan="up" type="button">▲</button><button data-pan="left" type="button">◀</button><button id="home-view" type="button">⌂</button><button data-pan="right" type="button">▶</button><button data-pan="down" type="button">▼</button><button id="rotate-left" type="button" title="Rotate view left">↺</button><button id="zoom-out" type="button">−</button><button id="zoom-in" type="button">＋</button><button id="rotate-right" type="button" title="Rotate view right">↻</button></div>
           <div class="focus-row"><button id="focus-people" type="button">◎ People <small>H</small></button><button id="focus-battle" type="button">⚔ Battle <small>B</small></button></div>
+          <button id="geometry-wireframe" class="geometry-wireframe" type="button" aria-pressed="true" hidden>◇ Geometry overlay <small>On</small></button>
           <p class="camera-help">Drag · WASD / arrows · wheel zoom · Z/X rotate<br>H people · B battle · hover a joint: R raise · F lower</p>
           <p id="camera-readout" class="camera-readout">View 7, 9 · 180%</p>
         </section>
@@ -118,6 +119,6 @@
   <dialog id="events-dialog" class="modal"><div class="modal-card events-card"><p class="eyebrow">Chronicle</p><h2>Important events</h2><ol id="modal-event-history" class="event-history modal-event-history" aria-label="Important event history"></ol><button id="close-events" type="button">Return to the world</button></div></dialog>
   <dialog id="world-dialog" class="modal"><div class="modal-card world-card"><p class="eyebrow">World rules</p><h2 id="world-details-title">Verdant Reach</h2><p id="world-details-meta" class="world-details-meta"></p><p id="world-details-copy"></p><button id="close-world-details" type="button">Return to the world</button></div></dialog>
   <dialog id="outcome" class="modal"><div class="modal-card"><p id="outcome-kicker" class="eyebrow">The world remembers</p><h2 id="outcome-title">Victory</h2><p id="outcome-copy"></p><p id="outcome-save-warning" class="save-warning outcome-save-warning" hidden></p><button id="play-again" type="button">Shape another world</button><button id="outcome-continue-unsaved" type="button" hidden>Continue without saving</button><button id="outcome-reload" type="button" hidden>Reload newer saved world</button></div></dialog>
-  <script type="module" src="game.js?v=20261108-235"></script>
+  <script type="module" src="game.js?v=20261108-236"></script>
 </body>
 </html>

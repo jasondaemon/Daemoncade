@@ -1,6 +1,13 @@
 import assert from "node:assert/strict";
+import fs from "node:fs";
 import {pickAccessibleTerrainCorner,pickVisibleTerrainCorner,pointInPolygon,resolveCommittedTerrainCorner,terrainDragThreshold,touchTerrainCommit} from "./terrain-picking.mjs";
 import {normalizePopulousTerrain} from "./terrain-model.mjs";
+
+const gameSource=fs.readFileSync(new URL("./game.js",import.meta.url),"utf8");
+const pageSource=fs.readFileSync(new URL("./index.html",import.meta.url),"utf8");
+assert.match(pageSource,/id="geometry-wireframe"[^>]+hidden/,"the development overlay control starts hidden from ordinary Meddle");
+assert.match(gameSource,/geometryWireframe=originalGeometryStudy/,"the overlay defaults on only in the opt-in original-geometry study");
+assert.match(gameSource,/geometryWireframeButton\.hidden=!originalGeometryStudy/,"ordinary Meddle never exposes the geometry control");
 
 const corner=(x,y,sx,sy,h=1)=>({world:{x,y},screen:{x:sx,y:sy},screenHeight:h});
 const rear={world:{x:1,y:1},depth:2,corners:[corner(1,1,40,10),corner(2,1,70,30),corner(2,2,40,50),corner(1,2,10,30)]};
