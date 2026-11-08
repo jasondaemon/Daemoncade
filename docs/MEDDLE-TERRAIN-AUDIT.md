@@ -25,32 +25,26 @@ evidence. Screenshots and contemporary video are useful visual corroboration onl
 | Height data | shared point grid | shared `(N+1)×(N+1)` point grid | same model |
 | Shaping cascade | recursively keeps all 8 neighbors within one level | optional Populous terrain model does the same | source-backed prototype |
 | Tile surface | selected from four corner heights | rendered from four corner heights | same basis |
-| Grid projection | diamond; one candidate row advances 16 px | adjacent point advances `tileHeight / 2` | comparable |
-| One height level | 8 px | `.55 × tileHeight` | Meddle relief is about 2.2× too strong |
-| Relative relief | `8 / 16 = 0.5` row steps | `.55 / .5 = 1.1` row steps | principal occlusion cause |
-| Source-matched Meddle value | — | `.25 × tileHeight` gives `.25 / .5 = .5` | local study value |
+| Grid projection | 32×16 diamond; a same-axis diagonal advances one full 16 px tile height | Meddle uses a `tileHeight` diamond | comparable |
+| One height level | 8 px | `.55 × tileHeight` | Meddle is slightly steeper |
+| Relative relief | `8 / 16 = 0.5` tile heights | `.55` tile heights | close, but not identical |
+| Source-matched Meddle value | — | `.5 × tileHeight` | corrected local study value |
 
-Meddle's current `view.hs = view.th * .55` does not mean 55% of a grid-row
-step: a grid-row step is only `view.th / 2`. Consequently a one-level rise is
-taller than the projected separation between adjacent points. The source-derived
-setting is `view.hs = view.th * .25`.
+The first study incorrectly used the half-row advance as its denominator. That
+was wrong: the original comparison is the 8 px height step against the full
+16 px diamond height. The source-derived setting is `view.hs = view.th * .5`.
+With the one-level neighbor invariant, `.55` still leaves `.45` tile heights of
+screen separation; a two-level discontinuity in the default terrain can reverse
+that ordering and create genuine ambiguity.
 
-## Empirical visibility fixture
+## Empirical accessibility fixture
 
-The deterministic broad-basin fixture was projected in all four rotations and a
-point was counted as hidden when a later-painted terrain surface covered its
-projected screen location.
-
-| Relief (`hs / tileHeight`) | North | East | South | West |
-| --- | ---: | ---: | ---: | ---: |
-| current `.55` | 13 / 1089 | 13 / 1089 | 19 / 1089 | 19 / 1089 |
-| compromise `.40` | 0 / 1089 | 0 / 1089 | 0 / 1089 | 0 / 1089 |
-| source-derived `.25` | 0 / 1089 | 0 / 1089 | 0 / 1089 | 0 / 1089 |
-
-Browser inspection of the same fixture corroborated the numeric result. At `.55`,
-the foreground bank visibly masks joints behind it. At `.25`, the full basin rim
-remains readable in North, East, South, and West views. A winter ordinary-play run
-also kept walkers, trees, the beacon, and their foot anchors grounded.
+The original hidden-count fixture was based on the same denominator error and is
+superseded. The corrected fixture projects a peak/pit lattice obeying the one-level
+invariant at `.5`, then asks the joint picker to recover every exact world joint in
+all four rotations. All 100 projected joint/rotation cases resolve to their own
+world coordinate. Exact screen ties resolve deterministically toward the visually
+deeper joint; clicks outside the zoom-scaled tolerance return no target.
 
 ## Shaping and functional behavior
 
@@ -67,19 +61,20 @@ also kept walkers, trees, the beacon, and their foot anchors grounded.
 
 ### Current interaction defects
 
-1. **Projection creates the hidden-point problem.** The visible-only picker is a
-   safety stopgap: it prevents edits through foreground geometry, but also makes a
-   covered joint unavailable. It should not be mistaken for an original-like fix.
+1. **Projection and unrestricted terrain differ together.** The visible-only picker
+   is a safety stopgap: it prevents edits through foreground geometry, but also makes
+   a covered joint unavailable. The corrected prototype combines `.5` relief with
+   the one-level invariant and addresses the joint lattice directly.
 2. **Picker and original sculpting differ.** Meddle finds the frontmost polygon and
    then its nearest visible corner. `_sculpt` maps horizontal strips and scans the
    height-adjusted candidate rows. With source-like relief these approaches should
    converge visually more often, but they are not algorithmically identical.
-3. **Target tolerance scales broadly.** Meddle accepts a corner within
-   `max(30 px, 0.32 × tileWidth)`. At low zoom adjacent candidates can compete; at
-   high zoom the fixed 30 px floor is generous.
+3. **Target tolerance was too broad.** The corrected prototype clamps a
+   zoom-relative radius to 12–30 px rather than using a fixed 30 px floor.
 4. **Pointerdown uses the point selected at pointerup.** This is sensible for drag
-   cancellation, but a moving simulation can alter the hovered surface during a
-   long press. The edit should use a stable preview/commit identity.
+   cancellation, but previously allowed the selected surface to change during a
+   press. The corrected prototype stores the joint at pointerdown and commits that
+   exact identity; an explicit `null` cannot fall through to a release-time target.
 5. **Edges need explicit coverage.** The cascade correctly clips to the array, but
    cursor availability, feedback labels, and power targeting need deterministic
    corner/edge fixtures in every rotation.
@@ -90,6 +85,11 @@ also kept walkers, trees, the beacon, and their foot anchors grounded.
 7. **Normal and prototype saves are intentionally separated.** The terrain prototype
    nulls the resumable save. A future geometry migration needs an explicit policy;
    changing projection alone is save-compatible, changing height normalization is not.
+
+Touch uses a deliberate two-tap edit in the prototype: the first tap selects the
+joint and exposes its cascade/cost preview, while a second tap on the same joint
+commits. A pan or rotation clears that pending intent. This avoids spending influence
+before a touch player can see the target.
 
 ## Gameplay impact
 
@@ -103,12 +103,18 @@ also kept walkers, trees, the beacon, and their foot anchors grounded.
   use `iso()` and therefore remain coherent, but must be browser-checked.
 - Simulation, pathfinding, settlement support, and combat use world heights rather
   than screen height and are not changed by projection relief.
+- Independent 74×74 browser profiling at 180% zoom measured 16.7 ms mean, 17.6 ms
+  p95, 17.7 ms p99, 0.1 ms update, and 7.1 ms draw with 14 walkers. The pure
+  5,625-joint selection scan measured about 0.104 ms per pick in Node. Developed
+  late-game performance remains a separate required regression.
+- The clipped mixed shore keeps water coplanar and meets land at interpolated sea
+  points. Its current earth/water boundary can still look stair-stepped at high zoom;
+  that is a rendering-quality issue to address after geometry acceptance.
 
 ## Recommended sequence
 
-1. **Adopt the source-derived `.25` relief in the opt-in terrain prototype only.**
-   Keep `.40` as a comparison control, not the target: it fixes the fixture but lacks
-   the primary-source basis.
+1. **Adopt the corrected source-derived `.5` relief in the opt-in terrain prototype
+   only.** Keep normal Meddle unchanged until the full interaction fixture passes.
 2. **Replace the visible-only limitation with predictable surface/joint targeting.**
    With occlusion removed geometrically, choose the nearest projected joint within a
    zoom-relative Voronoi region, show its coordinate and complete cascade, and commit

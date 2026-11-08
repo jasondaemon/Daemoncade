@@ -23,3 +23,18 @@ export function pickVisibleTerrainHit(tiles,point,maxDistance=36){
 }
 
 export const pickVisibleTerrainCorner=(tiles,point,maxDistance=36)=>pickVisibleTerrainHit(tiles,point,maxDistance)?.corner||null;
+
+export function pickAccessibleTerrainCorner(corners,point,maxDistance=36){
+  if(!Array.isArray(corners)||!point||!Number.isFinite(point.x)||!Number.isFinite(point.y))return null;
+  let best=null;
+  for(const corner of corners){
+    if(!corner?.screen||!Number.isFinite(corner.screen.x)||!Number.isFinite(corner.screen.y))continue;
+    const d=distance(point,corner.screen);
+    if(d>maxDistance)continue;
+    const depth=Number(corner.depth)||0;
+    if(!best||d<best.distance-.001||(Math.abs(d-best.distance)<=.001&&depth>best.depth))best={...corner.world,screenHeight:corner.screenHeight,distance:d,depth};
+  }
+  return best;
+}
+
+export const resolveCommittedTerrainCorner=(committed,fallback)=>committed===undefined?fallback():committed;
