@@ -1,5 +1,8 @@
 import assert from "node:assert/strict";
+import { readFileSync } from "node:fs";
 import { isSeason, resolveSeason, sceneryCell, seasonForSeed, SEASON_NAMES } from "./seasons.mjs";
+
+const gameScript = readFileSync(new URL("./game.js", import.meta.url), "utf8");
 
 assert.deepEqual(SEASON_NAMES, ["spring", "fall", "winter"]);
 assert.equal(isSeason("winter"), true);
@@ -14,4 +17,5 @@ assert.equal(resolveSeason("invalid", 42), seasonForSeed(42), "legacy saves deri
 assert.equal(resolveSeason("fall", 42, "winter"), "winter", "QA query override is deterministic");
 assert.deepEqual(sceneryCell(1600, 800, "tree", 2), { sx: 800, sy: 0, sw: 400, sh: 400 });
 assert.deepEqual(sceneryCell(1600, 800, "rock", 5), { sx: 400, sy: 400, sw: 400, sh: 400 });
+assert.match(gameScript, /group\.name==="BEACON"[^}]+strokeText\(group\.name,labelX,labelY\)/, "beacon edge label has a dark contrast outline");
 console.log("Meddle seasonal visuals: OK");
