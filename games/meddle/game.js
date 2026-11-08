@@ -61,8 +61,8 @@ import { musicRequestCurrent } from "./music-state.mjs?v=20261107-1";
   const mapSizeDescription=size=>`${size}×${size} map · ${size===34?"standard walker speed":size===54?"walkers move 10% slower":"walkers move 20% slower"}`;
   const saveSessionId=globalThis.crypto?.randomUUID?.()||`${Date.now()}-${Math.random()}`;
   const terrainAtlas=new Image(),terrainPatterns={};terrainAtlas.src="./assets/terrain-textures-v1.png";terrainAtlas.addEventListener("load",()=>{const half=terrainAtlas.naturalWidth/2;for(const [name,qx,qy] of [["grass",0,0],["earth",half,0],["water",0,half],["bog",half,half]]){const tile=document.createElement("canvas");tile.width=tile.height=256;tile.getContext("2d").drawImage(terrainAtlas,qx,qy,half,half,0,0,256,256);terrainPatterns[name]=ctx.createPattern(tile,"repeat");}});
-  const followerAnimationSprites=new Image();followerAnimationSprites.src="./assets/follower-animations.png?v=5";
-  const championAnimationSprites=new Image();championAnimationSprites.src="./assets/champion-animations.png?v=5";
+  const followerAnimationSprites=new Image();followerAnimationSprites.src="./assets/follower-animations.png?v=6";
+  const championAnimationSprites=new Image();championAnimationSprites.src="./assets/champion-animations.png?v=6";
   const frontierResourceSprites=Object.fromEntries(["forest","mine","farm"].map(type=>{const image=new Image();image.src=`./assets/frontier-${type}.webp`;return[type,image];}));
   const buildingSprites=Object.fromEntries(["player","rival","rival2"].map(faction=>[faction,Array.from({length:4},(_,level)=>Array.from({length:4},(_,rotation)=>{const image=new Image();image.src=`./assets/building-${level+1}-${rotation}${faction==="player"?"":"-rival"}.png?v=8`;return image;}))]));
   // Each source render is centered on its plot's diamond, rather than pinned to
