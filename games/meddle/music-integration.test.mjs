@@ -36,6 +36,7 @@ assert.match(script, /matchVariant=pendingMatchVariant/, "new worlds use the pen
 assert.match(script, /musicPlayer\.addEventListener\("ended"/, "gameplay music advances after a track ends");
 assert.match(script, /RECKONING_MUSIC="assets\/music\/reckoning\.mp3"/, "Reckoning uses its authored score");
 assert.match(script, /setMusicScene\("reckoning"\)/, "invoking Reckoning changes the music scene");
+assert.match(script, /reckoningPreload=new Audio\(RECKONING_MUSIC\).*reckoningPreload\.preload="auto".*reckoningPreload\.load\(\)/, "gameplay primes the Reckoning score without autoplaying it");
 assert.match(script, /cueAllowed\(elapsed,lastSoundAt,\.14\)/, "dense combat effects are rate limited");
 assert.match(script, /musicDuckFactor=\.28/, "major effects duck the score for audibility");
 assert.ok(splash.size > 100_000 && splash.size < 1_000_000, "splash is optimized for web delivery");
