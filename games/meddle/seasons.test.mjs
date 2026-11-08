@@ -7,6 +7,7 @@ const pngSize = name => {
   const bytes = readFileSync(new URL(`./assets/${name}`, import.meta.url));
   return [bytes.readUInt32BE(16), bytes.readUInt32BE(20)];
 };
+const webpBytes = name => readFileSync(new URL(`./assets/${name}`, import.meta.url));
 
 assert.deepEqual(SEASON_NAMES, ["spring", "fall", "winter"]);
 assert.equal(isSeason("winter"), true);
@@ -30,5 +31,14 @@ for (let stage=1;stage<=4;stage++) for (let orientation=0;orientation<2;orientat
   assert.deepEqual(pngSize(`building-${stage}-${orientation}-winter.png`), pngSize(`building-${stage}-${orientation}.png`), `winter stage ${stage}, orientation ${orientation} preserves its exact sprite canvas and anchor geometry`);
 }
 assert.match(gameScript, /season==="winter"\?winterBuildingSprites/, "winter settlements use dedicated snow artwork");
+for (const name of ["terrain-grass-v2.webp", "terrain-snow-v2.webp"]) {
+  const bytes = webpBytes(name);
+  assert.equal(bytes.subarray(0, 4).toString(), "RIFF", `${name} is a valid WebP container`);
+  assert.equal(bytes.subarray(8, 12).toString(), "WEBP", `${name} has a WebP payload`);
+  assert.ok(bytes.length < 150_000, `${name} stays lightweight for map-size-independent loading`);
+}
+assert.match(gameScript, /terrain-grass-v2\.webp/, "spring and fall load the raster grass material");
+assert.match(gameScript, /terrain-snow-v2\.webp/, "winter loads the raster snow material");
+assert.match(gameScript, /upperTerrainPolygon/, "slopes split surface cover from exposed earth by world height");
 assert.match(gameScript, /group\.name==="BEACON"[^}]+strokeText\(group\.name,labelX,labelY\)/, "beacon edge label has a dark contrast outline");
 console.log("Meddle seasonal visuals: OK");
