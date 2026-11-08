@@ -35,12 +35,15 @@ const size=34,save={version:1,complete:false,currentWorld:0,worldSeed:1,heights:
 assert.equal(isValidGameSave(save,size,["player","rival"]),true);
 save.people[0].members=5;
 assert.equal(isValidGameSave(save,size,["player","rival"]),false,"oversized bands are rejected from saves");
+save.people[0].members=4;
 
-const lifecyclePeople=[{id:1,faction:"player",members:2,hp:18,rank:1,experience:0},{id:2,faction:"player",members:2,hp:18,rank:1,experience:0}],lifecycleHouses=[];
+const lifecyclePeople=[{id:1,faction:"player",x:5,y:5,members:2,hp:18,rank:1,experience:0},{id:2,faction:"player",x:5.4,y:5.2,members:2,hp:18,rank:1,experience:0}],lifecycleHouses=[];
 const lifecycleStart=populationOf(lifecyclePeople,lifecycleHouses,"player");
 mergeFollowerBands(lifecyclePeople[0],lifecyclePeople[1]);lifecyclePeople.splice(1,1);
 const resumedPeople=JSON.parse(JSON.stringify(lifecyclePeople));
 assert.equal(populationOf(resumedPeople,lifecycleHouses,"player"),lifecycleStart,"merged band survives save/resume without changing population");
+const lifecycleSnapshot=JSON.parse(JSON.stringify({...save,people:resumedPeople,houses:[]}));
+assert.equal(isValidGameSave(lifecycleSnapshot,size,["player","rival"]),true,"a real serialized merged-band snapshot validates for restore");
 const disaster=applyFollowerCasualty(resumedPeople[0]);
 assert.deepEqual(disaster,{dead:false,lost:1},"a disaster removes exactly one represented soul");
 const settlement={faction:"player",level:1,pop:0,hp:30};
