@@ -1,5 +1,12 @@
 import assert from "node:assert/strict";
+import { readFileSync } from "node:fs";
 import { isValidGameSave, seededRandom, separatedStarts, viableRouteCells } from "./rules.mjs";
+
+const launchMarkup=readFileSync(new URL("./index.html",import.meta.url),"utf8");
+const launchValues=name=>[...launchMarkup.matchAll(new RegExp(`name="${name}" value="([^"]+)"`,"g"))].map(match=>match[1]);
+assert.deepEqual(launchValues("match-variant"),["classic","mortal"],"launch offers exactly Classic and Mortal contests");
+assert.deepEqual(launchValues("map-size"),["34","54","74"],"launch offers exactly the three supported map sizes");
+for(const contest of launchValues("match-variant"))for(const size of launchValues("map-size"))assert.ok(contest&&size,`${contest} ${size} is selectable as an independent launch combination`);
 
 for(const size of [34,54,74])for(let seed=1;seed<=200;seed++){
   const minimum=size*.58,starts=separatedStarts(size,seededRandom(seed),minimum);
