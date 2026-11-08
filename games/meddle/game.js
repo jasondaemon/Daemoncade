@@ -3,7 +3,7 @@ import { chooseReckoningLoss } from "./faction-state.mjs?v=20261107-1";
 import { advanceFoodEconomy, boundedFarmRoute, boundedGridPath, causewayCells, causewayDeckCells, chooseFarmForWorker, createEconomy, frontierRenderScale, frontierSaveCompatible, generateNodes, harvest, oceanChannels, purchaseUpgradePath, refreshFarmBatch, resourceForJob, revealFog, validEconomySave, workerJob } from "./frontier-economy.mjs?v=20261107-11";
 import { terminalOutcome } from "./rules.mjs?v=20261108-67";
 import { cueAllowed, effectiveMusicVolume, musicRequestCurrent } from "./music-state.mjs?v=20261108-2";
-import { resolveSeason, sceneryCell, SEASON_THEMES, winterSnowMaskAlpha, winterTerrainMaterial } from "./seasons.mjs?v=20261108-4";
+import { resolveSeason, sceneryCell, SEASON_THEMES, winterSnowMaskAlpha, winterTerrainMaterial } from "./seasons.mjs?v=20261108-5";
 
 (() => {
   "use strict";
@@ -222,7 +222,7 @@ import { resolveSeason, sceneryCell, SEASON_THEMES, winterSnowMaskAlpha, winterT
     ctx.beginPath(); ctx.moveTo(p1.x, p1.y); ctx.lineTo(p2.x, p2.y); ctx.lineTo(p3.x, p3.y); ctx.lineTo(p4.x, p4.y); ctx.closePath();
     ctx.fillStyle = bogs.has(`${x},${y}`) ? "#3b3340" : winterMaterial?.color||terrainColor(avg, (x + y) % 2); ctx.fill();
     const texture=avg<=water?terrainPatterns.water:bogs.has(`${x},${y}`)?terrainPatterns.bog:winterMaterial?terrainPatterns.earth:relief>=1?terrainPatterns.earth:terrainPatterns.grass;if(texture){anchorTerrainPattern(texture,avg);ctx.save();ctx.globalAlpha=avg<=water?.22:winterMaterial?.kind==="earth"?.36:winterMaterial?.24:relief>=1?.24:.15;ctx.fillStyle=texture;ctx.fill();ctx.restore();}
-    if(winterMaterial&&terrainPatterns.snow){anchorTerrainPattern(terrainPatterns.snow,avg,7);ctx.save();ctx.globalAlpha=relief>=1?.5:.96;ctx.fillStyle=terrainPatterns.snow;ctx.fill();ctx.restore();}
+    if(winterMaterial&&terrainPatterns.snow){anchorTerrainPattern(terrainPatterns.snow,avg,23);ctx.save();ctx.globalAlpha=relief>=1?.5:.96;ctx.fillStyle=terrainPatterns.snow;ctx.fill();ctx.restore();}
     ctx.beginPath();ctx.moveTo(p1.x,p1.y);ctx.lineTo(p2.x,p2.y);ctx.lineTo(p3.x,p3.y);ctx.lineTo(p4.x,p4.y);ctx.closePath();ctx.strokeStyle = winterMaterial?.kind==="earth"?"#342a2348":season==="winter"?"#6f838022":"#10171a24"; ctx.lineWidth = winterMaterial?.kind==="earth"?.6:season==="winter"?.4:.65; ctx.stroke();
     const field=avg>water&&isFlat(x,y)?houses.filter(h=>Math.max(Math.abs(h.x-(x+.5)),Math.abs(h.y-(y+.5)))<=[0,1,1.5,2,2.5][h.level]).sort((a,b)=>dist(a,{x:x+.5,y:y+.5})-dist(b,{x:x+.5,y:y+.5}))[0]:null;if(field){ctx.save();ctx.beginPath();ctx.moveTo(p1.x,p1.y);ctx.lineTo(p2.x,p2.y);ctx.lineTo(p3.x,p3.y);ctx.lineTo(p4.x,p4.y);ctx.closePath();ctx.clip();ctx.fillStyle=field.faction==="player"?"#53cdb413":"#dc675f13";ctx.fillRect(minX,minY,maxX-minX,maxY-minY);ctx.strokeStyle=field.faction==="player"?"#8ed9a94f":"#d8947752";ctx.lineWidth=.8;for(let i=-2;i<=2;i++){const a=iso(x+.1,y+.15+i*.16,avg),b=iso(x+.9,y+.15+i*.16,avg);ctx.beginPath();ctx.moveTo(a.x,a.y);ctx.lineTo(b.x,b.y);ctx.stroke();}ctx.restore();}
     if (avg <= water) { ctx.fillStyle = "#5ec5d019"; ctx.fill(); }

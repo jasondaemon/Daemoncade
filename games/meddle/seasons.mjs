@@ -20,9 +20,21 @@ export function winterTerrainMaterial(x, y, height, relief, water, seed = 1) {
 
 export function winterSnowMaskAlpha(u, v) {
   const x = ((Number(u) || 0) % 1 + 1) % 1, y = ((Number(v) || 0) % 1 + 1) % 1;
-  const wave = .67 + Math.sin(Math.PI*4*x)*.13 + Math.cos(Math.PI*4*y)*.11 + Math.sin(Math.PI*6*(x+y))*.07 + Math.cos(Math.PI*10*(x-y))*.04;
-  const eased = Math.max(0, Math.min(1, (wave - .43) / .22));
-  return eased * eased * (3 - 2 * eased);
+  const hash = (ix, iy, cells) => {
+    const wx=((ix%cells)+cells)%cells, wy=((iy%cells)+cells)%cells;
+    let n=Math.imul(wx+19,374761393)^Math.imul(wy+47,668265263)^Math.imul(cells,2246822519);
+    n=Math.imul(n^(n>>>13),1274126177);return ((n^(n>>>16))>>>0)/4294967295;
+  };
+  const noise = cells => {
+    const px=x*cells,py=y*cells,ix=Math.floor(px),iy=Math.floor(py),fx=px-ix,fy=py-iy,
+      sx=fx*fx*(3-2*fx),sy=fy*fy*(3-2*fy),
+      a=hash(ix,iy,cells)*(1-sx)+hash(ix+1,iy,cells)*sx,
+      b=hash(ix,iy+1,cells)*(1-sx)+hash(ix+1,iy+1,cells)*sx;
+    return a*(1-sy)+b*sy;
+  };
+  const coverage=noise(7)*.18+noise(17)*.47+noise(31)*.35;
+  const eased=Math.max(0,Math.min(1,(coverage-.18)/.11));
+  return eased*eased*(3-2*eased);
 }
 
 export function isSeason(value) { return SEASON_NAMES.includes(value); }
