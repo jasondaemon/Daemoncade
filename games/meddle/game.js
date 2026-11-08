@@ -149,7 +149,7 @@ import { musicRequestCurrent } from "./music-state.mjs?v=20261107-1";
     const rect = canvas.getBoundingClientRect();
     view.dpr = frontierEconomy||longRealmTestMode?frontierRenderScale(rect.width,rect.height,window.devicePixelRatio||1):Math.min(2,window.devicePixelRatio||1); view.w = rect.width; view.h = rect.height;
     canvas.width = Math.round(rect.width * view.dpr); canvas.height = Math.round(rect.height * view.dpr);
-    view.baseTw = clamp(Math.min(rect.width / 12, rect.height / 8), 42, 72);applyZoom();
+    view.baseTw = clamp(Math.min(rect.width / 12, rect.height / 8), 42, longRealmTestMode?112:72);applyZoom();
     view.ox = rect.width * .5; view.oy = rect.height * .5;
   }
 
