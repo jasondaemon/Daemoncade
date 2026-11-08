@@ -38,3 +38,8 @@ export function pickAccessibleTerrainCorner(corners,point,maxDistance=36){
 }
 
 export const resolveCommittedTerrainCorner=(committed,fallback)=>committed===undefined?fallback():committed;
+export const terrainDragThreshold=pointerType=>pointerType==="touch"?12:3;
+export function touchTerrainCommit(primed,selected){
+  const same=selected&&primed&&selected.x===primed.x&&selected.y===primed.y;
+  return same?{commit:true,next:null}:{commit:false,next:selected||null};
+}

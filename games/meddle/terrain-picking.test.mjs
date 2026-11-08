@@ -1,5 +1,6 @@
 import assert from "node:assert/strict";
-import {pickAccessibleTerrainCorner,pickVisibleTerrainCorner,pointInPolygon,resolveCommittedTerrainCorner} from "./terrain-picking.mjs";
+import {pickAccessibleTerrainCorner,pickVisibleTerrainCorner,pointInPolygon,resolveCommittedTerrainCorner,terrainDragThreshold,touchTerrainCommit} from "./terrain-picking.mjs";
+import {normalizePopulousTerrain} from "./terrain-model.mjs";
 
 const corner=(x,y,sx,sy,h=1)=>({world:{x,y},screen:{x:sx,y:sy},screenHeight:h});
 const rear={world:{x:1,y:1},depth:2,corners:[corner(1,1,40,10),corner(2,1,70,30),corner(2,2,40,50),corner(1,2,10,30)]};
@@ -31,4 +32,20 @@ assert.deepEqual(pickAccessibleTerrainCorner(tied,{x:20,y:20},5).x,2,"an exact p
 assert.equal(pickAccessibleTerrainCorner(tied,{x:80,y:80},5),null,"a distant click never guesses a joint");
 assert.equal(resolveCommittedTerrainCorner(null,()=>({x:3,y:3})),null,"a press that began without a joint cannot acquire one on release");
 assert.deepEqual(resolveCommittedTerrainCorner(undefined,()=>({x:3,y:3})),{x:3,y:3},"non-pointer callers can still request a fresh lookup");
+assert.ok(terrainDragThreshold("touch")>terrainDragThreshold("mouse"),"touch tolerates normal finger jitter before becoming a pan");
+assert.deepEqual(touchTerrainCommit(null,{x:4,y:5}),{commit:false,next:{x:4,y:5}},"first touch previews without spending");
+assert.deepEqual(touchTerrainCommit({x:4,y:5},{x:4,y:5}),{commit:true,next:null},"second touch on the same world joint commits");
+assert.deepEqual(touchTerrainCommit({x:4,y:5},{x:5,y:5}),{commit:false,next:{x:5,y:5}},"touching another joint moves the preview instead of committing");
+
+const randomFor=seed=>()=>{seed=(Math.imul(seed,1664525)+1013904223)>>>0;return seed/4294967296;};
+for(const generatedSize of [34,54,74])for(const seed of [17,811]){
+  const random=randomFor(seed),generated=normalizePopulousTerrain(Array.from({length:generatedSize+1},()=>Array.from({length:generatedSize+1},()=>Math.floor(random()*7))));
+  const samples=[[0,0],[generatedSize,0],[generatedSize,generatedSize],[0,generatedSize],[Math.floor(generatedSize/2),0],[generatedSize,Math.floor(generatedSize/2)],[Math.floor(generatedSize/2),generatedSize],[0,Math.floor(generatedSize/2)]];
+  for(let i=0;i<32;i+=1)samples.push([Math.floor(random()*(generatedSize+1)),Math.floor(random()*(generatedSize+1))]);
+  for(const zoom of [.9,1.8,2.2])for(let rotation=0;rotation<4;rotation+=1){
+    const tw=58*zoom,th=tw*.5,hs=th*.5,candidates=[];
+    for(let y=0;y<=generatedSize;y+=1)for(let x=0;x<=generatedSize;x+=1){const p=rotation===0?{x,y}:rotation===1?{x:y,y:generatedSize-x}:rotation===2?{x:generatedSize-x,y:generatedSize-y}:{x:generatedSize-y,y:x};candidates.push({world:{x,y},screen:{x:1200+(p.x-p.y)*tw/2,y:700+(p.x+p.y)*th/2-generated[y][x]*hs},screenHeight:generated[y][x],depth:p.x+p.y});}
+    for(const [x,y] of samples){const candidate=candidates.find(value=>value.world.x===x&&value.world.y===y),picked=pickAccessibleTerrainCorner(candidates,candidate.screen,Math.max(12,Math.min(30,tw*.24)));assert.deepEqual({x:picked.x,y:picked.y},{x,y},`${generatedSize} seed ${seed} zoom ${zoom} rotation ${rotation} must address joint ${x},${y}`);}
+  }
+}
 console.log("Meddle terrain picking: rendered tiles and all source-ratio terrain joints remain addressable");

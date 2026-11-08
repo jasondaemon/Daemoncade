@@ -40,11 +40,12 @@ that ordering and create genuine ambiguity.
 ## Empirical accessibility fixture
 
 The original hidden-count fixture was based on the same denominator error and is
-superseded. The corrected fixture projects a peak/pit lattice obeying the one-level
-invariant at `.5`, then asks the joint picker to recover every exact world joint in
-all four rotations. All 100 projected joint/rotation cases resolve to their own
-world coordinate. Exact screen ties resolve deterministically toward the visually
-deeper joint; clicks outside the zoom-scaled tolerance return no target.
+superseded. The corrected fixtures project both a peak/pit lattice and normalized
+generated 34×34, 54×54, and 74×74 maps at `.5`. They sample every map edge, all
+four corners, and deterministic interior points at 90%, 180%, and 220% zoom through
+all four rotations. Every sampled joint resolves to its own world coordinate. Exact
+screen ties resolve deterministically toward the visually deeper joint; clicks
+outside the zoom-scaled tolerance return no target.
 
 ## Shaping and functional behavior
 
@@ -65,15 +66,14 @@ deeper joint; clicks outside the zoom-scaled tolerance return no target.
    is a safety stopgap: it prevents edits through foreground geometry, but also makes
    a covered joint unavailable. The corrected prototype combines `.5` relief with
    the one-level invariant and addresses the joint lattice directly.
-2. **Picker and original sculpting differ.** Meddle finds the frontmost polygon and
-   then its nearest visible corner. `_sculpt` maps horizontal strips and scans the
-   height-adjusted candidate rows. With source-like relief these approaches should
-   converge visually more often, but they are not algorithmically identical.
+2. **Picker and original sculpting differ.** Normal Meddle finds the frontmost
+   polygon and its nearest visible corner; the isolated prototype finds the nearest
+   projected joint. `_sculpt` maps horizontal strips and scans height-adjusted
+   candidate rows. The prototype is predictable but not algorithmically identical.
 3. **Target tolerance was too broad.** The corrected prototype clamps a
    zoom-relative radius to 12–30 px rather than using a fixed 30 px floor.
-4. **Pointerdown uses the point selected at pointerup.** This is sensible for drag
-   cancellation, but previously allowed the selected surface to change during a
-   press. The corrected prototype stores the joint at pointerdown and commits that
+4. **Pointer identity must remain stable.** The corrected prototype stores the joint
+   at pointerdown and commits that
    exact identity; an explicit `null` cannot fall through to a release-time target.
 5. **Edges need explicit coverage.** The cascade correctly clips to the array, but
    cursor availability, feedback labels, and power targeting need deterministic
@@ -103,10 +103,12 @@ before a touch player can see the target.
   use `iso()` and therefore remain coherent, but must be browser-checked.
 - Simulation, pathfinding, settlement support, and combat use world heights rather
   than screen height and are not changed by projection relief.
-- Independent 74×74 browser profiling at 180% zoom measured 16.7 ms mean, 17.6 ms
-  p95, 17.7 ms p99, 0.1 ms update, and 7.1 ms draw with 14 walkers. The pure
-  5,625-joint selection scan measured about 0.104 ms per pick in Node. Developed
-  late-game performance remains a separate required regression.
+- A developed 74×74 browser run after 240 simulated seconds measured 16.8 ms mean,
+  18.3 ms p95, 18.6 ms p99, 33.9 ms max, 1.4 ms update, and 5.7 ms draw with
+  89 walkers and 38 dwellings. A developed 54×54 run measured 16.7 ms mean,
+  18.3 ms p95, 18.7 ms p99/max, 0.3 ms update, and 5.0 ms draw with 28 walkers
+  and 17 dwellings. The pure 5,625-joint selection scan measured about 0.104 ms
+  per pick in Node. Late-game disasters and Reckoning remain separate regressions.
 - The clipped mixed shore keeps water coplanar and meets land at interpolated sea
   points. Its current earth/water boundary can still look stair-stepped at high zoom;
   that is a rendering-quality issue to address after geometry acceptance.
