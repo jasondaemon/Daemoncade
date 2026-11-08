@@ -44,6 +44,7 @@ import { pickVisibleTerrainHit } from "./terrain-picking.mjs?v=1";
   const championTestMode=new URLSearchParams(location.search).has("championTest");
   const previewTestMode=new URLSearchParams(location.search).get("previewTest");
   const populousTerrainMode=new URLSearchParams(location.search).get("terrainModel")==="populous";
+  const originalGeometryStudy=populousTerrainMode&&new URLSearchParams(location.search).get("terrainGeometry")==="original";
   const previewTestState=new URLSearchParams(location.search).get("previewState");
   const castleFootprintMode=new URLSearchParams(location.search).get("footprint")==="castle";
   const storageTestMode=new URLSearchParams(location.search).get("storageTest");
@@ -182,7 +183,14 @@ import { pickVisibleTerrainHit } from "./terrain-picking.mjs?v=1";
     view.ox = rect.width * .5; view.oy = rect.height * .5;
   }
 
-  function applyZoom(){view.tw=view.baseTw*camera.zoom;view.th=view.tw*.5;view.hs=view.th*.55;}
+  function applyZoom(){
+    view.tw=view.baseTw*camera.zoom;
+    view.th=view.tw*.5;
+    // Original Amiga sculpting advances candidate rows by 16 px and height by
+    // 8 px. Since one Meddle grid step is half a tile high, .25 preserves the
+    // same 1:2 relief-to-row ratio without changing normal Meddle geometry.
+    view.hs=view.th*(originalGeometryStudy?.25:.55);
+  }
 
   function anchorTerrainPattern(pattern,height,worldSpan=4,textureSize=256){if(!pattern?.setTransform)return;const origin=iso(0,0,height),unit=worldSpan/textureSize,bases=[[[1,1],[-1,1]],[[1,-1],[1,1]],[[-1,-1],[1,-1]],[[-1,1],[-1,-1]]][camera.rotation],x=bases[0],y=bases[1];pattern.setTransform(new DOMMatrix([x[0]*view.tw*.5*unit,x[1]*view.th*.5*unit,y[0]*view.tw*.5*unit,y[1]*view.th*.5*unit,origin.x,origin.y]));}
   function fillTerrainPolygon(points,pattern,alpha){if(!pattern||points.length<3)return;ctx.save();ctx.beginPath();points.forEach((point,index)=>index?ctx.lineTo(point.x,point.y):ctx.moveTo(point.x,point.y));ctx.closePath();ctx.globalAlpha=alpha;ctx.fillStyle=pattern;ctx.fill();ctx.restore();}
@@ -468,7 +476,7 @@ import { pickVisibleTerrainHit } from "./terrain-picking.mjs?v=1";
   function setTool(v){tool=v;power=null;$$('.tool').forEach(b=>b.classList.toggle("active",b.dataset.tool===v));$("#beacon").classList.toggle("active",v==="beacon");if(v!=="inspect"&&$("#inspect-readout"))$("#inspect-readout").textContent="";const copy={raise:"Raise a terrain corner. Cyan frontier marks the exact reach of your influence.",lower:"Lower a terrain corner. Cyan frontier marks the exact reach of your influence.",inspect:"Inspect land, people, and dwellings. Click again to cycle overlapping targets.",beacon:"Choose dry land for the beacon. Your followers can be ordered to gather there."};$("#tool-hint").textContent=copy[v];}
   function selectPower(v){setTool("inspect");power=v;$$('[data-power]').forEach(b=>b.classList.toggle("selected",b.dataset.power===v));if(v){const info=POWER_INFO[v];$("#tool-hint").textContent=`${info.name} · ${COST[v]} influence · hover to preview ${info.area}, then click to cast. Select again to cancel.`;}}
   function setOrderIndicator(label){$("#order-state").textContent=`Current will · ${label}`;const help={settle:"Walkers seek open flat land and build.",gather:"The leader follows the beacon; the tribe follows the leader.",roam:"Walkers pursue reachable enemies across the world.",fightsettle:"Local leash: six tiles and at most eight route steps. Ordinary walkers settle when clear; champions patrol the beacon."};if($("#order-help"))$("#order-help").textContent=help[order]||"";$$('.order').forEach(b=>b.classList.toggle("active",b.dataset.order===order));}
-  function updateWorldState(){const el=$("#world-state");if(!el)return;$("#world-rule").textContent=testModeLabel()?"Controlled test world":`${mapSizeDescription(N)} · ${rulesDescription()}`;if(!testModeLabel()){const label=`World ${WORLD_NUMERALS[currentWorld]} · ${WORLDS[currentWorld].name} · ${N}×${N}${populousTerrainMode?" · Terrain prototype":""}`;$("#world-name").textContent=label;$("#world-name").setAttribute("aria-label",`${label}. View world rules and seed.`);}el.classList.toggle("paused",paused);el.innerHTML=`<i></i> ${paused?"Paused":"Active"} · ${speed}×${conquests.player?` · ${conquests.player} captured`:""}`;}
+  function updateWorldState(){const el=$("#world-state");if(!el)return;$("#world-rule").textContent=testModeLabel()?"Controlled test world":`${mapSizeDescription(N)} · ${rulesDescription()}`;if(!testModeLabel()){const label=`World ${WORLD_NUMERALS[currentWorld]} · ${WORLDS[currentWorld].name} · ${N}×${N}${populousTerrainMode?originalGeometryStudy?" · Original geometry study":" · Terrain prototype":""}`;$("#world-name").textContent=label;$("#world-name").setAttribute("aria-label",`${label}. View world rules and seed.`);}el.classList.toggle("paused",paused);el.innerHTML=`<i></i> ${paused?"Paused":"Active"} · ${speed}×${conquests.player?` · ${conquests.player} captured`:""}`;}
   function setSpeed(value){if(resumableSave?.worldSeed===worldSeed){season=resolveSeason(resumableSave.season,worldSeed,requestedSeason);seasonTheme=SEASON_THEMES[season];}speed=value;$$('[data-speed]').forEach(b=>b.classList.toggle("active",Number(b.dataset.speed)===value));updateWorldState();}
   function setStatus(s,force=false){if(!force&&elapsed<statusLockUntil)return;$("#status").textContent=s;}
   function showInspection(s){setStatus(s,true);const readout=$("#inspect-readout");if(readout)readout.textContent=s;}
