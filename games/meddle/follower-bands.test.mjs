@@ -1,10 +1,13 @@
 import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
-import { applyFollowerCasualty, awardBandExperience, bandSize, bandTier, captureDwelling, followerAnimationFrame, followerGroupStatus, followerReadout, isValidGameSave, mergeFollowerBands, populationOf, releaseForReckoning } from "./rules.mjs";
+import { applyFollowerCasualty, awardBandExperience, bandSize, bandTier, captureDwelling, dwellingVeteranExperience, followerAnimationFrame, followerGroupStatus, followerMaximumHealth, followerReadout, isValidGameSave, mergeFollowerBands, populationOf, recoverFollowerHealth, releaseForReckoning, withdrawDwellingVeteran } from "./rules.mjs";
 
 const target={faction:"player",members:2,hp:14,rank:2,experience:4},source={faction:"player",members:2,hp:13,rank:2,experience:5};
 const gameScript=readFileSync(new URL("./game.js",import.meta.url),"utf8");
 assert.match(gameScript,/drawFollowerShadow\(q,size,champion,leader\)[\s\S]+q\.y\+size\*\.145[\s\S]+createRadialGradient/,"every raster follower rank shares a soft shadow anchored at the atlas foot line");
+assert.match(gameScript,/order!=="reckoning"[\s\S]+recoverFollowerHealth\(p,dt,simElapsed\)/,"live recovery is withheld during Reckoning");
+assert.match(gameScript,/if\(hazard>0\)p\.lastHarmAt=simElapsed/,"flood, bog, and starvation reset the shared recovery cooldown");
+assert.match(gameScript,/type==="rank"[\s\S]+fx\.label/,"fighter and warrior promotion has a distinct readable battlefield cue");
 const before=bandSize(target)+bandSize(source);
 assert.equal(mergeFollowerBands(target,source),2);
 assert.equal(bandSize(target),4);
@@ -15,6 +18,11 @@ assert.equal(followerReadout(target).role,"warrior band");
 const largeRecruitBand={members:4,rank:1,experience:0,hp:40};
 assert.equal(bandTier(largeRecruitBand),1,"represented headcount does not grant rank");
 assert.equal(awardBandExperience(largeRecruitBand,3),2,"rank is earned separately through experience");
+largeRecruitBand.lastHarmAt=10;
+assert.equal(recoverFollowerHealth(largeRecruitBand,1,19),0,"recovery waits for ten complete safe simulated seconds");
+assert.equal(recoverFollowerHealth(largeRecruitBand,1,20),.25,"a safe band recovers at the restrained shared rate");
+for(let second=21;second<200;second++)recoverFollowerHealth(largeRecruitBand,1,second);
+assert.equal(largeRecruitBand.hp,followerMaximumHealth(largeRecruitBand),"recovery stops at the member-based maximum without resurrection");
 assert.equal(followerAnimationFrame({age:0,movingUntil:0,combatUntil:0},1),0,"idle followers hold the contact pose");
 assert.deepEqual([.05,.18,.32].map(age=>followerAnimationFrame({age,movingUntil:2,combatUntil:0},1)),[0,1,2],"walking cycles through three aligned frames");
 assert.deepEqual([1,1.12,1.23].map(time=>followerAnimationFrame({id:0,age:.3,movingUntil:2,combatUntil:2},time)),[3,4,5],"combat cycles through ready, strike, and recovery frames");
@@ -30,15 +38,25 @@ const houses=[{faction:"player",pop:7},{faction:"rival",pop:5}];
 assert.equal(populationOf(people,houses,"player"),12);
 assert.equal(populationOf(people,houses,"rival"),8);
 assert.deepEqual(followerGroupStatus(people.slice(0,2)),{count:5,fighting:false});
-const house={faction:"rival",pop:9,level:2,hp:1};
-captureDwelling(house,"player",4);
+const house={faction:"rival",pop:9,level:2,hp:1,veteranExperience:6};
+captureDwelling(house,"player",4,8);
 assert.equal(house.pop,4,"capturing band becomes the new residents without losing souls");
+assert.equal(dwellingVeteranExperience(house),8,"capture replaces the defeated lineage with the conqueror's exact experience");
+assert.equal(withdrawDwellingVeteran(house),8);
+assert.equal(dwellingVeteranExperience(house),0,"veteran experience leaves a dwelling exactly once");
 
 const size=34,save={version:1,complete:false,currentWorld:0,worldSeed:1,heights:Array.from({length:size+1},()=>Array(size+1).fill(3)),houses:[],people:[{faction:"player",x:5,y:5,hp:20,members:4}],bogs:[],mana:1,rivalMana:1,water:1,elapsed:1,simElapsed:1,nextId:2,beacon:{x:5,y:5},camera:{x:5,y:5},factionStarts:{player:{x:5,y:5},rival:{x:25,y:25}}};
 assert.equal(isValidGameSave(save,size,["player","rival"]),true);
 save.people[0].members=5;
 assert.equal(isValidGameSave(save,size,["player","rival"]),false,"oversized bands are rejected from saves");
 save.people[0].members=4;
+save.people[0].lastHarmAt=1;
+save.people[0].experience=8;save.people[0].rank=3;
+save.houses=[{faction:"player",x:6,y:6,level:2,pop:4,veteranExperience:8}];
+assert.equal(isValidGameSave(JSON.parse(JSON.stringify(save)),size,["player","rival"]),true,"veteran recovery and settlement lineage survive a real JSON save round trip");
+save.people[0].lastHarmAt=-1;
+assert.equal(isValidGameSave(save,size,["player","rival"]),false,"malformed recovery timestamps cannot poison a resumed world");
+save.people[0].lastHarmAt=1;save.houses=[];
 
 const lifecyclePeople=[{id:1,faction:"player",x:5,y:5,members:2,hp:18,rank:1,experience:0},{id:2,faction:"player",x:5.4,y:5.2,members:2,hp:18,rank:1,experience:0}],lifecycleHouses=[];
 const lifecycleStart=populationOf(lifecyclePeople,lifecycleHouses,"player");
@@ -49,10 +67,12 @@ const lifecycleSnapshot=JSON.parse(JSON.stringify({...save,people:resumedPeople,
 assert.equal(isValidGameSave(lifecycleSnapshot,size,["player","rival"]),true,"a real serialized merged-band snapshot validates for restore");
 const disaster=applyFollowerCasualty(resumedPeople[0]);
 assert.deepEqual(disaster,{dead:false,lost:1},"a disaster removes exactly one represented soul");
+resumedPeople[0].experience=8;resumedPeople[0].rank=3;
 const settlement={faction:"player",level:1,pop:0,hp:30};
-captureDwelling(settlement,"player",bandSize(resumedPeople[0]));lifecycleHouses.push(settlement);resumedPeople.length=0;
+captureDwelling(settlement,"player",bandSize(resumedPeople[0]),resumedPeople[0].experience);lifecycleHouses.push(settlement);resumedPeople.length=0;
 assert.equal(populationOf(resumedPeople,lifecycleHouses,"player"),lifecycleStart-1,"settlement stores every surviving merged soul");
 const released=releaseForReckoning(lifecycleHouses);
 assert.equal(released.length,lifecycleStart-1,"Reckoning releases every stored soul after merge, resume, disaster, and settlement");
+assert.equal(released.reduce((sum,resident)=>sum+resident.experience,0),8,"Reckoning returns veteran experience once without duplication");
 
 console.log("Meddle follower bands: population, tiers, casualties, capture, and save bounds OK");

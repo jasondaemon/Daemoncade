@@ -19,6 +19,30 @@ export function awardBandExperience(person, amount = 1) {
   return person.rank;
 }
 
+export function followerMaximumHealth(person) {
+  return person?.champion ? 120 : 18 * bandSize(person);
+}
+
+export function recoverFollowerHealth(person, dt, simElapsed, cooldown = 10, rate = .25) {
+  const maximum = followerMaximumHealth(person), hp = Number(person?.hp) || 0;
+  if (hp <= 0 || hp >= maximum || !Number.isFinite(dt) || dt <= 0 || !Number.isFinite(simElapsed)) return 0;
+  const lastHarmAt = Number.isFinite(person.lastHarmAt) ? person.lastHarmAt : simElapsed;
+  if (simElapsed - lastHarmAt < cooldown) return 0;
+  const gained = Math.min(maximum - hp, dt * rate);
+  person.hp = hp + gained;
+  return gained;
+}
+
+export function dwellingVeteranExperience(house) {
+  return Math.max(0, Number(house?.veteranExperience) || 0);
+}
+
+export function withdrawDwellingVeteran(house) {
+  const experience = dwellingVeteranExperience(house);
+  house.veteranExperience = 0;
+  return experience;
+}
+
 export function followerAnimationFrame(person, elapsed = 0) {
   if ((person?.combatUntil || 0) > elapsed) return 3 + Math.floor((elapsed + (Number(person?.id) || 0) * .03125) * 9) % 3;
   if ((person?.movingUntil || 0) <= elapsed) return 0;
@@ -32,6 +56,8 @@ export function mergeFollowerBands(target, source, maximum = 4) {
   target.members = bandSize(target) + moved;
   target.hp = Math.min(target.members * 18, Math.max(1, target.hp) + Math.max(1, source.hp) * moved / bandSize(source));
   awardBandExperience(target, movedExperience);
+  const harmTimes = [target.lastHarmAt, source.lastHarmAt].filter(Number.isFinite);
+  if (harmTimes.length) target.lastHarmAt = Math.max(...harmTimes);
   source.members = sourceSize - moved;
   source.experience = Math.max(0, (Number(source.experience) || 0) - movedExperience);
   source.rank = source.experience >= 8 ? 3 : source.experience >= 3 ? 2 : 1;
@@ -96,17 +122,19 @@ export function advanceDwelling(house) {
   return true;
 }
 
-export function captureDwelling(house, faction, population = 1) {
+export function captureDwelling(house, faction, population = 1, veteranExperience = 0) {
   house.faction = faction;
   house.pop = Math.max(1, Math.floor(population));
+  house.veteranExperience = Math.max(0, Number(veteranExperience) || 0);
   house.hp = 20 + house.level * 10;
 }
 
 export function releaseForReckoning(houses) {
   const released = [];
   for (const house of houses) {
+    const veteranExperience = withdrawDwellingVeteran(house);
     for (let index = 0; index < house.pop; index += 1) {
-      released.push({ faction: house.faction, x: house.x, y: house.y });
+      released.push({ faction: house.faction, x: house.x, y: house.y, experience: index === 0 ? veteranExperience : 0 });
     }
     house.pop = 0;
   }
@@ -442,8 +470,8 @@ export function isValidGameSave(value, size = 34, allowedFactions = size > 34 ? 
   if (!value.beacon || !value.camera || !value.factionStarts) return false;
   const point = item => item && Number.isFinite(item.x) && Number.isFinite(item.y) && item.x >= 0 && item.y >= 0 && item.x <= size && item.y <= size;
   if (!point(value.beacon) || !point(value.camera) || !allowedFactions.every(faction=>point(value.factionStarts[faction]))) return false;
-  if (!value.houses.every(house => point(house) && allowedFactions.includes(house.faction) && Number.isInteger(house.level) && house.level >= 1 && house.level <= 4 && Number.isFinite(house.pop))) return false;
-  if (!value.people.every(person => point(person) && allowedFactions.includes(person.faction) && Number.isFinite(person.hp) && (person.members === undefined || Number.isInteger(person.members) && person.members >= 1 && person.members <= 4) && (person.rank === undefined || Number.isInteger(person.rank) && person.rank >= 1 && person.rank <= 3) && (person.experience === undefined || Number.isFinite(person.experience) && person.experience >= 0))) return false;
+  if (!value.houses.every(house => point(house) && allowedFactions.includes(house.faction) && Number.isInteger(house.level) && house.level >= 1 && house.level <= 4 && Number.isFinite(house.pop) && (house.veteranExperience === undefined || Number.isFinite(house.veteranExperience) && house.veteranExperience >= 0))) return false;
+  if (!value.people.every(person => point(person) && allowedFactions.includes(person.faction) && Number.isFinite(person.hp) && (person.members === undefined || Number.isInteger(person.members) && person.members >= 1 && person.members <= 4) && (person.rank === undefined || Number.isInteger(person.rank) && person.rank >= 1 && person.rank <= 3) && (person.experience === undefined || Number.isFinite(person.experience) && person.experience >= 0) && (person.lastHarmAt === undefined || Number.isFinite(person.lastHarmAt) && person.lastHarmAt >= 0))) return false;
   return true;
 }
 
