@@ -1,7 +1,10 @@
 import assert from "node:assert/strict";
+import { readFileSync } from "node:fs";
 import { applyFollowerCasualty, awardBandExperience, bandSize, bandTier, captureDwelling, followerAnimationFrame, followerGroupStatus, followerReadout, isValidGameSave, mergeFollowerBands, populationOf, releaseForReckoning } from "./rules.mjs";
 
 const target={faction:"player",members:2,hp:14,rank:2,experience:4},source={faction:"player",members:2,hp:13,rank:2,experience:5};
+const gameScript=readFileSync(new URL("./game.js",import.meta.url),"utf8");
+assert.match(gameScript,/drawRasterFollower[\s\S]+ellipse\(q\.x,q\.y\+1,size\*\(champion\?\.19:leader\?\.17:\.145\),size\*\.047/,"every raster follower rank shares a feet-anchored contact shadow");
 const before=bandSize(target)+bandSize(source);
 assert.equal(mergeFollowerBands(target,source),2);
 assert.equal(bandSize(target),4);
