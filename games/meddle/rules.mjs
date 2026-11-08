@@ -20,7 +20,7 @@ export function awardBandExperience(person, amount = 1) {
 }
 
 export function followerAnimationFrame(person, elapsed = 0) {
-  if ((person?.combatUntil || 0) > elapsed) return 3;
+  if ((person?.combatUntil || 0) > elapsed) return 3 + Math.floor((elapsed + (Number(person?.id) || 0) * .03125) * 9) % 3;
   if ((person?.movingUntil || 0) <= elapsed) return 0;
   return Math.floor(Math.max(0, Number(person?.age) || 0) * 7) % 3;
 }
