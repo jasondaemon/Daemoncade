@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
-import { applyFollowerCasualty, bandSize, bandTier, captureDwelling, followerGroupStatus, followerReadout, isValidGameSave, mergeFollowerBands, populationOf } from "./rules.mjs";
+import { applyFollowerCasualty, awardBandExperience, bandSize, bandTier, captureDwelling, followerGroupStatus, followerReadout, isValidGameSave, mergeFollowerBands, populationOf } from "./rules.mjs";
 
-const target={faction:"player",members:2,hp:14},source={faction:"player",members:2,hp:13};
+const target={faction:"player",members:2,hp:14,rank:2,experience:4},source={faction:"player",members:2,hp:13,rank:2,experience:5};
 const before=bandSize(target)+bandSize(source);
 assert.equal(mergeFollowerBands(target,source),2);
 assert.equal(bandSize(target),4);
@@ -9,6 +9,9 @@ assert.equal(source.members,0);
 assert.equal(target.members+source.members,before,"merging conserves represented population");
 assert.equal(bandTier(target),3);
 assert.equal(followerReadout(target).role,"warrior band");
+const largeRecruitBand={members:4,rank:1,experience:0,hp:40};
+assert.equal(bandTier(largeRecruitBand),1,"represented headcount does not grant rank");
+assert.equal(awardBandExperience(largeRecruitBand,3),2,"rank is earned separately through experience");
 
 const losses=[];
 while(target.members>1)losses.push(applyFollowerCasualty(target));

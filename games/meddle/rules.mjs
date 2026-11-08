@@ -8,16 +8,27 @@ export function bandSize(person) {
 }
 
 export function bandTier(person) {
-  const size = bandSize(person);
-  return size >= 4 ? 3 : size >= 2 ? 2 : 1;
+  if (Number.isInteger(person?.rank) && person.rank >= 1 && person.rank <= 3) return person.rank;
+  const experience = Math.max(0, Number(person?.experience) || 0);
+  return experience >= 8 ? 3 : experience >= 3 ? 2 : 1;
+}
+
+export function awardBandExperience(person, amount = 1) {
+  person.experience = Math.max(0, (Number(person.experience) || 0) + Math.max(0, Number(amount) || 0));
+  person.rank = person.experience >= 8 ? 3 : person.experience >= 3 ? 2 : 1;
+  return person.rank;
 }
 
 export function mergeFollowerBands(target, source, maximum = 4) {
-  const moved = Math.min(bandSize(source), Math.max(0, maximum - bandSize(target)));
+  const sourceSize = bandSize(source), moved = Math.min(sourceSize, Math.max(0, maximum - bandSize(target)));
   if (!moved) return 0;
+  const movedExperience = (Number(source.experience) || 0) * moved / sourceSize;
   target.members = bandSize(target) + moved;
   target.hp = Math.min(target.members * 18, Math.max(1, target.hp) + Math.max(1, source.hp) * moved / bandSize(source));
-  source.members = bandSize(source) - moved;
+  awardBandExperience(target, movedExperience);
+  source.members = sourceSize - moved;
+  source.experience = Math.max(0, (Number(source.experience) || 0) - movedExperience);
+  source.rank = source.experience >= 8 ? 3 : source.experience >= 3 ? 2 : 1;
   if (source.members > 0) source.hp = Math.min(source.hp, source.members * 18);
   return moved;
 }
@@ -426,7 +437,7 @@ export function isValidGameSave(value, size = 34, allowedFactions = size > 34 ? 
   const point = item => item && Number.isFinite(item.x) && Number.isFinite(item.y) && item.x >= 0 && item.y >= 0 && item.x <= size && item.y <= size;
   if (!point(value.beacon) || !point(value.camera) || !allowedFactions.every(faction=>point(value.factionStarts[faction]))) return false;
   if (!value.houses.every(house => point(house) && allowedFactions.includes(house.faction) && Number.isInteger(house.level) && house.level >= 1 && house.level <= 4 && Number.isFinite(house.pop))) return false;
-  if (!value.people.every(person => point(person) && allowedFactions.includes(person.faction) && Number.isFinite(person.hp) && (person.members === undefined || Number.isInteger(person.members) && person.members >= 1 && person.members <= 4))) return false;
+  if (!value.people.every(person => point(person) && allowedFactions.includes(person.faction) && Number.isFinite(person.hp) && (person.members === undefined || Number.isInteger(person.members) && person.members >= 1 && person.members <= 4) && (person.rank === undefined || Number.isInteger(person.rank) && person.rank >= 1 && person.rank <= 3) && (person.experience === undefined || Number.isFinite(person.experience) && person.experience >= 0))) return false;
   return true;
 }
 
