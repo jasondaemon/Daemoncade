@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
-import { applyFollowerCasualty, awardBandExperience, bandSize, bandTier, captureDwelling, dwellingVeteranExperience, followerAnimationFrame, followerGroupStatus, followerMaximumHealth, followerReadout, isValidGameSave, mergeFollowerBands, populationOf, recoverFollowerHealth, releaseForReckoning, withdrawDwellingVeteran } from "./rules.mjs";
+import { advanceDwelling, applyFollowerCasualty, awardBandExperience, bandSize, bandTier, captureDwelling, dwellingVeteranExperience, followerAnimationFrame, followerGroupStatus, followerMaximumHealth, followerReadout, isValidGameSave, mergeFollowerBands, populationOf, recoverFollowerHealth, releaseForReckoning, withdrawDwellingVeteran } from "./rules.mjs";
 
 const target={faction:"player",members:2,hp:14,rank:2,experience:4},source={faction:"player",members:2,hp:13,rank:2,experience:5};
 const gameScript=readFileSync(new URL("./game.js",import.meta.url),"utf8");
@@ -8,13 +8,31 @@ assert.match(gameScript,/drawFollowerShadow\(q,size,champion,leader\)[\s\S]+q\.y
 assert.match(gameScript,/order!=="reckoning"[\s\S]+recoverFollowerHealth\(p,dt,simElapsed\)/,"live recovery is withheld during Reckoning");
 assert.match(gameScript,/if\(hazard>0\)p\.lastHarmAt=simElapsed/,"flood, bog, and starvation reset the shared recovery cooldown");
 assert.match(gameScript,/type==="rank"[\s\S]+fx\.label/,"fighter and warrior promotion has a distinct readable battlefield cue");
-const before=bandSize(target)+bandSize(source);
+assert.doesNotMatch(gameScript,/\$\{factionName\(p\.faction\)\} people seize/,"capture feedback does not duplicate the word people");
+const before=bandSize(target)+bandSize(source),healthBefore=target.hp+source.hp,experienceBefore=target.experience+source.experience;
 assert.equal(mergeFollowerBands(target,source),2);
 assert.equal(bandSize(target),4);
 assert.equal(source.members,0);
 assert.equal(target.members+source.members,before,"merging conserves represented population");
+assert.equal(target.hp+source.hp,healthBefore,"a complete merge conserves total remaining health");
+assert.equal(target.experience+source.experience,experienceBefore,"a complete merge conserves veteran experience");
 assert.equal(bandTier(target),3);
 assert.equal(followerReadout(target).role,"warrior band");
+for(const fixture of [
+  {target:{members:3,hp:21,experience:2,rank:1},source:{members:4,hp:28,experience:8,rank:3},maximum:4,moved:1},
+  {target:{members:1,hp:4,experience:0,rank:1},source:{members:4,hp:61,experience:7,rank:2},maximum:3,moved:2},
+  {target:{members:2,hp:35,experience:3,rank:2},source:{members:3,hp:9,experience:6,rank:2},maximum:4,moved:2},
+]){
+  const population=fixture.target.members+fixture.source.members,health=fixture.target.hp+fixture.source.hp,experience=fixture.target.experience+fixture.source.experience;
+  assert.equal(mergeFollowerBands(fixture.target,fixture.source,fixture.maximum),fixture.moved);
+  assert.equal(fixture.target.members+fixture.source.members,population,"partial consolidation conserves represented population");
+  assert.ok(Math.abs(fixture.target.hp+fixture.source.hp-health)<1e-9,"partial consolidation conserves health rather than duplicating it");
+  assert.ok(Math.abs(fixture.target.experience+fixture.source.experience-experience)<1e-9,"partial consolidation conserves fractional veteran experience");
+  assert.ok(fixture.target.hp<=fixture.target.members*18&&fixture.source.hp<=fixture.source.members*18,"both partial bands respect member health caps");
+}
+const fullTarget={members:4,hp:40,experience:2,rank:1},blockedSource={members:2,hp:20,experience:2,rank:1};
+assert.equal(mergeFollowerBands(fullTarget,blockedSource),0,"a full target cannot siphon health or experience");
+assert.deepEqual([fullTarget.hp,blockedSource.hp,fullTarget.experience,blockedSource.experience],[40,20,2,2]);
 const largeRecruitBand={members:4,rank:1,experience:0,hp:40};
 assert.equal(bandTier(largeRecruitBand),1,"represented headcount does not grant rank");
 assert.equal(awardBandExperience(largeRecruitBand,3),2,"rank is earned separately through experience");
@@ -68,11 +86,22 @@ assert.equal(isValidGameSave(lifecycleSnapshot,size,["player","rival"]),true,"a 
 const disaster=applyFollowerCasualty(resumedPeople[0]);
 assert.deepEqual(disaster,{dead:false,lost:1},"a disaster removes exactly one represented soul");
 resumedPeople[0].experience=8;resumedPeople[0].rank=3;
-const settlement={faction:"player",level:1,pop:0,hp:30};
+const settlement={faction:"player",x:6,y:6,level:1,cap:3,pop:0,hp:30};
 captureDwelling(settlement,"player",bandSize(resumedPeople[0]),resumedPeople[0].experience);lifecycleHouses.push(settlement);resumedPeople.length=0;
 assert.equal(populationOf(resumedPeople,lifecycleHouses,"player"),lifecycleStart-1,"settlement stores every surviving merged soul");
+const settledSnapshot=JSON.parse(JSON.stringify({...save,people:[],houses:lifecycleHouses}));
+assert.equal(isValidGameSave(settledSnapshot,size,["player","rival"]),true,"settled veteran lineage survives a JSON save/resume boundary");
+assert.equal(advanceDwelling(settlement),true,"a full veteran dwelling transfers one resident into emigration");
+const emigrantExperience=withdrawDwellingVeteran(settlement),emigrant={faction:"player",members:1,hp:10,experience:emigrantExperience,rank:bandTier({experience:emigrantExperience})};
+resumedPeople.push(emigrant);
+assert.equal(populationOf(resumedPeople,lifecycleHouses,"player"),lifecycleStart-1,"emigration transfers rather than duplicates a resident");
+assert.equal(emigrant.experience,8,"the first emigrant resumes the stored warrior lineage");
 const released=releaseForReckoning(lifecycleHouses);
-assert.equal(released.length,lifecycleStart-1,"Reckoning releases every stored soul after merge, resume, disaster, and settlement");
-assert.equal(released.reduce((sum,resident)=>sum+resident.experience,0),8,"Reckoning returns veteran experience once without duplication");
+assert.equal(released.length,lifecycleStart-2,"Reckoning releases every resident still stored after veteran emigration");
+assert.equal(released.reduce((sum,resident)=>sum+resident.experience,0),0,"Reckoning cannot duplicate experience already carried by an emigrant");
+assert.equal(populationOf([...resumedPeople,...released],[],"player"),lifecycleStart-1,"merge, resume, casualty, settlement, emigration, and Reckoning conserve every surviving soul");
+const collapsing={faction:"player",pop:2,veteranExperience:8},collapseExperience=withdrawDwellingVeteran(collapsing),evacuee={faction:"player",members:1,hp:10,experience:collapseExperience};
+assert.equal(evacuee.experience,8,"a surviving evacuee can carry the veteran lineage from a destroyed settlement");
+assert.equal(withdrawDwellingVeteran(collapsing),0,"destroying a settlement cannot release its lineage twice");
 
 console.log("Meddle follower bands: population, tiers, casualties, capture, and save bounds OK");

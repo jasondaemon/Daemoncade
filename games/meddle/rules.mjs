@@ -53,15 +53,16 @@ export function mergeFollowerBands(target, source, maximum = 4) {
   const sourceSize = bandSize(source), moved = Math.min(sourceSize, Math.max(0, maximum - bandSize(target)));
   if (!moved) return 0;
   const movedExperience = (Number(source.experience) || 0) * moved / sourceSize;
+  const sourceHealth = Math.max(0, Number(source.hp) || 0), movedHealth = sourceHealth * moved / sourceSize;
   target.members = bandSize(target) + moved;
-  target.hp = Math.min(target.members * 18, Math.max(1, target.hp) + Math.max(1, source.hp) * moved / bandSize(source));
+  target.hp = Math.min(target.members * 18, Math.max(0, Number(target.hp) || 0) + movedHealth);
   awardBandExperience(target, movedExperience);
   const harmTimes = [target.lastHarmAt, source.lastHarmAt].filter(Number.isFinite);
   if (harmTimes.length) target.lastHarmAt = Math.max(...harmTimes);
   source.members = sourceSize - moved;
   source.experience = Math.max(0, (Number(source.experience) || 0) - movedExperience);
   source.rank = source.experience >= 8 ? 3 : source.experience >= 3 ? 2 : 1;
-  if (source.members > 0) source.hp = Math.min(source.hp, source.members * 18);
+  source.hp = source.members > 0 ? Math.min(sourceHealth - movedHealth, source.members * 18) : 0;
   return moved;
 }
 
