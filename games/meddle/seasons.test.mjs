@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
-import { isSeason, resolveSeason, sceneryCell, seasonForSeed, SEASON_NAMES } from "./seasons.mjs";
+import { isSeason, resolveSeason, sceneryCell, seasonForSeed, SEASON_NAMES, winterTerrainMaterial } from "./seasons.mjs";
 
 const gameScript = readFileSync(new URL("./game.js", import.meta.url), "utf8");
 
@@ -17,5 +17,8 @@ assert.equal(resolveSeason("invalid", 42), seasonForSeed(42), "legacy saves deri
 assert.equal(resolveSeason("fall", 42, "winter"), "winter", "QA query override is deterministic");
 assert.deepEqual(sceneryCell(1600, 800, "tree", 2), { sx: 800, sy: 0, sw: 400, sh: 400 });
 assert.deepEqual(sceneryCell(1600, 800, "rock", 5), { sx: 400, sy: 400, sw: 400, sh: 400 });
+assert.equal(winterTerrainMaterial(4, 7, 3, 1, 1.4, 42).kind, "earth", "winter slopes retain exposed earth");
+assert.ok(["snow", "ground"].includes(winterTerrainMaterial(4, 7, 3, 0, 1.4, 42).kind), "flat winter land uses surface coverage");
+assert.deepEqual(winterTerrainMaterial(4, 7, 3, 0, 1.4, 42), winterTerrainMaterial(4, 7, 3, 0, 1.4, 42), "winter cover is deterministic");
 assert.match(gameScript, /group\.name==="BEACON"[^}]+strokeText\(group\.name,labelX,labelY\)/, "beacon edge label has a dark contrast outline");
 console.log("Meddle seasonal visuals: OK");

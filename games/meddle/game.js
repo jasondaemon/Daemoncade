@@ -3,7 +3,7 @@ import { chooseReckoningLoss } from "./faction-state.mjs?v=20261107-1";
 import { advanceFoodEconomy, boundedFarmRoute, boundedGridPath, causewayCells, causewayDeckCells, chooseFarmForWorker, createEconomy, frontierRenderScale, frontierSaveCompatible, generateNodes, harvest, oceanChannels, purchaseUpgradePath, refreshFarmBatch, resourceForJob, revealFog, validEconomySave, workerJob } from "./frontier-economy.mjs?v=20261107-11";
 import { terminalOutcome } from "./rules.mjs?v=20261108-67";
 import { cueAllowed, effectiveMusicVolume, musicRequestCurrent } from "./music-state.mjs?v=20261108-2";
-import { resolveSeason, sceneryCell, SEASON_THEMES } from "./seasons.mjs?v=20261108-1";
+import { resolveSeason, sceneryCell, SEASON_THEMES, winterTerrainMaterial } from "./seasons.mjs?v=20261108-2";
 
 (() => {
   "use strict";
@@ -216,9 +216,11 @@ import { resolveSeason, sceneryCell, SEASON_THEMES } from "./seasons.mjs?v=20261
     const p1 = iso(x, y, h1), p2 = iso(x + 1, y, h2), p3 = iso(x + 1, y + 1, h3), p4 = iso(x, y + 1, h4);
     const minX=Math.min(p1.x,p2.x,p3.x,p4.x),maxX=Math.max(p1.x,p2.x,p3.x,p4.x),minY=Math.min(p1.y,p2.y,p3.y,p4.y),maxY=Math.max(p1.y,p2.y,p3.y,p4.y);if(maxX<-80||minX>view.w+80||maxY<-100||minY>view.h+100)return;
     const avg = (h1 + h2 + h3 + h4) / 4;
+    const relief=Math.max(h1,h2,h3,h4)-Math.min(h1,h2,h3,h4),winterMaterial=season==="winter"&&avg>water&&!bogs.has(`${x},${y}`)?winterTerrainMaterial(x,y,avg,relief,water,worldSeed):null;
     ctx.beginPath(); ctx.moveTo(p1.x, p1.y); ctx.lineTo(p2.x, p2.y); ctx.lineTo(p3.x, p3.y); ctx.lineTo(p4.x, p4.y); ctx.closePath();
-    ctx.fillStyle = bogs.has(`${x},${y}`) ? "#3b3340" : terrainColor(avg, (x + y) % 2); ctx.fill(); ctx.strokeStyle = season==="winter"?"#31485266":"#10171a24"; ctx.lineWidth = season==="winter"?.85:.65; ctx.stroke();
-    const relief=Math.max(h1,h2,h3,h4)-Math.min(h1,h2,h3,h4),texture=avg<=water?terrainPatterns.water:bogs.has(`${x},${y}`)?terrainPatterns.bog:relief>=1?terrainPatterns.earth:terrainPatterns.grass;if(texture){anchorTerrainPattern(texture,avg);ctx.save();ctx.globalAlpha=avg<=water?.22:relief>=1?.24:.15;ctx.fillStyle=texture;ctx.fill();ctx.restore();}
+    ctx.fillStyle = bogs.has(`${x},${y}`) ? "#3b3340" : winterMaterial?.color||terrainColor(avg, (x + y) % 2); ctx.fill(); ctx.strokeStyle = winterMaterial?.kind==="earth"?"#342a235e":season==="winter"?"#6f83802e":"#10171a24"; ctx.lineWidth = winterMaterial?.kind==="earth"?.7:season==="winter"?.5:.65; ctx.stroke();
+    const texture=avg<=water?terrainPatterns.water:bogs.has(`${x},${y}`)?terrainPatterns.bog:winterMaterial?.kind==="earth"?terrainPatterns.earth:winterMaterial?.kind==="snow"?null:relief>=1?terrainPatterns.earth:terrainPatterns.grass;if(texture){anchorTerrainPattern(texture,avg);ctx.save();ctx.globalAlpha=avg<=water?.22:winterMaterial?.kind==="earth"?.36:relief>=1?.24:.15;ctx.fillStyle=texture;ctx.fill();ctx.restore();}
+    if(winterMaterial?.kind==="snow"){ctx.save();ctx.clip();ctx.strokeStyle="#c6d3d2b0";ctx.lineWidth=Math.max(.5,view.tw/150);for(let i=0;i<3;i++){const u=.18+((x*13+y*7+i*17)%59)/92,v=.2+((x*5+y*19+i*23)%53)/86,a={x:p1.x+(p2.x-p1.x)*u+(p4.x-p1.x)*v,y:p1.y+(p2.y-p1.y)*u+(p4.y-p1.y)*v};ctx.beginPath();ctx.moveTo(a.x-view.tw*.035,a.y-view.th*.012);ctx.lineTo(a.x+view.tw*.045,a.y+view.th*.014);ctx.stroke();}ctx.restore();}
     const field=avg>water&&isFlat(x,y)?houses.filter(h=>Math.max(Math.abs(h.x-(x+.5)),Math.abs(h.y-(y+.5)))<=[0,1,1.5,2,2.5][h.level]).sort((a,b)=>dist(a,{x:x+.5,y:y+.5})-dist(b,{x:x+.5,y:y+.5}))[0]:null;if(field){ctx.save();ctx.beginPath();ctx.moveTo(p1.x,p1.y);ctx.lineTo(p2.x,p2.y);ctx.lineTo(p3.x,p3.y);ctx.lineTo(p4.x,p4.y);ctx.closePath();ctx.clip();ctx.fillStyle=field.faction==="player"?"#53cdb413":"#dc675f13";ctx.fillRect(minX,minY,maxX-minX,maxY-minY);ctx.strokeStyle=field.faction==="player"?"#8ed9a94f":"#d8947752";ctx.lineWidth=.8;for(let i=-2;i<=2;i++){const a=iso(x+.1,y+.15+i*.16,avg),b=iso(x+.9,y+.15+i*.16,avg);ctx.beginPath();ctx.moveTo(a.x,a.y);ctx.lineTo(b.x,b.y);ctx.stroke();}ctx.restore();}
     if (avg <= water) { ctx.fillStyle = "#5ec5d019"; ctx.fill(); }
   }
