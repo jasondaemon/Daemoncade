@@ -1,6 +1,33 @@
 export function populationOf(people, houses, faction) {
-  return people.filter((person) => person.faction === faction).length
+  return people.filter((person) => person.faction === faction).reduce((sum, person) => sum + bandSize(person), 0)
     + houses.filter((house) => house.faction === faction).reduce((sum, house) => sum + house.pop, 0);
+}
+
+export function bandSize(person) {
+  return Number.isInteger(person?.members) && person.members > 0 ? Math.min(4, person.members) : 1;
+}
+
+export function bandTier(person) {
+  const size = bandSize(person);
+  return size >= 4 ? 3 : size >= 2 ? 2 : 1;
+}
+
+export function mergeFollowerBands(target, source, maximum = 4) {
+  const moved = Math.min(bandSize(source), Math.max(0, maximum - bandSize(target)));
+  if (!moved) return 0;
+  target.members = bandSize(target) + moved;
+  target.hp = Math.min(target.members * 18, Math.max(1, target.hp) + Math.max(1, source.hp) * moved / bandSize(source));
+  source.members = bandSize(source) - moved;
+  if (source.members > 0) source.hp = Math.min(source.hp, source.members * 18);
+  return moved;
+}
+
+export function applyFollowerCasualty(person) {
+  const size = bandSize(person);
+  if (size <= 1) return { dead: true, lost: 1 };
+  person.members = size - 1;
+  person.hp = Math.max(6, Math.min(person.members * 18, 10));
+  return { dead: false, lost: 1 };
 }
 
 export function terminalOutcome(playerPopulation, rivalPopulation, elapsed) {
@@ -52,9 +79,9 @@ export function advanceDwelling(house) {
   return true;
 }
 
-export function captureDwelling(house, faction) {
+export function captureDwelling(house, faction, population = 1) {
   house.faction = faction;
-  house.pop = 1;
+  house.pop = Math.max(1, Math.floor(population));
   house.hp = 20 + house.level * 10;
 }
 
@@ -357,14 +384,14 @@ export function clusterFollowerGroups(people, radius = 3) {
 }
 
 export function followerGroupStatus(group, elapsed = 0) {
-  return { count: group.length, fighting: group.some(person => (person.combatUntil || 0) > elapsed) };
+  return { count: group.reduce((sum, person) => sum + bandSize(person), 0), fighting: group.some(person => (person.combatUntil || 0) > elapsed) };
 }
 
 export function followerReadout(person) {
-  const maximum = person.champion ? 120 : 18;
+  const members = bandSize(person), maximum = person.champion ? 120 : 18 * members;
   const strength = Math.max(0, Math.min(maximum, Math.round(person.hp || 0)));
   const ratio = strength / maximum;
-  const role = person.champion ? "champion" : person.leader ? "leader" : "follower";
+  const role = person.champion ? "champion" : person.leader ? "leader" : bandTier(person) === 3 ? "warrior band" : bandTier(person) === 2 ? "fighter band" : "follower";
   const condition = ratio <= .33 ? "fading" : ratio < .55 ? "wounded" : ratio < .8 ? "steady" : "strong";
   return { role, strength, maximum, condition };
 }
@@ -399,7 +426,7 @@ export function isValidGameSave(value, size = 34, allowedFactions = size > 34 ? 
   const point = item => item && Number.isFinite(item.x) && Number.isFinite(item.y) && item.x >= 0 && item.y >= 0 && item.x <= size && item.y <= size;
   if (!point(value.beacon) || !point(value.camera) || !allowedFactions.every(faction=>point(value.factionStarts[faction]))) return false;
   if (!value.houses.every(house => point(house) && allowedFactions.includes(house.faction) && Number.isInteger(house.level) && house.level >= 1 && house.level <= 4 && Number.isFinite(house.pop))) return false;
-  if (!value.people.every(person => point(person) && allowedFactions.includes(person.faction) && Number.isFinite(person.hp))) return false;
+  if (!value.people.every(person => point(person) && allowedFactions.includes(person.faction) && Number.isFinite(person.hp) && (person.members === undefined || Number.isInteger(person.members) && person.members >= 1 && person.members <= 4))) return false;
   return true;
 }
 
