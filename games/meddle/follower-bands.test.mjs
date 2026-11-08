@@ -4,7 +4,7 @@ import { applyFollowerCasualty, awardBandExperience, bandSize, bandTier, capture
 
 const target={faction:"player",members:2,hp:14,rank:2,experience:4},source={faction:"player",members:2,hp:13,rank:2,experience:5};
 const gameScript=readFileSync(new URL("./game.js",import.meta.url),"utf8");
-assert.match(gameScript,/drawRasterFollower[\s\S]+ellipse\(q\.x,q\.y\+1,size\*\(champion\?\.19:leader\?\.17:\.145\),size\*\.047/,"every raster follower rank shares a feet-anchored contact shadow");
+assert.match(gameScript,/drawFollowerShadow\(q,size,champion,leader\)[\s\S]+q\.y\+size\*\.145[\s\S]+createRadialGradient/,"every raster follower rank shares a soft shadow anchored at the atlas foot line");
 const before=bandSize(target)+bandSize(source);
 assert.equal(mergeFollowerBands(target,source),2);
 assert.equal(bandSize(target),4);
