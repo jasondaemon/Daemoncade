@@ -19,6 +19,12 @@ export function awardBandExperience(person, amount = 1) {
   return person.rank;
 }
 
+export function followerAnimationFrame(person, elapsed = 0) {
+  if ((person?.combatUntil || 0) > elapsed) return 3;
+  if ((person?.movingUntil || 0) <= elapsed) return 0;
+  return Math.floor(Math.max(0, Number(person?.age) || 0) * 7) % 3;
+}
+
 export function mergeFollowerBands(target, source, maximum = 4) {
   const sourceSize = bandSize(source), moved = Math.min(sourceSize, Math.max(0, maximum - bandSize(target)));
   if (!moved) return 0;

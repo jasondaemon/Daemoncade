@@ -1,5 +1,5 @@
 import assert from "node:assert/strict";
-import { applyFollowerCasualty, awardBandExperience, bandSize, bandTier, captureDwelling, followerGroupStatus, followerReadout, isValidGameSave, mergeFollowerBands, populationOf } from "./rules.mjs";
+import { applyFollowerCasualty, awardBandExperience, bandSize, bandTier, captureDwelling, followerAnimationFrame, followerGroupStatus, followerReadout, isValidGameSave, mergeFollowerBands, populationOf } from "./rules.mjs";
 
 const target={faction:"player",members:2,hp:14,rank:2,experience:4},source={faction:"player",members:2,hp:13,rank:2,experience:5};
 const before=bandSize(target)+bandSize(source);
@@ -12,6 +12,9 @@ assert.equal(followerReadout(target).role,"warrior band");
 const largeRecruitBand={members:4,rank:1,experience:0,hp:40};
 assert.equal(bandTier(largeRecruitBand),1,"represented headcount does not grant rank");
 assert.equal(awardBandExperience(largeRecruitBand,3),2,"rank is earned separately through experience");
+assert.equal(followerAnimationFrame({age:0,movingUntil:0,combatUntil:0},1),0,"idle followers hold the contact pose");
+assert.deepEqual([.05,.18,.32].map(age=>followerAnimationFrame({age,movingUntil:2,combatUntil:0},1)),[0,1,2],"walking cycles through three aligned frames");
+assert.equal(followerAnimationFrame({age:.3,movingUntil:2,combatUntil:2},1),3,"combat selects the distinct strike frame");
 
 const losses=[];
 while(target.members>1)losses.push(applyFollowerCasualty(target));
