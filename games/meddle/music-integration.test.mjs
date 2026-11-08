@@ -37,8 +37,12 @@ assert.match(script, /musicPlayer\.addEventListener\("ended"/, "gameplay music a
 assert.match(script, /RECKONING_MUSIC="assets\/music\/reckoning\.mp3"/, "Reckoning uses its authored score");
 assert.match(script, /setMusicScene\("reckoning"\)/, "invoking Reckoning changes the music scene");
 assert.match(script, /reckoningPreload=new Audio\(RECKONING_MUSIC\).*reckoningPreload\.preload="auto".*reckoningPreload\.load\(\)/, "gameplay primes the Reckoning score without autoplaying it");
-assert.match(script, /cueAllowed\(elapsed,lastSoundAt,\.14\)/, "dense combat effects are rate limited");
-assert.match(script, /musicDuckFactor=\.28/, "major effects duck the score for audibility");
+assert.match(script, /cueAllowed\(elapsed,lastSoundAt,\.2\)/, "dense combat effects are rate limited");
+assert.match(script, /function duckMusic\(duration,factor=\.28\)/, "major effects duck the score for audibility");
+assert.match(script, /sword1:\{src:"assets\/sfx\/sword-hit-1\.mp3",gain:1\.3,duck:\.55,duckFactor:\.42\}/, "combat hits are prominent and briefly duck music");
+assert.match(script, /soundEnabled=onboarding\.profile\?\.sound!==false/, "SFX default on unless a player explicitly muted them");
+assert.match(script, /studio-continue[\s\S]+unlockCombatSfx\(\)/, "the trusted Continue gesture unlocks the combat audio pool");
+assert.match(script, /Sound blocked · tap/, "a rejected combat sound is visible instead of silently failing");
 assert.ok(splash.size > 100_000 && splash.size < 1_000_000, "splash is optimized for web delivery");
 assert.ok(logo.size > 20_000 && logo.size < 150_000, "transparent studio logo is optimized for web delivery");
 for (const file of [title, gameplay1, gameplay2, gameplay3]) {
