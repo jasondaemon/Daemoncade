@@ -1,0 +1,16 @@
+const clamp=(value,min,max)=>Math.max(min,Math.min(max,value));
+const lerp=(a,b,t)=>a+(b-a)*t;
+const smooth=(t)=>t*t*(3-2*t);
+
+function hash2(x,y,seed){let value=Math.imul((x|0)^seed,0x45d9f3b)^Math.imul((y|0)+seed,0x27d4eb2d);value=Math.imul(value^(value>>>16),0x45d9f3b);return((value^(value>>>16))>>>0)/4294967295;}
+function valueNoise(x,y,seed){const ix=Math.floor(x),iy=Math.floor(y),fx=smooth(x-ix),fy=smooth(y-iy);return lerp(lerp(hash2(ix,iy,seed),hash2(ix+1,iy,seed),fx),lerp(hash2(ix,iy+1,seed),hash2(ix+1,iy+1,seed),fx),fy);}
+function terrainNoise(x,y,seed){return valueNoise(x*.72,y*.72,seed)*.55+valueNoise(x*2.15,y*2.15,seed^0x6d2b79f5)*.3+valueNoise(x*5.4,y*5.4,seed^0x9e3779b9)*.15;}
+
+function tileHeight(heights,x,y){return(heights[y][x]+heights[y][x+1]+heights[y+1][x+1]+heights[y+1][x])/4;}
+function shoreDistances(heights,water){const size=heights.length-1,dist=Array.from({length:size},()=>Array(size).fill(Infinity));for(let y=0;y<size;y++)for(let x=0;x<size;x++)if(tileHeight(heights,x,y)<=water+.02)dist[y][x]=0;const steps=[[-1,0,1],[0,-1,1],[-1,-1,Math.SQRT2],[1,-1,Math.SQRT2]];for(let y=0;y<size;y++)for(let x=0;x<size;x++)for(const[dx,dy,cost]of steps){const nx=x+dx,ny=y+dy;if(nx>=0&&ny>=0&&nx<size&&ny<size)dist[y][x]=Math.min(dist[y][x],dist[ny][nx]+cost);}for(let y=size-1;y>=0;y--)for(let x=size-1;x>=0;x--)for(const[dx,dy,cost]of steps){const nx=x-dx,ny=y-dy;if(nx>=0&&ny>=0&&nx<size&&ny<size)dist[y][x]=Math.min(dist[y][x],dist[ny][nx]+cost);}return dist;}
+function bilinear(values,x,y){const size=values.length,ix=clamp(Math.floor(x),0,size-1),iy=clamp(Math.floor(y),0,size-1),jx=Math.min(size-1,ix+1),jy=Math.min(size-1,iy+1),fx=clamp(x-ix,0,1),fy=clamp(y-iy,0,1);return lerp(lerp(values[iy][ix],values[iy][jx],fx),lerp(values[jy][ix],values[jy][jx],fx),fy);}
+
+export function terrainCoverageSample(heights,water,x,y,seed=1){const size=heights.length-1,ix=clamp(Math.floor(x),0,size-1),iy=clamp(Math.floor(y),0,size-1),fx=clamp(x-ix,0,1),fy=clamp(y-iy,0,1),h00=heights[iy][ix],h10=heights[iy][ix+1],h11=heights[iy+1][ix+1],h01=heights[iy+1][ix],height=lerp(lerp(h00,h10,fx),lerp(h01,h11,fx),fy),gx=lerp(h10-h00,h11-h01,fy),gy=lerp(h01-h00,h11-h10,fx),slope=Math.hypot(gx,gy),noise=terrainNoise(x,y,seed),detail=terrainNoise(x+31.7,y-19.3,seed^0x85ebca6b);return{height,slope,noise,detail};}
+
+export function buildTerrainCoverageMask({heights,water,scale=8,seed=1}){const size=heights.length-1,width=size*scale,alpha=new Uint8ClampedArray(width*width),distance=shoreDistances(heights,water);for(let py=0;py<width;py++)for(let px=0;px<width;px++){const x=(px+.5)/scale,y=(py+.5)/scale,sample=terrainCoverageSample(heights,water,x,y,seed),horizontal=bilinear(distance,x-.5,y-.5),vertical=Math.max(0,sample.height-water),shoreLimit=.52+sample.noise*.34,nearShore=horizontal<1.75&&vertical<shoreLimit,steepPatch=horizontal>=1.15&&sample.slope>.82&&sample.noise>.84&&sample.detail>.58,covered=!(nearShore||steepPatch);alpha[py*width+px]=covered?255:0;}return{alpha,width,height:width};}
+

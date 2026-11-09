@@ -1,0 +1,11 @@
+import assert from "node:assert/strict";
+import{buildTerrainCoverageMask,terrainCoverageSample}from"./terrain-coverage.mjs";
+const heights=Array.from({length:7},(_,y)=>Array.from({length:7},(_,x)=>x<2?0:x===2?1:3));
+const mask=buildTerrainCoverageMask({heights,water:1.4,scale:12,seed:17});
+assert.equal(mask.width,72);assert.equal(mask.alpha.length,72*72);assert.ok(mask.alpha.some(value=>value===0),"shore exposes earth");assert.ok(mask.alpha.some(value=>value===255),"upper land keeps cover");
+const wetSide=terrainCoverageSample(heights,1.4,2.1,3,17),highSide=terrainCoverageSample(heights,1.4,4.5,3,17);assert.ok(wetSide.height<highSide.height);assert.ok(wetSide.slope>0,"coverage samples actual bilinear slope");
+const repeat=buildTerrainCoverageMask({heights,water:1.4,scale:12,seed:17});assert.deepEqual(mask.alpha,repeat.alpha,"coverage field is deterministic");
+const different=buildTerrainCoverageMask({heights,water:1.4,scale:12,seed:18});assert.notDeepEqual(mask.alpha,different.alpha,"seed varies authored irregularity");
+const edited=heights.map(row=>[...row]);edited[3][2]=2;const editedMask=buildTerrainCoverageMask({heights:edited,water:1.4,scale:12,seed:17});assert.notDeepEqual(mask.alpha,editedMask.alpha,"a terrain edit rebuilds the continuous shore field");
+const inlandEarth=[];for(let y=0;y<mask.height;y++)for(let x=48;x<mask.width;x++)if(mask.alpha[y*mask.width+x]===0)inlandEarth.push([x,y]);assert.ok(inlandEarth.length<mask.height*24*.22,"inland slopes do not become solid contour bands");
+console.log("Meddle continuous terrain coverage: deterministic shore and sparse inland bank exposure OK");
