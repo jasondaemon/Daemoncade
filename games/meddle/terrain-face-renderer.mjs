@@ -11,6 +11,13 @@ export function terrainSlopeClass(points){
   return vector.y>=0?"south":"north";
 }
 
+export function rotateSlopeClass(direction,turns=0){
+  if(direction==="flat"||direction==="coast")return direction;
+  const directions=["north","east","south","west"],index=directions.indexOf(direction);
+  if(index<0)return"flat";
+  return directions[(index+((turns%4)+4)%4)%4];
+}
+
 // A face receives one authored coverage treatment. There are no horizontal
 // contour slices: flat surfaces keep cover, water stays on a common plane,
 // coastal clips use bank art, and each rising face selects directional art.
