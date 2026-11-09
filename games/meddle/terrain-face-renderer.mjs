@@ -18,6 +18,16 @@ export function rotateSlopeClass(direction,turns=0){
   return directions[(index+((turns%4)+4)%4)%4];
 }
 
+export function terrainFacePlane(points){
+  if(!Array.isArray(points)||points.length<3)return null;
+  const [a,b,c]=points,det=(b.x-a.x)*(c.y-a.y)-(c.x-a.x)*(b.y-a.y);
+  if(Math.abs(det)<1e-9)return null;
+  const gx=((b.h-a.h)*(c.y-a.y)-(c.h-a.h)*(b.y-a.y))/det,gy=((b.x-a.x)*(c.h-a.h)-(c.x-a.x)*(b.h-a.h))/det,offset=a.h-gx*a.x-gy*a.y;
+  return{gx,gy,offset,heightAt:(x,y)=>gx*x+gy*y+offset};
+}
+
+export function terrainUvAt(point,worldSpan=4){return{u:Number(point.x)/worldSpan,v:Number(point.y)/worldSpan};}
+
 // A face receives one authored coverage treatment. There are no horizontal
 // contour slices: flat surfaces keep cover, water stays on a common plane,
 // coastal clips use bank art, and each rising face selects directional art.
