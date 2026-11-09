@@ -5,6 +5,7 @@ import { terminalOutcome } from "./rules.mjs?v=20261108-69";
 import { cueAllowed, effectiveMusicVolume, musicRequestCurrent } from "./music-state.mjs?v=20261108-2";
 import { resolveSeason, sceneryCell, SEASON_THEMES, winterSnowMaskAlpha, winterTerrainMaterial } from "./seasons.mjs?v=20261108-5";
 import { upperTerrainPolygon } from "./terrain-materials.mjs?v=20261108-1";
+import { terrainFaceDepth, terrainMaterialFaces } from "./terrain-face-renderer.mjs?v=1";
 import { normalizePopulousTerrain, populousTerrainShapePlan } from "./terrain-model.mjs?v=1";
 import { terrainMeshFaces } from "./terrain-mesh.mjs?v=2";
 import { pickAccessibleTerrainCorner, pickVisibleTerrainHit, resolveCommittedTerrainCorner, terrainDragThreshold, touchTerrainCommit } from "./terrain-picking.mjs?v=3";
@@ -45,6 +46,7 @@ import { pickAccessibleTerrainCorner, pickVisibleTerrainHit, resolveCommittedTer
   const previewTestMode=new URLSearchParams(location.search).get("previewTest");
   const populousTerrainMode=new URLSearchParams(location.search).get("terrainModel")==="populous";
   const originalGeometryStudy=populousTerrainMode&&new URLSearchParams(location.search).get("terrainGeometry")==="original";
+  const faceAwareTerrainStudy=originalGeometryStudy&&new URLSearchParams(location.search).get("terrainRenderer")==="faces";
   const requestedGeometrySize=Number(new URLSearchParams(location.search).get("mapSize"));
   if(originalGeometryStudy&&SUPPORTED_MAP_SIZES.includes(requestedGeometrySize))N=requestedGeometrySize;
   let geometryWireframe=originalGeometryStudy;
@@ -78,6 +80,8 @@ import { pickAccessibleTerrainCorner, pickVisibleTerrainHit, resolveCommittedTer
   const terrainMaterialImages={grass:Object.assign(new Image(),{src:"./assets/terrain-grass-v2.webp?v=1"}),snow:Object.assign(new Image(),{src:"./assets/terrain-snow-v2.webp?v=1"})};
   terrainMaterialImages.grass.addEventListener("load",()=>{terrainPatterns.grass=ctx.createPattern(terrainMaterialImages.grass,"repeat");terrainPatternSizes.grass=terrainMaterialImages.grass.naturalWidth;});
   terrainMaterialImages.snow.addEventListener("load",()=>{terrainPatterns.snow=ctx.createPattern(terrainMaterialImages.snow,"repeat");terrainPatternSizes.snow=terrainMaterialImages.snow.naturalWidth;});
+  const terrainMaterialAtlasV2=new Image();terrainMaterialAtlasV2.src="./assets/terrain-material-atlas-v2.webp?v=1";terrainMaterialAtlasV2.addEventListener("load",()=>{const half=terrainMaterialAtlasV2.naturalWidth/2;for(const [name,qx,qy] of [["grassArt",0,0],["earthArt",half,0],["snowArt",0,half]]){const tile=document.createElement("canvas");tile.width=tile.height=512;tile.getContext("2d").drawImage(terrainMaterialAtlasV2,qx,qy,half,half,0,0,512,512);terrainPatterns[name]=ctx.createPattern(tile,"repeat");terrainPatternSizes[name]=512;}});
+  const terrainTransitionAtlasV2=new Image();terrainTransitionAtlasV2.src="./assets/terrain-transition-atlas-v2.webp?v=1";terrainTransitionAtlasV2.addEventListener("load",()=>{const half=terrainTransitionAtlasV2.naturalWidth/2;for(const [name,qx] of [["grassBankArt",0],["snowBankArt",half]]){const tile=document.createElement("canvas");tile.width=tile.height=512;tile.getContext("2d").drawImage(terrainTransitionAtlasV2,qx,0,half,half,0,0,512,512);terrainPatterns[name]=ctx.createPattern(tile,"repeat");terrainPatternSizes[name]=512;}});
   const sceneryAtlases={};
   const sceneryAtlas=()=>sceneryAtlases[season]??=Object.assign(new Image(),{src:SEASON_THEMES[season].atlas});
   const followerAnimationSprites=new Image();followerAnimationSprites.src="./assets/follower-animations.png?v=6";
@@ -204,11 +208,16 @@ import { pickAccessibleTerrainCorner, pickVisibleTerrainHit, resolveCommittedTer
     return palette[clamp(Math.round(h), 0, palette.length - 1)];
   }
 
+  function drawFaceAwareTerrain(tiles){
+    const faces=[];for(const {x,y} of tiles){const heights4=[at(x,y),at(x+1,y),at(x+1,y+1),at(x,y+1)],vertices=[{x,y,h:heights4[0]},{x:x+1,y,h:heights4[1]},{x:x+1,y:y+1,h:heights4[2]},{x,y:y+1,h:heights4[3]}];for(const face of terrainMaterialFaces(vertices,water))faces.push({...face,x,y,depth:terrainFaceDepth(face,(px,py)=>rotated(px,py))});}faces.sort((a,b)=>a.depth-b.depth);
+    for(const face of faces){const points=face.points.map(point=>iso(point.x,point.y,point.h)),height=face.material==="water"?water:face.points.reduce((sum,point)=>sum+point.h,0)/face.points.length,patternName=face.material==="water"?"water":face.material==="earth"?"earthArt":face.material==="bank"?(season==="winter"?"snowBankArt":"grassBankArt"):(season==="winter"?"snowArt":"grassArt"),pattern=terrainPatterns[patternName]||terrainPatterns[face.material==="water"?"water":face.material==="earth"?"earth":season==="winter"?"snow":"grass"],base=face.material==="water"?"#285d72":face.material==="earth"?"#725238":face.material==="bank"?(season==="winter"?"#88755d":"#65724d"):terrainColor(height,(face.x+face.y)%2);ctx.beginPath();points.forEach((point,index)=>index?ctx.lineTo(point.x,point.y):ctx.moveTo(point.x,point.y));ctx.closePath();ctx.fillStyle=base;ctx.fill();if(pattern){anchorTerrainPattern(pattern,height,face.material==="water"?4:8,terrainPatternSizes[patternName]||256);fillTerrainPolygon(points,pattern,face.material==="water"?.32:face.material==="earth"?.72:face.material==="bank"?.78:season==="winter"?.9:.82);}if(face.material!=="water"){const shade=Math.min(.16,Math.abs(face.light-.72)*.19);if(shade>.012){ctx.beginPath();points.forEach((point,index)=>index?ctx.lineTo(point.x,point.y):ctx.moveTo(point.x,point.y));ctx.closePath();ctx.fillStyle=face.light<.72?`rgba(24,27,29,${shade})`:`rgba(255,244,211,${shade*.45})`;ctx.fill();}}}
+  }
+
   function draw() {
     updateBandState();
     ctx.setTransform(view.dpr, 0, 0, view.dpr, 0, 0); ctx.clearRect(0, 0, view.w, view.h);
     const quake=battleFx.find(fx=>fx.type==="quake"||fx.type==="volcano"),reducedMotion=matchMedia?.("(prefers-reduced-motion: reduce)").matches,shake=quake&&!reducedMotion?Math.max(0,1-quake.age/quake.life)*(quake.type==="volcano"?7:5):0;view.shakeX=shake?Math.sin(elapsed*53)*shake:0;view.shakeY=shake?Math.cos(elapsed*47)*shake*.55:0;const sky = ctx.createLinearGradient(0, 0, 0, view.h),skyColors=seasonTheme?.sky||SEASON_THEMES.spring.sky; sky.addColorStop(0,skyColors[0]); sky.addColorStop(1,skyColors[1]); ctx.fillStyle = sky; ctx.fillRect(0, 0, view.w, view.h);
-    const tiles=[];for(let y=0;y<N;y++)for(let x=0;x<N;x++){const screen=iso(x+.5,y+.5,tileHeight(x,y));if(screen.x<-view.tw||screen.x>view.w+view.tw||screen.y<-view.th*4||screen.y>view.h+view.th*4)continue;const p=rotated(x+.5,y+.5);tiles.push({x,y,d:p.x+p.y});}tiles.sort((a,b)=>a.d-b.d);for(const tile of tiles)drawTile(tile.x,tile.y);if(frontierEconomy)drawFrontierFog(tiles);if(geometryWireframe)drawGeometryWireframe(tiles);if(!power&&(tool==="raise"||tool==="lower"))drawInfluenceFrontier();
+    const tiles=[];for(let y=0;y<N;y++)for(let x=0;x<N;x++){const screen=iso(x+.5,y+.5,tileHeight(x,y));if(screen.x<-view.tw||screen.x>view.w+view.tw||screen.y<-view.th*4||screen.y>view.h+view.th*4)continue;const p=rotated(x+.5,y+.5);tiles.push({x,y,d:p.x+p.y});}tiles.sort((a,b)=>a.d-b.d);if(faceAwareTerrainStudy)drawFaceAwareTerrain(tiles);else for(const tile of tiles)drawTile(tile.x,tile.y);if(frontierEconomy)drawFrontierFog(tiles);if(geometryWireframe)drawGeometryWireframe(tiles);if(!power&&(tool==="raise"||tool==="lower"))drawInfluenceFrontier();
     if(!power)drawTerrainCursor();
     const depth=v=>{const p=rotated(v.x,v.y);return p.x+p.y;},onScreen=v=>{const z=tileHeight(clamp(Math.floor(v.x),0,N-1),clamp(Math.floor(v.y),0,N-1)),p=iso(v.x,v.y,z);return p.x>-160&&p.x<view.w+160&&p.y>-180&&p.y<view.h+140;},sprites = [
       ...houses.filter(h=>visibleFrontierObject(h)&&onScreen(h)).map(h => ({ type: "house", y: depth(h), v: h })),
