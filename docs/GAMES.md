@@ -36,7 +36,7 @@ This page is generated from the per-game `game.json` files by `./scripts/build-c
 
 | Icon | Game | Version | Mobile | About |
 | --- | --- | --- | --- | --- |
-| <img src="../games/lantern-vale/icon.webp" width="48" height="48" alt=""> | [Lantern Vale](../games/lantern-vale/) | `0.1.0-alpha.1` | Yes | Explore five woodland rooms, reveal hidden paths with your lantern, and rekindle the beacon. |
+| <img src="../games/lantern-vale/icon.webp" width="48" height="48" alt=""> | [Lantern Vale](../games/lantern-vale/) | `0.2.0-alpha.1` | — | Restore the stolen dawn across three lands and three puzzle dungeons, with sword upgrades and local waystone saves. |
 | <img src="../games/apex-run/icon.webp" width="48" height="48" alt=""> | [Apex Run](../games/apex-run/) | `0.5.0-alpha.37` | — | Attack a gravity-bending 3D stadium course, master momentum, and chase your personal best. |
 | <img src="../games/spacefighter/icon.webp" width="48" height="48" alt=""> | [Spacefighter](../games/spacefighter/) | `0.1.0-alpha.1` | — | Thread a nimble fighter through dense enemy patterns, collect weapon upgrades, and unleash missiles and bombs. |
 | <img src="../games/canyon-crawler/icon.webp" width="48" height="48" alt=""> | [Canyon Crawler](../games/canyon-crawler/) | `0.1.0-alpha.1` | — | Defend your rover from segmented trail worms and the hazards filling the canyon wash. |
