@@ -1,0 +1,18 @@
+{
+  "title": "Lantern Vale",
+  "slug": "lantern-vale",
+  "version": "0.2.0-alpha.1",
+  "release_stage": "alpha",
+  "order": 29,
+  "category": "Adventure",
+  "source": "Daemoncade",
+  "players": "Solo",
+  "controls": "Keyboard or touch",
+  "mobile_ready": false,
+  "orientation": "landscape",
+  "summary": "Restore the stolen dawn across three lands and three puzzle dungeons, with sword upgrades and local waystone saves.",
+  "accent": "gold",
+  "mark": "L",
+  "icon": "icon.webp",
+  "metric": "score"
+}
