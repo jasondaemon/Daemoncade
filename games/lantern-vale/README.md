@@ -8,8 +8,15 @@ points and a brief flashing invulnerability window allow recovery after damage.
 
 All artwork is original geometric Canvas drawing. No imported assets, fonts,
 audio, dependencies, network calls, or persistent data. Repository GPL-3.0
-licensing applies. Catalog and launcher integration are pending separate review;
-this directory deliberately has no game.json.
+licensing applies. The development branch includes `game.json` and an original
+local generated WebP artwork for its dev-menu entry. Production catalog promotion remains
+subject to separate review.
+
+Menu artwork was generated with the built-in image-generation tool on
+2026-11-09, then resized to 512x512 WebP. Art brief: an original hooded woodland
+keeper carrying an amber lantern along a mossy forest path, with a ruined beacon
+and hidden bridge; pixel-art-inspired storybook style, deep teal and amber,
+readable as a square thumbnail, no text or existing franchise characters.
 
 ## Run and test
 

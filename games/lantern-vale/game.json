@@ -1,0 +1,18 @@
+{
+  "title": "Lantern Vale",
+  "slug": "lantern-vale",
+  "version": "0.1.0-alpha.1",
+  "release_stage": "alpha",
+  "order": 29,
+  "category": "Adventure",
+  "source": "Daemoncade",
+  "players": "Solo",
+  "controls": "Keyboard or touch",
+  "mobile_ready": true,
+  "orientation": "landscape",
+  "summary": "Explore five woodland rooms, reveal hidden paths with your lantern, and rekindle the beacon.",
+  "accent": "gold",
+  "mark": "L",
+  "icon": "icon.webp",
+  "metric": "score"
+}
