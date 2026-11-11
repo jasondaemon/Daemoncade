@@ -1,4 +1,4 @@
-import manifest from './manifest.mjs';
+import manifest from './manifest.mjs?v=0.3.0-alpha.6';
 /** Local raster atlas adapter. Coordinates and sizes are logical canvas pixels. */
 export function frameAt(manifest, name, elapsedMs = 0) {
   const animation = manifest.animations[name];

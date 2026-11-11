@@ -16,3 +16,9 @@ test('complete campaign: dungeons, upgrades, checkpoint reload, ending and resta
  function camp(){go(3.5,5.5);assert.equal(interact(s),'save');s=decode(encode(s));assert.ok(s);}
  function delve(d){go(12.5,5.5);go(12.5,2.5);assert.equal(interact(s),true);assert.equal(s.room,15+d*4);if(!s.light)toggle(s);east();go(12.5,5.5);assert.ok(s.switches.includes(d));east();go(8.5,5.5);for(let i=0;i<1000&&!s.keys.includes(d);i++)tick({});assert.ok(s.keys.includes(d));east();go(10.5,5.5);for(let i=0;i<1000&&s.enemies[s.room].some(e=>e.hp>0);i++)tick({});go(12.5,5.5);assert.ok(s.relics.includes(d));west();west();west();west();assert.equal(s.room,entrances[d]);go(12.5,5.5);camp();}
  go(8.5,5.5);south();east();camp();delve(0);east();east();camp();delve(1);south();east();camp();delve(2);north();north();go(12.5,5.5);if(!s.light)toggle(s);assert.equal(interact(s),true);assert.equal(s.status,'won');assert.equal(s.sword,3);assert.equal(fresh().relics.length,0);assert.equal(fresh().status,'playing');});
+
+test('version-one checkpoints explicitly migrate and unknown versions stay rejected',()=>{
+ const original=fresh(),v1=JSON.parse(encode(original));v1.version=1;delete v1.expansion;delete v1.progress;
+ const migrated=decode(JSON.stringify(v1));assert.ok(migrated);assert.equal(migrated.version,2);assert.deepEqual(migrated.visited,[0]);assert.deepEqual(migrated.equipment,[]);assert.equal(migrated.room,0);
+ v1.version=0;assert.equal(decode(JSON.stringify(v1)),null);
+});

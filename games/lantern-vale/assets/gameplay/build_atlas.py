@@ -29,6 +29,7 @@ class Raster:
     def paste(self,im,x,y):
         for yy in range(im.h):
             for xx in range(im.w):
+                if not (0 <= x+xx < self.w and 0 <= y+yy < self.h): continue
                 c=im.p[(yy*im.w+xx)*4:(yy*im.w+xx)*4+4]
                 if c[3]:
                     pos=((y+yy)*self.w+x+xx)*4
@@ -229,6 +230,10 @@ for effect in ['lantern-glow','sword-arc','light-burst','projectile','spark','sh
     else:im.oval(5,27,30,9,(4,12,24,80))
     name=f'effect.{effect}.{phase}';add(name,im,'effect');ids.append(name)
  anim(f'effect.{effect}',ids,90,effect in ['lantern-glow','projectile','shadow','danger-ring'])
+from expanded_art import build, polish, campaign_art
+expanded_palettes, expanded_bosses = build(Raster, add, anim, palettes, art)
+expanded_enemies = polish(Raster, add, anim, palettes, expanded_palettes, art)
+campaign_art(Raster, add, anim, art)
 # Shelf packing with two clear pixels around every frame. No scaling or extrusion.
 width=1024;x=y=2;row=0
 for name,im in art:
@@ -236,8 +241,21 @@ for name,im in art:
  frames[name]['rect']=[x,y,im.w,im.h];x+=im.w+4;row=max(row,im.h)
 height=y+row+2;atlas=Raster(width,height)
 for name,im in art:atlas.paste(im,*frames[name]['rect'][:2])
-atlas.png(ROOT/'lantern-gameplay-v1.png')
-manifest={'schemaVersion':1,'image':'lantern-gameplay-v1.png','imageSize':[width,height],'tileSize':40,'padding':2,'sampling':'nearest','pivotUnits':'pixels from frame top-left; world position is frame center unless tile','directions':['down','left','right','up'],'frames':frames,'animations':animations,'terrainSets':{land:{'floor':[f'terrain.{land}.floor.{i}' for i in range(3)],'wall':[f'terrain.{land}.wall.{i}' for i in range(2)],'water':f'terrain.{land}.water'} for land in palettes},'enemySets':{'mossward':'briarling','amber-fen':'fen-moth','glass-highlands':'glass-sentinel','rootvault':'briarling','drowned-archive':'fen-moth','prism-crypt':'glass-sentinel'},'wardenSets':{'rootvault':'root-warden','drowned-archive':'tide-warden','prism-crypt':'prism-warden'}}
+atlas.png(ROOT/'lantern-gameplay-v2.png')
+manifest={'schemaVersion':1,'image':'lantern-gameplay-v2.png','imageSize':[width,height],'tileSize':40,'padding':2,'sampling':'nearest','pivotUnits':'pixels from frame top-left; world position is frame center unless tile','directions':['down','left','right','up'],'frames':frames,'animations':animations,'terrainSets':{land:{'floor':[f'terrain.{land}.floor.{i}' for i in range(3)],'wall':[f'terrain.{land}.wall.{i}' for i in range(2)],'water':f'terrain.{land}.water'} for land in palettes},'enemySets':{'mossward':'briarling','amber-fen':'fen-moth','glass-highlands':'glass-sentinel','rootvault':'briarling','drowned-archive':'fen-moth','prism-crypt':'glass-sentinel'},'wardenSets':{'rootvault':'root-warden','drowned-archive':'tide-warden','prism-crypt':'prism-warden'}}
+manifest['expansionSets']={land:{'floor':[f'terrain.{land}.floor.{i}' for i in range(3)],'wall':[f'terrain.{land}.wall.{i}' for i in range(2)],'water':f'terrain.{land}.water'} for land in expanded_palettes}
+manifest['regionSets']={**manifest['terrainSets'],**manifest['expansionSets']}
+for land,terrain in manifest['regionSets'].items():
+ terrain.update({'shore':[f'terrain.{land}.shore.{i}' for i in range(16)],'details':[f'prop.{land}.detail.{i}' for i in range(3)],'landmark':f'landmark.{land}'})
+manifest['bossSets']={**manifest['wardenSets'],'bell-cistern':'bell-leviathan','ember-foundry':'ember-colossus','gale-observatory':'storm-roc','winter-reservoir':'frost-leviathan','moon-conservatory':'moon-weaver','horizon-engine':'horizon-iris'}
+manifest['contentBindings']={'lands':dict(zip(['confluence','riverreach','cinderstep','windscar','frostmere','nightbloom','dawncoast'],['mossward','amber-fen','cinder-coast','storm-peaks','glass-highlands','moonwood','starfall-desert'])),'materials':dict(zip(['moss','peat','ember','chalk','ice','night','sand'],['mossward','amber-fen','cinder-coast','storm-peaks','glass-highlands','moonwood','starfall-desert'])),'dungeons':dict(zip(['bell-cistern','ember-foundry','gale-observatory','winter-reservoir','moon-conservatory','horizon-engine'],['verdant-cistern','ember-forge','tempest-spire','lunar-observatory','sunken-garden','solar-tomb'])),'equipment':['tide-boots','ember-cloak','wind-hook','frost-lens','moon-mirror','dawn-thread'],'characters':{'Mira':'npc.mira.idle','Sen':'npc.sen.idle','Oren':'npc.oren.idle','Ida':'npc.ida.idle'}}
+manifest['expandedEnemySets']=dict(zip(list(expanded_palettes)[:6],expanded_enemies))
+manifest['npcSets']={name:f'npc.{name}.idle' for name in ['mira','oren','sable','tavi','ilya','sol','nima','rook','vesper','ada','ferryman','merchant','sen','ida']}
+manifest['scenerySets']={}
+for content_land,visual_land in manifest['contentBindings']['lands'].items():
+ for role in ['gateway','landmark','settlement','workshop','shrine','crossing','hazard','healer','puzzle','market','dungeon-entrance','watchtower','secret','ruin','garden','checkpoint','consequence','beacon','road-marker']:
+  frame={'workshop':'prop.counter.0','market':'prop.market-stall.0','healer':'prop.hearth.0','road-marker':'prop.sign.0','crossing':'prop.bridge.0','secret':'prop.chest.0','checkpoint':'prop.waystone','beacon':'prop.beacon','garden':f'prop.{visual_land}.detail.1','ruin':f'prop.{visual_land}.detail.2','hazard':f'prop.{visual_land}.detail.0'}.get(role,f'landmark.{visual_land}')
+  manifest['scenerySets'][f'{content_land}-{role}']=frame
 (ROOT/'atlas.json').write_text(json.dumps(manifest,indent=2)+'\n')
 (ROOT/'manifest.mjs').write_text('// Generated by build_atlas.py; local module avoids fetch under connect-src none.\nexport default '+json.dumps(manifest,separators=(',',':'))+';\n')
 # A true raster contact sheet: actual atlas frames, no simulated gameplay.
@@ -252,7 +270,37 @@ for i,direction in enumerate(['down','left','right','up']):
  for j in range(4):preview.paste(dict(art)[f'keeper.{direction}.walk.{j}'],20+j*48,140+i*48)
 for i,family in enumerate(['briarling','fen-moth','glass-sentinel','root-warden','tide-warden','prism-warden']):
  for j,action in enumerate(['idle','windup','attack','defeat']):preview.paste(dict(art)[f'enemy.{family}.{action}.0'],240+j*92,140+i*84)
-for i,(name,im) in enumerate([(n,im) for n,im in art if n.startswith('prop.') and n.endswith('.0')]):preview.paste(im,640+(i%6)*48,140+(i//6)*56)
+for i,(name,im) in enumerate([(n,im) for n,im in art if n.startswith('prop.') and n.endswith('.0')][:20]):preview.paste(im,640+(i%6)*48,140+(i//6)*56)
 for i,effect in enumerate(['lantern-glow','sword-arc','light-burst','projectile','spark','danger-ring']):preview.paste(dict(art)[f'effect.{effect}.1'],640+i%2*140,400+i//2*85)
 preview.png(ROOT/'contact-sheet.png')
-print(f'Authored {len(frames)} frames, {len(animations)} animations; atlas {width}x{height}; sha256 '+hashlib.sha256((ROOT/'lantern-gameplay-v1.png').read_bytes()).hexdigest())
+print(f'Authored {len(frames)} frames, {len(animations)} animations; atlas {width}x{height}; sha256 '+hashlib.sha256((ROOT/'lantern-gameplay-v2.png').read_bytes()).hexdigest())
+
+# Expanded review sheets contain actual native-size frames, never gameplay composites.
+lookup=dict(art)
+review=Raster(1080, len(manifest['regionSets'])*92)
+review.rect(0,0,review.w,review.h,'16232d')
+for row,(land,terrain) in enumerate(manifest['regionSets'].items()):
+ y=row*92+4
+ for i,key in enumerate(terrain['floor']+terrain['wall']+[terrain['water']+'.0']):review.paste(lookup[key],i*44+4,y)
+ for i in range(8):
+  review.paste(lookup[terrain['water']+'.0'],280+i*44,y)
+  review.paste(lookup[terrain['shore'][i+1]],280+i*44,y)
+ for i,key in enumerate(terrain['details']):review.paste(lookup[key],650+i*44,y)
+ review.paste(lookup[terrain['landmark']],810,y)
+review.png(ROOT/'regions-asset-sheet.png')
+bossReview=Raster(1080,9*100+200);bossReview.rect(0,0,bossReview.w,bossReview.h,'16232d')
+for row,family in enumerate(manifest['bossSets'].values()):
+ for j,action in enumerate(['idle','windup','attack']):
+  for phase in range(4):bossReview.paste(lookup[f'enemy.{family}.{action}.{phase}'],4+(j*4+phase)*88,4+row*100)
+for i,key in enumerate(manifest['npcSets'].values()):bossReview.paste(lookup[key+'.0'],4+i*48,914)
+for i,key in enumerate([n for n in lookup if n.startswith('interior.') or n.startswith('prop.potion-')]):bossReview.paste(lookup[key],4+i*48,970)
+bossReview.png(ROOT/'actors-asset-sheet.png')
+(ROOT/'asset-sheet-index.json').write_text(json.dumps({'label':'Native-scale asset review sheets; NOT gameplay screenshots','regions':list(manifest['regionSets']),'bosses':list(manifest['bossSets'].values()),'npc':list(manifest['npcSets']),'columns':{'regions':'3 floor, 2 wall, water; shore masks 1–8; 3 details; landmark','actors':'idle 0–3, windup 0–3, attack 0–3; NPC and interiors below'}},indent=2)+'\n')
+
+props=[(name,im) for name,im in art if name.startswith(('prop.','interior.')) and not '.detail.' in name]
+propReview=Raster(960,((len(props)+15)//16)*64)
+propReview.rect(0,0,propReview.w,propReview.h,'16232d')
+for i,(name,im) in enumerate(props):propReview.paste(im,4+i%16*60,4+i//16*64)
+propReview.png(ROOT/'props-asset-sheet.png')
+# Index every source rectangle separately for unambiguous human review.
+(ROOT/'asset-sheet-index.json').write_text(json.dumps({'label':'Asset review sheets, NOT gameplay screenshots','regionsRows':list(manifest['regionSets']),'actorsRows':list(manifest['bossSets'].values()),'npcRow':list(manifest['npcSets']),'propsRows16Columns':[name for name,im in props],'regionColumns':'3 floors; 2 walls; water; shore masks 1–8; 3 details; landmark','actorColumns':'idle 0–3; windup 0–3; attack 0–3'},indent=2)+'\n')

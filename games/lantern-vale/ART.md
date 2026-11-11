@@ -42,7 +42,7 @@ Import `loadAtlas` from `./assets/gameplay/atlas.mjs` and load once before start
 
 For terrain, `terrainSets[land].floor` and `.wall` contain static frame IDs; `.water` names an animation. Land IDs: `mossward`, `amber-fen`, `glass-highlands`, `rootvault`, `drowned-archive`, `prism-crypt`. Typical actor sequence: `keeper.right.walk`; enemy sequence: `enemy.root-warden.windup`; static prop: `prop.chest.0`; animated prop: `prop.waystone`; effect: `effect.lantern-glow`. Animated names and static frame names are both accepted by the adapter. Missing names return false without drawing. Keep movement/collision, light rules, animation clocks, attack facing, room IDs and gameplay states owned by the game renderer/rules.
 
-The artwork worker's allowed writes exclude `game.mjs`; therefore this change supplies finished raster assets and an adapter but does **not** replace that file's current primitive drawing. Runtime consumption must be connected by the renderer owner. Artwork existence alone does not establish the acceptance criterion that actual gameplay uses it.
+The legacy renderer and expanded runtime both consume these local raster assets. Asset integrity tests establish frame validity; deployed play review is needed to assess visual quality.
 
 ### Actual validation
 
@@ -59,3 +59,33 @@ The live `game.mjs` now loads the atlas once and delegates world drawing to `ren
 `manifest.mjs` is generated alongside `atlas.json` and loaded as a local script module. This avoids a fetch blocked by the preserved `connect-src 'none'` policy. The PNG remains a local image. The contact sheet was inspected again; it is an asset review sheet, not evidence of deployed gameplay.
 
 Validation: all six local test files passed, including renderer coverage of all 27 rooms, light states, gates, bridges, plates, chests, attacks and terrain mappings. Runtime adapter coverage verifies successful decoded-atlas drawing as well as existing input/storage behavior. Trusted deployment browser QA is still pending; no browser screenshot or visual gameplay pass is claimed.
+
+## Expanded gameplay artwork — 2026-11-11
+
+This section supersedes the v1 atlas dimensions and counts above. The active manifest now points to **`lantern-gameplay-v2.png`**, 1024 × 5040 RGBA, 1,281 frames and 217 animation sequences. The v1 PNG is retained as historical art. All legacy frame IDs, pivots, animation names, `terrainSets`, `enemySets`, `wardenSets` and the `loadAtlas`/`frameAt`/`drawFrame` APIs remain compatible. The image filename changes to avoid an old cached PNG being used with new rectangles. The local module manifest still avoids fetch, and nearest-neighbor sampling remains enforced by the adapter.
+
+### Editable source and provenance
+
+`build_atlas.py` plus `expanded_art.py` are the complete editable pixel-geometry sources. Rebuild with `python3 -B games/lantern-vale/assets/gameplay/build_atlas.py`; only Python standard-library modules are used. The extension contains individually authored silhouettes, palettes, shading, architecture, props and poses. No downloaded art, external fonts, generated-image calls, authentication, paid APIs, third-party textures or new dependencies were used in this pass. All newly authored source, PNG and manifest additions inherit the **CC0 1.0 Universal** dedication and fallback permission in the gameplay redistribution section above. Title artwork provenance is unchanged.
+
+### Delivered artwork
+
+- Eighteen terrain families: the six legacy regions plus Cinder Coast, Moonwood, Sunken Garden, Storm Peaks, Starfall Desert, Eclipse Reach, Ember Forge, Lunar Observatory, Verdant Cistern, Tempest Spire, Solar Tomb and Eclipse Citadel. Each has floors, masonry, animated water, three environmental details, a landmark and sixteen transparent shoreline masks. Legacy floors and walls also receive material detailing.
+- Root/tree arches, stilted tide houses and docks, broken crystal observatories, stepped solar tombs, a smoking forge and eclipse spires provide different landmark silhouettes. They use grounded shadows, inset doorways and warm entrance markers. Interior materials include oak boards, woven floors and marble; props include beds, shelves, counters, hearths, signs, barrels, market awnings and doors.
+- The keeper retains directional idle, walk and strike animations and gains four-frame cast, use, dash and hurt actions in every direction. Existing lantern, blade and equipment identity stays readable at 40px world scale.
+- Fourteen NPC appearances include distinct Mira, Sen, Oren and Ida poses matched to the actual story; two-frame breathing loops retain fixed world pivots. Other appearances support merchants, ferrymen and settlement inhabitants.
+- Six new regular enemy families (cinder crab, moon spider, thorn stalker, storm wisp, dune scarab and eclipse shade) have idle/walk/windup/attack/hurt/defeat sequences. Existing regular enemies remain available.
+- Nine campaign boss mappings cover Rootvault, Drowned Archive, Prism Crypt, Bell Cistern, Ember Foundry, Gale Observatory, Winter Reservoir, Moon Conservatory and Horizon Engine. The six new silhouettes are a bronze diving-bell leviathan, fissured forge colossus, winged storm roc, low ice-armored leviathan, patterned lunar weaver and mechanical horizon iris. Windups, attacks, hurt highlights and terminal dissolves remain distinct from idle. Three additional optional silhouettes (thorn matriarch, sun scarab and eclipse sovereign) are also available by frame name.
+- Inventory art includes all six exact earned equipment IDs in `expansion/story.mjs`, additional equipment candidates, three colored potion bottles, and new ember, mist, leaf, moonbeam, storm and eclipse effects. Existing swords, relics, tonic, key, coin and sun-disc-compatible boomerang remain intact.
+
+### Runtime integration
+
+`manifest.regionSets` combines eighteen materials; `terrainSets` retains its original six keys for legacy consumers. Each expanded set provides floor, wall, animated water, shoreline masks, details and a landmark. Shoreline overlays use N=1, E=2, S=4, W=8 to mark adjacent dry banks. Native pivots and dimensions are retained for actors and 80-pixel landmarks.
+
+The expanded runtime selects materials through `contentBindings.lands` and `contentBindings.dungeons`, authored scenery through `scenerySets`, named story NPCs through `contentBindings.characters`, and nine distinct boss families through `bossSets`. The shared adventure adapter reconciles authoring IDs with story rewards and rendering IDs. This selection is implemented in gameplay; deployed visual quality remains unverified.
+
+### Inspection and validation
+
+`regions-asset-sheet.png`, `actors-asset-sheet.png`, `props-asset-sheet.png` and `contact-sheet.png` are asset sheets, not gameplay screenshots. The actor sheet was inspected during integration for boss silhouettes, tells, attack poses and NPC differentiation. The images have a coherent restrained palette and readable silhouettes; animation subtlety, environmental repetition, scale and composition require actual deployed play assessment.
+
+Local atlas tests decode PNG data, validate rectangles, gutters, animations, opaque/seamless terrain, shoreline alpha, distinct boss silhouettes and NPC pixels, equipment resolution and actual scene/scenery bindings. Loader tests preserve decode and dimension rejection. The runtime mock now uses the shipped manifest dimensions, so it exercises the real v2 loader contract. No gameplay screenshot or deployed art approval is claimed. See VALIDATION.md for the final command results.
