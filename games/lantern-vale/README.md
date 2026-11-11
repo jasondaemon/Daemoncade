@@ -1,46 +1,44 @@
 # Lantern Vale · The stolen dawn
 
-A standalone adventure alpha with 15 overworld areas across Mossward, Amber Fen and the Glass Highlands, plus three four-room underground dungeons. Mira gives the keeper the last lantern; recover the three wardens' heart relics and return them to the northeast beacon. Light reveals bridges, treasure and sun plates, attracts shadows, and awakens wardens. Relics strengthen the blade, increase health and open the next land.
+A standalone adventure alpha: Mira lends the keeper the last lantern and asks for three heart relics to restore dawn at the northeast beacon. Explore 15 overworld areas across Mossward, Amber Fen and Glass Highlands, three four-room underground dungeons, and three optional keeper chambers: 30 areas total. This is a compact campaign, not a finished multi-day RPG.
 
-The original five-room rules and tests remain under `prototype/` as a reference. The playable entry uses `campaign.mjs`, with a deterministic simulation independent of its Canvas renderer. No shared helpers, dependencies, catalog, launcher or other games are modified. All runtime requests are local assets. No accounts, analytics or server storage.
+## Play and progression
 
-## Play and save
+Open `games/lantern-vale/index.html` through the repository's normal static deployment.
 
-Run `./scripts/serve.sh` from the repository root and open `/games/lantern-vale/`.
+- Arrows/WASD move; Space/J strikes; L toggles the lantern; Q drinks a five-heart tonic; E interacts; P pauses; R opens Journey. X throws the earned sun-disc; K opens the journal. Closing the journal leaves the game paused until Resume/P.
+- Follow the western grove to Rootvault, the central landing to Drowned Archive, then the southeast stair to Prism Crypt. Carry light across each bridge, touch its sun plate, defeat hall sentries for a key, defeat the warden and collect its heart. Return west to save; finish at the beacon with all three hearts and the lantern raised.
+- Light reveals treasure and bridges, activates puzzles and wardens, attracts enemies and briefly stuns bramblelings. Wardens telegraph a root charge, fixed ripples or a sweeping prism beam. Darkness preserves the original dormant-warden combat route.
+- Optional threshold alcoves lead to a shutter/seed chamber, sluice/reflection chamber and two-prism chamber. Their rewards grant supplies, a tenth tonic slot and a longer brambleling light stun. Lantern fuel does not drain.
+- Oren's orchard, Sen's three singing reeds and Ida's inscriptions offer optional rewards and recurring dialogue. The returning sun-disc damages ordinary enemies, stuns them and toggles the distant root shutter. Relics strengthen the sword and increase health. Treasure and enemy coins fund tonics.
+- Hold touch directions while using action buttons. Keyboard/touch input clears on pause, focus loss and pointer cancellation. Resume requires fresh movement input.
 
-- Arrows/WASD move; Space/J strikes in the facing direction. L toggles the lantern, Q drinks a five-heart tonic, E interacts, P pauses, R opens the journey menu.
-- Touch: hold direction buttons and tap the named actions. Movement clears on pointer cancellation, loss of capture, pause, tab hiding and blur. Resume explicitly.
-- Glowing waystones heal and save when E is pressed nearby. They sell one tonic for six coins per interaction, up to nine carried. Treasure is visible in lantern light.
-- Save key: `daemoncade.lantern-vale.waystone.v1`. One checkpoint per browser/device. Continue reloads the waystone and campaign progress. A new journey replaces the checkpoint only when saving. Clearing browser storage deletes it. Storage denial is handled with a visible message; play remains possible.
-- Save records have a schema version, strict bounded fields and canonical enemy arrays. Transient positions, timers, light and status are reset on continue; remaining enemies resume at their authored spawn positions with saved health. No compatibility with future save versions is promised during alpha.
+## Checkpoints
 
-## Validation
+Interact near a waystone to heal, save and buy one tonic for six coins when space permits. Save key: `daemoncade.lantern-vale.waystone.v1`. Continue restores campaign and optional progression at the saved waystone. Existing valid version-1 checkpoints without optional progress remain supported. Enemy health persists; enemies return to authored positions. Combat timers, projectiles, facing and light reset.
 
-Commands run from the repository root with Node 18.20.4:
+New journey replaces the checkpoint only at the next successful save. Invalid checkpoints and unavailable storage produce feedback while allowing a new journey without persistence. Clearing browser storage removes the checkpoint. Saves are local to the browser/device.
+
+## Artwork and interface
+
+Actual world rendering consumes the original local 305-frame raster atlas: six terrain sets, directional keeper animation, enemies, distinct wardens, props and effects. `ART.md` records provenance and redistribution terms; the title illustration is separate. A failed image load exposes a retry button and a basic map fallback. No dependencies, remote runtime assets, analytics, accounts or services are required. The restrictive Content Security Policy remains intact.
+
+The custom interface fills the window, with responsive touch controls and a short-landscape layout. Those are implemented behaviors, not a claim of verified device usability. `mobile_ready` remains false pending browser/device review.
+
+## Recorded validation
+
+On 2026-11-10, the following local command passed all seven test files with zero failures, including the preserved prototype suite:
 
 ```sh
-node --test games/lantern-vale/*.test.mjs games/lantern-vale/prototype/*.test.mjs games/meddle/*.test.mjs
-node --check games/lantern-vale/game.mjs
-node --check games/lantern-vale/campaign.mjs
+node --test games/lantern-vale/*.test.mjs games/lantern-vale/prototype/*.test.mjs games/lantern-vale/assets/gameplay/*.test.mjs
 ```
 
-All seven test files pass, zero failures. Campaign coverage includes normalized movement, collision, light puzzles, sentry keys, warden dormancy, directional combat, cooldown, tonics, death freeze, pause, malformed save rejection, and an entire route through all three dungeons, checkpoint serialization/reload, upgrades and ending using actual movement transitions. Adapter tests use a fake DOM to check element wiring, resize sizing, blocked storage messaging, menu navigation, blur/pause/resume and pointer cancellation event handling. They do not render a browser or establish visual correctness. The six original prototype rule scenarios remain passing. All four committed Meddle Node test files pass without changes.
+Coverage includes actual movement through the complete three-relic route to the ending and checkpoint reload; bridge/plate/key gating; optional chamber walking access and return; differentiated puzzles/combat; secondary weapon; legacy and extended saves; malformed input; fake-DOM storage, focus, pause, resize and pointer handling. Renderer tests resolve atlas names across all 30 rooms and exercise puzzle/combat states without mutating simulation state. Atlas tests inspect PNG data, frame bounds, animation references and drawing arguments. All game-local JavaScript modules passed `node --check`.
 
-`./scripts/serve.sh` failed with `PermissionError: [Errno 1] Operation not permitted` creating a socket. No browser, Playwright or Puppeteer is installed. HTTP delivery and browser visual QA were **not performed**. `mobile_ready` is false until device review.
+These tests do not render a real browser. No deployment browser result, gameplay screenshot, mobile pass, measured playtime or sustained performance result is claimed here. Independent deployment review must still assess visual quality, a full player-driven campaign, reload persistence, simultaneous touch, keyboard focus, pause/resume and viewport layouts, including short landscape. No browser failure report was supplied during this integration check.
 
-## Browser review still required
+Review-finding validation (2026-11-10): reran the command above: seven test files passed, zero failures or skips. All game-local `.mjs` files passed `node --check`. Inspected the gameplay contact sheet, atlas renderer integration, interface markup/styles, and input/storage lifecycle source. The supplied independent review requests trusted deployment browser evidence only; it supplies no reproduced gameplay defect. This implementation worker has no tool for invoking the separate trusted cluster QA Job and did not launch a local browser/server as a substitute. Deployment acceptance remains unverified pending that downstream assessment; no gameplay code, tests, security policy or mobile-readiness claim was changed for this finding.
 
-1. Open directly over HTTP in Chrome and Firefox; inspect console, local asset loading, art loading and absence of external requests.
-2. Start a new journey, read the guide, save at the first waystone. Go south then east into the western grove. Enter the stairs in the northeast of that area.
-3. In each dungeon: travel east, light the bridge, touch the sun plate, defeat both sentries for their gate key, defeat the warden with the lantern raised, collect its heart and backtrack west. Save outside. Verify each gate blocks before its requirement and visibly opens afterward.
-4. Proceed east to the central grove dungeon, then south/east to the southeast dungeon. Use tonics, gather caches, buy a tonic, and verify health/blade improvements. Return north to the northeast beacon, raise the lantern and interact to finish.
-5. Lose all health, open Journey, Continue, and verify the last saved waystone/progress. Reload the page and continue again. Check invalid/blocked storage and confirm a new journey only replaces a save at a waystone.
-6. Test each keyboard action and diagonal movement; use simultaneous touch movement/actions, release outside controls and cancel touches. Pause while moving, blur, hide the tab, resume explicitly and verify movement requires fresh input.
-7. Resize desktop, portrait and landscape phones, short landscape, high DPI and zoom. Verify readable HUD, focus visibility, reachable buttons, correct aspect ratio and no document/parent scrolling. Test iframe fit separately if integration is approved.
-8. Finish, open Journey, start again, and confirm all hearts, enemies, keys, caches and upgrades reset. Collect screenshots and review sustained device performance before changing mobile readiness.
+See `DEVELOPMENT.md` for the retained engine evaluation and remaining expansion work.
 
-## Art and limits
-
-`assets/lantern-vale.png` is an original generated square raster illustration used on the journey screen; inspected locally for composition and palette. `ART.md` records its full prompt and provenance. `icon.webp` preserves the prototype's original generated menu artwork. In-game tiles and sprites are hand-authored pixel shapes rasterized by Canvas. The illustration is a polished art-direction sample; this alpha does not yet have a production sprite atlas, animation suite, audio, varied boss patterns or days of authored content. The 27 areas are a compact campaign with repeated dungeon structure, not a claim to the finished large RPG. See `DEVELOPMENT.md` for engine evaluation and staged expansion.
-
-Production catalog registration, merge and deployment require separate human action.
+Correction validation (2026-11-10): fixed literal escaped newlines in the journal and overworld map, and moved checkpoint feedback outside the guide hidden by compact layouts. The same seven-file test command above passed after these changes, including new adapter assertions for journal paragraphs, three map rows and independent checkpoint feedback markup. `node --check games/lantern-vale/game.mjs` also passed. These are source and fake-DOM checks; actual compact-layout readability still requires trusted deployment browser QA. The supplied review payload contained only a report-path validation error (`review.findings[0].path must be a safe relative path without globs`), with no actionable file location or browser evidence. A subsequent independent review and deployment QA remain downstream workflow steps.

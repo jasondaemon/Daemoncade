@@ -1,0 +1,6268 @@
+{
+  "schemaVersion": 1,
+  "image": "lantern-gameplay-v1.png",
+  "imageSize": [
+    1024,
+    1232
+  ],
+  "tileSize": 40,
+  "padding": 2,
+  "sampling": "nearest",
+  "pivotUnits": "pixels from frame top-left; world position is frame center unless tile",
+  "directions": [
+    "down",
+    "left",
+    "right",
+    "up"
+  ],
+  "frames": {
+    "terrain.mossward.floor.0": {
+      "kind": "tile",
+      "pivot": [
+        0,
+        0
+      ],
+      "logicalSize": [
+        40,
+        40
+      ],
+      "rect": [
+        2,
+        2,
+        40,
+        40
+      ]
+    },
+    "terrain.mossward.floor.1": {
+      "kind": "tile",
+      "pivot": [
+        0,
+        0
+      ],
+      "logicalSize": [
+        40,
+        40
+      ],
+      "rect": [
+        46,
+        2,
+        40,
+        40
+      ]
+    },
+    "terrain.mossward.floor.2": {
+      "kind": "tile",
+      "pivot": [
+        0,
+        0
+      ],
+      "logicalSize": [
+        40,
+        40
+      ],
+      "rect": [
+        90,
+        2,
+        40,
+        40
+      ]
+    },
+    "terrain.mossward.wall.0": {
+      "kind": "tile",
+      "pivot": [
+        0,
+        0
+      ],
+      "logicalSize": [
+        40,
+        40
+      ],
+      "rect": [
+        134,
+        2,
+        40,
+        40
+      ]
+    },
+    "terrain.mossward.wall.1": {
+      "kind": "tile",
+      "pivot": [
+        0,
+        0
+      ],
+      "logicalSize": [
+        40,
+        40
+      ],
+      "rect": [
+        178,
+        2,
+        40,
+        40
+      ]
+    },
+    "terrain.mossward.water.0": {
+      "kind": "tile",
+      "pivot": [
+        0,
+        0
+      ],
+      "logicalSize": [
+        40,
+        40
+      ],
+      "rect": [
+        222,
+        2,
+        40,
+        40
+      ]
+    },
+    "terrain.mossward.water.1": {
+      "kind": "tile",
+      "pivot": [
+        0,
+        0
+      ],
+      "logicalSize": [
+        40,
+        40
+      ],
+      "rect": [
+        266,
+        2,
+        40,
+        40
+      ]
+    },
+    "terrain.mossward.water.2": {
+      "kind": "tile",
+      "pivot": [
+        0,
+        0
+      ],
+      "logicalSize": [
+        40,
+        40
+      ],
+      "rect": [
+        310,
+        2,
+        40,
+        40
+      ]
+    },
+    "terrain.mossward.water.3": {
+      "kind": "tile",
+      "pivot": [
+        0,
+        0
+      ],
+      "logicalSize": [
+        40,
+        40
+      ],
+      "rect": [
+        354,
+        2,
+        40,
+        40
+      ]
+    },
+    "terrain.amber-fen.floor.0": {
+      "kind": "tile",
+      "pivot": [
+        0,
+        0
+      ],
+      "logicalSize": [
+        40,
+        40
+      ],
+      "rect": [
+        398,
+        2,
+        40,
+        40
+      ]
+    },
+    "terrain.amber-fen.floor.1": {
+      "kind": "tile",
+      "pivot": [
+        0,
+        0
+      ],
+      "logicalSize": [
+        40,
+        40
+      ],
+      "rect": [
+        442,
+        2,
+        40,
+        40
+      ]
+    },
+    "terrain.amber-fen.floor.2": {
+      "kind": "tile",
+      "pivot": [
+        0,
+        0
+      ],
+      "logicalSize": [
+        40,
+        40
+      ],
+      "rect": [
+        486,
+        2,
+        40,
+        40
+      ]
+    },
+    "terrain.amber-fen.wall.0": {
+      "kind": "tile",
+      "pivot": [
+        0,
+        0
+      ],
+      "logicalSize": [
+        40,
+        40
+      ],
+      "rect": [
+        530,
+        2,
+        40,
+        40
+      ]
+    },
+    "terrain.amber-fen.wall.1": {
+      "kind": "tile",
+      "pivot": [
+        0,
+        0
+      ],
+      "logicalSize": [
+        40,
+        40
+      ],
+      "rect": [
+        574,
+        2,
+        40,
+        40
+      ]
+    },
+    "terrain.amber-fen.water.0": {
+      "kind": "tile",
+      "pivot": [
+        0,
+        0
+      ],
+      "logicalSize": [
+        40,
+        40
+      ],
+      "rect": [
+        618,
+        2,
+        40,
+        40
+      ]
+    },
+    "terrain.amber-fen.water.1": {
+      "kind": "tile",
+      "pivot": [
+        0,
+        0
+      ],
+      "logicalSize": [
+        40,
+        40
+      ],
+      "rect": [
+        662,
+        2,
+        40,
+        40
+      ]
+    },
+    "terrain.amber-fen.water.2": {
+      "kind": "tile",
+      "pivot": [
+        0,
+        0
+      ],
+      "logicalSize": [
+        40,
+        40
+      ],
+      "rect": [
+        706,
+        2,
+        40,
+        40
+      ]
+    },
+    "terrain.amber-fen.water.3": {
+      "kind": "tile",
+      "pivot": [
+        0,
+        0
+      ],
+      "logicalSize": [
+        40,
+        40
+      ],
+      "rect": [
+        750,
+        2,
+        40,
+        40
+      ]
+    },
+    "terrain.glass-highlands.floor.0": {
+      "kind": "tile",
+      "pivot": [
+        0,
+        0
+      ],
+      "logicalSize": [
+        40,
+        40
+      ],
+      "rect": [
+        794,
+        2,
+        40,
+        40
+      ]
+    },
+    "terrain.glass-highlands.floor.1": {
+      "kind": "tile",
+      "pivot": [
+        0,
+        0
+      ],
+      "logicalSize": [
+        40,
+        40
+      ],
+      "rect": [
+        838,
+        2,
+        40,
+        40
+      ]
+    },
+    "terrain.glass-highlands.floor.2": {
+      "kind": "tile",
+      "pivot": [
+        0,
+        0
+      ],
+      "logicalSize": [
+        40,
+        40
+      ],
+      "rect": [
+        882,
+        2,
+        40,
+        40
+      ]
+    },
+    "terrain.glass-highlands.wall.0": {
+      "kind": "tile",
+      "pivot": [
+        0,
+        0
+      ],
+      "logicalSize": [
+        40,
+        40
+      ],
+      "rect": [
+        926,
+        2,
+        40,
+        40
+      ]
+    },
+    "terrain.glass-highlands.wall.1": {
+      "kind": "tile",
+      "pivot": [
+        0,
+        0
+      ],
+      "logicalSize": [
+        40,
+        40
+      ],
+      "rect": [
+        970,
+        2,
+        40,
+        40
+      ]
+    },
+    "terrain.glass-highlands.water.0": {
+      "kind": "tile",
+      "pivot": [
+        0,
+        0
+      ],
+      "logicalSize": [
+        40,
+        40
+      ],
+      "rect": [
+        2,
+        46,
+        40,
+        40
+      ]
+    },
+    "terrain.glass-highlands.water.1": {
+      "kind": "tile",
+      "pivot": [
+        0,
+        0
+      ],
+      "logicalSize": [
+        40,
+        40
+      ],
+      "rect": [
+        46,
+        46,
+        40,
+        40
+      ]
+    },
+    "terrain.glass-highlands.water.2": {
+      "kind": "tile",
+      "pivot": [
+        0,
+        0
+      ],
+      "logicalSize": [
+        40,
+        40
+      ],
+      "rect": [
+        90,
+        46,
+        40,
+        40
+      ]
+    },
+    "terrain.glass-highlands.water.3": {
+      "kind": "tile",
+      "pivot": [
+        0,
+        0
+      ],
+      "logicalSize": [
+        40,
+        40
+      ],
+      "rect": [
+        134,
+        46,
+        40,
+        40
+      ]
+    },
+    "terrain.rootvault.floor.0": {
+      "kind": "tile",
+      "pivot": [
+        0,
+        0
+      ],
+      "logicalSize": [
+        40,
+        40
+      ],
+      "rect": [
+        178,
+        46,
+        40,
+        40
+      ]
+    },
+    "terrain.rootvault.floor.1": {
+      "kind": "tile",
+      "pivot": [
+        0,
+        0
+      ],
+      "logicalSize": [
+        40,
+        40
+      ],
+      "rect": [
+        222,
+        46,
+        40,
+        40
+      ]
+    },
+    "terrain.rootvault.floor.2": {
+      "kind": "tile",
+      "pivot": [
+        0,
+        0
+      ],
+      "logicalSize": [
+        40,
+        40
+      ],
+      "rect": [
+        266,
+        46,
+        40,
+        40
+      ]
+    },
+    "terrain.rootvault.wall.0": {
+      "kind": "tile",
+      "pivot": [
+        0,
+        0
+      ],
+      "logicalSize": [
+        40,
+        40
+      ],
+      "rect": [
+        310,
+        46,
+        40,
+        40
+      ]
+    },
+    "terrain.rootvault.wall.1": {
+      "kind": "tile",
+      "pivot": [
+        0,
+        0
+      ],
+      "logicalSize": [
+        40,
+        40
+      ],
+      "rect": [
+        354,
+        46,
+        40,
+        40
+      ]
+    },
+    "terrain.rootvault.water.0": {
+      "kind": "tile",
+      "pivot": [
+        0,
+        0
+      ],
+      "logicalSize": [
+        40,
+        40
+      ],
+      "rect": [
+        398,
+        46,
+        40,
+        40
+      ]
+    },
+    "terrain.rootvault.water.1": {
+      "kind": "tile",
+      "pivot": [
+        0,
+        0
+      ],
+      "logicalSize": [
+        40,
+        40
+      ],
+      "rect": [
+        442,
+        46,
+        40,
+        40
+      ]
+    },
+    "terrain.rootvault.water.2": {
+      "kind": "tile",
+      "pivot": [
+        0,
+        0
+      ],
+      "logicalSize": [
+        40,
+        40
+      ],
+      "rect": [
+        486,
+        46,
+        40,
+        40
+      ]
+    },
+    "terrain.rootvault.water.3": {
+      "kind": "tile",
+      "pivot": [
+        0,
+        0
+      ],
+      "logicalSize": [
+        40,
+        40
+      ],
+      "rect": [
+        530,
+        46,
+        40,
+        40
+      ]
+    },
+    "terrain.drowned-archive.floor.0": {
+      "kind": "tile",
+      "pivot": [
+        0,
+        0
+      ],
+      "logicalSize": [
+        40,
+        40
+      ],
+      "rect": [
+        574,
+        46,
+        40,
+        40
+      ]
+    },
+    "terrain.drowned-archive.floor.1": {
+      "kind": "tile",
+      "pivot": [
+        0,
+        0
+      ],
+      "logicalSize": [
+        40,
+        40
+      ],
+      "rect": [
+        618,
+        46,
+        40,
+        40
+      ]
+    },
+    "terrain.drowned-archive.floor.2": {
+      "kind": "tile",
+      "pivot": [
+        0,
+        0
+      ],
+      "logicalSize": [
+        40,
+        40
+      ],
+      "rect": [
+        662,
+        46,
+        40,
+        40
+      ]
+    },
+    "terrain.drowned-archive.wall.0": {
+      "kind": "tile",
+      "pivot": [
+        0,
+        0
+      ],
+      "logicalSize": [
+        40,
+        40
+      ],
+      "rect": [
+        706,
+        46,
+        40,
+        40
+      ]
+    },
+    "terrain.drowned-archive.wall.1": {
+      "kind": "tile",
+      "pivot": [
+        0,
+        0
+      ],
+      "logicalSize": [
+        40,
+        40
+      ],
+      "rect": [
+        750,
+        46,
+        40,
+        40
+      ]
+    },
+    "terrain.drowned-archive.water.0": {
+      "kind": "tile",
+      "pivot": [
+        0,
+        0
+      ],
+      "logicalSize": [
+        40,
+        40
+      ],
+      "rect": [
+        794,
+        46,
+        40,
+        40
+      ]
+    },
+    "terrain.drowned-archive.water.1": {
+      "kind": "tile",
+      "pivot": [
+        0,
+        0
+      ],
+      "logicalSize": [
+        40,
+        40
+      ],
+      "rect": [
+        838,
+        46,
+        40,
+        40
+      ]
+    },
+    "terrain.drowned-archive.water.2": {
+      "kind": "tile",
+      "pivot": [
+        0,
+        0
+      ],
+      "logicalSize": [
+        40,
+        40
+      ],
+      "rect": [
+        882,
+        46,
+        40,
+        40
+      ]
+    },
+    "terrain.drowned-archive.water.3": {
+      "kind": "tile",
+      "pivot": [
+        0,
+        0
+      ],
+      "logicalSize": [
+        40,
+        40
+      ],
+      "rect": [
+        926,
+        46,
+        40,
+        40
+      ]
+    },
+    "terrain.prism-crypt.floor.0": {
+      "kind": "tile",
+      "pivot": [
+        0,
+        0
+      ],
+      "logicalSize": [
+        40,
+        40
+      ],
+      "rect": [
+        970,
+        46,
+        40,
+        40
+      ]
+    },
+    "terrain.prism-crypt.floor.1": {
+      "kind": "tile",
+      "pivot": [
+        0,
+        0
+      ],
+      "logicalSize": [
+        40,
+        40
+      ],
+      "rect": [
+        2,
+        90,
+        40,
+        40
+      ]
+    },
+    "terrain.prism-crypt.floor.2": {
+      "kind": "tile",
+      "pivot": [
+        0,
+        0
+      ],
+      "logicalSize": [
+        40,
+        40
+      ],
+      "rect": [
+        46,
+        90,
+        40,
+        40
+      ]
+    },
+    "terrain.prism-crypt.wall.0": {
+      "kind": "tile",
+      "pivot": [
+        0,
+        0
+      ],
+      "logicalSize": [
+        40,
+        40
+      ],
+      "rect": [
+        90,
+        90,
+        40,
+        40
+      ]
+    },
+    "terrain.prism-crypt.wall.1": {
+      "kind": "tile",
+      "pivot": [
+        0,
+        0
+      ],
+      "logicalSize": [
+        40,
+        40
+      ],
+      "rect": [
+        134,
+        90,
+        40,
+        40
+      ]
+    },
+    "terrain.prism-crypt.water.0": {
+      "kind": "tile",
+      "pivot": [
+        0,
+        0
+      ],
+      "logicalSize": [
+        40,
+        40
+      ],
+      "rect": [
+        178,
+        90,
+        40,
+        40
+      ]
+    },
+    "terrain.prism-crypt.water.1": {
+      "kind": "tile",
+      "pivot": [
+        0,
+        0
+      ],
+      "logicalSize": [
+        40,
+        40
+      ],
+      "rect": [
+        222,
+        90,
+        40,
+        40
+      ]
+    },
+    "terrain.prism-crypt.water.2": {
+      "kind": "tile",
+      "pivot": [
+        0,
+        0
+      ],
+      "logicalSize": [
+        40,
+        40
+      ],
+      "rect": [
+        266,
+        90,
+        40,
+        40
+      ]
+    },
+    "terrain.prism-crypt.water.3": {
+      "kind": "tile",
+      "pivot": [
+        0,
+        0
+      ],
+      "logicalSize": [
+        40,
+        40
+      ],
+      "rect": [
+        310,
+        90,
+        40,
+        40
+      ]
+    },
+    "prop.mossward.foliage": {
+      "kind": "sprite",
+      "pivot": [
+        20.0,
+        20.0
+      ],
+      "logicalSize": [
+        40,
+        40
+      ],
+      "rect": [
+        354,
+        90,
+        40,
+        40
+      ]
+    },
+    "prop.amber-fen.foliage": {
+      "kind": "sprite",
+      "pivot": [
+        20.0,
+        20.0
+      ],
+      "logicalSize": [
+        40,
+        40
+      ],
+      "rect": [
+        398,
+        90,
+        40,
+        40
+      ]
+    },
+    "prop.glass-highlands.foliage": {
+      "kind": "sprite",
+      "pivot": [
+        20.0,
+        20.0
+      ],
+      "logicalSize": [
+        40,
+        40
+      ],
+      "rect": [
+        442,
+        90,
+        40,
+        40
+      ]
+    },
+    "keeper.down.idle.0": {
+      "kind": "sprite",
+      "pivot": [
+        20.0,
+        20.0
+      ],
+      "logicalSize": [
+        40,
+        40
+      ],
+      "rect": [
+        486,
+        90,
+        40,
+        40
+      ]
+    },
+    "keeper.down.idle.1": {
+      "kind": "sprite",
+      "pivot": [
+        20.0,
+        20.0
+      ],
+      "logicalSize": [
+        40,
+        40
+      ],
+      "rect": [
+        530,
+        90,
+        40,
+        40
+      ]
+    },
+    "keeper.down.walk.0": {
+      "kind": "sprite",
+      "pivot": [
+        20.0,
+        20.0
+      ],
+      "logicalSize": [
+        40,
+        40
+      ],
+      "rect": [
+        574,
+        90,
+        40,
+        40
+      ]
+    },
+    "keeper.down.walk.1": {
+      "kind": "sprite",
+      "pivot": [
+        20.0,
+        20.0
+      ],
+      "logicalSize": [
+        40,
+        40
+      ],
+      "rect": [
+        618,
+        90,
+        40,
+        40
+      ]
+    },
+    "keeper.down.walk.2": {
+      "kind": "sprite",
+      "pivot": [
+        20.0,
+        20.0
+      ],
+      "logicalSize": [
+        40,
+        40
+      ],
+      "rect": [
+        662,
+        90,
+        40,
+        40
+      ]
+    },
+    "keeper.down.walk.3": {
+      "kind": "sprite",
+      "pivot": [
+        20.0,
+        20.0
+      ],
+      "logicalSize": [
+        40,
+        40
+      ],
+      "rect": [
+        706,
+        90,
+        40,
+        40
+      ]
+    },
+    "keeper.down.strike.0": {
+      "kind": "sprite",
+      "pivot": [
+        20.0,
+        20.0
+      ],
+      "logicalSize": [
+        40,
+        40
+      ],
+      "rect": [
+        750,
+        90,
+        40,
+        40
+      ]
+    },
+    "keeper.down.strike.1": {
+      "kind": "sprite",
+      "pivot": [
+        20.0,
+        20.0
+      ],
+      "logicalSize": [
+        40,
+        40
+      ],
+      "rect": [
+        794,
+        90,
+        40,
+        40
+      ]
+    },
+    "keeper.down.strike.2": {
+      "kind": "sprite",
+      "pivot": [
+        20.0,
+        20.0
+      ],
+      "logicalSize": [
+        40,
+        40
+      ],
+      "rect": [
+        838,
+        90,
+        40,
+        40
+      ]
+    },
+    "keeper.down.strike.3": {
+      "kind": "sprite",
+      "pivot": [
+        20.0,
+        20.0
+      ],
+      "logicalSize": [
+        40,
+        40
+      ],
+      "rect": [
+        882,
+        90,
+        40,
+        40
+      ]
+    },
+    "keeper.left.idle.0": {
+      "kind": "sprite",
+      "pivot": [
+        20.0,
+        20.0
+      ],
+      "logicalSize": [
+        40,
+        40
+      ],
+      "rect": [
+        926,
+        90,
+        40,
+        40
+      ]
+    },
+    "keeper.left.idle.1": {
+      "kind": "sprite",
+      "pivot": [
+        20.0,
+        20.0
+      ],
+      "logicalSize": [
+        40,
+        40
+      ],
+      "rect": [
+        970,
+        90,
+        40,
+        40
+      ]
+    },
+    "keeper.left.walk.0": {
+      "kind": "sprite",
+      "pivot": [
+        20.0,
+        20.0
+      ],
+      "logicalSize": [
+        40,
+        40
+      ],
+      "rect": [
+        2,
+        134,
+        40,
+        40
+      ]
+    },
+    "keeper.left.walk.1": {
+      "kind": "sprite",
+      "pivot": [
+        20.0,
+        20.0
+      ],
+      "logicalSize": [
+        40,
+        40
+      ],
+      "rect": [
+        46,
+        134,
+        40,
+        40
+      ]
+    },
+    "keeper.left.walk.2": {
+      "kind": "sprite",
+      "pivot": [
+        20.0,
+        20.0
+      ],
+      "logicalSize": [
+        40,
+        40
+      ],
+      "rect": [
+        90,
+        134,
+        40,
+        40
+      ]
+    },
+    "keeper.left.walk.3": {
+      "kind": "sprite",
+      "pivot": [
+        20.0,
+        20.0
+      ],
+      "logicalSize": [
+        40,
+        40
+      ],
+      "rect": [
+        134,
+        134,
+        40,
+        40
+      ]
+    },
+    "keeper.left.strike.0": {
+      "kind": "sprite",
+      "pivot": [
+        20.0,
+        20.0
+      ],
+      "logicalSize": [
+        40,
+        40
+      ],
+      "rect": [
+        178,
+        134,
+        40,
+        40
+      ]
+    },
+    "keeper.left.strike.1": {
+      "kind": "sprite",
+      "pivot": [
+        20.0,
+        20.0
+      ],
+      "logicalSize": [
+        40,
+        40
+      ],
+      "rect": [
+        222,
+        134,
+        40,
+        40
+      ]
+    },
+    "keeper.left.strike.2": {
+      "kind": "sprite",
+      "pivot": [
+        20.0,
+        20.0
+      ],
+      "logicalSize": [
+        40,
+        40
+      ],
+      "rect": [
+        266,
+        134,
+        40,
+        40
+      ]
+    },
+    "keeper.left.strike.3": {
+      "kind": "sprite",
+      "pivot": [
+        20.0,
+        20.0
+      ],
+      "logicalSize": [
+        40,
+        40
+      ],
+      "rect": [
+        310,
+        134,
+        40,
+        40
+      ]
+    },
+    "keeper.right.idle.0": {
+      "kind": "sprite",
+      "pivot": [
+        20.0,
+        20.0
+      ],
+      "logicalSize": [
+        40,
+        40
+      ],
+      "rect": [
+        354,
+        134,
+        40,
+        40
+      ]
+    },
+    "keeper.right.idle.1": {
+      "kind": "sprite",
+      "pivot": [
+        20.0,
+        20.0
+      ],
+      "logicalSize": [
+        40,
+        40
+      ],
+      "rect": [
+        398,
+        134,
+        40,
+        40
+      ]
+    },
+    "keeper.right.walk.0": {
+      "kind": "sprite",
+      "pivot": [
+        20.0,
+        20.0
+      ],
+      "logicalSize": [
+        40,
+        40
+      ],
+      "rect": [
+        442,
+        134,
+        40,
+        40
+      ]
+    },
+    "keeper.right.walk.1": {
+      "kind": "sprite",
+      "pivot": [
+        20.0,
+        20.0
+      ],
+      "logicalSize": [
+        40,
+        40
+      ],
+      "rect": [
+        486,
+        134,
+        40,
+        40
+      ]
+    },
+    "keeper.right.walk.2": {
+      "kind": "sprite",
+      "pivot": [
+        20.0,
+        20.0
+      ],
+      "logicalSize": [
+        40,
+        40
+      ],
+      "rect": [
+        530,
+        134,
+        40,
+        40
+      ]
+    },
+    "keeper.right.walk.3": {
+      "kind": "sprite",
+      "pivot": [
+        20.0,
+        20.0
+      ],
+      "logicalSize": [
+        40,
+        40
+      ],
+      "rect": [
+        574,
+        134,
+        40,
+        40
+      ]
+    },
+    "keeper.right.strike.0": {
+      "kind": "sprite",
+      "pivot": [
+        20.0,
+        20.0
+      ],
+      "logicalSize": [
+        40,
+        40
+      ],
+      "rect": [
+        618,
+        134,
+        40,
+        40
+      ]
+    },
+    "keeper.right.strike.1": {
+      "kind": "sprite",
+      "pivot": [
+        20.0,
+        20.0
+      ],
+      "logicalSize": [
+        40,
+        40
+      ],
+      "rect": [
+        662,
+        134,
+        40,
+        40
+      ]
+    },
+    "keeper.right.strike.2": {
+      "kind": "sprite",
+      "pivot": [
+        20.0,
+        20.0
+      ],
+      "logicalSize": [
+        40,
+        40
+      ],
+      "rect": [
+        706,
+        134,
+        40,
+        40
+      ]
+    },
+    "keeper.right.strike.3": {
+      "kind": "sprite",
+      "pivot": [
+        20.0,
+        20.0
+      ],
+      "logicalSize": [
+        40,
+        40
+      ],
+      "rect": [
+        750,
+        134,
+        40,
+        40
+      ]
+    },
+    "keeper.up.idle.0": {
+      "kind": "sprite",
+      "pivot": [
+        20.0,
+        20.0
+      ],
+      "logicalSize": [
+        40,
+        40
+      ],
+      "rect": [
+        794,
+        134,
+        40,
+        40
+      ]
+    },
+    "keeper.up.idle.1": {
+      "kind": "sprite",
+      "pivot": [
+        20.0,
+        20.0
+      ],
+      "logicalSize": [
+        40,
+        40
+      ],
+      "rect": [
+        838,
+        134,
+        40,
+        40
+      ]
+    },
+    "keeper.up.walk.0": {
+      "kind": "sprite",
+      "pivot": [
+        20.0,
+        20.0
+      ],
+      "logicalSize": [
+        40,
+        40
+      ],
+      "rect": [
+        882,
+        134,
+        40,
+        40
+      ]
+    },
+    "keeper.up.walk.1": {
+      "kind": "sprite",
+      "pivot": [
+        20.0,
+        20.0
+      ],
+      "logicalSize": [
+        40,
+        40
+      ],
+      "rect": [
+        926,
+        134,
+        40,
+        40
+      ]
+    },
+    "keeper.up.walk.2": {
+      "kind": "sprite",
+      "pivot": [
+        20.0,
+        20.0
+      ],
+      "logicalSize": [
+        40,
+        40
+      ],
+      "rect": [
+        970,
+        134,
+        40,
+        40
+      ]
+    },
+    "keeper.up.walk.3": {
+      "kind": "sprite",
+      "pivot": [
+        20.0,
+        20.0
+      ],
+      "logicalSize": [
+        40,
+        40
+      ],
+      "rect": [
+        2,
+        178,
+        40,
+        40
+      ]
+    },
+    "keeper.up.strike.0": {
+      "kind": "sprite",
+      "pivot": [
+        20.0,
+        20.0
+      ],
+      "logicalSize": [
+        40,
+        40
+      ],
+      "rect": [
+        46,
+        178,
+        40,
+        40
+      ]
+    },
+    "keeper.up.strike.1": {
+      "kind": "sprite",
+      "pivot": [
+        20.0,
+        20.0
+      ],
+      "logicalSize": [
+        40,
+        40
+      ],
+      "rect": [
+        90,
+        178,
+        40,
+        40
+      ]
+    },
+    "keeper.up.strike.2": {
+      "kind": "sprite",
+      "pivot": [
+        20.0,
+        20.0
+      ],
+      "logicalSize": [
+        40,
+        40
+      ],
+      "rect": [
+        134,
+        178,
+        40,
+        40
+      ]
+    },
+    "keeper.up.strike.3": {
+      "kind": "sprite",
+      "pivot": [
+        20.0,
+        20.0
+      ],
+      "logicalSize": [
+        40,
+        40
+      ],
+      "rect": [
+        178,
+        178,
+        40,
+        40
+      ]
+    },
+    "npc.mira": {
+      "kind": "sprite",
+      "pivot": [
+        20.0,
+        20.0
+      ],
+      "logicalSize": [
+        40,
+        40
+      ],
+      "rect": [
+        222,
+        178,
+        40,
+        40
+      ]
+    },
+    "enemy.briarling.idle.0": {
+      "kind": "sprite",
+      "pivot": [
+        20.0,
+        20.0
+      ],
+      "logicalSize": [
+        40,
+        40
+      ],
+      "rect": [
+        266,
+        178,
+        40,
+        40
+      ]
+    },
+    "enemy.briarling.idle.1": {
+      "kind": "sprite",
+      "pivot": [
+        20.0,
+        20.0
+      ],
+      "logicalSize": [
+        40,
+        40
+      ],
+      "rect": [
+        310,
+        178,
+        40,
+        40
+      ]
+    },
+    "enemy.briarling.idle.2": {
+      "kind": "sprite",
+      "pivot": [
+        20.0,
+        20.0
+      ],
+      "logicalSize": [
+        40,
+        40
+      ],
+      "rect": [
+        354,
+        178,
+        40,
+        40
+      ]
+    },
+    "enemy.briarling.idle.3": {
+      "kind": "sprite",
+      "pivot": [
+        20.0,
+        20.0
+      ],
+      "logicalSize": [
+        40,
+        40
+      ],
+      "rect": [
+        398,
+        178,
+        40,
+        40
+      ]
+    },
+    "enemy.briarling.walk.0": {
+      "kind": "sprite",
+      "pivot": [
+        20.0,
+        20.0
+      ],
+      "logicalSize": [
+        40,
+        40
+      ],
+      "rect": [
+        442,
+        178,
+        40,
+        40
+      ]
+    },
+    "enemy.briarling.walk.1": {
+      "kind": "sprite",
+      "pivot": [
+        20.0,
+        20.0
+      ],
+      "logicalSize": [
+        40,
+        40
+      ],
+      "rect": [
+        486,
+        178,
+        40,
+        40
+      ]
+    },
+    "enemy.briarling.walk.2": {
+      "kind": "sprite",
+      "pivot": [
+        20.0,
+        20.0
+      ],
+      "logicalSize": [
+        40,
+        40
+      ],
+      "rect": [
+        530,
+        178,
+        40,
+        40
+      ]
+    },
+    "enemy.briarling.walk.3": {
+      "kind": "sprite",
+      "pivot": [
+        20.0,
+        20.0
+      ],
+      "logicalSize": [
+        40,
+        40
+      ],
+      "rect": [
+        574,
+        178,
+        40,
+        40
+      ]
+    },
+    "enemy.briarling.windup.0": {
+      "kind": "sprite",
+      "pivot": [
+        20.0,
+        20.0
+      ],
+      "logicalSize": [
+        40,
+        40
+      ],
+      "rect": [
+        618,
+        178,
+        40,
+        40
+      ]
+    },
+    "enemy.briarling.windup.1": {
+      "kind": "sprite",
+      "pivot": [
+        20.0,
+        20.0
+      ],
+      "logicalSize": [
+        40,
+        40
+      ],
+      "rect": [
+        662,
+        178,
+        40,
+        40
+      ]
+    },
+    "enemy.briarling.windup.2": {
+      "kind": "sprite",
+      "pivot": [
+        20.0,
+        20.0
+      ],
+      "logicalSize": [
+        40,
+        40
+      ],
+      "rect": [
+        706,
+        178,
+        40,
+        40
+      ]
+    },
+    "enemy.briarling.windup.3": {
+      "kind": "sprite",
+      "pivot": [
+        20.0,
+        20.0
+      ],
+      "logicalSize": [
+        40,
+        40
+      ],
+      "rect": [
+        750,
+        178,
+        40,
+        40
+      ]
+    },
+    "enemy.briarling.attack.0": {
+      "kind": "sprite",
+      "pivot": [
+        20.0,
+        20.0
+      ],
+      "logicalSize": [
+        40,
+        40
+      ],
+      "rect": [
+        794,
+        178,
+        40,
+        40
+      ]
+    },
+    "enemy.briarling.attack.1": {
+      "kind": "sprite",
+      "pivot": [
+        20.0,
+        20.0
+      ],
+      "logicalSize": [
+        40,
+        40
+      ],
+      "rect": [
+        838,
+        178,
+        40,
+        40
+      ]
+    },
+    "enemy.briarling.attack.2": {
+      "kind": "sprite",
+      "pivot": [
+        20.0,
+        20.0
+      ],
+      "logicalSize": [
+        40,
+        40
+      ],
+      "rect": [
+        882,
+        178,
+        40,
+        40
+      ]
+    },
+    "enemy.briarling.attack.3": {
+      "kind": "sprite",
+      "pivot": [
+        20.0,
+        20.0
+      ],
+      "logicalSize": [
+        40,
+        40
+      ],
+      "rect": [
+        926,
+        178,
+        40,
+        40
+      ]
+    },
+    "enemy.briarling.hurt.0": {
+      "kind": "sprite",
+      "pivot": [
+        20.0,
+        20.0
+      ],
+      "logicalSize": [
+        40,
+        40
+      ],
+      "rect": [
+        970,
+        178,
+        40,
+        40
+      ]
+    },
+    "enemy.briarling.hurt.1": {
+      "kind": "sprite",
+      "pivot": [
+        20.0,
+        20.0
+      ],
+      "logicalSize": [
+        40,
+        40
+      ],
+      "rect": [
+        2,
+        222,
+        40,
+        40
+      ]
+    },
+    "enemy.briarling.hurt.2": {
+      "kind": "sprite",
+      "pivot": [
+        20.0,
+        20.0
+      ],
+      "logicalSize": [
+        40,
+        40
+      ],
+      "rect": [
+        46,
+        222,
+        40,
+        40
+      ]
+    },
+    "enemy.briarling.hurt.3": {
+      "kind": "sprite",
+      "pivot": [
+        20.0,
+        20.0
+      ],
+      "logicalSize": [
+        40,
+        40
+      ],
+      "rect": [
+        90,
+        222,
+        40,
+        40
+      ]
+    },
+    "enemy.briarling.defeat.0": {
+      "kind": "sprite",
+      "pivot": [
+        20.0,
+        20.0
+      ],
+      "logicalSize": [
+        40,
+        40
+      ],
+      "rect": [
+        134,
+        222,
+        40,
+        40
+      ]
+    },
+    "enemy.briarling.defeat.1": {
+      "kind": "sprite",
+      "pivot": [
+        20.0,
+        20.0
+      ],
+      "logicalSize": [
+        40,
+        40
+      ],
+      "rect": [
+        178,
+        222,
+        40,
+        40
+      ]
+    },
+    "enemy.briarling.defeat.2": {
+      "kind": "sprite",
+      "pivot": [
+        20.0,
+        20.0
+      ],
+      "logicalSize": [
+        40,
+        40
+      ],
+      "rect": [
+        222,
+        222,
+        40,
+        40
+      ]
+    },
+    "enemy.briarling.defeat.3": {
+      "kind": "sprite",
+      "pivot": [
+        20.0,
+        20.0
+      ],
+      "logicalSize": [
+        40,
+        40
+      ],
+      "rect": [
+        266,
+        222,
+        40,
+        40
+      ]
+    },
+    "enemy.fen-moth.idle.0": {
+      "kind": "sprite",
+      "pivot": [
+        20.0,
+        20.0
+      ],
+      "logicalSize": [
+        40,
+        40
+      ],
+      "rect": [
+        310,
+        222,
+        40,
+        40
+      ]
+    },
+    "enemy.fen-moth.idle.1": {
+      "kind": "sprite",
+      "pivot": [
+        20.0,
+        20.0
+      ],
+      "logicalSize": [
+        40,
+        40
+      ],
+      "rect": [
+        354,
+        222,
+        40,
+        40
+      ]
+    },
+    "enemy.fen-moth.idle.2": {
+      "kind": "sprite",
+      "pivot": [
+        20.0,
+        20.0
+      ],
+      "logicalSize": [
+        40,
+        40
+      ],
+      "rect": [
+        398,
+        222,
+        40,
+        40
+      ]
+    },
+    "enemy.fen-moth.idle.3": {
+      "kind": "sprite",
+      "pivot": [
+        20.0,
+        20.0
+      ],
+      "logicalSize": [
+        40,
+        40
+      ],
+      "rect": [
+        442,
+        222,
+        40,
+        40
+      ]
+    },
+    "enemy.fen-moth.walk.0": {
+      "kind": "sprite",
+      "pivot": [
+        20.0,
+        20.0
+      ],
+      "logicalSize": [
+        40,
+        40
+      ],
+      "rect": [
+        486,
+        222,
+        40,
+        40
+      ]
+    },
+    "enemy.fen-moth.walk.1": {
+      "kind": "sprite",
+      "pivot": [
+        20.0,
+        20.0
+      ],
+      "logicalSize": [
+        40,
+        40
+      ],
+      "rect": [
+        530,
+        222,
+        40,
+        40
+      ]
+    },
+    "enemy.fen-moth.walk.2": {
+      "kind": "sprite",
+      "pivot": [
+        20.0,
+        20.0
+      ],
+      "logicalSize": [
+        40,
+        40
+      ],
+      "rect": [
+        574,
+        222,
+        40,
+        40
+      ]
+    },
+    "enemy.fen-moth.walk.3": {
+      "kind": "sprite",
+      "pivot": [
+        20.0,
+        20.0
+      ],
+      "logicalSize": [
+        40,
+        40
+      ],
+      "rect": [
+        618,
+        222,
+        40,
+        40
+      ]
+    },
+    "enemy.fen-moth.windup.0": {
+      "kind": "sprite",
+      "pivot": [
+        20.0,
+        20.0
+      ],
+      "logicalSize": [
+        40,
+        40
+      ],
+      "rect": [
+        662,
+        222,
+        40,
+        40
+      ]
+    },
+    "enemy.fen-moth.windup.1": {
+      "kind": "sprite",
+      "pivot": [
+        20.0,
+        20.0
+      ],
+      "logicalSize": [
+        40,
+        40
+      ],
+      "rect": [
+        706,
+        222,
+        40,
+        40
+      ]
+    },
+    "enemy.fen-moth.windup.2": {
+      "kind": "sprite",
+      "pivot": [
+        20.0,
+        20.0
+      ],
+      "logicalSize": [
+        40,
+        40
+      ],
+      "rect": [
+        750,
+        222,
+        40,
+        40
+      ]
+    },
+    "enemy.fen-moth.windup.3": {
+      "kind": "sprite",
+      "pivot": [
+        20.0,
+        20.0
+      ],
+      "logicalSize": [
+        40,
+        40
+      ],
+      "rect": [
+        794,
+        222,
+        40,
+        40
+      ]
+    },
+    "enemy.fen-moth.attack.0": {
+      "kind": "sprite",
+      "pivot": [
+        20.0,
+        20.0
+      ],
+      "logicalSize": [
+        40,
+        40
+      ],
+      "rect": [
+        838,
+        222,
+        40,
+        40
+      ]
+    },
+    "enemy.fen-moth.attack.1": {
+      "kind": "sprite",
+      "pivot": [
+        20.0,
+        20.0
+      ],
+      "logicalSize": [
+        40,
+        40
+      ],
+      "rect": [
+        882,
+        222,
+        40,
+        40
+      ]
+    },
+    "enemy.fen-moth.attack.2": {
+      "kind": "sprite",
+      "pivot": [
+        20.0,
+        20.0
+      ],
+      "logicalSize": [
+        40,
+        40
+      ],
+      "rect": [
+        926,
+        222,
+        40,
+        40
+      ]
+    },
+    "enemy.fen-moth.attack.3": {
+      "kind": "sprite",
+      "pivot": [
+        20.0,
+        20.0
+      ],
+      "logicalSize": [
+        40,
+        40
+      ],
+      "rect": [
+        970,
+        222,
+        40,
+        40
+      ]
+    },
+    "enemy.fen-moth.hurt.0": {
+      "kind": "sprite",
+      "pivot": [
+        20.0,
+        20.0
+      ],
+      "logicalSize": [
+        40,
+        40
+      ],
+      "rect": [
+        2,
+        266,
+        40,
+        40
+      ]
+    },
+    "enemy.fen-moth.hurt.1": {
+      "kind": "sprite",
+      "pivot": [
+        20.0,
+        20.0
+      ],
+      "logicalSize": [
+        40,
+        40
+      ],
+      "rect": [
+        46,
+        266,
+        40,
+        40
+      ]
+    },
+    "enemy.fen-moth.hurt.2": {
+      "kind": "sprite",
+      "pivot": [
+        20.0,
+        20.0
+      ],
+      "logicalSize": [
+        40,
+        40
+      ],
+      "rect": [
+        90,
+        266,
+        40,
+        40
+      ]
+    },
+    "enemy.fen-moth.hurt.3": {
+      "kind": "sprite",
+      "pivot": [
+        20.0,
+        20.0
+      ],
+      "logicalSize": [
+        40,
+        40
+      ],
+      "rect": [
+        134,
+        266,
+        40,
+        40
+      ]
+    },
+    "enemy.fen-moth.defeat.0": {
+      "kind": "sprite",
+      "pivot": [
+        20.0,
+        20.0
+      ],
+      "logicalSize": [
+        40,
+        40
+      ],
+      "rect": [
+        178,
+        266,
+        40,
+        40
+      ]
+    },
+    "enemy.fen-moth.defeat.1": {
+      "kind": "sprite",
+      "pivot": [
+        20.0,
+        20.0
+      ],
+      "logicalSize": [
+        40,
+        40
+      ],
+      "rect": [
+        222,
+        266,
+        40,
+        40
+      ]
+    },
+    "enemy.fen-moth.defeat.2": {
+      "kind": "sprite",
+      "pivot": [
+        20.0,
+        20.0
+      ],
+      "logicalSize": [
+        40,
+        40
+      ],
+      "rect": [
+        266,
+        266,
+        40,
+        40
+      ]
+    },
+    "enemy.fen-moth.defeat.3": {
+      "kind": "sprite",
+      "pivot": [
+        20.0,
+        20.0
+      ],
+      "logicalSize": [
+        40,
+        40
+      ],
+      "rect": [
+        310,
+        266,
+        40,
+        40
+      ]
+    },
+    "enemy.glass-sentinel.idle.0": {
+      "kind": "sprite",
+      "pivot": [
+        20.0,
+        20.0
+      ],
+      "logicalSize": [
+        40,
+        40
+      ],
+      "rect": [
+        354,
+        266,
+        40,
+        40
+      ]
+    },
+    "enemy.glass-sentinel.idle.1": {
+      "kind": "sprite",
+      "pivot": [
+        20.0,
+        20.0
+      ],
+      "logicalSize": [
+        40,
+        40
+      ],
+      "rect": [
+        398,
+        266,
+        40,
+        40
+      ]
+    },
+    "enemy.glass-sentinel.idle.2": {
+      "kind": "sprite",
+      "pivot": [
+        20.0,
+        20.0
+      ],
+      "logicalSize": [
+        40,
+        40
+      ],
+      "rect": [
+        442,
+        266,
+        40,
+        40
+      ]
+    },
+    "enemy.glass-sentinel.idle.3": {
+      "kind": "sprite",
+      "pivot": [
+        20.0,
+        20.0
+      ],
+      "logicalSize": [
+        40,
+        40
+      ],
+      "rect": [
+        486,
+        266,
+        40,
+        40
+      ]
+    },
+    "enemy.glass-sentinel.walk.0": {
+      "kind": "sprite",
+      "pivot": [
+        20.0,
+        20.0
+      ],
+      "logicalSize": [
+        40,
+        40
+      ],
+      "rect": [
+        530,
+        266,
+        40,
+        40
+      ]
+    },
+    "enemy.glass-sentinel.walk.1": {
+      "kind": "sprite",
+      "pivot": [
+        20.0,
+        20.0
+      ],
+      "logicalSize": [
+        40,
+        40
+      ],
+      "rect": [
+        574,
+        266,
+        40,
+        40
+      ]
+    },
+    "enemy.glass-sentinel.walk.2": {
+      "kind": "sprite",
+      "pivot": [
+        20.0,
+        20.0
+      ],
+      "logicalSize": [
+        40,
+        40
+      ],
+      "rect": [
+        618,
+        266,
+        40,
+        40
+      ]
+    },
+    "enemy.glass-sentinel.walk.3": {
+      "kind": "sprite",
+      "pivot": [
+        20.0,
+        20.0
+      ],
+      "logicalSize": [
+        40,
+        40
+      ],
+      "rect": [
+        662,
+        266,
+        40,
+        40
+      ]
+    },
+    "enemy.glass-sentinel.windup.0": {
+      "kind": "sprite",
+      "pivot": [
+        20.0,
+        20.0
+      ],
+      "logicalSize": [
+        40,
+        40
+      ],
+      "rect": [
+        706,
+        266,
+        40,
+        40
+      ]
+    },
+    "enemy.glass-sentinel.windup.1": {
+      "kind": "sprite",
+      "pivot": [
+        20.0,
+        20.0
+      ],
+      "logicalSize": [
+        40,
+        40
+      ],
+      "rect": [
+        750,
+        266,
+        40,
+        40
+      ]
+    },
+    "enemy.glass-sentinel.windup.2": {
+      "kind": "sprite",
+      "pivot": [
+        20.0,
+        20.0
+      ],
+      "logicalSize": [
+        40,
+        40
+      ],
+      "rect": [
+        794,
+        266,
+        40,
+        40
+      ]
+    },
+    "enemy.glass-sentinel.windup.3": {
+      "kind": "sprite",
+      "pivot": [
+        20.0,
+        20.0
+      ],
+      "logicalSize": [
+        40,
+        40
+      ],
+      "rect": [
+        838,
+        266,
+        40,
+        40
+      ]
+    },
+    "enemy.glass-sentinel.attack.0": {
+      "kind": "sprite",
+      "pivot": [
+        20.0,
+        20.0
+      ],
+      "logicalSize": [
+        40,
+        40
+      ],
+      "rect": [
+        882,
+        266,
+        40,
+        40
+      ]
+    },
+    "enemy.glass-sentinel.attack.1": {
+      "kind": "sprite",
+      "pivot": [
+        20.0,
+        20.0
+      ],
+      "logicalSize": [
+        40,
+        40
+      ],
+      "rect": [
+        926,
+        266,
+        40,
+        40
+      ]
+    },
+    "enemy.glass-sentinel.attack.2": {
+      "kind": "sprite",
+      "pivot": [
+        20.0,
+        20.0
+      ],
+      "logicalSize": [
+        40,
+        40
+      ],
+      "rect": [
+        970,
+        266,
+        40,
+        40
+      ]
+    },
+    "enemy.glass-sentinel.attack.3": {
+      "kind": "sprite",
+      "pivot": [
+        20.0,
+        20.0
+      ],
+      "logicalSize": [
+        40,
+        40
+      ],
+      "rect": [
+        2,
+        310,
+        40,
+        40
+      ]
+    },
+    "enemy.glass-sentinel.hurt.0": {
+      "kind": "sprite",
+      "pivot": [
+        20.0,
+        20.0
+      ],
+      "logicalSize": [
+        40,
+        40
+      ],
+      "rect": [
+        46,
+        310,
+        40,
+        40
+      ]
+    },
+    "enemy.glass-sentinel.hurt.1": {
+      "kind": "sprite",
+      "pivot": [
+        20.0,
+        20.0
+      ],
+      "logicalSize": [
+        40,
+        40
+      ],
+      "rect": [
+        90,
+        310,
+        40,
+        40
+      ]
+    },
+    "enemy.glass-sentinel.hurt.2": {
+      "kind": "sprite",
+      "pivot": [
+        20.0,
+        20.0
+      ],
+      "logicalSize": [
+        40,
+        40
+      ],
+      "rect": [
+        134,
+        310,
+        40,
+        40
+      ]
+    },
+    "enemy.glass-sentinel.hurt.3": {
+      "kind": "sprite",
+      "pivot": [
+        20.0,
+        20.0
+      ],
+      "logicalSize": [
+        40,
+        40
+      ],
+      "rect": [
+        178,
+        310,
+        40,
+        40
+      ]
+    },
+    "enemy.glass-sentinel.defeat.0": {
+      "kind": "sprite",
+      "pivot": [
+        20.0,
+        20.0
+      ],
+      "logicalSize": [
+        40,
+        40
+      ],
+      "rect": [
+        222,
+        310,
+        40,
+        40
+      ]
+    },
+    "enemy.glass-sentinel.defeat.1": {
+      "kind": "sprite",
+      "pivot": [
+        20.0,
+        20.0
+      ],
+      "logicalSize": [
+        40,
+        40
+      ],
+      "rect": [
+        266,
+        310,
+        40,
+        40
+      ]
+    },
+    "enemy.glass-sentinel.defeat.2": {
+      "kind": "sprite",
+      "pivot": [
+        20.0,
+        20.0
+      ],
+      "logicalSize": [
+        40,
+        40
+      ],
+      "rect": [
+        310,
+        310,
+        40,
+        40
+      ]
+    },
+    "enemy.glass-sentinel.defeat.3": {
+      "kind": "sprite",
+      "pivot": [
+        20.0,
+        20.0
+      ],
+      "logicalSize": [
+        40,
+        40
+      ],
+      "rect": [
+        354,
+        310,
+        40,
+        40
+      ]
+    },
+    "enemy.root-warden.idle.0": {
+      "kind": "sprite",
+      "pivot": [
+        40.0,
+        40.0
+      ],
+      "logicalSize": [
+        80,
+        80
+      ],
+      "rect": [
+        398,
+        310,
+        80,
+        80
+      ]
+    },
+    "enemy.root-warden.idle.1": {
+      "kind": "sprite",
+      "pivot": [
+        40.0,
+        40.0
+      ],
+      "logicalSize": [
+        80,
+        80
+      ],
+      "rect": [
+        482,
+        310,
+        80,
+        80
+      ]
+    },
+    "enemy.root-warden.idle.2": {
+      "kind": "sprite",
+      "pivot": [
+        40.0,
+        40.0
+      ],
+      "logicalSize": [
+        80,
+        80
+      ],
+      "rect": [
+        566,
+        310,
+        80,
+        80
+      ]
+    },
+    "enemy.root-warden.idle.3": {
+      "kind": "sprite",
+      "pivot": [
+        40.0,
+        40.0
+      ],
+      "logicalSize": [
+        80,
+        80
+      ],
+      "rect": [
+        650,
+        310,
+        80,
+        80
+      ]
+    },
+    "enemy.root-warden.walk.0": {
+      "kind": "sprite",
+      "pivot": [
+        40.0,
+        40.0
+      ],
+      "logicalSize": [
+        80,
+        80
+      ],
+      "rect": [
+        734,
+        310,
+        80,
+        80
+      ]
+    },
+    "enemy.root-warden.walk.1": {
+      "kind": "sprite",
+      "pivot": [
+        40.0,
+        40.0
+      ],
+      "logicalSize": [
+        80,
+        80
+      ],
+      "rect": [
+        818,
+        310,
+        80,
+        80
+      ]
+    },
+    "enemy.root-warden.walk.2": {
+      "kind": "sprite",
+      "pivot": [
+        40.0,
+        40.0
+      ],
+      "logicalSize": [
+        80,
+        80
+      ],
+      "rect": [
+        902,
+        310,
+        80,
+        80
+      ]
+    },
+    "enemy.root-warden.walk.3": {
+      "kind": "sprite",
+      "pivot": [
+        40.0,
+        40.0
+      ],
+      "logicalSize": [
+        80,
+        80
+      ],
+      "rect": [
+        2,
+        394,
+        80,
+        80
+      ]
+    },
+    "enemy.root-warden.windup.0": {
+      "kind": "sprite",
+      "pivot": [
+        40.0,
+        40.0
+      ],
+      "logicalSize": [
+        80,
+        80
+      ],
+      "rect": [
+        86,
+        394,
+        80,
+        80
+      ]
+    },
+    "enemy.root-warden.windup.1": {
+      "kind": "sprite",
+      "pivot": [
+        40.0,
+        40.0
+      ],
+      "logicalSize": [
+        80,
+        80
+      ],
+      "rect": [
+        170,
+        394,
+        80,
+        80
+      ]
+    },
+    "enemy.root-warden.windup.2": {
+      "kind": "sprite",
+      "pivot": [
+        40.0,
+        40.0
+      ],
+      "logicalSize": [
+        80,
+        80
+      ],
+      "rect": [
+        254,
+        394,
+        80,
+        80
+      ]
+    },
+    "enemy.root-warden.windup.3": {
+      "kind": "sprite",
+      "pivot": [
+        40.0,
+        40.0
+      ],
+      "logicalSize": [
+        80,
+        80
+      ],
+      "rect": [
+        338,
+        394,
+        80,
+        80
+      ]
+    },
+    "enemy.root-warden.attack.0": {
+      "kind": "sprite",
+      "pivot": [
+        40.0,
+        40.0
+      ],
+      "logicalSize": [
+        80,
+        80
+      ],
+      "rect": [
+        422,
+        394,
+        80,
+        80
+      ]
+    },
+    "enemy.root-warden.attack.1": {
+      "kind": "sprite",
+      "pivot": [
+        40.0,
+        40.0
+      ],
+      "logicalSize": [
+        80,
+        80
+      ],
+      "rect": [
+        506,
+        394,
+        80,
+        80
+      ]
+    },
+    "enemy.root-warden.attack.2": {
+      "kind": "sprite",
+      "pivot": [
+        40.0,
+        40.0
+      ],
+      "logicalSize": [
+        80,
+        80
+      ],
+      "rect": [
+        590,
+        394,
+        80,
+        80
+      ]
+    },
+    "enemy.root-warden.attack.3": {
+      "kind": "sprite",
+      "pivot": [
+        40.0,
+        40.0
+      ],
+      "logicalSize": [
+        80,
+        80
+      ],
+      "rect": [
+        674,
+        394,
+        80,
+        80
+      ]
+    },
+    "enemy.root-warden.hurt.0": {
+      "kind": "sprite",
+      "pivot": [
+        40.0,
+        40.0
+      ],
+      "logicalSize": [
+        80,
+        80
+      ],
+      "rect": [
+        758,
+        394,
+        80,
+        80
+      ]
+    },
+    "enemy.root-warden.hurt.1": {
+      "kind": "sprite",
+      "pivot": [
+        40.0,
+        40.0
+      ],
+      "logicalSize": [
+        80,
+        80
+      ],
+      "rect": [
+        842,
+        394,
+        80,
+        80
+      ]
+    },
+    "enemy.root-warden.hurt.2": {
+      "kind": "sprite",
+      "pivot": [
+        40.0,
+        40.0
+      ],
+      "logicalSize": [
+        80,
+        80
+      ],
+      "rect": [
+        926,
+        394,
+        80,
+        80
+      ]
+    },
+    "enemy.root-warden.hurt.3": {
+      "kind": "sprite",
+      "pivot": [
+        40.0,
+        40.0
+      ],
+      "logicalSize": [
+        80,
+        80
+      ],
+      "rect": [
+        2,
+        478,
+        80,
+        80
+      ]
+    },
+    "enemy.root-warden.defeat.0": {
+      "kind": "sprite",
+      "pivot": [
+        40.0,
+        40.0
+      ],
+      "logicalSize": [
+        80,
+        80
+      ],
+      "rect": [
+        86,
+        478,
+        80,
+        80
+      ]
+    },
+    "enemy.root-warden.defeat.1": {
+      "kind": "sprite",
+      "pivot": [
+        40.0,
+        40.0
+      ],
+      "logicalSize": [
+        80,
+        80
+      ],
+      "rect": [
+        170,
+        478,
+        80,
+        80
+      ]
+    },
+    "enemy.root-warden.defeat.2": {
+      "kind": "sprite",
+      "pivot": [
+        40.0,
+        40.0
+      ],
+      "logicalSize": [
+        80,
+        80
+      ],
+      "rect": [
+        254,
+        478,
+        80,
+        80
+      ]
+    },
+    "enemy.root-warden.defeat.3": {
+      "kind": "sprite",
+      "pivot": [
+        40.0,
+        40.0
+      ],
+      "logicalSize": [
+        80,
+        80
+      ],
+      "rect": [
+        338,
+        478,
+        80,
+        80
+      ]
+    },
+    "enemy.tide-warden.idle.0": {
+      "kind": "sprite",
+      "pivot": [
+        40.0,
+        40.0
+      ],
+      "logicalSize": [
+        80,
+        80
+      ],
+      "rect": [
+        422,
+        478,
+        80,
+        80
+      ]
+    },
+    "enemy.tide-warden.idle.1": {
+      "kind": "sprite",
+      "pivot": [
+        40.0,
+        40.0
+      ],
+      "logicalSize": [
+        80,
+        80
+      ],
+      "rect": [
+        506,
+        478,
+        80,
+        80
+      ]
+    },
+    "enemy.tide-warden.idle.2": {
+      "kind": "sprite",
+      "pivot": [
+        40.0,
+        40.0
+      ],
+      "logicalSize": [
+        80,
+        80
+      ],
+      "rect": [
+        590,
+        478,
+        80,
+        80
+      ]
+    },
+    "enemy.tide-warden.idle.3": {
+      "kind": "sprite",
+      "pivot": [
+        40.0,
+        40.0
+      ],
+      "logicalSize": [
+        80,
+        80
+      ],
+      "rect": [
+        674,
+        478,
+        80,
+        80
+      ]
+    },
+    "enemy.tide-warden.walk.0": {
+      "kind": "sprite",
+      "pivot": [
+        40.0,
+        40.0
+      ],
+      "logicalSize": [
+        80,
+        80
+      ],
+      "rect": [
+        758,
+        478,
+        80,
+        80
+      ]
+    },
+    "enemy.tide-warden.walk.1": {
+      "kind": "sprite",
+      "pivot": [
+        40.0,
+        40.0
+      ],
+      "logicalSize": [
+        80,
+        80
+      ],
+      "rect": [
+        842,
+        478,
+        80,
+        80
+      ]
+    },
+    "enemy.tide-warden.walk.2": {
+      "kind": "sprite",
+      "pivot": [
+        40.0,
+        40.0
+      ],
+      "logicalSize": [
+        80,
+        80
+      ],
+      "rect": [
+        926,
+        478,
+        80,
+        80
+      ]
+    },
+    "enemy.tide-warden.walk.3": {
+      "kind": "sprite",
+      "pivot": [
+        40.0,
+        40.0
+      ],
+      "logicalSize": [
+        80,
+        80
+      ],
+      "rect": [
+        2,
+        562,
+        80,
+        80
+      ]
+    },
+    "enemy.tide-warden.windup.0": {
+      "kind": "sprite",
+      "pivot": [
+        40.0,
+        40.0
+      ],
+      "logicalSize": [
+        80,
+        80
+      ],
+      "rect": [
+        86,
+        562,
+        80,
+        80
+      ]
+    },
+    "enemy.tide-warden.windup.1": {
+      "kind": "sprite",
+      "pivot": [
+        40.0,
+        40.0
+      ],
+      "logicalSize": [
+        80,
+        80
+      ],
+      "rect": [
+        170,
+        562,
+        80,
+        80
+      ]
+    },
+    "enemy.tide-warden.windup.2": {
+      "kind": "sprite",
+      "pivot": [
+        40.0,
+        40.0
+      ],
+      "logicalSize": [
+        80,
+        80
+      ],
+      "rect": [
+        254,
+        562,
+        80,
+        80
+      ]
+    },
+    "enemy.tide-warden.windup.3": {
+      "kind": "sprite",
+      "pivot": [
+        40.0,
+        40.0
+      ],
+      "logicalSize": [
+        80,
+        80
+      ],
+      "rect": [
+        338,
+        562,
+        80,
+        80
+      ]
+    },
+    "enemy.tide-warden.attack.0": {
+      "kind": "sprite",
+      "pivot": [
+        40.0,
+        40.0
+      ],
+      "logicalSize": [
+        80,
+        80
+      ],
+      "rect": [
+        422,
+        562,
+        80,
+        80
+      ]
+    },
+    "enemy.tide-warden.attack.1": {
+      "kind": "sprite",
+      "pivot": [
+        40.0,
+        40.0
+      ],
+      "logicalSize": [
+        80,
+        80
+      ],
+      "rect": [
+        506,
+        562,
+        80,
+        80
+      ]
+    },
+    "enemy.tide-warden.attack.2": {
+      "kind": "sprite",
+      "pivot": [
+        40.0,
+        40.0
+      ],
+      "logicalSize": [
+        80,
+        80
+      ],
+      "rect": [
+        590,
+        562,
+        80,
+        80
+      ]
+    },
+    "enemy.tide-warden.attack.3": {
+      "kind": "sprite",
+      "pivot": [
+        40.0,
+        40.0
+      ],
+      "logicalSize": [
+        80,
+        80
+      ],
+      "rect": [
+        674,
+        562,
+        80,
+        80
+      ]
+    },
+    "enemy.tide-warden.hurt.0": {
+      "kind": "sprite",
+      "pivot": [
+        40.0,
+        40.0
+      ],
+      "logicalSize": [
+        80,
+        80
+      ],
+      "rect": [
+        758,
+        562,
+        80,
+        80
+      ]
+    },
+    "enemy.tide-warden.hurt.1": {
+      "kind": "sprite",
+      "pivot": [
+        40.0,
+        40.0
+      ],
+      "logicalSize": [
+        80,
+        80
+      ],
+      "rect": [
+        842,
+        562,
+        80,
+        80
+      ]
+    },
+    "enemy.tide-warden.hurt.2": {
+      "kind": "sprite",
+      "pivot": [
+        40.0,
+        40.0
+      ],
+      "logicalSize": [
+        80,
+        80
+      ],
+      "rect": [
+        926,
+        562,
+        80,
+        80
+      ]
+    },
+    "enemy.tide-warden.hurt.3": {
+      "kind": "sprite",
+      "pivot": [
+        40.0,
+        40.0
+      ],
+      "logicalSize": [
+        80,
+        80
+      ],
+      "rect": [
+        2,
+        646,
+        80,
+        80
+      ]
+    },
+    "enemy.tide-warden.defeat.0": {
+      "kind": "sprite",
+      "pivot": [
+        40.0,
+        40.0
+      ],
+      "logicalSize": [
+        80,
+        80
+      ],
+      "rect": [
+        86,
+        646,
+        80,
+        80
+      ]
+    },
+    "enemy.tide-warden.defeat.1": {
+      "kind": "sprite",
+      "pivot": [
+        40.0,
+        40.0
+      ],
+      "logicalSize": [
+        80,
+        80
+      ],
+      "rect": [
+        170,
+        646,
+        80,
+        80
+      ]
+    },
+    "enemy.tide-warden.defeat.2": {
+      "kind": "sprite",
+      "pivot": [
+        40.0,
+        40.0
+      ],
+      "logicalSize": [
+        80,
+        80
+      ],
+      "rect": [
+        254,
+        646,
+        80,
+        80
+      ]
+    },
+    "enemy.tide-warden.defeat.3": {
+      "kind": "sprite",
+      "pivot": [
+        40.0,
+        40.0
+      ],
+      "logicalSize": [
+        80,
+        80
+      ],
+      "rect": [
+        338,
+        646,
+        80,
+        80
+      ]
+    },
+    "enemy.prism-warden.idle.0": {
+      "kind": "sprite",
+      "pivot": [
+        40.0,
+        40.0
+      ],
+      "logicalSize": [
+        80,
+        80
+      ],
+      "rect": [
+        422,
+        646,
+        80,
+        80
+      ]
+    },
+    "enemy.prism-warden.idle.1": {
+      "kind": "sprite",
+      "pivot": [
+        40.0,
+        40.0
+      ],
+      "logicalSize": [
+        80,
+        80
+      ],
+      "rect": [
+        506,
+        646,
+        80,
+        80
+      ]
+    },
+    "enemy.prism-warden.idle.2": {
+      "kind": "sprite",
+      "pivot": [
+        40.0,
+        40.0
+      ],
+      "logicalSize": [
+        80,
+        80
+      ],
+      "rect": [
+        590,
+        646,
+        80,
+        80
+      ]
+    },
+    "enemy.prism-warden.idle.3": {
+      "kind": "sprite",
+      "pivot": [
+        40.0,
+        40.0
+      ],
+      "logicalSize": [
+        80,
+        80
+      ],
+      "rect": [
+        674,
+        646,
+        80,
+        80
+      ]
+    },
+    "enemy.prism-warden.walk.0": {
+      "kind": "sprite",
+      "pivot": [
+        40.0,
+        40.0
+      ],
+      "logicalSize": [
+        80,
+        80
+      ],
+      "rect": [
+        758,
+        646,
+        80,
+        80
+      ]
+    },
+    "enemy.prism-warden.walk.1": {
+      "kind": "sprite",
+      "pivot": [
+        40.0,
+        40.0
+      ],
+      "logicalSize": [
+        80,
+        80
+      ],
+      "rect": [
+        842,
+        646,
+        80,
+        80
+      ]
+    },
+    "enemy.prism-warden.walk.2": {
+      "kind": "sprite",
+      "pivot": [
+        40.0,
+        40.0
+      ],
+      "logicalSize": [
+        80,
+        80
+      ],
+      "rect": [
+        926,
+        646,
+        80,
+        80
+      ]
+    },
+    "enemy.prism-warden.walk.3": {
+      "kind": "sprite",
+      "pivot": [
+        40.0,
+        40.0
+      ],
+      "logicalSize": [
+        80,
+        80
+      ],
+      "rect": [
+        2,
+        730,
+        80,
+        80
+      ]
+    },
+    "enemy.prism-warden.windup.0": {
+      "kind": "sprite",
+      "pivot": [
+        40.0,
+        40.0
+      ],
+      "logicalSize": [
+        80,
+        80
+      ],
+      "rect": [
+        86,
+        730,
+        80,
+        80
+      ]
+    },
+    "enemy.prism-warden.windup.1": {
+      "kind": "sprite",
+      "pivot": [
+        40.0,
+        40.0
+      ],
+      "logicalSize": [
+        80,
+        80
+      ],
+      "rect": [
+        170,
+        730,
+        80,
+        80
+      ]
+    },
+    "enemy.prism-warden.windup.2": {
+      "kind": "sprite",
+      "pivot": [
+        40.0,
+        40.0
+      ],
+      "logicalSize": [
+        80,
+        80
+      ],
+      "rect": [
+        254,
+        730,
+        80,
+        80
+      ]
+    },
+    "enemy.prism-warden.windup.3": {
+      "kind": "sprite",
+      "pivot": [
+        40.0,
+        40.0
+      ],
+      "logicalSize": [
+        80,
+        80
+      ],
+      "rect": [
+        338,
+        730,
+        80,
+        80
+      ]
+    },
+    "enemy.prism-warden.attack.0": {
+      "kind": "sprite",
+      "pivot": [
+        40.0,
+        40.0
+      ],
+      "logicalSize": [
+        80,
+        80
+      ],
+      "rect": [
+        422,
+        730,
+        80,
+        80
+      ]
+    },
+    "enemy.prism-warden.attack.1": {
+      "kind": "sprite",
+      "pivot": [
+        40.0,
+        40.0
+      ],
+      "logicalSize": [
+        80,
+        80
+      ],
+      "rect": [
+        506,
+        730,
+        80,
+        80
+      ]
+    },
+    "enemy.prism-warden.attack.2": {
+      "kind": "sprite",
+      "pivot": [
+        40.0,
+        40.0
+      ],
+      "logicalSize": [
+        80,
+        80
+      ],
+      "rect": [
+        590,
+        730,
+        80,
+        80
+      ]
+    },
+    "enemy.prism-warden.attack.3": {
+      "kind": "sprite",
+      "pivot": [
+        40.0,
+        40.0
+      ],
+      "logicalSize": [
+        80,
+        80
+      ],
+      "rect": [
+        674,
+        730,
+        80,
+        80
+      ]
+    },
+    "enemy.prism-warden.hurt.0": {
+      "kind": "sprite",
+      "pivot": [
+        40.0,
+        40.0
+      ],
+      "logicalSize": [
+        80,
+        80
+      ],
+      "rect": [
+        758,
+        730,
+        80,
+        80
+      ]
+    },
+    "enemy.prism-warden.hurt.1": {
+      "kind": "sprite",
+      "pivot": [
+        40.0,
+        40.0
+      ],
+      "logicalSize": [
+        80,
+        80
+      ],
+      "rect": [
+        842,
+        730,
+        80,
+        80
+      ]
+    },
+    "enemy.prism-warden.hurt.2": {
+      "kind": "sprite",
+      "pivot": [
+        40.0,
+        40.0
+      ],
+      "logicalSize": [
+        80,
+        80
+      ],
+      "rect": [
+        926,
+        730,
+        80,
+        80
+      ]
+    },
+    "enemy.prism-warden.hurt.3": {
+      "kind": "sprite",
+      "pivot": [
+        40.0,
+        40.0
+      ],
+      "logicalSize": [
+        80,
+        80
+      ],
+      "rect": [
+        2,
+        814,
+        80,
+        80
+      ]
+    },
+    "enemy.prism-warden.defeat.0": {
+      "kind": "sprite",
+      "pivot": [
+        40.0,
+        40.0
+      ],
+      "logicalSize": [
+        80,
+        80
+      ],
+      "rect": [
+        86,
+        814,
+        80,
+        80
+      ]
+    },
+    "enemy.prism-warden.defeat.1": {
+      "kind": "sprite",
+      "pivot": [
+        40.0,
+        40.0
+      ],
+      "logicalSize": [
+        80,
+        80
+      ],
+      "rect": [
+        170,
+        814,
+        80,
+        80
+      ]
+    },
+    "enemy.prism-warden.defeat.2": {
+      "kind": "sprite",
+      "pivot": [
+        40.0,
+        40.0
+      ],
+      "logicalSize": [
+        80,
+        80
+      ],
+      "rect": [
+        254,
+        814,
+        80,
+        80
+      ]
+    },
+    "enemy.prism-warden.defeat.3": {
+      "kind": "sprite",
+      "pivot": [
+        40.0,
+        40.0
+      ],
+      "logicalSize": [
+        80,
+        80
+      ],
+      "rect": [
+        338,
+        814,
+        80,
+        80
+      ]
+    },
+    "prop.waystone.0": {
+      "kind": "sprite",
+      "pivot": [
+        20.0,
+        20.0
+      ],
+      "logicalSize": [
+        40,
+        40
+      ],
+      "rect": [
+        422,
+        814,
+        40,
+        40
+      ]
+    },
+    "prop.waystone.1": {
+      "kind": "sprite",
+      "pivot": [
+        20.0,
+        20.0
+      ],
+      "logicalSize": [
+        40,
+        40
+      ],
+      "rect": [
+        466,
+        814,
+        40,
+        40
+      ]
+    },
+    "prop.waystone.2": {
+      "kind": "sprite",
+      "pivot": [
+        20.0,
+        20.0
+      ],
+      "logicalSize": [
+        40,
+        40
+      ],
+      "rect": [
+        510,
+        814,
+        40,
+        40
+      ]
+    },
+    "prop.waystone.3": {
+      "kind": "sprite",
+      "pivot": [
+        20.0,
+        20.0
+      ],
+      "logicalSize": [
+        40,
+        40
+      ],
+      "rect": [
+        554,
+        814,
+        40,
+        40
+      ]
+    },
+    "prop.stairs.0": {
+      "kind": "sprite",
+      "pivot": [
+        20.0,
+        20.0
+      ],
+      "logicalSize": [
+        40,
+        40
+      ],
+      "rect": [
+        598,
+        814,
+        40,
+        40
+      ]
+    },
+    "prop.stairs-up.0": {
+      "kind": "sprite",
+      "pivot": [
+        20.0,
+        20.0
+      ],
+      "logicalSize": [
+        40,
+        40
+      ],
+      "rect": [
+        642,
+        814,
+        40,
+        40
+      ]
+    },
+    "prop.beacon.0": {
+      "kind": "sprite",
+      "pivot": [
+        20.0,
+        20.0
+      ],
+      "logicalSize": [
+        40,
+        40
+      ],
+      "rect": [
+        686,
+        814,
+        40,
+        40
+      ]
+    },
+    "prop.beacon.1": {
+      "kind": "sprite",
+      "pivot": [
+        20.0,
+        20.0
+      ],
+      "logicalSize": [
+        40,
+        40
+      ],
+      "rect": [
+        730,
+        814,
+        40,
+        40
+      ]
+    },
+    "prop.beacon.2": {
+      "kind": "sprite",
+      "pivot": [
+        20.0,
+        20.0
+      ],
+      "logicalSize": [
+        40,
+        40
+      ],
+      "rect": [
+        774,
+        814,
+        40,
+        40
+      ]
+    },
+    "prop.beacon.3": {
+      "kind": "sprite",
+      "pivot": [
+        20.0,
+        20.0
+      ],
+      "logicalSize": [
+        40,
+        40
+      ],
+      "rect": [
+        818,
+        814,
+        40,
+        40
+      ]
+    },
+    "prop.chest.0": {
+      "kind": "sprite",
+      "pivot": [
+        20.0,
+        20.0
+      ],
+      "logicalSize": [
+        40,
+        40
+      ],
+      "rect": [
+        862,
+        814,
+        40,
+        40
+      ]
+    },
+    "prop.chest-open.0": {
+      "kind": "sprite",
+      "pivot": [
+        20.0,
+        20.0
+      ],
+      "logicalSize": [
+        40,
+        40
+      ],
+      "rect": [
+        906,
+        814,
+        40,
+        40
+      ]
+    },
+    "prop.plate.0": {
+      "kind": "sprite",
+      "pivot": [
+        20.0,
+        20.0
+      ],
+      "logicalSize": [
+        40,
+        40
+      ],
+      "rect": [
+        950,
+        814,
+        40,
+        40
+      ]
+    },
+    "prop.plate-lit.0": {
+      "kind": "sprite",
+      "pivot": [
+        20.0,
+        20.0
+      ],
+      "logicalSize": [
+        40,
+        40
+      ],
+      "rect": [
+        2,
+        898,
+        40,
+        40
+      ]
+    },
+    "prop.gate.0": {
+      "kind": "sprite",
+      "pivot": [
+        20.0,
+        20.0
+      ],
+      "logicalSize": [
+        40,
+        40
+      ],
+      "rect": [
+        46,
+        898,
+        40,
+        40
+      ]
+    },
+    "prop.bridge.0": {
+      "kind": "sprite",
+      "pivot": [
+        20.0,
+        20.0
+      ],
+      "logicalSize": [
+        40,
+        40
+      ],
+      "rect": [
+        90,
+        898,
+        40,
+        40
+      ]
+    },
+    "prop.relic-root.0": {
+      "kind": "sprite",
+      "pivot": [
+        20.0,
+        20.0
+      ],
+      "logicalSize": [
+        40,
+        40
+      ],
+      "rect": [
+        134,
+        898,
+        40,
+        40
+      ]
+    },
+    "prop.relic-root.1": {
+      "kind": "sprite",
+      "pivot": [
+        20.0,
+        20.0
+      ],
+      "logicalSize": [
+        40,
+        40
+      ],
+      "rect": [
+        178,
+        898,
+        40,
+        40
+      ]
+    },
+    "prop.relic-root.2": {
+      "kind": "sprite",
+      "pivot": [
+        20.0,
+        20.0
+      ],
+      "logicalSize": [
+        40,
+        40
+      ],
+      "rect": [
+        222,
+        898,
+        40,
+        40
+      ]
+    },
+    "prop.relic-root.3": {
+      "kind": "sprite",
+      "pivot": [
+        20.0,
+        20.0
+      ],
+      "logicalSize": [
+        40,
+        40
+      ],
+      "rect": [
+        266,
+        898,
+        40,
+        40
+      ]
+    },
+    "prop.relic-tide.0": {
+      "kind": "sprite",
+      "pivot": [
+        20.0,
+        20.0
+      ],
+      "logicalSize": [
+        40,
+        40
+      ],
+      "rect": [
+        310,
+        898,
+        40,
+        40
+      ]
+    },
+    "prop.relic-tide.1": {
+      "kind": "sprite",
+      "pivot": [
+        20.0,
+        20.0
+      ],
+      "logicalSize": [
+        40,
+        40
+      ],
+      "rect": [
+        354,
+        898,
+        40,
+        40
+      ]
+    },
+    "prop.relic-tide.2": {
+      "kind": "sprite",
+      "pivot": [
+        20.0,
+        20.0
+      ],
+      "logicalSize": [
+        40,
+        40
+      ],
+      "rect": [
+        398,
+        898,
+        40,
+        40
+      ]
+    },
+    "prop.relic-tide.3": {
+      "kind": "sprite",
+      "pivot": [
+        20.0,
+        20.0
+      ],
+      "logicalSize": [
+        40,
+        40
+      ],
+      "rect": [
+        442,
+        898,
+        40,
+        40
+      ]
+    },
+    "prop.relic-prism.0": {
+      "kind": "sprite",
+      "pivot": [
+        20.0,
+        20.0
+      ],
+      "logicalSize": [
+        40,
+        40
+      ],
+      "rect": [
+        486,
+        898,
+        40,
+        40
+      ]
+    },
+    "prop.relic-prism.1": {
+      "kind": "sprite",
+      "pivot": [
+        20.0,
+        20.0
+      ],
+      "logicalSize": [
+        40,
+        40
+      ],
+      "rect": [
+        530,
+        898,
+        40,
+        40
+      ]
+    },
+    "prop.relic-prism.2": {
+      "kind": "sprite",
+      "pivot": [
+        20.0,
+        20.0
+      ],
+      "logicalSize": [
+        40,
+        40
+      ],
+      "rect": [
+        574,
+        898,
+        40,
+        40
+      ]
+    },
+    "prop.relic-prism.3": {
+      "kind": "sprite",
+      "pivot": [
+        20.0,
+        20.0
+      ],
+      "logicalSize": [
+        40,
+        40
+      ],
+      "rect": [
+        618,
+        898,
+        40,
+        40
+      ]
+    },
+    "prop.tonic.0": {
+      "kind": "sprite",
+      "pivot": [
+        20.0,
+        20.0
+      ],
+      "logicalSize": [
+        40,
+        40
+      ],
+      "rect": [
+        662,
+        898,
+        40,
+        40
+      ]
+    },
+    "prop.coin.0": {
+      "kind": "sprite",
+      "pivot": [
+        20.0,
+        20.0
+      ],
+      "logicalSize": [
+        40,
+        40
+      ],
+      "rect": [
+        706,
+        898,
+        40,
+        40
+      ]
+    },
+    "prop.key.0": {
+      "kind": "sprite",
+      "pivot": [
+        20.0,
+        20.0
+      ],
+      "logicalSize": [
+        40,
+        40
+      ],
+      "rect": [
+        750,
+        898,
+        40,
+        40
+      ]
+    },
+    "prop.secondary-boomerang.0": {
+      "kind": "sprite",
+      "pivot": [
+        20.0,
+        20.0
+      ],
+      "logicalSize": [
+        40,
+        40
+      ],
+      "rect": [
+        794,
+        898,
+        40,
+        40
+      ]
+    },
+    "prop.sword-1.0": {
+      "kind": "sprite",
+      "pivot": [
+        20.0,
+        20.0
+      ],
+      "logicalSize": [
+        40,
+        40
+      ],
+      "rect": [
+        838,
+        898,
+        40,
+        40
+      ]
+    },
+    "prop.sword-2.0": {
+      "kind": "sprite",
+      "pivot": [
+        20.0,
+        20.0
+      ],
+      "logicalSize": [
+        40,
+        40
+      ],
+      "rect": [
+        882,
+        898,
+        40,
+        40
+      ]
+    },
+    "prop.sword-3.0": {
+      "kind": "sprite",
+      "pivot": [
+        20.0,
+        20.0
+      ],
+      "logicalSize": [
+        40,
+        40
+      ],
+      "rect": [
+        926,
+        898,
+        40,
+        40
+      ]
+    },
+    "effect.lantern-glow.0": {
+      "kind": "effect",
+      "pivot": [
+        60.0,
+        60.0
+      ],
+      "logicalSize": [
+        120,
+        120
+      ],
+      "rect": [
+        2,
+        942,
+        120,
+        120
+      ]
+    },
+    "effect.lantern-glow.1": {
+      "kind": "effect",
+      "pivot": [
+        60.0,
+        60.0
+      ],
+      "logicalSize": [
+        120,
+        120
+      ],
+      "rect": [
+        126,
+        942,
+        120,
+        120
+      ]
+    },
+    "effect.lantern-glow.2": {
+      "kind": "effect",
+      "pivot": [
+        60.0,
+        60.0
+      ],
+      "logicalSize": [
+        120,
+        120
+      ],
+      "rect": [
+        250,
+        942,
+        120,
+        120
+      ]
+    },
+    "effect.lantern-glow.3": {
+      "kind": "effect",
+      "pivot": [
+        60.0,
+        60.0
+      ],
+      "logicalSize": [
+        120,
+        120
+      ],
+      "rect": [
+        374,
+        942,
+        120,
+        120
+      ]
+    },
+    "effect.sword-arc.0": {
+      "kind": "effect",
+      "pivot": [
+        40.0,
+        40.0
+      ],
+      "logicalSize": [
+        80,
+        80
+      ],
+      "rect": [
+        498,
+        942,
+        80,
+        80
+      ]
+    },
+    "effect.sword-arc.1": {
+      "kind": "effect",
+      "pivot": [
+        40.0,
+        40.0
+      ],
+      "logicalSize": [
+        80,
+        80
+      ],
+      "rect": [
+        582,
+        942,
+        80,
+        80
+      ]
+    },
+    "effect.sword-arc.2": {
+      "kind": "effect",
+      "pivot": [
+        40.0,
+        40.0
+      ],
+      "logicalSize": [
+        80,
+        80
+      ],
+      "rect": [
+        666,
+        942,
+        80,
+        80
+      ]
+    },
+    "effect.sword-arc.3": {
+      "kind": "effect",
+      "pivot": [
+        40.0,
+        40.0
+      ],
+      "logicalSize": [
+        80,
+        80
+      ],
+      "rect": [
+        750,
+        942,
+        80,
+        80
+      ]
+    },
+    "effect.light-burst.0": {
+      "kind": "effect",
+      "pivot": [
+        40.0,
+        40.0
+      ],
+      "logicalSize": [
+        80,
+        80
+      ],
+      "rect": [
+        834,
+        942,
+        80,
+        80
+      ]
+    },
+    "effect.light-burst.1": {
+      "kind": "effect",
+      "pivot": [
+        40.0,
+        40.0
+      ],
+      "logicalSize": [
+        80,
+        80
+      ],
+      "rect": [
+        918,
+        942,
+        80,
+        80
+      ]
+    },
+    "effect.light-burst.2": {
+      "kind": "effect",
+      "pivot": [
+        40.0,
+        40.0
+      ],
+      "logicalSize": [
+        80,
+        80
+      ],
+      "rect": [
+        2,
+        1066,
+        80,
+        80
+      ]
+    },
+    "effect.light-burst.3": {
+      "kind": "effect",
+      "pivot": [
+        40.0,
+        40.0
+      ],
+      "logicalSize": [
+        80,
+        80
+      ],
+      "rect": [
+        86,
+        1066,
+        80,
+        80
+      ]
+    },
+    "effect.projectile.0": {
+      "kind": "effect",
+      "pivot": [
+        20.0,
+        20.0
+      ],
+      "logicalSize": [
+        40,
+        40
+      ],
+      "rect": [
+        170,
+        1066,
+        40,
+        40
+      ]
+    },
+    "effect.projectile.1": {
+      "kind": "effect",
+      "pivot": [
+        20.0,
+        20.0
+      ],
+      "logicalSize": [
+        40,
+        40
+      ],
+      "rect": [
+        214,
+        1066,
+        40,
+        40
+      ]
+    },
+    "effect.projectile.2": {
+      "kind": "effect",
+      "pivot": [
+        20.0,
+        20.0
+      ],
+      "logicalSize": [
+        40,
+        40
+      ],
+      "rect": [
+        258,
+        1066,
+        40,
+        40
+      ]
+    },
+    "effect.projectile.3": {
+      "kind": "effect",
+      "pivot": [
+        20.0,
+        20.0
+      ],
+      "logicalSize": [
+        40,
+        40
+      ],
+      "rect": [
+        302,
+        1066,
+        40,
+        40
+      ]
+    },
+    "effect.spark.0": {
+      "kind": "effect",
+      "pivot": [
+        20.0,
+        20.0
+      ],
+      "logicalSize": [
+        40,
+        40
+      ],
+      "rect": [
+        346,
+        1066,
+        40,
+        40
+      ]
+    },
+    "effect.spark.1": {
+      "kind": "effect",
+      "pivot": [
+        20.0,
+        20.0
+      ],
+      "logicalSize": [
+        40,
+        40
+      ],
+      "rect": [
+        390,
+        1066,
+        40,
+        40
+      ]
+    },
+    "effect.spark.2": {
+      "kind": "effect",
+      "pivot": [
+        20.0,
+        20.0
+      ],
+      "logicalSize": [
+        40,
+        40
+      ],
+      "rect": [
+        434,
+        1066,
+        40,
+        40
+      ]
+    },
+    "effect.spark.3": {
+      "kind": "effect",
+      "pivot": [
+        20.0,
+        20.0
+      ],
+      "logicalSize": [
+        40,
+        40
+      ],
+      "rect": [
+        478,
+        1066,
+        40,
+        40
+      ]
+    },
+    "effect.shadow.0": {
+      "kind": "effect",
+      "pivot": [
+        20.0,
+        20.0
+      ],
+      "logicalSize": [
+        40,
+        40
+      ],
+      "rect": [
+        522,
+        1066,
+        40,
+        40
+      ]
+    },
+    "effect.shadow.1": {
+      "kind": "effect",
+      "pivot": [
+        20.0,
+        20.0
+      ],
+      "logicalSize": [
+        40,
+        40
+      ],
+      "rect": [
+        566,
+        1066,
+        40,
+        40
+      ]
+    },
+    "effect.shadow.2": {
+      "kind": "effect",
+      "pivot": [
+        20.0,
+        20.0
+      ],
+      "logicalSize": [
+        40,
+        40
+      ],
+      "rect": [
+        610,
+        1066,
+        40,
+        40
+      ]
+    },
+    "effect.shadow.3": {
+      "kind": "effect",
+      "pivot": [
+        20.0,
+        20.0
+      ],
+      "logicalSize": [
+        40,
+        40
+      ],
+      "rect": [
+        654,
+        1066,
+        40,
+        40
+      ]
+    },
+    "effect.danger-ring.0": {
+      "kind": "effect",
+      "pivot": [
+        40.0,
+        40.0
+      ],
+      "logicalSize": [
+        80,
+        80
+      ],
+      "rect": [
+        698,
+        1066,
+        80,
+        80
+      ]
+    },
+    "effect.danger-ring.1": {
+      "kind": "effect",
+      "pivot": [
+        40.0,
+        40.0
+      ],
+      "logicalSize": [
+        80,
+        80
+      ],
+      "rect": [
+        782,
+        1066,
+        80,
+        80
+      ]
+    },
+    "effect.danger-ring.2": {
+      "kind": "effect",
+      "pivot": [
+        40.0,
+        40.0
+      ],
+      "logicalSize": [
+        80,
+        80
+      ],
+      "rect": [
+        866,
+        1066,
+        80,
+        80
+      ]
+    },
+    "effect.danger-ring.3": {
+      "kind": "effect",
+      "pivot": [
+        40.0,
+        40.0
+      ],
+      "logicalSize": [
+        80,
+        80
+      ],
+      "rect": [
+        2,
+        1150,
+        80,
+        80
+      ]
+    }
+  },
+  "animations": {
+    "terrain.mossward.water": {
+      "frames": [
+        "terrain.mossward.water.0",
+        "terrain.mossward.water.1",
+        "terrain.mossward.water.2",
+        "terrain.mossward.water.3"
+      ],
+      "durationsMs": [
+        240,
+        240,
+        240,
+        240
+      ],
+      "loop": true
+    },
+    "terrain.amber-fen.water": {
+      "frames": [
+        "terrain.amber-fen.water.0",
+        "terrain.amber-fen.water.1",
+        "terrain.amber-fen.water.2",
+        "terrain.amber-fen.water.3"
+      ],
+      "durationsMs": [
+        240,
+        240,
+        240,
+        240
+      ],
+      "loop": true
+    },
+    "terrain.glass-highlands.water": {
+      "frames": [
+        "terrain.glass-highlands.water.0",
+        "terrain.glass-highlands.water.1",
+        "terrain.glass-highlands.water.2",
+        "terrain.glass-highlands.water.3"
+      ],
+      "durationsMs": [
+        240,
+        240,
+        240,
+        240
+      ],
+      "loop": true
+    },
+    "terrain.rootvault.water": {
+      "frames": [
+        "terrain.rootvault.water.0",
+        "terrain.rootvault.water.1",
+        "terrain.rootvault.water.2",
+        "terrain.rootvault.water.3"
+      ],
+      "durationsMs": [
+        240,
+        240,
+        240,
+        240
+      ],
+      "loop": true
+    },
+    "terrain.drowned-archive.water": {
+      "frames": [
+        "terrain.drowned-archive.water.0",
+        "terrain.drowned-archive.water.1",
+        "terrain.drowned-archive.water.2",
+        "terrain.drowned-archive.water.3"
+      ],
+      "durationsMs": [
+        240,
+        240,
+        240,
+        240
+      ],
+      "loop": true
+    },
+    "terrain.prism-crypt.water": {
+      "frames": [
+        "terrain.prism-crypt.water.0",
+        "terrain.prism-crypt.water.1",
+        "terrain.prism-crypt.water.2",
+        "terrain.prism-crypt.water.3"
+      ],
+      "durationsMs": [
+        240,
+        240,
+        240,
+        240
+      ],
+      "loop": true
+    },
+    "keeper.down.idle": {
+      "frames": [
+        "keeper.down.idle.0",
+        "keeper.down.idle.1"
+      ],
+      "durationsMs": [
+        420,
+        420
+      ],
+      "loop": true
+    },
+    "keeper.down.walk": {
+      "frames": [
+        "keeper.down.walk.0",
+        "keeper.down.walk.1",
+        "keeper.down.walk.2",
+        "keeper.down.walk.3"
+      ],
+      "durationsMs": [
+        115,
+        115,
+        115,
+        115
+      ],
+      "loop": true
+    },
+    "keeper.down.strike": {
+      "frames": [
+        "keeper.down.strike.0",
+        "keeper.down.strike.1",
+        "keeper.down.strike.2",
+        "keeper.down.strike.3"
+      ],
+      "durationsMs": [
+        65,
+        65,
+        65,
+        65
+      ],
+      "loop": false
+    },
+    "keeper.left.idle": {
+      "frames": [
+        "keeper.left.idle.0",
+        "keeper.left.idle.1"
+      ],
+      "durationsMs": [
+        420,
+        420
+      ],
+      "loop": true
+    },
+    "keeper.left.walk": {
+      "frames": [
+        "keeper.left.walk.0",
+        "keeper.left.walk.1",
+        "keeper.left.walk.2",
+        "keeper.left.walk.3"
+      ],
+      "durationsMs": [
+        115,
+        115,
+        115,
+        115
+      ],
+      "loop": true
+    },
+    "keeper.left.strike": {
+      "frames": [
+        "keeper.left.strike.0",
+        "keeper.left.strike.1",
+        "keeper.left.strike.2",
+        "keeper.left.strike.3"
+      ],
+      "durationsMs": [
+        65,
+        65,
+        65,
+        65
+      ],
+      "loop": false
+    },
+    "keeper.right.idle": {
+      "frames": [
+        "keeper.right.idle.0",
+        "keeper.right.idle.1"
+      ],
+      "durationsMs": [
+        420,
+        420
+      ],
+      "loop": true
+    },
+    "keeper.right.walk": {
+      "frames": [
+        "keeper.right.walk.0",
+        "keeper.right.walk.1",
+        "keeper.right.walk.2",
+        "keeper.right.walk.3"
+      ],
+      "durationsMs": [
+        115,
+        115,
+        115,
+        115
+      ],
+      "loop": true
+    },
+    "keeper.right.strike": {
+      "frames": [
+        "keeper.right.strike.0",
+        "keeper.right.strike.1",
+        "keeper.right.strike.2",
+        "keeper.right.strike.3"
+      ],
+      "durationsMs": [
+        65,
+        65,
+        65,
+        65
+      ],
+      "loop": false
+    },
+    "keeper.up.idle": {
+      "frames": [
+        "keeper.up.idle.0",
+        "keeper.up.idle.1"
+      ],
+      "durationsMs": [
+        420,
+        420
+      ],
+      "loop": true
+    },
+    "keeper.up.walk": {
+      "frames": [
+        "keeper.up.walk.0",
+        "keeper.up.walk.1",
+        "keeper.up.walk.2",
+        "keeper.up.walk.3"
+      ],
+      "durationsMs": [
+        115,
+        115,
+        115,
+        115
+      ],
+      "loop": true
+    },
+    "keeper.up.strike": {
+      "frames": [
+        "keeper.up.strike.0",
+        "keeper.up.strike.1",
+        "keeper.up.strike.2",
+        "keeper.up.strike.3"
+      ],
+      "durationsMs": [
+        65,
+        65,
+        65,
+        65
+      ],
+      "loop": false
+    },
+    "enemy.briarling.idle": {
+      "frames": [
+        "enemy.briarling.idle.0",
+        "enemy.briarling.idle.1",
+        "enemy.briarling.idle.2",
+        "enemy.briarling.idle.3"
+      ],
+      "durationsMs": [
+        150,
+        150,
+        150,
+        150
+      ],
+      "loop": true
+    },
+    "enemy.briarling.walk": {
+      "frames": [
+        "enemy.briarling.walk.0",
+        "enemy.briarling.walk.1",
+        "enemy.briarling.walk.2",
+        "enemy.briarling.walk.3"
+      ],
+      "durationsMs": [
+        150,
+        150,
+        150,
+        150
+      ],
+      "loop": true
+    },
+    "enemy.briarling.windup": {
+      "frames": [
+        "enemy.briarling.windup.0",
+        "enemy.briarling.windup.1",
+        "enemy.briarling.windup.2",
+        "enemy.briarling.windup.3"
+      ],
+      "durationsMs": [
+        100,
+        100,
+        100,
+        100
+      ],
+      "loop": false
+    },
+    "enemy.briarling.attack": {
+      "frames": [
+        "enemy.briarling.attack.0",
+        "enemy.briarling.attack.1",
+        "enemy.briarling.attack.2",
+        "enemy.briarling.attack.3"
+      ],
+      "durationsMs": [
+        100,
+        100,
+        100,
+        100
+      ],
+      "loop": false
+    },
+    "enemy.briarling.hurt": {
+      "frames": [
+        "enemy.briarling.hurt.0",
+        "enemy.briarling.hurt.1",
+        "enemy.briarling.hurt.2",
+        "enemy.briarling.hurt.3"
+      ],
+      "durationsMs": [
+        100,
+        100,
+        100,
+        100
+      ],
+      "loop": false
+    },
+    "enemy.briarling.defeat": {
+      "frames": [
+        "enemy.briarling.defeat.0",
+        "enemy.briarling.defeat.1",
+        "enemy.briarling.defeat.2",
+        "enemy.briarling.defeat.3"
+      ],
+      "durationsMs": [
+        100,
+        100,
+        100,
+        100
+      ],
+      "loop": false
+    },
+    "enemy.fen-moth.idle": {
+      "frames": [
+        "enemy.fen-moth.idle.0",
+        "enemy.fen-moth.idle.1",
+        "enemy.fen-moth.idle.2",
+        "enemy.fen-moth.idle.3"
+      ],
+      "durationsMs": [
+        150,
+        150,
+        150,
+        150
+      ],
+      "loop": true
+    },
+    "enemy.fen-moth.walk": {
+      "frames": [
+        "enemy.fen-moth.walk.0",
+        "enemy.fen-moth.walk.1",
+        "enemy.fen-moth.walk.2",
+        "enemy.fen-moth.walk.3"
+      ],
+      "durationsMs": [
+        150,
+        150,
+        150,
+        150
+      ],
+      "loop": true
+    },
+    "enemy.fen-moth.windup": {
+      "frames": [
+        "enemy.fen-moth.windup.0",
+        "enemy.fen-moth.windup.1",
+        "enemy.fen-moth.windup.2",
+        "enemy.fen-moth.windup.3"
+      ],
+      "durationsMs": [
+        100,
+        100,
+        100,
+        100
+      ],
+      "loop": false
+    },
+    "enemy.fen-moth.attack": {
+      "frames": [
+        "enemy.fen-moth.attack.0",
+        "enemy.fen-moth.attack.1",
+        "enemy.fen-moth.attack.2",
+        "enemy.fen-moth.attack.3"
+      ],
+      "durationsMs": [
+        100,
+        100,
+        100,
+        100
+      ],
+      "loop": false
+    },
+    "enemy.fen-moth.hurt": {
+      "frames": [
+        "enemy.fen-moth.hurt.0",
+        "enemy.fen-moth.hurt.1",
+        "enemy.fen-moth.hurt.2",
+        "enemy.fen-moth.hurt.3"
+      ],
+      "durationsMs": [
+        100,
+        100,
+        100,
+        100
+      ],
+      "loop": false
+    },
+    "enemy.fen-moth.defeat": {
+      "frames": [
+        "enemy.fen-moth.defeat.0",
+        "enemy.fen-moth.defeat.1",
+        "enemy.fen-moth.defeat.2",
+        "enemy.fen-moth.defeat.3"
+      ],
+      "durationsMs": [
+        100,
+        100,
+        100,
+        100
+      ],
+      "loop": false
+    },
+    "enemy.glass-sentinel.idle": {
+      "frames": [
+        "enemy.glass-sentinel.idle.0",
+        "enemy.glass-sentinel.idle.1",
+        "enemy.glass-sentinel.idle.2",
+        "enemy.glass-sentinel.idle.3"
+      ],
+      "durationsMs": [
+        150,
+        150,
+        150,
+        150
+      ],
+      "loop": true
+    },
+    "enemy.glass-sentinel.walk": {
+      "frames": [
+        "enemy.glass-sentinel.walk.0",
+        "enemy.glass-sentinel.walk.1",
+        "enemy.glass-sentinel.walk.2",
+        "enemy.glass-sentinel.walk.3"
+      ],
+      "durationsMs": [
+        150,
+        150,
+        150,
+        150
+      ],
+      "loop": true
+    },
+    "enemy.glass-sentinel.windup": {
+      "frames": [
+        "enemy.glass-sentinel.windup.0",
+        "enemy.glass-sentinel.windup.1",
+        "enemy.glass-sentinel.windup.2",
+        "enemy.glass-sentinel.windup.3"
+      ],
+      "durationsMs": [
+        100,
+        100,
+        100,
+        100
+      ],
+      "loop": false
+    },
+    "enemy.glass-sentinel.attack": {
+      "frames": [
+        "enemy.glass-sentinel.attack.0",
+        "enemy.glass-sentinel.attack.1",
+        "enemy.glass-sentinel.attack.2",
+        "enemy.glass-sentinel.attack.3"
+      ],
+      "durationsMs": [
+        100,
+        100,
+        100,
+        100
+      ],
+      "loop": false
+    },
+    "enemy.glass-sentinel.hurt": {
+      "frames": [
+        "enemy.glass-sentinel.hurt.0",
+        "enemy.glass-sentinel.hurt.1",
+        "enemy.glass-sentinel.hurt.2",
+        "enemy.glass-sentinel.hurt.3"
+      ],
+      "durationsMs": [
+        100,
+        100,
+        100,
+        100
+      ],
+      "loop": false
+    },
+    "enemy.glass-sentinel.defeat": {
+      "frames": [
+        "enemy.glass-sentinel.defeat.0",
+        "enemy.glass-sentinel.defeat.1",
+        "enemy.glass-sentinel.defeat.2",
+        "enemy.glass-sentinel.defeat.3"
+      ],
+      "durationsMs": [
+        100,
+        100,
+        100,
+        100
+      ],
+      "loop": false
+    },
+    "enemy.root-warden.idle": {
+      "frames": [
+        "enemy.root-warden.idle.0",
+        "enemy.root-warden.idle.1",
+        "enemy.root-warden.idle.2",
+        "enemy.root-warden.idle.3"
+      ],
+      "durationsMs": [
+        150,
+        150,
+        150,
+        150
+      ],
+      "loop": true
+    },
+    "enemy.root-warden.walk": {
+      "frames": [
+        "enemy.root-warden.walk.0",
+        "enemy.root-warden.walk.1",
+        "enemy.root-warden.walk.2",
+        "enemy.root-warden.walk.3"
+      ],
+      "durationsMs": [
+        150,
+        150,
+        150,
+        150
+      ],
+      "loop": true
+    },
+    "enemy.root-warden.windup": {
+      "frames": [
+        "enemy.root-warden.windup.0",
+        "enemy.root-warden.windup.1",
+        "enemy.root-warden.windup.2",
+        "enemy.root-warden.windup.3"
+      ],
+      "durationsMs": [
+        100,
+        100,
+        100,
+        100
+      ],
+      "loop": false
+    },
+    "enemy.root-warden.attack": {
+      "frames": [
+        "enemy.root-warden.attack.0",
+        "enemy.root-warden.attack.1",
+        "enemy.root-warden.attack.2",
+        "enemy.root-warden.attack.3"
+      ],
+      "durationsMs": [
+        100,
+        100,
+        100,
+        100
+      ],
+      "loop": false
+    },
+    "enemy.root-warden.hurt": {
+      "frames": [
+        "enemy.root-warden.hurt.0",
+        "enemy.root-warden.hurt.1",
+        "enemy.root-warden.hurt.2",
+        "enemy.root-warden.hurt.3"
+      ],
+      "durationsMs": [
+        100,
+        100,
+        100,
+        100
+      ],
+      "loop": false
+    },
+    "enemy.root-warden.defeat": {
+      "frames": [
+        "enemy.root-warden.defeat.0",
+        "enemy.root-warden.defeat.1",
+        "enemy.root-warden.defeat.2",
+        "enemy.root-warden.defeat.3"
+      ],
+      "durationsMs": [
+        100,
+        100,
+        100,
+        100
+      ],
+      "loop": false
+    },
+    "enemy.tide-warden.idle": {
+      "frames": [
+        "enemy.tide-warden.idle.0",
+        "enemy.tide-warden.idle.1",
+        "enemy.tide-warden.idle.2",
+        "enemy.tide-warden.idle.3"
+      ],
+      "durationsMs": [
+        150,
+        150,
+        150,
+        150
+      ],
+      "loop": true
+    },
+    "enemy.tide-warden.walk": {
+      "frames": [
+        "enemy.tide-warden.walk.0",
+        "enemy.tide-warden.walk.1",
+        "enemy.tide-warden.walk.2",
+        "enemy.tide-warden.walk.3"
+      ],
+      "durationsMs": [
+        150,
+        150,
+        150,
+        150
+      ],
+      "loop": true
+    },
+    "enemy.tide-warden.windup": {
+      "frames": [
+        "enemy.tide-warden.windup.0",
+        "enemy.tide-warden.windup.1",
+        "enemy.tide-warden.windup.2",
+        "enemy.tide-warden.windup.3"
+      ],
+      "durationsMs": [
+        100,
+        100,
+        100,
+        100
+      ],
+      "loop": false
+    },
+    "enemy.tide-warden.attack": {
+      "frames": [
+        "enemy.tide-warden.attack.0",
+        "enemy.tide-warden.attack.1",
+        "enemy.tide-warden.attack.2",
+        "enemy.tide-warden.attack.3"
+      ],
+      "durationsMs": [
+        100,
+        100,
+        100,
+        100
+      ],
+      "loop": false
+    },
+    "enemy.tide-warden.hurt": {
+      "frames": [
+        "enemy.tide-warden.hurt.0",
+        "enemy.tide-warden.hurt.1",
+        "enemy.tide-warden.hurt.2",
+        "enemy.tide-warden.hurt.3"
+      ],
+      "durationsMs": [
+        100,
+        100,
+        100,
+        100
+      ],
+      "loop": false
+    },
+    "enemy.tide-warden.defeat": {
+      "frames": [
+        "enemy.tide-warden.defeat.0",
+        "enemy.tide-warden.defeat.1",
+        "enemy.tide-warden.defeat.2",
+        "enemy.tide-warden.defeat.3"
+      ],
+      "durationsMs": [
+        100,
+        100,
+        100,
+        100
+      ],
+      "loop": false
+    },
+    "enemy.prism-warden.idle": {
+      "frames": [
+        "enemy.prism-warden.idle.0",
+        "enemy.prism-warden.idle.1",
+        "enemy.prism-warden.idle.2",
+        "enemy.prism-warden.idle.3"
+      ],
+      "durationsMs": [
+        150,
+        150,
+        150,
+        150
+      ],
+      "loop": true
+    },
+    "enemy.prism-warden.walk": {
+      "frames": [
+        "enemy.prism-warden.walk.0",
+        "enemy.prism-warden.walk.1",
+        "enemy.prism-warden.walk.2",
+        "enemy.prism-warden.walk.3"
+      ],
+      "durationsMs": [
+        150,
+        150,
+        150,
+        150
+      ],
+      "loop": true
+    },
+    "enemy.prism-warden.windup": {
+      "frames": [
+        "enemy.prism-warden.windup.0",
+        "enemy.prism-warden.windup.1",
+        "enemy.prism-warden.windup.2",
+        "enemy.prism-warden.windup.3"
+      ],
+      "durationsMs": [
+        100,
+        100,
+        100,
+        100
+      ],
+      "loop": false
+    },
+    "enemy.prism-warden.attack": {
+      "frames": [
+        "enemy.prism-warden.attack.0",
+        "enemy.prism-warden.attack.1",
+        "enemy.prism-warden.attack.2",
+        "enemy.prism-warden.attack.3"
+      ],
+      "durationsMs": [
+        100,
+        100,
+        100,
+        100
+      ],
+      "loop": false
+    },
+    "enemy.prism-warden.hurt": {
+      "frames": [
+        "enemy.prism-warden.hurt.0",
+        "enemy.prism-warden.hurt.1",
+        "enemy.prism-warden.hurt.2",
+        "enemy.prism-warden.hurt.3"
+      ],
+      "durationsMs": [
+        100,
+        100,
+        100,
+        100
+      ],
+      "loop": false
+    },
+    "enemy.prism-warden.defeat": {
+      "frames": [
+        "enemy.prism-warden.defeat.0",
+        "enemy.prism-warden.defeat.1",
+        "enemy.prism-warden.defeat.2",
+        "enemy.prism-warden.defeat.3"
+      ],
+      "durationsMs": [
+        100,
+        100,
+        100,
+        100
+      ],
+      "loop": false
+    },
+    "prop.waystone": {
+      "frames": [
+        "prop.waystone.0",
+        "prop.waystone.1",
+        "prop.waystone.2",
+        "prop.waystone.3"
+      ],
+      "durationsMs": [
+        180,
+        180,
+        180,
+        180
+      ],
+      "loop": true
+    },
+    "prop.beacon": {
+      "frames": [
+        "prop.beacon.0",
+        "prop.beacon.1",
+        "prop.beacon.2",
+        "prop.beacon.3"
+      ],
+      "durationsMs": [
+        180,
+        180,
+        180,
+        180
+      ],
+      "loop": true
+    },
+    "prop.relic-root": {
+      "frames": [
+        "prop.relic-root.0",
+        "prop.relic-root.1",
+        "prop.relic-root.2",
+        "prop.relic-root.3"
+      ],
+      "durationsMs": [
+        180,
+        180,
+        180,
+        180
+      ],
+      "loop": true
+    },
+    "prop.relic-tide": {
+      "frames": [
+        "prop.relic-tide.0",
+        "prop.relic-tide.1",
+        "prop.relic-tide.2",
+        "prop.relic-tide.3"
+      ],
+      "durationsMs": [
+        180,
+        180,
+        180,
+        180
+      ],
+      "loop": true
+    },
+    "prop.relic-prism": {
+      "frames": [
+        "prop.relic-prism.0",
+        "prop.relic-prism.1",
+        "prop.relic-prism.2",
+        "prop.relic-prism.3"
+      ],
+      "durationsMs": [
+        180,
+        180,
+        180,
+        180
+      ],
+      "loop": true
+    },
+    "effect.lantern-glow": {
+      "frames": [
+        "effect.lantern-glow.0",
+        "effect.lantern-glow.1",
+        "effect.lantern-glow.2",
+        "effect.lantern-glow.3"
+      ],
+      "durationsMs": [
+        90,
+        90,
+        90,
+        90
+      ],
+      "loop": true
+    },
+    "effect.sword-arc": {
+      "frames": [
+        "effect.sword-arc.0",
+        "effect.sword-arc.1",
+        "effect.sword-arc.2",
+        "effect.sword-arc.3"
+      ],
+      "durationsMs": [
+        90,
+        90,
+        90,
+        90
+      ],
+      "loop": false
+    },
+    "effect.light-burst": {
+      "frames": [
+        "effect.light-burst.0",
+        "effect.light-burst.1",
+        "effect.light-burst.2",
+        "effect.light-burst.3"
+      ],
+      "durationsMs": [
+        90,
+        90,
+        90,
+        90
+      ],
+      "loop": false
+    },
+    "effect.projectile": {
+      "frames": [
+        "effect.projectile.0",
+        "effect.projectile.1",
+        "effect.projectile.2",
+        "effect.projectile.3"
+      ],
+      "durationsMs": [
+        90,
+        90,
+        90,
+        90
+      ],
+      "loop": true
+    },
+    "effect.spark": {
+      "frames": [
+        "effect.spark.0",
+        "effect.spark.1",
+        "effect.spark.2",
+        "effect.spark.3"
+      ],
+      "durationsMs": [
+        90,
+        90,
+        90,
+        90
+      ],
+      "loop": false
+    },
+    "effect.shadow": {
+      "frames": [
+        "effect.shadow.0",
+        "effect.shadow.1",
+        "effect.shadow.2",
+        "effect.shadow.3"
+      ],
+      "durationsMs": [
+        90,
+        90,
+        90,
+        90
+      ],
+      "loop": true
+    },
+    "effect.danger-ring": {
+      "frames": [
+        "effect.danger-ring.0",
+        "effect.danger-ring.1",
+        "effect.danger-ring.2",
+        "effect.danger-ring.3"
+      ],
+      "durationsMs": [
+        90,
+        90,
+        90,
+        90
+      ],
+      "loop": true
+    }
+  },
+  "terrainSets": {
+    "mossward": {
+      "floor": [
+        "terrain.mossward.floor.0",
+        "terrain.mossward.floor.1",
+        "terrain.mossward.floor.2"
+      ],
+      "wall": [
+        "terrain.mossward.wall.0",
+        "terrain.mossward.wall.1"
+      ],
+      "water": "terrain.mossward.water"
+    },
+    "amber-fen": {
+      "floor": [
+        "terrain.amber-fen.floor.0",
+        "terrain.amber-fen.floor.1",
+        "terrain.amber-fen.floor.2"
+      ],
+      "wall": [
+        "terrain.amber-fen.wall.0",
+        "terrain.amber-fen.wall.1"
+      ],
+      "water": "terrain.amber-fen.water"
+    },
+    "glass-highlands": {
+      "floor": [
+        "terrain.glass-highlands.floor.0",
+        "terrain.glass-highlands.floor.1",
+        "terrain.glass-highlands.floor.2"
+      ],
+      "wall": [
+        "terrain.glass-highlands.wall.0",
+        "terrain.glass-highlands.wall.1"
+      ],
+      "water": "terrain.glass-highlands.water"
+    },
+    "rootvault": {
+      "floor": [
+        "terrain.rootvault.floor.0",
+        "terrain.rootvault.floor.1",
+        "terrain.rootvault.floor.2"
+      ],
+      "wall": [
+        "terrain.rootvault.wall.0",
+        "terrain.rootvault.wall.1"
+      ],
+      "water": "terrain.rootvault.water"
+    },
+    "drowned-archive": {
+      "floor": [
+        "terrain.drowned-archive.floor.0",
+        "terrain.drowned-archive.floor.1",
+        "terrain.drowned-archive.floor.2"
+      ],
+      "wall": [
+        "terrain.drowned-archive.wall.0",
+        "terrain.drowned-archive.wall.1"
+      ],
+      "water": "terrain.drowned-archive.water"
+    },
+    "prism-crypt": {
+      "floor": [
+        "terrain.prism-crypt.floor.0",
+        "terrain.prism-crypt.floor.1",
+        "terrain.prism-crypt.floor.2"
+      ],
+      "wall": [
+        "terrain.prism-crypt.wall.0",
+        "terrain.prism-crypt.wall.1"
+      ],
+      "water": "terrain.prism-crypt.water"
+    }
+  },
+  "enemySets": {
+    "mossward": "briarling",
+    "amber-fen": "fen-moth",
+    "glass-highlands": "glass-sentinel",
+    "rootvault": "briarling",
+    "drowned-archive": "fen-moth",
+    "prism-crypt": "glass-sentinel"
+  },
+  "wardenSets": {
+    "rootvault": "root-warden",
+    "drowned-archive": "tide-warden",
+    "prism-crypt": "prism-warden"
+  }
+}
