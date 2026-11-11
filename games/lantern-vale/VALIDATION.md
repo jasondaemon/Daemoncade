@@ -41,3 +41,20 @@ Validation actually run:
 - `node --check` passed for all **26** game-local `.mjs` modules. Inspected changed Canvas/UI sources, regional labels, journal instructions, local asset identifiers and cache imports. No raster assets were generated or changed.
 
 No trusted deployment browser QA was performed by this worker. Actual composition, warning readability, mobile layout and multi-day human duration remain unverified; no deployed pass or human completion estimate is claimed. All writes for this correction remain inside `games/lantern-vale/`; no dependency, service, security policy, infrastructure, launcher or publication change was made.
+
+## Input and canvas correction — 2026-11-11
+
+Addressed the supplied keyboard-release and blank-canvas findings in the browser adapter:
+
+- Releasing the last keyboard or touch direction clears the walking pose immediately, including frames with no simulation step. Pause/menu/focus clearing also resets that pose. Movement still comes from the existing held-input sets and deterministic campaign step.
+- The simulation initializes its clock from animation-frame timestamps, rather than mixing the initial `performance.now()` reading with the frame clock.
+- Resize ignores unmeasurable stages and leaves unchanged backing dimensions alone. A real backing-size change paints immediately, and artwork decoding/retry completion also paints immediately. Canvas sizing no longer participates in the stage's intrinsic layout, avoiding resize feedback between its backing dimensions and the field.
+- HTML references the corrected entry module and stylesheet with `0.3.0-alpha.7`. Campaign/content module identities and the restrictive CSP remain unchanged.
+
+Actual validation:
+
+- `node --test games/lantern-vale/*.test.mjs games/lantern-vale/prototype/*.test.mjs games/lantern-vale/assets/gameplay/*.test.mjs games/lantern-vale/expansion/*.test.mjs`: **13 files passed**, zero failures, skips or cancellations. Includes the complete legacy/expanded deterministic traversal, puzzles, encounters, migration and raster resolution checks.
+- `node games/lantern-vale/runtime.test.mjs`: passed again after adding the final immediate-idle and artwork-completion assertions. The real adapter receives all four arrow keys and WASD through keydown/keyup, verifies movement while held and stationary rendered world positions after release, simultaneous keyboard/touch, pointer release/cancellation, focus loss, saves and all nine boss samples. Resize assertions verify no backing writes for unchanged geometry and immediate raster draw calls for changed geometry without executing an animation frame. The frame fixture starts at zero independently of the process clock.
+- `node --check games/lantern-vale/game.mjs`: passed. Inspected the changed input/render/resize implementation, canvas CSS and HTML asset references. No raster assets changed.
+
+These checks use the deterministic rules and fake DOM/Canvas adapter; they do not establish a Chromium or WebKit deployment pass or conclusively diagnose the remote screenshot failure. Trusted deployment QA must revalidate the intended correction revision. The supplied report's top-level SHA is `b08698801d080bc0b70a720d295451efc8c7987b`, while its tested commit and before/after markers are `8ba0b3d612bc5acec0b7900305c8019bb9f4f29f`; that report is not evidence for this corrected source. No harness, security policy, dependencies, services, shared files or other games were changed.
