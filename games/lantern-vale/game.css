@@ -13,3 +13,6 @@ main{min-height:0}header,nav,footer,#objective,#message{flex-shrink:0}#message{m
 
 .journal-tabs{display:flex;gap:6px;margin:12px 0;flex-wrap:wrap}.journal-tabs button{flex:1}.journal-tabs [aria-pressed="true"]{background:#705139;border-color:#f7d29b;color:#fff5dd}#journal-location{color:#deb77c}#region-controls:not([hidden]){display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:12px}#region-name{text-align:center}#journal-text{overflow-wrap:anywhere}#venture{position:absolute;z-index:2;left:50%;top:48%;transform:translate(-50%,-50%);max-width:80vw;box-shadow:0 4px 18px #000}#venture[hidden]{display:none}#journal-panel{overscroll-behavior:contain;padding-bottom:max(16px,env(safe-area-inset-bottom))}#journal-close{position:sticky;bottom:0;box-shadow:0 0 12px #111622}
 @media(max-height:540px){#journal-panel{inset:8px;padding:12px;max-height:calc(100dvh - 16px)}#journal-panel h2{font-size:20px;margin-bottom:5px}.journal-tabs{margin:6px 0}.journal-tabs button,#region-controls button,#journal-close{min-height:44px}#journal-text{font-size:12px}#venture{top:44%;font-size:12px}}
+
+/* The field owns its geometry; canvas backing size cannot resize the stage. */
+.stage>canvas{position:absolute;inset:0;margin:auto}
