@@ -2,25 +2,33 @@ import {controlLabel} from './expansion/mechanics.mjs';
 import {quests,characters,discoveries,rewards} from './content.mjs?v=0.3.0-alpha.6';
 import {loadAtlas} from './assets/gameplay/atlas.mjs?v=0.3.0-alpha.6';
 import {drawWorld,drawFallback,bossTell} from './renderer.mjs?v=0.3.0-alpha.6';
-import {fresh,step,secondary,toggle,pause,attack,potion,interact,names,objective,encode,decode,entrances,camps,rooms,roomInfo,installExpansion,continueAdventure,campaignMap,tile,solid} from './campaign.mjs?v=0.3.0-alpha.6';
+import {fresh,step,secondary,toggle,pause,attack,potion,interact,names,objective,encode,decode,entrances,camps,rooms,roomInfo,installExpansion,continueAdventure,campaignMap,tile,solid} from './campaign.mjs?v=river-1';
 import * as world from './expansion/world.mjs';
 import * as depths from './expansion/dungeons.mjs?v=0.3.0-alpha.6';
 import * as story from './expansion/story.mjs';
 import {adventure,dungeonArtIds} from './expansion/adventure.mjs?v=0.3.0-alpha.6';
-installExpansion(adventure);
+import {riverChapter,riverStart,riverObjective} from './river-chapter.mjs?v=river-1';
+import {paintRiverGround,paintRiverScenery} from './river-scenery.mjs?v=river-1';
+installExpansion(adventure,riverChapter);
+const inRiver=state=>state.room>=riverStart;
+const currentObjective=state=>inRiver(state)&&state.status!=='dead'?riverObjective(state):objective(state);
 const human=id=>String(id).replaceAll('-',' ').replace(/\b\w/g,c=>c.toUpperCase());
 const $=id=>document.getElementById(id),c=$('world'),g=c.getContext('2d'),stage=document.querySelector('.stage'),keys=new Set(),blocked=new Set(),pointers=new Map(),saveKey='daemoncade.lantern-vale.waystone.v1';
+const riverSaveKey='daemoncade.lantern-vale.river-valley.v1';
 let s=fresh(),started=false,storageMessage='',atlas=null,artMessage='Loading valley artwork…',animationMs=0,moving=false;
 let loading=false,tab='quests',regionFilter=null;
 async function artwork(){if(loading)return;loading=true;$('retry-art').hidden=true;artMessage='Loading valley artwork…';let timer;try{atlas=await Promise.race([loadAtlas(),new Promise((_,reject)=>{timer=setTimeout(()=>reject(Error('Artwork timeout')),8000);})]);artMessage='';}catch{artMessage='Artwork unavailable. Playing in map mode. Retry artwork to restore sprites.';$('retry-art').hidden=false;}finally{clearTimeout(timer);loading=false;draw();}}
 $('retry-art').onclick=artwork;artwork();
 function clear(){for(const k of keys)blocked.add(k);keys.clear();pointers.clear();moving=false;}
 function action(fn){if(started&&!$('journal-panel').hidden)return;if(started)fn();}
-function save(){try{localStorage.setItem(saveKey,encode(s));storageMessage='Saved on this device.';}catch{storageMessage='Storage unavailable. You can keep playing; this checkpoint was not saved.';}}
-function start(load=false){if(load){try{const saved=decode(localStorage.getItem(saveKey));if(!saved){$('title-status').textContent='No valid checkpoint found. Start a new journey.';return;}s=saved;}catch{$('title-status').textContent='Storage unavailable. Start a new journey to play without saving.';return;}}else s=fresh();storageMessage=load?'Checkpoint loaded.':'New journey: save at a waystone to replace your checkpoint.';started=true;$('journal-panel').hidden=true;$('title-screen').hidden=true;clear();c.focus();}
+function save(){try{localStorage.setItem(inRiver(s)?riverSaveKey:saveKey,encode(s));storageMessage='Saved on this device.';}catch{storageMessage='Storage unavailable. You can keep playing; this checkpoint was not saved.';}}
+function start(load=false,river=false){if(load){try{const saved=decode(localStorage.getItem(river?riverSaveKey:saveKey));if(!saved||inRiver(saved)!==river){$('title-status').textContent='No valid checkpoint found. Start a new journey.';return;}s=saved;}catch{$('title-status').textContent='Storage unavailable. Start a new journey to play without saving.';return;}}else {
+ s=fresh();
+ if(river)Object.assign(s,{room:riverStart,x:5.5,y:6.5,visited:[riverStart],message:'The east road is flooded. Mira is waiting by the village path.'});
+}storageMessage=load?'Checkpoint loaded.':'New journey: save at a waystone to replace your checkpoint.';started=true;$('journal-panel').hidden=true;$('title-screen').hidden=true;clear();c.focus();}
 function menu(){$('journal-panel').hidden=true;started=false;clear();$('title-screen').hidden=false;}
 $('venture').onclick=()=>{if(continueAdventure(s,world.continuation.room,world.continuation.at)){clear();c.focus();}};
-$('begin').onclick=()=>start();$('continue').onclick=()=>start(true);$('restart').onclick=menu;
+$('river-begin').onclick=()=>start(false,true);$('river-continue').onclick=()=>start(true,true);$('begin').onclick=()=>start();$('continue').onclick=()=>start(true);$('restart').onclick=menu;
 function use(){if(interact(s)==='save')save();}
 function journal(){if(!started)return;clear();if($('journal-panel').hidden){if(s.status==='playing')pause(s);$('journal-panel').hidden=false;$('journal-close').focus();}else{$('journal-panel').hidden=true;c.focus();}}
 $('light').onclick=()=>action(()=>toggle(s));$('attack').onclick=()=>action(()=>attack(s));$('potion').onclick=()=>action(()=>potion(s));$('interact').onclick=()=>action(use);$('secondary').onclick=()=>action(()=>secondary(s));$('journal').onclick=journal;$('journal-close').onclick=journal;
@@ -41,18 +49,19 @@ function resize(){
 }
 // Expanded room metadata is rendered directly; the legacy renderer owns IDs 0–29.
 function drawExpanded(){
- const r=roomInfo(s.room),art=atlas?.manifest,artId=dungeonArtIds[r.dungeon],terrain=r.kind==='overworld'?art?.contentBindings.lands[r.land]:art?.contentBindings.dungeons[artId]||artId,set=art?.regionSets[terrain];
+ const r=roomInfo(s.room),art=atlas?.manifest,artId=dungeonArtIds[r.dungeon],terrain=r.kind==='overworld'?art?.contentBindings.lands[r.land==='alderwick'?'riverreach':r.land]:art?.contentBindings.dungeons[artId]||artId,set=art?.regionSets[terrain];
  const sprite=(name,x,y,scale=1)=>atlas?.draw(g,name,x*40,y*40,animationMs,scale);
  const label=(text,x,y)=>{g.font='11px system-ui';g.textAlign='center';g.fillStyle='#10151ee8';g.fillRect(x*40-65,y*40-32,130,17);g.fillStyle='#ffe3aa';g.fillText(text,x*40,y*40-20);};
- for(let y=0;y<10;y++)for(let x=0;x<16;x++){const t=tile(s.room,x,y);if(set){atlas.draw(g,set.floor[(x+y*7)%set.floor.length],x*40,y*40,animationMs);if(t==='#')atlas.draw(g,set.wall[(x+y)%set.wall.length],x*40,y*40,animationMs);if(t==='~'){atlas.draw(g,set.water,x*40,y*40,animationMs);const mask=[[0,-1,1],[1,0,2],[0,1,4],[-1,0,8]].reduce((m,[dx,dy,b])=>m|(tile(s.room,x+dx,y+dy)!=='~'?b:0),0);atlas.draw(g,set.shore[mask],x*40,y*40,animationMs);}if(t==='^')sprite('effect.danger-ring',x+.5,y+.5);}else{g.fillStyle=t==='#'?'#575568':t==='~'?'#173650':'#243b38';g.fillRect(x*40,y*40,39,39);}if(t==='D'&&solid(s,x+.5,y+.5))sprite('prop.gate.0',x+.5,y+.5);}
+ for(let y=0;y<10;y++)for(let x=0;x<16;x++){const t=tile(s.room,x,y);if(inRiver(s)&&r.kind==='overworld'){paintRiverGround(g,s.room-riverStart,x,y,t);}else if(set){atlas.draw(g,set.floor[(x+y*7)%set.floor.length],x*40,y*40,animationMs);if(t==='#')atlas.draw(g,set.wall[(x+y)%set.wall.length],x*40,y*40,animationMs);if(t==='~'){atlas.draw(g,set.water,x*40,y*40,animationMs);const mask=[[0,-1,1],[1,0,2],[0,1,4],[-1,0,8]].reduce((m,[dx,dy,b])=>m|(tile(s.room,x+dx,y+dy)!=='~'?b:0),0);atlas.draw(g,set.shore[mask],x*40,y*40,animationMs);}if(t==='^')sprite('effect.danger-ring',x+.5,y+.5);}else{g.fillStyle=t==='#'?'#575568':t==='~'?'#173650':'#243b38';g.fillRect(x*40,y*40,39,39);}if(t==='D'&&!inRiver(s)&&solid(s,x+.5,y+.5))sprite('prop.gate.0',x+.5,y+.5);}
+ if(inRiver(s))paintRiverScenery(g,s.room-riverStart,s.equipment.includes('river-sluice-wheel'),s.events.includes('river-guide-lamp'));
  const mark=(name,at,text)=>{if(atlas)sprite(name,...at);else{g.fillStyle='#f4d080';g.fillRect(at[0]*40-9,at[1]*40-9,18,18);}label(text,...at);};
  if(r.checkpoint)mark('prop.waystone',r.checkpointAt||[3.5,5.5],'Waystone · E');
  for(const l of r.links||[])mark('prop.stairs.0',l.at,(l.label||roomInfo(l.to)?.name.split(' · ')[0]||'Passage')+' · E');
  for(const p of r.scenery||[])sprite(art?.scenerySets[p.kind]||set?.landmark||'prop.mossward.foliage',p.x,p.y);
  for(const h of r.hazards||[])mark('effect.danger-ring',h.at,h.equipment?human(h.equipment)+' protects':'Hazard · keep clear');
  for(const p of r.characters||[])mark(art?.contentBindings.characters[p.name]||'npc.ida.idle',p.at,(p.name||'Keeper')+' · E');
- for(const p of r.puzzles||[]){const v=s.expandedPuzzles[p.id],done=s.events.includes(p.id);mark(done?'prop.plate-lit.0':'prop.plate.0',p.source,done?'Circuit restored':p.mechanic?'Source · E for instructions':p.shade?'Lower light here':'Raise light here');for(const [i,c] of p.controls.entries())mark(v?.marks?.[i]?'prop.plate-lit.0':p.mechanic==='roots'?'prop.relic-root':p.mechanic==='frost'||p.mechanic==='reflection'?'prop.moon-mirror.0':'prop.relic-prism',c.at,p.mechanic?controlLabel(p,v,i):`${v?.controls?.[i]||0}/${c.target} · E`);}
- for(const reward of r.rewards||[])if(!s.events.includes(reward.id))mark('prop.chest.0',reward.at,'Keeper gift · E');
+ for(const p of r.puzzles||[]){const v=s.expandedPuzzles[p.id],done=s.events.includes(p.id);mark(done?'prop.plate-lit.0':'prop.plate.0',p.source,done?'Circuit restored':p.id==='river-guide-lamp'?'Guide lamp':p.id==='river-sluice-aligned'?'Light receiver':p.mechanic?'Source · E for instructions':p.shade?'Lower light here':'Raise light here');for(const [i,c] of p.controls.entries())mark(v?.marks?.[i]?'prop.plate-lit.0':p.mechanic==='roots'?'prop.relic-root':p.mechanic==='frost'||p.mechanic==='reflection'?'prop.moon-mirror.0':'prop.relic-prism',c.at,p.mechanic?controlLabel(p,v,i):`${v?.controls?.[i]||0}/${c.target} · E`);}
+ for(const reward of r.rewards||[])if(!s.events.includes(reward.id))mark('prop.chest.0',reward.at,reward.id==='river-warden-cleared'?'Sluice wheel · E':'Keeper gift · E');
  for(const shop of r.shops||[])mark('prop.chest.0',shop.at,`${human(shop.item)} · ${shop.price} coins · E`);
  if(r.ending)mark('prop.beacon',r.ending.at,'Far Lantern · E');
  for(const e of s.enemies[s.room])if(e.hp>0){if(e.boss)bossTell(g,(name,x,y,scale)=>sprite(name,x/40,y/40,scale),s,e);else if(e.phase==='tell'){sprite('effect.danger-ring',e.x,e.y);}const kind=e.boss?art?.bossSets[artId]:e.kind==='brambleling'?'briarling':e.kind;sprite(`enemy.${kind}.${e.phase==='recover'?'hurt':e.phase==='tell'?'windup':e.phase==='strike'?'attack':'walk'}`,e.x,e.y);if(!atlas){g.fillStyle='#e58b83';g.fillRect(e.x*40-10,e.y*40-10,20,20);}if(e.boss)label(e.phase==='recover'?'Exposed · strike':e.name||'Warden',e.x,e.y);}
@@ -62,7 +71,11 @@ function drawExpanded(){
  if(!atlas){g.fillStyle='#e2f6c0';g.fillRect(s.x*40-10,s.y*40-10,20,20);}
 }
 function navigationText(){
- const here=roomInfo(s.room),all=campaignMap(s),group=regionFilter|| (here.kind==='overworld'?'land:'+here.land:'dungeon:'+here.dungeon);
+ if(inRiver(s)){
+  $('region-name').textContent='River Valley';
+  return riverMap(s);
+ }
+ const here=roomInfo(s.room),all=campaignMap(s).filter(r=>r.id<riverStart),group=regionFilter|| (here.kind==='overworld'?'land:'+here.land:'dungeon:'+here.dungeon);
  const visible=all.filter(r=>group.startsWith('land:')?r.kind==='overworld'&&r.land===group.slice(5):r.kind!=='overworld'&&String(r.dungeon)===group.slice(8));
  const title=group.startsWith('land:')?human(group.slice(5)):visible[0]?.name.split(' · ')[0];
  $('region-name').textContent=title||'Current region';
@@ -79,23 +92,37 @@ function navigationText(){
 function renderJournal(){
  const here=roomInfo(s.room);$('journal-location').textContent=`${here.name} · ${s.visited.length}/${rooms.length} places explored`;
  for(const id of ['quests','navigation','inventory'])$('tab-'+id).setAttribute('aria-pressed',String(tab===id));
- $('region-controls').hidden=tab!=='navigation';
+ $('region-controls').hidden=tab!=='navigation'||inRiver(s);
  if(tab==='navigation'){$('journal-text').textContent=navigationText();return;}
  if(tab==='inventory'){$('journal-text').textContent=[`Blade ${s.sword} · Hearts ${s.hp}/${s.maxHp} · Relics ${s.relics.length}/3 · Seals ${story.seals.filter(id=>s.seals.includes(id)).length}/6`, `Lantern: ${s.light?'raised':'lowered'}. Reveals bridges and caches; light and shade both power keeper circuits.`, `Tonic ${s.potions}/${s.tonicCapacity} · Q restores five hearts. Waystones heal freely; shops sell supplies for coins.`, `Sun-disc: ${s.events.includes('reed-disc')||s.equipment.includes('sun-disc')?'X throws a returning stun weapon.':'Seek Sen and illuminate the three singing reeds.'}`, ...s.equipment.map(id=>'✓ '+human(id)+(rooms.some(r=>(r.gates||[]).some(g=>g.equipment===id))?' · Opens marked keeper roads and caches.':'')),...rewards.filter(r=>s.events.includes(r.id)).map(r=>'✓ '+(r.description||human(r.id))), 'Earned equipment works automatically at matching hazards and keeper roads. Maps reveal the dungeon route; no equipment is consumed.'].join('\n\n');return;}
+ if(inRiver(s)){$('journal-text').textContent=[currentObjective(s),...(here.puzzles||[]).map(p=>p.hint).filter(Boolean),'Waystones heal and save. The ridge path is optional.','Close this journal, then press P or Resume to continue.'].join('\n\n');return;}
  const optional=quests.map(q=>{const giver=characters.find(c=>c.id===q.giver),done=q.steps.filter(st=>s.events.includes(st.id||st.discovery)).length;return `${s.events.includes(q.id)?'✓':'◇'} ${giver?.name||'Keeper'}: ${q.steps.map(st=>{const d=discoveries.find(d=>d.id===st.discovery);return st.room!==undefined?`${human(st.action)} at ${roomInfo(st.room)?.name||st.room}`:d?`Read ${roomInfo(27+discoveries.indexOf(d))?.name}`:human(st.discovery);}).join('; ')} · ${done}/${q.steps.length}`;});
  const regional=adventure.quests.map(q=>`${s.quests.includes(q.id)?'✓':'◇'} ${q.text}`);
  $('journal-text').textContent=[objective(s),...(here.puzzles||[]).map(p=>p.hint),'Mira’s request: restore Rootvault, Drowned Archive and Prism Crypt, then raise the lantern at the northern beacon. Each heart strengthens your blade.', 'Beyond the beacon: choose Follow the distant lights after restoring dawn. Mira waits on the Far Road; explore six lands, recover their seals and bring them to the Far Lantern.',...optional,...(s.beaconRestored?regional:[]),'Close this journal, then press P or Resume to continue.'].join('\n\n');
 }
 for(const id of ['quests','navigation','inventory'])$('tab-'+id).onclick=()=>{tab=id;regionFilter=null;renderJournal();};
-const groups=[...new Set(rooms.map(r=>r.kind==='overworld'?'land:'+r.land:'dungeon:'+r.dungeon))];
+const groups=[...new Set(rooms.filter(r=>r.id<riverStart).map(r=>r.kind==='overworld'?'land:'+r.land:'dungeon:'+r.dungeon))];
 for(const [id,delta] of [['region-prev',-1],['region-next',1]])$(id).onclick=()=>{const r=roomInfo(s.room),current=regionFilter||(r.kind==='overworld'?'land:'+r.land:'dungeon:'+r.dungeon);regionFilter=groups[(groups.indexOf(current)+delta+groups.length)%groups.length];$('region-name').textContent=regionFilter.startsWith('land:')?human(regionFilter.slice(5)):rooms.find(r=>r.kind!=='overworld'&&String(r.dungeon)===regionFilter.slice(8))?.name.split(' · ')[0];renderJournal();};
+function riverMap(state){
+ const namesByRoom=['Alderwick','Willowbank','Heron Ridge','Intake','Sluice chamber','Wheelhouse','East Crossing'];
+ const marker=index=>state.room===riverStart+index?'◆':state.visited.includes(riverStart+index)?'·':'○';
+ if(roomInfo(state.room).kind==='dungeon'){
+  return [3,4,5].map(index=>marker(index)+' '+namesByRoom[index]).join('\n');
+ }
+ const crossing=state.equipment.includes('river-sluice-wheel')?marker(6)+' East Crossing':'× Flooded road';
+ return `         ${marker(2)} Heron Ridge\n         │\n${marker(0)} Alderwick ─ ${marker(1)} Willowbank ─ ${crossing}\n         │\n         ▣ Waterworks`;
+}
 function draw(){g.setTransform(c.width/640,0,0,c.height/400,0,0);g.imageSmoothingEnabled=false;
  g.clearRect(0,0,640,400);
  if(s.room>=30)drawExpanded();else if(atlas)drawWorld(g,atlas,s,animationMs,moving);else drawFallback(g,s);
  $('secondary').disabled=!s.events.includes('reed-disc')&&!s.equipment.includes('sun-disc');$('secondary').textContent=(s.events.includes('reed-disc')||s.equipment.includes('sun-disc'))?'Sun-disc · X':'Sun-disc · seek Sen';
  renderJournal();
  $('venture').hidden=!(s.status==='won'&&s.beaconRestored&&!s.expandedEnding);
- $('room').textContent=names[s.room];$('stats').textContent=`Hearts ${s.hp}/${s.maxHp} · Blade ${s.sword} · Relics ${s.relics.length}/3 · ${s.coins} coins${s.beaconRestored?' · Seals '+story.seals.filter(id=>s.seals.includes(id)).length+'/6':''}`;$('objective').textContent=objective(s);const speaker=characters.find(person=>person.encounters.some(e=>e.room===s.room&&(e.text===s.message||e.after===s.message)));$('message').textContent=(speaker?speaker.name+': ':'')+s.message;$('save-status').textContent=[storageMessage,artMessage].filter(Boolean).join(' ');$('potion').textContent=`Tonic ${s.potions} · Q`;$('light').textContent=`Lantern ${s.light?'ON':'OFF'} · L`;$('light').setAttribute('aria-pressed',String(s.light));$('pause').textContent=s.status==='paused'?'Resume · P':'Pause · P';$('overlay').hidden=s.status==='playing';$('overlay').textContent=s.status==='paused'?'Paused · P to resume':`${s.message} Use Journey to continue or restart.`;
+ $('room').textContent=names[s.room];$('stats').textContent=inRiver(s)?`Hearts ${s.hp}/${s.maxHp} · Tonic ${s.potions}`:`Hearts ${s.hp}/${s.maxHp} · Blade ${s.sword} · Relics ${s.relics.length}/3 · ${s.coins} coins${s.beaconRestored?' · Seals '+story.seals.filter(id=>s.seals.includes(id)).length+'/6':''}`;$('objective').textContent=currentObjective(s);const speaker=characters.find(person=>person.encounters.some(e=>e.room===s.room&&(e.text===s.message||e.after===s.message)));$('message').textContent=(speaker?speaker.name+': ':'')+s.message;$('save-status').textContent=[storageMessage,artMessage].filter(Boolean).join(' ');$('potion').textContent=`Tonic ${s.potions} · Q`;$('light').textContent=`Lantern ${s.light?'ON':'OFF'} · L`;$('light').setAttribute('aria-pressed',String(s.light));$('pause').textContent=s.status==='paused'?'Resume · P':'Pause · P';$('overlay').hidden=s.status==='playing';$('overlay').textContent=s.status==='paused'?'Paused · P to resume':`${s.message} Use Journey to continue or restart.`;
+ if(inRiver(s)){
+  $('map').textContent=roomInfo(s.room).kind==='overworld'?'Open map · K':'Waterworks';
+  return;
+ }
  const map=[];for(let row=0;row<3;row++){map.push(Array.from({length:5},(_,col)=>{const id=row*5+col;return s.room===id?'◆':entrances.includes(id)?'▣':camps.includes(id)?'✦':s.visited.includes(id)?'·':'?';}).join('  '));}$('map').textContent=map.join('\n');
 }
 let last=null,accumulator=0;function frame(now){const elapsed=last===null?0:Math.min(.12,Math.max(0,(now-last)/1000));last=now;if(started&&s.status==='playing'){accumulator+=elapsed;while(accumulator>=1/60){let x=0,y=0;for(const k of keys){const v=moves[k];if(v){x+=v[0];y+=v[1];}}for(const v of pointers.values()){x+=v[0];y+=v[1];}const previousX=s.x,previousY=s.y;step(s,{x,y},1/60);moving=s.x!==previousX||s.y!==previousY;animationMs+=1000/60;accumulator-=1/60;}}else accumulator=0;draw();requestAnimationFrame(frame);}resize();new ResizeObserver(resize).observe(stage);requestAnimationFrame(frame);

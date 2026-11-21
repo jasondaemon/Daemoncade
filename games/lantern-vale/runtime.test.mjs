@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
-import {fresh,encode,rooms,roomInfo,canStand} from './campaign.mjs?v=0.3.0-alpha.6';
+import {fresh,encode,rooms,roomInfo,canStand} from './campaign.mjs?v=river-1';
 import manifest from './assets/gameplay/manifest.mjs';
 class Element {
  constructor(){this.events={};this.style={};this.hidden=false;this.textContent='';this.dataset={};}
@@ -27,7 +27,9 @@ test('browser adapter: save failure, pause, title, resize and touch cancellation
  stage.getBoundingClientRect=()=>({width:800,height:450});resizeCallback();assert.doesNotMatch(nodes['save-status'].textContent,/artwork/);
  nodes.continue.onclick();assert.match(nodes['title-status'].textContent,/Storage unavailable/);
  globalThis.localStorage={getItem:()=>'{invalid',setItem(){throw Error('blocked');}};nodes.continue.onclick();assert.match(nodes['title-status'].textContent,/No valid checkpoint/);
- nodes.begin.onclick();tick();assert.match(nodes.message.textContent,/Mira:/);assert.equal(nodes.map.textContent.split('\n').length,3,'map displays three overworld rows');assert.ok(nodes['journal-text'].textContent.includes('\n\n'),'journal separates quest entries into paragraphs');assert.ok(!nodes['journal-text'].textContent.includes('\\n'),'journal does not display escaped newline text');assert.equal(nodes['title-screen'].hidden,true);assert.equal(canvas.width,1440);
+ nodes['river-begin'].onclick();tick();assert.equal(nodes.room.textContent,'Alderwick');assert.match(nodes.map.textContent,/Open map/);assert.match(nodes.objective.textContent,/guide lamp/);
+ nodes.interact.onclick();tick();assert.match(nodes['save-status'].textContent,/not saved/);
+ nodes.restart.onclick();nodes.begin.onclick();tick();assert.match(nodes.message.textContent,/Mira:/);assert.equal(nodes.map.textContent.split('\n').length,3,'map displays three overworld rows');assert.ok(nodes['journal-text'].textContent.includes('\n\n'),'journal separates quest entries into paragraphs');assert.ok(!nodes['journal-text'].textContent.includes('\\n'),'journal does not display escaped newline text');assert.equal(nodes['title-screen'].hidden,true);assert.equal(canvas.width,1440);
  nodes.interact.onclick();tick();assert.match(nodes['save-status'].textContent,/not saved/);
  nodes.pause.onclick();tick();assert.match(nodes.overlay.textContent,/Paused/);nodes.pause.onclick();tick();assert.equal(nodes.overlay.hidden,true);
  nodes.journal.onclick();tick();assert.equal(nodes['journal-panel'].hidden,false);assert.match(nodes['journal-text'].textContent,/Sen:/);nodes['journal-close'].onclick();tick();assert.match(nodes.overlay.textContent,/Paused/);nodes.pause.onclick();tick();
@@ -54,7 +56,7 @@ test('browser adapter: save failure, pause, title, resize and touch cancellation
  const expanded=fresh();Object.assign(expanded,{room:30,beaconRestored:true,visited:[0,30,48],equipment:['tide-boots','rootvault-map'],seals:['river-seal']});
  globalThis.localStorage={getItem:()=>encode(expanded),setItem(){writes++;}};nodes.restart.onclick();nodes.continue.onclick();tick();assert.match(nodes.room.textContent,/Far Road/);assert.match(nodes.stats.textContent,/Seals 1\/6/);
  nodes.journal.onclick();nodes['tab-inventory'].onclick();tick();assert.match(nodes['journal-text'].textContent,/Tide Boots/);nodes['tab-navigation'].onclick();tick();assert.match(nodes['journal-text'].textContent,/Far Road/);assert.match(nodes['journal-text'].textContent,/Unexplored/);nodes['tab-quests'].onclick();tick();assert.match(nodes['journal-text'].textContent,/Cinder Forge/);nodes['journal-close'].onclick();nodes.pause.onclick();nodes.interact.onclick();tick();assert.match(nodes['save-status'].textContent,/Saved on this device/);
- assert.equal(rooms.filter(r=>r.kind==='overworld').length,141);assert.equal(rooms.filter(r=>r.id>=300).length,108);for(const r of rooms)for(const link of r.links||[])assert.ok(roomInfo(link.to),'every interface passage resolves');
+ assert.equal(rooms.filter(r=>r.kind==='overworld'&&r.id<500).length,141);assert.equal(rooms.filter(r=>r.id>=300&&r.id<500).length,108);for(const r of rooms)for(const link of r.links||[])assert.ok(roomInfo(link.to),'every interface passage resolves');
  // A completed original beacon remains an ending, with an explicit additive continuation.
  const beacon=fresh();Object.assign(beacon,{room:4,relics:[0,1,2],visited:[0,4]});globalThis.localStorage={getItem:()=>encode(beacon),setItem(){}};nodes.restart.onclick();nodes.continue.onclick();tick();
  nodes.journal.onclick();nodes['tab-navigation'].onclick();tick();assert.match(nodes['journal-text'].textContent,/Northern Beacon/);nodes['journal-close'].onclick();nodes.pause.onclick();tick();

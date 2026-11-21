@@ -241,7 +241,17 @@ function expandedBoss(s,e,dt){const dx=s.x-e.x,dy=s.y-e.y,dist=Math.hypot(dx,dy)
  const angle=Math.atan2(dy,dx),aim=Math.atan2(e.aim[1],e.aim[0])+(1-e.timer/(e.strike||.6))*Math.PI;
  if((['charge','hunt'].includes(e.kind)&&dist<1)||(e.kind==='ring'&&Math.abs(dist-(1-e.timer/(e.strike||.6))*6)<.65)||(e.kind==='cross'&&(Math.abs(s.x-e.target[0])<.6||Math.abs(s.y-e.target[1])<.6))||(e.kind==='sweep'&&dist<7&&Math.abs(Math.atan2(Math.sin(angle-aim),Math.cos(angle-aim)))<.2))hurt(s,2);
 }
-function saveExpansion(s){return {equipment:s.equipment,quests:s.quests,seals:s.seals,puzzles:s.expandedPuzzles,beaconRestored:s.beaconRestored,ending:s.expandedEnding,events:s.events.filter(id=>!eventIds.has(id)),enemies:Object.fromEntries(rooms.filter(r=>r.id>=30).map(r=>[r.id,(s.enemies[r.id]||[]).map(e=>e.hp)]))};}
+function saveExpansion(s){
+ const enemies={};
+ for(const r of rooms){
+  if(r.id<30)continue;
+  const encounter=s.enemies[r.id];
+  if(encounter.some((enemy,index)=>enemy.hp!==r.encounters[index].hp)){
+   enemies[r.id]=encounter.map(enemy=>enemy.hp);
+  }
+ }
+ return {equipment:s.equipment,quests:s.quests,seals:s.seals,puzzles:s.expandedPuzzles,beaconRestored:s.beaconRestored,ending:s.expandedEnding,events:s.events.filter(id=>!eventIds.has(id)),enemies};
+}
 function restoreExpansion(s,v,version){if(v===undefined)return version===1||!rooms.some(r=>r.id>=30);
  if(!v||typeof v!=='object'||Array.isArray(v))return false;
  const allowed=new Set(expansionIds()),equipment=new Set(),seals=new Set();

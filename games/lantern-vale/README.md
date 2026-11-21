@@ -1,4 +1,22 @@
-# Lantern Vale · The shared dawn
+# Lantern Vale
+
+## River Valley playtest
+
+Start the static server with `./scripts/serve.sh` and open
+`http://127.0.0.1:4174/games/lantern-vale/`. Choose **Play the River Valley chapter**.
+Start in Alderwick and find out why the east road is flooded. Use the journal (K) to
+see the region map. Finish by reaching the waystone on the far side of the crossing.
+
+Arrow keys or WASD move, L raises the lantern, E interacts, J or Space strikes,
+and Q uses a tonic. The buttons support touch. River Valley has its own checkpoint
+and Continue button. The original campaign and its checkpoint are under
+**Original campaign** in the Journey menu.
+
+This self-contained chapter tests surface exploration, a dungeon puzzle, a boss,
+and a reward that changes the route above ground. Outdoor compositions are a
+first art pass. The dungeon and characters reuse the existing raster atlas.
+
+## The shared dawn
 
 A full-window Canvas adventure alpha about a keeper carrying Mira’s last lantern. Restore three heart relics and dawn at the northern beacon, then choose **Follow the distant lights** to reach six distant lands and the Far Lantern resolution. The original route remains playable unchanged.
 
