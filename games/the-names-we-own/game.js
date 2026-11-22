@@ -12,6 +12,39 @@ const captions = {
 };
 const placeNames = {tollhouse:"Tollhouse", riverbank:"Riverbank", crossing:"Bellwick bridge"};
 let pendingFrame;
+let ambientTimer;
+let ambientPhase = 0;
+let motionPaused = false;
+const motionButton = document.querySelector("#scene-motion");
+const twinkle = ["+", "+", "x", "*", "+", "+", ".", "+", "+"];
+const ripple = ["~", "~", "-", "=", "~", ".", "~", "~", "-"];
+
+function sceneMotionEnabled() {
+  return !motionPaused && !motion.matches && !document.hidden;
+}
+
+function syncSceneMotion() {
+  clearInterval(ambientTimer);
+  motionButton.disabled = motion.matches;
+  motionButton.textContent = motion.matches ? "Scene motion off" : motionPaused ? "Resume scene motion" : "Pause scene motion";
+  motionButton.setAttribute("aria-pressed", String(motionPaused || motion.matches));
+  if (!sceneMotionEnabled()) return;
+  ambientTimer = setInterval(() => {
+    ambientPhase++;
+    for (const cell of bridge.querySelectorAll("[data-ambient]")) {
+      const frames = cell.dataset.ambient === "star" ? twinkle : ripple;
+      cell.textContent = frames[(ambientPhase + Number(cell.dataset.phase)) % frames.length];
+    }
+  }, 360);
+}
+
+motionButton.addEventListener("click", () => {
+  motionPaused = !motionPaused;
+  syncSceneMotion();
+});
+motion.addEventListener("change", syncSceneMotion);
+document.addEventListener("visibilitychange", syncSceneMotion);
+syncSceneMotion();
 
 function updateScene(animate = true) {
   const room = player.loc;
@@ -23,15 +56,15 @@ function updateScene(animate = true) {
   clearTimeout(pendingFrame);
   caption.textContent = placeNames[room] + " / " + captions[stage];
   const view = room === "tollhouse" && (stage === "paid" || stage === "tolls") ? "riverbank" : room;
-  if (!animate || motion.matches || !reveal) {
+  if (!animate || !sceneMotionEnabled() || !reveal) {
     drawCells(bridge, terminalFrame(view, stage));
     return;
   }
   let visible = 0;
   function frame() {
-    const rows = terminalFrame(view, stage, motion.matches ? 8 : visible);
+    const rows = terminalFrame(view, stage, sceneMotionEnabled() ? visible : 8);
     drawCells(bridge, rows);
-    if (visible++ < 8 && !motion.matches) pendingFrame = setTimeout(frame, 65);
+    if (visible++ < 8 && sceneMotionEnabled()) pendingFrame = setTimeout(frame, 65);
   }
   frame();
 }
