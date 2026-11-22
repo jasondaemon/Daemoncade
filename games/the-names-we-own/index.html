@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self'; style-src 'self'; img-src 'self'; base-uri 'none'; form-action 'none'">
   <title>The Names We Own</title>
-  <link rel="stylesheet" href="game.css?v=5">
+  <link rel="stylesheet" href="game.css?v=6">
   <script defer src="settings.js"></script>
   <script defer src="vendor/questjs/_util.js"></script>
   <script defer src="vendor/questjs/_settings.js"></script>
@@ -21,15 +21,35 @@
   <script defer src="vendor/questjs/_npc.js"></script>
   <script defer src="vendor/questjs/_parser.js"></script>
   <script defer src="vendor/questjs/_commands.js"></script>
-  <script defer src="story.js?v=5"></script>
-  <script defer src="scenes.js?v=5"></script>
-  <script defer src="game.js?v=5"></script>
+  <script defer src="story.js?v=6"></script>
+  <script defer src="scenes.js?v=6"></script>
+  <script defer src="encounter.js?v=6"></script>
+  <script defer src="game.js?v=6"></script>
 </head>
 <body>
   <header><h1>THE NAMES WE OWN</h1><span>BELLWICK CROSSING</span></header>
   <main id="main">
     <figure aria-label="Current location">
-      <pre id="bridge" aria-hidden="true"></pre>
+      <div class="scene-view">
+        <pre id="bridge" aria-hidden="true"></pre>
+        <section id="encounter" aria-labelledby="encounter-name" hidden>
+          <header class="encounter-header">
+            <h2 id="encounter-name">ORRA <span>// TROLL KEEPER</span></h2>
+            <button id="encounter-close" type="button">Leave</button>
+          </header>
+          <div class="encounter-body">
+            <pre id="encounter-portrait" aria-hidden="true"></pre>
+            <div>
+              <p id="encounter-line"></p>
+              <div class="encounter-topics" aria-label="Topics">
+                <button type="button" data-topic="ask orra about the plank">The plank</button>
+                <button type="button" data-topic="ask orra about the bell">The bell</button>
+                <button type="button" id="encounter-invitation" data-topic="show invitation to orra">Show invitation</button>
+              </div>
+            </div>
+          </div>
+        </section>
+      </div>
       <figcaption class="scene-footer"><span id="bridge-status">Fog hides the center of the bridge.</span><button id="scene-motion" type="button" aria-pressed="false">Pause scene motion</button></figcaption>
     </figure>
     <section id="inner" aria-label="Terminal transcript and command line">

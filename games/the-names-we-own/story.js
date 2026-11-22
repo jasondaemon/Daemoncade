@@ -47,7 +47,7 @@ createItem("ledger", {
 createItem("orra", NPC(), {alias:"Orra", synonyms:["troll", "keeper", "troll keeper"], loc:"tollhouse", scenery:true,
   examine:"The troll holds the door against the storm. A brass ferry bell hangs at his belt.",
   talkto() {
-    msg(player.spokeUp ? "Orra keeps a finger on the corrected line. “I'm listening.”" : "“The plank broke,” Orra says. “I kept the bridge open. Ask anyone who got home.”");
+    orraSpeaks(player.spokeUp ? "Orra keeps a finger on the ledger. “I'm listening.”" : "Orra keeps his eyes on the rain. “The plank broke. I kept the bridge open. Ask anyone who got home.”");
     return world.SUCCESS;
   },
 });
@@ -79,8 +79,33 @@ function storyCommand(name, regex, script) {
   new Cmd(name, {regexes:[regex], score:20, objects:[], script});
 }
 
+function orraTopic(name, regex, reply, pose) {
+  storyCommand(name, regex, () => {
+    if (player.loc !== w.orra.loc) {
+      return failedmsg(player.loc === "riverbank" ? "Orra is in the tollhouse to the north." : "Orra is in the tollhouse to the west.");
+    }
+    if (name === "OrraInvitation" && !w.invitation.isAtLoc(player.name)) return failedmsg("You aren't carrying the invitation.");
+    orraSpeaks(reply(), pose);
+    return world.SUCCESS;
+  });
+}
+
+orraTopic("OrraPlank", /^ask orra about (?:the )?plank$/, () =>
+  player.spokeUp ? "“I could have asked Bellwick for help,” Orra says. “I thought I could mend the whole thing before anyone noticed.”" :
+    "“I heard it crack under a cart. A child was halfway across. I knew what a new plank would cost.”");
+orraTopic("OrraBell", /^ask orra about (?:the )?bell$/, () =>
+  player.resolution === "paid" ? "Orra reaches for the bell and finds an empty loop. “Still getting used to that.”" :
+    "“It was my mother’s. One ring for the far bank, two for home. She could ring it once and have the whole bank listening.”");
+orraTopic("OrraInvitation", /^(?:show (?:the )?invitation to orra|show orra (?:the )?invitation)$/, () =>
+  "Orra turns away from the door and studies the little chair drawn next to the kitchen. “They put me by the stove. They remembered.”", "invitation");
+
+storyCommand("LeaveEncounter", /^(?:leave conversation|end conversation|leave)$/, () => {
+  if (!closeEncounter()) return failedmsg("You're not in a conversation. Try a direction to travel.");
+  return world.SUCCESS_NO_TURNSCRIPTS;
+});
+
 storyCommand("StoryHelp", /^(?:help|commands)$/, () => {
-  msg("Type LOOK, EXAMINE something, TALK TO someone, or a direction like SOUTH. HINT gives a nudge. SAVE followed by a name stores your place on this device. LOAD followed by that name restores it.");
+  msg("Type LOOK, EXAMINE something, TALK TO someone, or a direction like SOUTH. HINT gives a nudge. In a conversation, ASK about a topic or type LEAVE. SAVE followed by a name stores your place on this device. LOAD followed by that name restores it.");
   return world.SUCCESS_NO_TURNSCRIPTS;
 });
 
@@ -101,7 +126,11 @@ storyCommand("Accountability", /^(?:name orra|confront orra|tell orra the truth|
   player.spokeUp = true;
   msg("You lay the tally sticks beside the ledger. “These were their fares home. You took them and wrote Bellwick's name in the debt column.”");
   msg("Orra grips the bell. “I meant to put them back before fair day.”");
-  msg("You set his invitation on the desk. He studies the little chair drawn beside the kitchen door. “They still expect me?”");
+  if (w.invitation.isAtLoc(player.name)) {
+    msg("You set his invitation on the desk. He studies the little chair drawn beside the kitchen door. “They still expect me?”");
+  } else {
+    msg("You tell him about the invitation and the chair they drew for him beside the kitchen door. “They still expect me?”");
+  }
   msg("“They sent it yesterday. What happens today is up to you.”");
   msg("Leth comes in as you explain the two ways to make it right. SELL THE BELL and repay everyone now, or SIGN OVER THE TOLLS and let Bellwick collect what it's owed.");
   return world.SUCCESS;

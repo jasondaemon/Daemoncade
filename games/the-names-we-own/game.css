@@ -46,3 +46,30 @@ button { min-height: 44px; color: #83ddb4; background: transparent; border: 0; f
 .command-bar button { border: 1px solid var(--rule); padding: .2rem .6rem; font-size: .78rem; }
 .command-bar button:not(:disabled):hover { background: #223b33; }
 .command-bar button:disabled { color: var(--dim); opacity: .65; cursor: default; }
+
+.scene-view { position: relative; display: grid; align-items: center; }
+.scene-view > * { grid-area: 1 / 1; }
+#encounter {
+  z-index: 1;
+  justify-self: center;
+  width: min(98%, 41rem);
+  margin-block: .7rem;
+  border: 1px solid #88b997;
+  background: #0b1b18;
+  box-shadow: .4rem .4rem 0 #080f10;
+  padding: .5rem .8rem;
+  font-size: .82rem;
+}
+#encounter .encounter-header { padding: 0; }
+#encounter-name { margin: 0; font: inherit; font-weight: bold; color: #ffcf77; }
+#encounter-name span { color: var(--dim); }
+#encounter-close { min-height: 38px; padding-inline: .4rem; }
+.encounter-body { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: .7rem; align-items: center; }
+#encounter-portrait { width: auto; margin: 0; font-size: clamp(.43rem, 1.3cqi, .72rem); }
+#encounter-line { margin: .55rem 0; }
+.encounter-topics { display: flex; flex-wrap: wrap; gap: 0 .45rem; }
+.encounter-topics button { min-height: 44px; padding: .14rem .2rem; text-decoration: underline; text-underline-offset: .2rem; }
+@media (max-width: 27rem) {
+  #encounter { padding: .35rem .5rem; font-size: .74rem; }
+  .encounter-body { gap: .4rem; }
+}

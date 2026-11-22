@@ -28,7 +28,10 @@ function syncSceneMotion() {
   motionButton.disabled = motion.matches;
   motionButton.textContent = motion.matches ? "Scene motion off" : motionPaused ? "Resume scene motion" : "Pause scene motion";
   motionButton.setAttribute("aria-pressed", String(motionPaused || motion.matches));
-  if (!sceneMotionEnabled()) return;
+  if (!sceneMotionEnabled()) {
+    stopPortrait();
+    return;
+  }
   ambientTimer = setInterval(() => {
     ambientPhase++;
     for (const cell of bridge.querySelectorAll("[data-ambient]")) {
@@ -77,6 +80,7 @@ const commandConditions = {
 };
 
 function updateCommands() {
+  document.querySelector("#encounter-invitation").disabled = !w.invitation.isAtLoc(player.name);
   for (const button of commandButtons) {
     const {room, reveal, requires} = button.dataset;
     button.hidden = Boolean((room && room !== player.loc) || (reveal && !commandConditions[reveal]()));
@@ -85,6 +89,7 @@ function updateCommands() {
 }
 
 settings.afterLoad = () => {
+  closeEncounter();
   updateScene(false);
   updateCommands();
 };
@@ -111,6 +116,7 @@ function submit(raw) {
     runCmd(command);
   }
   input.value = "";
+  if (player.loc !== w.orra.loc) closeEncounter();
   updateScene();
   updateCommands();
   if (atEnd) output.scrollTop = output.scrollHeight;
@@ -119,6 +125,12 @@ function submit(raw) {
 // QuestJS also handles keys on document. Keep form controls and screen-reader
 // navigation outside its global shortcuts, and submit only from our prompt.
 document.addEventListener("keydown", event => {
+  if (event.key === "Escape" && !event.isComposing && closeEncounter()) {
+    event.preventDefault();
+    event.stopImmediatePropagation();
+    input.focus();
+    return;
+  }
   if (event.target !== input) {
     event.stopImmediatePropagation();
     return;
@@ -147,5 +159,12 @@ for (const button of commandButtons) {
     if (event.detail === 0 && (button.hidden || button.disabled)) input.focus();
   });
 }
+for (const button of encounter.querySelectorAll("[data-topic]")) {
+  button.addEventListener("click", () => submit(button.dataset.topic));
+}
+document.querySelector("#encounter-close").addEventListener("click", () => {
+  submit("leave conversation");
+  input.focus();
+});
 updateScene(false);
 updateCommands();
