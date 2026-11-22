@@ -81,6 +81,44 @@ function landscape(room, stage, visible) {
   return cells.map(row => row.join(""));
 }
 
+// Expand the layout into two rows of independently shaped cells. Sparse
+// markers stay one cell wide, while surfaces gain seams and texture.
+const detailCells = {
+  " ": ["  ", "  "],
+  "@": ["@ ", "  "],
+  ".": [". ", "  "],
+  ":": [". ", " ."],
+  "#": ["##", "#:"],
+  "^": [" ^", "^^"],
+  "v": ["vv", " v"],
+  ",": [", ", " ,"],
+  "~": ["~ ", " ~"],
+  "=": ["==", " ~"],
+  "/": [" /", "/ "],
+  "\\": ["\\ ", " \\"],
+  "_": ["  ", "__"],
+  "-": ["--", "  "],
+  "|": ["| ", "| "],
+  "[": ["[ ", "| "],
+  "]": [" ]", " |"],
+  "*": ["**", " *"],
+  "+": ["++", "  "],
+  "X": ["XX", "XX"],
+};
+
+function detailFrame(rows) {
+  return rows.flatMap(row => {
+    const upper = [];
+    const lower = [];
+    for (const glyph of row) {
+      const [top, bottom] = detailCells[glyph] ?? [glyph + " ", "  "];
+      upper.push(top);
+      lower.push(bottom);
+    }
+    return [upper.join(""), lower.join("")];
+  });
+}
+
 const cellColors = {
   "~":"water", "=":"foam", ",":"reed", "v":"reed", "^":"leaf", "#":"stone",
   "/":"timber", "\\":"timber", "_":"timber", "|":"timber", "-":"timber",
@@ -105,7 +143,7 @@ function drawCells(target, rows) {
       run = "";
     }
     for (const [column, glyph] of [...row].entries()) {
-      if (glyph === "@" || glyph === "~" && (index * 7 + column) % 5 === 0) {
+      if (glyph === "@" || glyph === "~" && (index * 7 + column) % 11 === 0) {
         flush();
         const cell = document.createElement("span");
         cell.className = glyph === "@" ? "flame" : "water";
@@ -127,5 +165,5 @@ function drawCells(target, rows) {
 }
 
 function terminalFrame(room, stage, visible = 8) {
-  return landscape(room, stage, visible);
+  return detailFrame(landscape(room, stage, visible));
 }
