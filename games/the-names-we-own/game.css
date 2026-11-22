@@ -41,3 +41,8 @@ button { min-height: 44px; color: #83ddb4; background: transparent; border: 0; f
 
 .scene-footer { display: flex; justify-content: space-between; align-items: baseline; flex-wrap: wrap; gap: .2rem 1rem; }
 #scene-motion { min-height: 28px; padding: 0 .25rem; font-size: .73rem; }
+
+.command-bar { display: flex; flex-wrap: wrap; gap: .35rem; padding: .55rem .25rem 0; }
+.command-bar button { border: 1px solid var(--rule); padding: .2rem .6rem; font-size: .78rem; }
+.command-bar button:not(:disabled):hover { background: #223b33; }
+.command-bar button:disabled { color: var(--dim); opacity: .65; cursor: default; }

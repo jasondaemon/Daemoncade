@@ -69,7 +69,25 @@ function updateScene(animate = true) {
   frame();
 }
 
-settings.afterLoad = () => updateScene(false);
+const commandButtons = document.querySelectorAll("#commands [data-command]");
+const commandConditions = {
+  cross: bridgeOpen,
+  confront: () => hasEvidence() && !player.spokeUp,
+  settle: () => player.spokeUp && !player.resolution,
+};
+
+function updateCommands() {
+  for (const button of commandButtons) {
+    const {room, reveal, requires} = button.dataset;
+    button.hidden = Boolean((room && room !== player.loc) || (reveal && !commandConditions[reveal]()));
+    button.disabled = Boolean(io.disableLevel || (requires && !commandConditions[requires]()));
+  }
+}
+
+settings.afterLoad = () => {
+  updateScene(false);
+  updateCommands();
+};
 settings.playMode = "poc";
 world.init();
 let input;
@@ -94,6 +112,7 @@ function submit(raw) {
   }
   input.value = "";
   updateScene();
+  updateCommands();
   if (atEnd) output.scrollTop = output.scrollHeight;
 }
 
@@ -122,4 +141,11 @@ enter.type = "button";
 enter.textContent = "ENTER";
 enter.addEventListener("click", () => submit(input.value));
 document.querySelector("#input").append(enter);
+for (const button of commandButtons) {
+  button.addEventListener("click", event => {
+    submit(button.dataset.command);
+    if (event.detail === 0 && (button.hidden || button.disabled)) input.focus();
+  });
+}
 updateScene(false);
+updateCommands();

@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self'; style-src 'self'; img-src 'self'; base-uri 'none'; form-action 'none'">
   <title>The Names We Own</title>
-  <link rel="stylesheet" href="game.css?v=4">
+  <link rel="stylesheet" href="game.css?v=5">
   <script defer src="settings.js"></script>
   <script defer src="vendor/questjs/_util.js"></script>
   <script defer src="vendor/questjs/_settings.js"></script>
@@ -21,9 +21,9 @@
   <script defer src="vendor/questjs/_npc.js"></script>
   <script defer src="vendor/questjs/_parser.js"></script>
   <script defer src="vendor/questjs/_commands.js"></script>
-  <script defer src="story.js"></script>
-  <script defer src="scenes.js?v=4"></script>
-  <script defer src="game.js?v=4"></script>
+  <script defer src="story.js?v=5"></script>
+  <script defer src="scenes.js?v=5"></script>
+  <script defer src="game.js?v=5"></script>
 </head>
 <body>
   <header><h1>THE NAMES WE OWN</h1><span>BELLWICK CROSSING</span></header>
@@ -36,7 +36,24 @@
       <p id="loading" role="status">Opening the field journal…</p>
       <div id="output" role="log" aria-label="Story transcript" tabindex="0"></div>
       <div id="input"></div>
-      <p class="command-help"><kbd>HELP</kbd> commands <span>/</span> <kbd>HINT</kbd> a nudge <span>/</span> <kbd>↑ ↓</kbd> history</p>
+      <nav id="commands" class="command-bar" aria-label="Available commands">
+        <button type="button" data-command="look" disabled>Look</button>
+        <button type="button" data-command="inventory" disabled>Inventory</button>
+        <button type="button" data-command="help" disabled>Help</button>
+        <button type="button" data-command="hint" disabled>Hint</button>
+        <button type="button" data-command="examine ledger" data-room="tollhouse" hidden>Examine ledger</button>
+        <button type="button" data-command="talk to orra" data-room="tollhouse" hidden>Talk to Orra</button>
+        <button type="button" data-command="talk to fen" data-room="tollhouse" hidden>Talk to Fen</button>
+        <button type="button" data-command="south" data-room="tollhouse" hidden>South · riverbank</button>
+        <button type="button" data-command="east" data-room="tollhouse" data-requires="cross" hidden>East · bridge</button>
+        <button type="button" data-command="talk to leth" data-room="riverbank" hidden>Talk to Leth</button>
+        <button type="button" data-command="north" data-room="riverbank" hidden>North · tollhouse</button>
+        <button type="button" data-command="west" data-room="crossing" hidden>West · tollhouse</button>
+        <button type="button" data-command="name orra" data-room="tollhouse" data-reveal="confront" hidden>Name Orra</button>
+        <button type="button" data-command="sell the bell" data-room="tollhouse" data-reveal="settle" hidden>Sell the bell</button>
+        <button type="button" data-command="sign over the tolls" data-room="tollhouse" data-reveal="settle" hidden>Sign over the tolls</button>
+      </nav>
+      <p class="command-help"><kbd>↑ ↓</kbd> command history</p>
     </section>
   </main>
   <dialog id="dialog"><div id="dialog-title"></div><div id="dialog-content"></div><div id="dialog-footer"></div></dialog>

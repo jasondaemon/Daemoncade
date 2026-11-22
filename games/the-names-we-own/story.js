@@ -13,10 +13,13 @@ createItem("me", PLAYER(), {
   resolution: "",
 });
 
+const bridgeOpen = () => player.resolution === "paid";
+const hasEvidence = () => player.sawLedger && player.heardSurveyor && player.heardWitness;
+
 createRoom("tollhouse", {
   alias: "The tollhouse",
   desc: "Rain rattles on the roof. A ledger lies open on the desk. Orra, the troll keeper, braces the door with one boot. Fen, a dwarf surveyor, counts notches on a tally stick. The bridge is east. The riverbank, where the elf witness is waiting, is south.",
-  east: new Exit("crossing", {isLocked: () => player.resolution !== "paid"}),
+  east: new Exit("crossing", {isLocked: () => !bridgeOpen()}),
   south: new Exit("riverbank"),
 });
 
@@ -94,7 +97,7 @@ storyCommand("StoryHint", /^hint$/, () => {
 storyCommand("Accountability", /^(?:name orra|confront orra|tell orra the truth|accuse (?:orra|the keeper))$/, () => {
   if (player.loc !== "tollhouse") return failedmsg("Orra is in the tollhouse, north of here.");
   if (player.spokeUp) return failedmsg("Orra has already admitted what happened.");
-  if (!player.sawLedger || !player.heardSurveyor || !player.heardWitness) return failedmsg("You have a suspicion. Put the ledger, the tally sticks and the witness's account together before you ask him to answer for it.");
+  if (!hasEvidence()) return failedmsg("You have a suspicion. Put the ledger, the tally sticks and the witness's account together before you ask him to answer for it.");
   player.spokeUp = true;
   msg("You lay the tally sticks beside the ledger. “These were their fares home. You took them and wrote Bellwick's name in the debt column.”");
   msg("Orra grips the bell. “I meant to put them back before fair day.”");
