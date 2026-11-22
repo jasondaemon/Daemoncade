@@ -4,43 +4,34 @@ const bridge = document.querySelector("#bridge");
 const caption = document.querySelector("#bridge-status");
 const output = document.querySelector("#output");
 const motion = matchMedia("(prefers-reduced-motion: reduce)");
-const glyphs = {
-  fog: ["                            ", "         .  .   .           ", "____|---             ---|____", "    |                   |    ", "~  ~~~  ~~~   ~~~  ~~  ~~~  ~"],
-  debt: ["        B E . . W I . .     ", "          .   .             ", "____|--------?       ---|____", "    |                   |    ", "~  ~~~  ~~~   ~~~  ~~  ~~~  ~"],
-  paid: ["        B E L L W I C K     ", "      *               *     ", "____|===================|____", "    |                   |    ", "~  ~~~  ~~~   ~~~  ~~  ~~~  ~"],
-  tolls: ["        B E L L W I C K     ", "      *    CLOSED     *     ", "____|===================|____", "    |                   |    ", "~  ~~~  ~~~   ~~~  ~~  ~~~  ~"],
-};
 const captions = {
   fog:"Fog hides the center of the bridge.",
   debt:"The missing name is taking shape. The gate is still shut.",
   paid:"Bellwick’s name is restored. The bridge is open.",
   tolls:"Bellwick’s name is restored. The gate is closed for inspection.",
 };
-
+const placeNames = {tollhouse:"Tollhouse", riverbank:"Riverbank", crossing:"Bellwick bridge"};
 let pendingFrame;
 
 function updateScene(animate = true) {
+  const room = player.loc;
   const stage = player.resolution || (player.spokeUp ? "debt" : "fog");
-  if (bridge.dataset.stage === stage) return;
+  if (bridge.dataset.stage === stage && bridge.dataset.location === room) return;
+  const reveal = stage !== bridge.dataset.stage && (stage === "paid" || stage === "tolls");
   bridge.dataset.stage = stage;
+  bridge.dataset.location = room;
   clearTimeout(pendingFrame);
-  const lines = glyphs[stage];
-  caption.textContent = captions[stage];
-  if (!animate || motion.matches || (stage !== "paid" && stage !== "tolls")) {
-    bridge.textContent = lines.join("\n");
+  caption.textContent = placeNames[room] + " / " + captions[stage];
+  const view = room === "tollhouse" && (stage === "paid" || stage === "tolls") ? "riverbank" : room;
+  if (!animate || motion.matches || !reveal) {
+    drawCells(bridge, terminalFrame(view, stage));
     return;
   }
-  let visibleLetters = 0;
+  let visible = 0;
   function frame() {
-    const banner = lines[0].replace(/\w/g, (glyph, offset) =>
-      offset < 8 + visibleLetters * 2 ? glyph : " ");
-    bridge.textContent = [banner, ...lines.slice(1)].join("\n");
-    if (visibleLetters < 8 && !motion.matches) {
-      visibleLetters++;
-      pendingFrame = setTimeout(frame, 65);
-    } else {
-      bridge.textContent = lines.join("\n");
-    }
+    const rows = terminalFrame(view, stage, motion.matches ? 8 : visible);
+    drawCells(bridge, rows);
+    if (visible++ < 8 && !motion.matches) pendingFrame = setTimeout(frame, 65);
   }
   frame();
 }
@@ -93,8 +84,9 @@ input.setAttribute("aria-label", "Type a command");
 input.placeholder = "Type a command";
 input.maxLength = 120;
 
-for (const button of document.querySelectorAll("[data-command]")) {
-  button.addEventListener("click", () => submit(button.dataset.command));
-}
-document.querySelector("#submit-command").addEventListener("click", () => submit(input.value));
+const enter = document.createElement("button");
+enter.type = "button";
+enter.textContent = "ENTER";
+enter.addEventListener("click", () => submit(input.value));
+document.querySelector("#input").append(enter);
 updateScene(false);

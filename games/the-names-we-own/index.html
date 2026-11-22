@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self'; style-src 'self'; img-src 'self'; base-uri 'none'; form-action 'none'">
   <title>The Names We Own</title>
-  <link rel="stylesheet" href="game.css">
+  <link rel="stylesheet" href="game.css?v=2">
   <script defer src="settings.js"></script>
   <script defer src="vendor/questjs/_util.js"></script>
   <script defer src="vendor/questjs/_settings.js"></script>
@@ -22,25 +22,21 @@
   <script defer src="vendor/questjs/_parser.js"></script>
   <script defer src="vendor/questjs/_commands.js"></script>
   <script defer src="story.js"></script>
-  <script defer src="game.js"></script>
+  <script defer src="scenes.js?v=2"></script>
+  <script defer src="game.js?v=2"></script>
 </head>
 <body>
-  <header><h1>The Names We Own</h1><p>Bellwick Crossing</p></header>
+  <header><h1>THE NAMES WE OWN</h1><span>BELLWICK CROSSING</span></header>
   <main id="main">
-    <figure>
+    <figure aria-label="Current location">
       <pre id="bridge" aria-hidden="true"></pre>
       <figcaption id="bridge-status">Fog hides the center of the bridge.</figcaption>
     </figure>
-    <section id="inner" aria-label="Field journal">
+    <section id="inner" aria-label="Terminal transcript and command line">
       <p id="loading" role="status">Opening the field journal…</p>
       <div id="output" role="log" aria-label="Story transcript" tabindex="0"></div>
       <div id="input"></div>
-      <nav aria-label="Suggested commands">
-        <button type="button" data-command="look">Look</button>
-        <button type="button" data-command="help">Help</button>
-        <button type="button" data-command="hint">Hint</button>
-        <button type="button" id="submit-command">Enter</button>
-      </nav>
+      <p class="command-help"><kbd>HELP</kbd> commands <span>/</span> <kbd>HINT</kbd> a nudge <span>/</span> <kbd>↑ ↓</kbd> history</p>
     </section>
   </main>
   <dialog id="dialog"><div id="dialog-title"></div><div id="dialog-content"></div><div id="dialog-footer"></div></dialog>
