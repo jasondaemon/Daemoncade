@@ -125,7 +125,7 @@ const cellColors = {
   "[":"flame", "]":"flame", "*":"flame", "+":"flame", ".":"rain", ":":"rain",
 };
 
-function drawCells(target, rows) {
+function drawCells(target, rows, palette = cellColors) {
   const fragment = document.createDocumentFragment();
   for (const [index, row] of rows.entries()) {
     let previous;
@@ -153,7 +153,7 @@ function drawCells(target, rows) {
         fragment.append(cell);
         continue;
       }
-      const color = cellColors[glyph] || (/[A-Z]/.test(glyph) ? "flame" : "");
+      const color = palette[glyph] || (/[A-Z]/.test(glyph) ? "flame" : "");
       if (color !== previous) flush();
       previous = color;
       run += glyph;

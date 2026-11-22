@@ -6,26 +6,58 @@ const encounterLine = document.querySelector("#encounter-line");
 let portraitTimer;
 let portraitPose;
 
+const portraitWidth = 42;
+const orraPalette = {
+  "#":"portrait-shadow", ":":"portrait-shadow",
+  "s":"portrait-skin", "S":"portrait-light",
+  "o":"portrait-eye", "*":"portrait-eye",
+  "t":"portrait-tusk", "-":"portrait-mouth",
+  "m":"portrait-mouth", ".":"portrait-mouth",
+  "/":"portrait-cloak", "|":"portrait-cloak",
+  "+":"portrait-clasp",
+};
+
 const orraPortrait = [
-  "       #######       ",
-  "    ###^^^^^^^###    ",
-  "   ##^^^^^^^^^^^##   ",
-  "  ##^^^##^^^##^^^##  ",
-  " [#^^^^++^^^++^^^^#] ",
-  " [#^^^^^^###^^^^^^#] ",
-  "  #^^^^^^^|^^^^^^^#  ",
-  "   #^^^---------^#   ",
-  "    ##^^^vvv^^^##    ",
-  "   /--#########--\\   ",
-  "  /_______________\\  ",
+  "#######",
+  "#####sssSSSsss#####",
+  "####ssSSSSSSSSSssss####",
+  "###ssSSSSSSSSSSSSSSsss###",
+  "##ssSSSSssssssssSSSSsss##",
+  "##ssSSss##########ssSSsss##",
+  "###ssSss###ssssss###ssSss###",
+  "ssss##ssSss##ssssssss##ssSss##ssss",
+  "ss##sssSss*oSssssssSo*ssSsss##ss",
+  "s###ssSSSSSssSSSSSSssSSSSSss###s",
+  "##ssSSSSsssSSSSSSSSsssSSSSss##",
+  "##ssSSsssSSSSSSSSSSsssSSss##",
+  "###ssSSsssss####sssssSSss###",
+  "###ssSStsssssssssssstSSss###",
+  "###sssSts--------stSsss###",
+  "###ssssstssssssstsssss###",
+  "####ssssSSSSssss####",
+  "#####ssssss#####",
+  "////####::::::::####////",
+  "////////####::::::::####////////",
+  "//////|||||##::::::##|||||//////",
+  "//////////||||||::++::||||||//////////",
+];
+
+const eyesLookingDown = "ss##sssSSSSssssssssssssSSSSsss##ss";
+const mouths = [
+  orraPortrait[14],
+  "###sssSts--mmmm--stSsss###",
+  "###sssSts-mmmmmm-stSsss###",
 ];
 
 function drawOrra(frame = 0) {
   const rows = [...orraPortrait];
-  if (portraitPose === "invitation") rows[4] = " [#^^++^^^^++^^^^^#] ";
-  if (frame === 1) rows[7] = "   #^^^---___---^#   ";
-  if (frame === 2) rows[7] = "   #^^^--[___]--^#   ";
-  drawCells(portrait, rows);
+  if (portraitPose === "invitation") rows[8] = eyesLookingDown;
+  rows[14] = mouths[frame];
+  const centered = rows.map(row => {
+    const left = Math.floor((portraitWidth - row.length) / 2);
+    return (" ".repeat(left) + row).padEnd(portraitWidth);
+  });
+  drawCells(portrait, centered, orraPalette);
 }
 
 function stopPortrait() {

@@ -65,7 +65,7 @@ button { min-height: 44px; color: #83ddb4; background: transparent; border: 0; f
 #encounter-name span { color: var(--dim); }
 #encounter-close { min-height: 38px; padding-inline: .4rem; }
 .encounter-body { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: .7rem; align-items: center; }
-#encounter-portrait { width: auto; margin: 0; font-size: clamp(.43rem, 1.3cqi, .72rem); }
+#encounter-portrait { width: auto; margin: 0; font-size: clamp(.215rem, .65cqi, .36rem); }
 #encounter-line { margin: .55rem 0; }
 .encounter-topics { display: flex; flex-wrap: wrap; gap: 0 .45rem; }
 .encounter-topics button { min-height: 44px; padding: .14rem .2rem; text-decoration: underline; text-underline-offset: .2rem; }
@@ -73,3 +73,12 @@ button { min-height: 44px; color: #83ddb4; background: transparent; border: 0; f
   #encounter { padding: .35rem .5rem; font-size: .74rem; }
   .encounter-body { gap: .4rem; }
 }
+
+.portrait-shadow { color: #486455; }
+.portrait-skin { color: #7f9e68; }
+.portrait-light { color: #b3c787; }
+.portrait-eye { color: #ffce79; }
+.portrait-tusk { color: #efd6a9; }
+.portrait-mouth { color: #d09982; }
+.portrait-cloak { color: #76969d; }
+.portrait-clasp { color: #dbad63; }
