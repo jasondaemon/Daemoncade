@@ -124,3 +124,6 @@ Kenney Car Kit 3.1 and Nature Kit (Racecar)
   Creative Commons Zero (CC0). Original license files and source models are
   retained in games/racecar/assets/kenney-cars/ and kenney-nature/.
   Sources: https://kenney.nl/assets/car-kit and https://kenney.nl/assets/nature-kit
+
+QuestJS runtime (MIT, Copyright 2019 Andy Joel) is pinned at
+72fef6a7315b2d977d8b4f57c358a11ba85d765a. See games/the-names-we-own/vendor/questjs/LICENSE.
