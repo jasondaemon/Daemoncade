@@ -132,8 +132,14 @@ function updateCommands() {
     button.hidden = Boolean((room && room !== player.loc) || (reveal && !commandConditions[reveal]()));
     button.disabled = Boolean(runFailed || io.disableLevel || (requires && !commandConditions[requires]()));
   }
+  const evidence = {
+    PresentDriver: player.roadDecision === "oral",
+    PresentRubbing: player.roadDecision === "marked",
+    PresentNames: player.orchardDecision === "public",
+    PresentTally: player.orchardDecision === "sealed",
+  };
   for (const [choice, button] of campaignButtons) {
-    button.hidden = player.loc !== choice.room || !choice.ready();
+    button.hidden = player.loc !== choice.room || !choice.ready() || evidence[choice.id] === false;
   }
 }
 
@@ -148,6 +154,13 @@ settings.afterLoad = () => {
 settings.playMode = "poc";
 world.init();
 let input;
+let historyDraft = "";
+let parserFailed = false;
+const endTurn = world.endTurn;
+world.endTurn = function(result) {
+  parserFailed ||= result === world.PARSER_FAILURE;
+  return endTurn.call(this, result);
+};
 
 io.msgInputText = function(command) {
   const line = document.createElement("p");
@@ -163,6 +176,7 @@ function submit(raw) {
       runFailed = false;
       metamsg("Back at the tollhouse. Orra’s hand is still on the gate.");
       updateCommands();
+      input.focus();
     } else if (command) {
       metamsg("The run has ended. Type RETRY to return to the tollhouse.");
     }
@@ -177,7 +191,9 @@ function submit(raw) {
   } else {
     if (io.savedCommands.at(-1) !== command) io.savedCommands.push(command);
     io.savedCommandsPos = io.savedCommands.length;
+    parserFailed = false;
     runCmd(command);
+    if (parserFailed) metamsg("Try an available command below, or type LOOK to see what’s nearby and HINT for a lead.");
     if (location !== player.loc) {
       crossingWarned = false;
       disclosureWarned = false;
@@ -185,10 +201,12 @@ function submit(raw) {
     storeCheckpoint();
   }
   input.value = "";
+  historyDraft = "";
   if (player.loc !== encounterRoom) closeEncounter();
   updateScene();
   updateCommands();
   if (atEnd) output.scrollTop = output.scrollHeight;
+  if (runFailed) retry.focus();
 }
 
 // QuestJS also handles keys on document. Keep form controls and screen-reader
@@ -204,10 +222,25 @@ document.addEventListener("keydown", event => {
     event.stopImmediatePropagation();
     return;
   }
+  if (!io.keydownFunctions.length && (event.key === "ArrowUp" || event.key === "ArrowDown")) {
+    event.stopImmediatePropagation();
+    if (event.isComposing || parser.override || io.disableLevel) return;
+    event.preventDefault();
+    const history = io.savedCommands;
+    if (!history.length) return;
+    if (io.savedCommandsPos === history.length) historyDraft = input.value;
+    const step = event.key === "ArrowUp" ? -1 : 1;
+    io.savedCommandsPos = Math.max(0, Math.min(history.length, io.savedCommandsPos + step));
+    input.value = history[io.savedCommandsPos] ?? historyDraft;
+    input.setSelectionRange(input.value.length, input.value.length);
+    return;
+  }
   if (event.key === "Enter") {
     event.preventDefault();
     event.stopImmediatePropagation();
     if (!event.isComposing) submit(input.value);
+  } else if (!io.keydownFunctions.length) {
+    event.stopImmediatePropagation();
   }
 });
 
@@ -216,6 +249,9 @@ input = document.querySelector("#textbox");
 input.setAttribute("aria-label", "Type a command");
 input.placeholder = "Type a command";
 input.maxLength = 120;
+input.autocapitalize = "off";
+input.enterKeyHint = "go";
+input.spellcheck = false;
 
 const enter = document.createElement("button");
 enter.type = "button";

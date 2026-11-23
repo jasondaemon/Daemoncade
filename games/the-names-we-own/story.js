@@ -1,13 +1,16 @@
 "use strict";
 
 settings.title = "The Names We Own";
-settings.version = "1.0.0-rc.2";
+settings.version = "1.0.0-rc.3";
 settings.panes = "none";
 settings.cmdEcho = false;
-settings.roomTemplate = ["#{cap:{hereName}}", "{hereDesc}", "{exitsHere:You can go {exits}.}"];
+settings.roomTemplate = ["#{cap:{hereName}}", "{hereDesc}", "{exitsHere:You can go {openExits}.}"];
+tp.text_processors.openExits = () => formatList(currentLocation.getExitDirs({excludeLocked:true}), {
+  lastSep:lang.list_or, nothing:lang.list_nowhere,
+});
 settings.intro = [
   "By the time you reach the tollhouse, the sign across the river says WELCOME TO. Beneath it is enough bare wood for a whole village.",
-  "You're Bellwick's youngest courier. The farrier is waiting to hear whether his mare sold. You touch the brass pass on your coat. It promises you a crossing on any council road. The gate is shut anyway.",
+  "You're Bellwick's youngest courier. The farrier is waiting to hear whether his mare sold. You touch the brass pass on your coat. It promises you a crossing on any council road. The gate is shut anyway. If you can find out why Bellwick vanished, you might still get these letters home. Start with the open ledger.",
 ];
 
 createItem("me", PLAYER(), {
@@ -21,14 +24,22 @@ const hasEvidence = () => player.sawLedger && player.heardSurveyor && player.hea
 
 createRoom("tollhouse", {
   alias: "The tollhouse",
-  desc: "Rain rattles on the roof. A ledger lies open on the desk. Orra, the troll keeper, braces the door with one boot. Fen, a dwarf surveyor, counts notches on a tally stick. The bridge is east. The riverbank, where the elf witness is waiting, is south.",
+  desc() {
+    if (player.resolution === "paid") return "The new plank holds. The hooks by the door are empty where Orra used to hang his bell. Fen has set out six coppers in three envelopes. The bridge is east and the riverbank is south.";
+    if (player.resolution === "tolls") return "Bellwick’s village keeper has set a new toll book on the desk. Orra’s keys lie beside it. " +
+      (bridgeOpen() ? "The inspected bridge is open to the east." : "Fen is waiting for daylight to inspect the plank.") + " The riverbank is south.";
+    return "Rain rattles on the roof. A ledger lies open on the desk. Orra, the troll keeper, braces the door with one boot. Fen, a dwarf surveyor, counts notches on a tally stick. The bridge is east. The riverbank, where the elf witness is waiting, is south.";
+  },
   east: new Exit("crossing", {isLocked: () => !bridgeOpen()}),
   south: new Exit("riverbank"),
 });
 
 createRoom("riverbank", {
   alias: "The riverbank",
-  desc: "You follow the wall around to the river. Leth, an elf with water dripping from her sleeves, is holding a cellar hatch shut against the wind. She heard what was said when the ledger was altered. The tollhouse is north.",
+  desc() {
+    if (player.resolution) return "The cellar hatch is open. Leth sits above the high-water mark, sleeves drying in the wind. The tollhouse is north.";
+    return "You follow the wall around to the river. Leth, an elf with water dripping from her sleeves, is holding a cellar hatch shut against the wind. She heard what was said when the ledger was altered. The tollhouse is north.";
+  },
   north: new Exit("tollhouse"),
 });
 
@@ -67,6 +78,10 @@ createItem("fen", NPC(), {alias:"Fen", synonyms:["dwarf", "surveyor", "dwarf sur
 createItem("leth", NPC(), {alias:"Leth", synonyms:["elf", "witness", "elf witness"], loc:"riverbank", scenery:true,
   examine:"Leth has hooked a foot through the iron ring on the rattling hatch.",
   talkto() {
+    if (player.resolution) {
+      characterSpeaks("leth", "“Neris went ahead as soon as she could walk. Tell her I want my dry coat back.”");
+      return world.SUCCESS;
+    }
     player.heardWitness = true;
     characterSpeaks("leth", "“Orra said ‘Put it on my name.’ I watched him mark the ledger. Then he saw what the plank had cost and scratched his mark out.” There is a knock from beneath the hatch. “That's Neris. She's keeping the name from washing downstream.”");
     return world.SUCCESS;
@@ -123,6 +138,7 @@ storyCommand("StoryHint", /^hint$/, () => {
   else if (player.loc === "washout") msg(player.roadDecision ? "The orchard is EAST." : "EXAMINE MILEPOST and TALK TO FEN. Then OPEN THE ROAD or RECORD THE MILEPOSTS.");
   else if (player.loc === "crossing") msg("Fen is waiting to the NORTH.");
   else if (player.resolution) msg(bridgeOpen() ? "The bridge is east from the tollhouse. Fen is on its northern road." : "Bellwick has its name back. WAIT UNTIL DAWN at the tollhouse for Fen's inspection.");
+  else if (player.loc === "riverbank") msg(player.heardWitness ? "Return NORTH to the tollhouse and compare the accounts." : "TALK TO LETH while she is here at the hatch.");
   else if (!player.sawLedger) msg("Start at the tollhouse desk. EXAMINE LEDGER.");
   else if (!player.heardSurveyor) msg("The tally sticks might explain the missing money. TALK TO FEN at the tollhouse.");
   else if (!player.heardWitness) msg("SOUTH goes to the riverbank. TALK TO LETH about what she witnessed.");

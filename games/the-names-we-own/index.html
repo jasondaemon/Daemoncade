@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self'; style-src 'self'; img-src 'self'; base-uri 'none'; form-action 'none'">
   <title>The Names We Own</title>
-  <link rel="stylesheet" href="game.css?v=15">
+  <link rel="stylesheet" href="game.css?v=17">
   <script defer src="settings.js"></script>
   <script defer src="vendor/questjs/_util.js"></script>
   <script defer src="vendor/questjs/_settings.js"></script>
@@ -21,16 +21,16 @@
   <script defer src="vendor/questjs/_npc.js"></script>
   <script defer src="vendor/questjs/_parser.js"></script>
   <script defer src="vendor/questjs/_commands.js"></script>
-  <script defer src="story.js?v=11"></script>
-  <script defer src="campaign.js?v=11"></script>
+  <script defer src="story.js?v=17"></script>
+  <script defer src="campaign.js?v=17"></script>
   <script defer src="side-stories.js?v=11"></script>
   <script defer src="scenes.js?v=13"></script>
   <script defer src="encounter.js?v=11"></script>
-  <script defer src="stakes.js?v=11"></script>
-  <script defer src="checkpoint.js?v=11"></script>
+  <script defer src="stakes.js?v=17"></script>
+  <script defer src="checkpoint.js?v=17"></script>
   <script defer src="scene-glyphs.js?v=15"></script>
   <script defer src="scene-art.js?v=16"></script>
-  <script defer src="game.js?v=16"></script>
+  <script defer src="game.js?v=17"></script>
 </head>
 <body>
   <header><h1>THE NAMES WE OWN</h1><span id="chapter">CHAPTER 1 / BELLWICK CROSSING</span></header>
@@ -66,6 +66,7 @@
       <p id="loading" role="status">Opening the field journal…</p>
       <div id="output" role="log" aria-label="Story transcript" tabindex="0"></div>
       <div id="input"></div>
+      <p class="command-help"><kbd>↑ ↓</kbd> command history <span>/</span> <span id="checkpoint-status" role="status">Progress saves on this device</span></p>
       <nav id="commands" class="command-bar" aria-label="Available commands">
         <button type="button" data-command="look" disabled>Look</button>
         <button type="button" data-command="inventory" disabled>Inventory</button>
@@ -110,7 +111,7 @@
         <button type="button" data-command="south" data-room="records" hidden>South · hearing</button>
       </nav>
       <button id="retry-run" type="button" hidden>Retry from the tollhouse</button>
-      <p class="command-help"><kbd>↑ ↓</kbd> command history <span>/</span> <span id="checkpoint-status" role="status">Auto-save on</span></p>
+
     </section>
   </main>
   <dialog id="dialog"><div id="dialog-title"></div><div id="dialog-content"></div><div id="dialog-footer"></div></dialog>

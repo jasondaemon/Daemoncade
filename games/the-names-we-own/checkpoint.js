@@ -49,7 +49,7 @@ function restoreCheckpoint() {
     metamsg("Resumed from your automatic checkpoint.");
     currentLocation.description();
     metamsg(recapLead());
-    checkpointStatus.textContent = "Progress restored from this device";
+    checkpointStatus.textContent = "Resumed · " + (placeNames[player.loc] || chapterTitles[player.loc][1]);
   } catch {
     saveLoad.loadTheWorld(freshCheckpoint);
     checkpointStatus.textContent = "Couldn’t restore progress. Starting at Bellwick.";

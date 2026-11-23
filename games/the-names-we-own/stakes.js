@@ -38,7 +38,9 @@ function makeWitnessCase(kind) {
   player.witnessesPresented = true;
   disclosureWarned = false;
   msg(kind === "public"
-    ? "Iven reads only the names she has permission to speak. The carter stands. “You can put mine beside the winter repairs.”"
+    ? player.roadDecision === "oral"
+      ? "Iven reads only the names she has permission to speak. The carter stands. “You can put mine beside the winter repairs.”"
+      : "Iven reads the open names. The milepost keeper lays down her receipts and points to her own signature."
     : "Iven submits the count and both witnesses attest to it. The councilor accepts the tally without opening the bundle.");
   return world.SUCCESS;
 }
@@ -90,11 +92,12 @@ addAction("ForceCrossing", "tollhouse", "force the crossing", "Force the crossin
 });
 
 storyCommand("CaseNotebook", /^(?:review evidence|inspect evidence|review clues)$/, () => {
-  msg("Which account doesn’t fit? Compare what the money paid for with the name written in the ledger.");
+  if (!player.spokeUp) msg("Which account doesn’t fit? Compare what the money paid for with the name written in the ledger.");
   if (player.sawLedger) msg("Ledger: six coppers paid for a plank. Orra’s mark is scratched out under Bellwick.");
   if (player.heardSurveyor) msg("Fen: three return fares were prepaid. By morning the box was empty.");
   if (player.heardWitness) msg("Leth: she saw Orra write his own mark and scratch it out.");
   if (hasEvidence() && !player.spokeUp) msg("You can question the keeper’s account or challenge Fen’s tally.");
+  else msg(recapLead());
   return world.SUCCESS_NO_TURNSCRIPTS;
 });
 storyCommand("ChallengeFen", /^(?:accuse fen|challenge (?:fen|the tally))$/, () => {
@@ -123,6 +126,6 @@ function recapLead() {
   if (player.spokeUp) return "Orra admitted what he did. Decide how Bellwick should be repaid.";
   if (hasEvidence()) return "You have three Bellwick clues. Compare the ledger, tally sticks and Leth’s account.";
   if (player.heardWitness) return "Leth saw the ledger changed. Compare her account with the tollhouse records.";
-  if (player.sawLedger || player.heardSurveyor) return "You have part of the tollhouse account. A witness waits at the riverbank.";
+  if (player.sawLedger || player.heardSurveyor) return "You have part of the tollhouse account. Talk to Leth at the riverbank, south of the tollhouse.";
   return "Find out why Bellwick vanished from the sign and the crossing is barred.";
 }

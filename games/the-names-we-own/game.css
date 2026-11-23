@@ -40,7 +40,7 @@ button { min-height: 44px; color: #83ddb4; background: transparent; border: 0; f
 .rain { color: #6f989d; }
 
 .scene-footer { display: flex; justify-content: space-between; align-items: baseline; flex-wrap: wrap; gap: .2rem 1rem; }
-#scene-motion { min-height: 28px; padding: 0 .25rem; font-size: .73rem; }
+#scene-motion { min-height: 44px; padding: 0 .25rem; font-size: .73rem; }
 
 .command-bar { display: flex; flex-wrap: wrap; gap: .35rem; padding: .55rem .25rem 0; }
 .command-bar button { border: 1px solid var(--rule); padding: .2rem .6rem; font-size: .78rem; }
@@ -63,7 +63,7 @@ button { min-height: 44px; color: #83ddb4; background: transparent; border: 0; f
 #encounter .encounter-header { padding: 0; }
 #encounter-name { margin: 0; font: inherit; font-weight: bold; color: #ffcf77; }
 #encounter-name span { color: var(--dim); }
-#encounter-close { min-height: 38px; padding-inline: .4rem; }
+#encounter-close { min-height: 44px; padding-inline: .4rem; }
 .encounter-body { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: .7rem; align-items: center; }
 #encounter-portrait { width: auto; margin: 0; font-size: clamp(.215rem, .65cqi, .36rem); }
 #encounter-line { margin: .55rem 0; }

@@ -20,6 +20,8 @@ createRoom("washout", {
   alias:"The Road Beneath the Road",
   desc() {
     const opening = player.roadDecision === "oral" ? "Fresh tracks from the medicine cart cut through the mud. Fen has penciled a road back onto her map." :
+      player.roadDecision === "marked" ?
+      "Fen's signed rubbing lies under a stone while the repair crew fills the washout. The cart’s lamp moves along the ridge detour." :
       "ABANDONED, says Fen's map. Someone has put a lamp in every window along the road. At the washout, the lamps stop.";
     return opening + " An old milepost leans into the mud. The orchard is east, Bellwick is south, and the signal ridge lies west.";
   },
@@ -69,9 +71,15 @@ createItem("iven", NPC(), {
   alias:"Iven", synonyms:["elf", "archivist"], loc:"orchard", scenery:true,
   talkto() {
     player.orchardWitness = true;
+    if (player.trustBroken) {
+      closeEncounter();
+      msg("Iven closes the box. “You can leave the names here.” She turns back to the trees.");
+      return world.SUCCESS;
+    }
     if (player.orchardDecision) {
       characterSpeaks("iven", player.orchardDecision === "public"
-        ? "“The carter's waiting by the road. He only speaks for himself. That will be quite enough.”"
+        ? (player.roadDecision === "oral" ? "“The carter’s waiting by the road. He speaks for himself.”" :
+          "“The woman who keeps the milepost has offered to speak about her own work.”")
         : "“I've put the folded tally in a dry pocket. What people asked me to keep here stays here.”");
       return world.SUCCESS;
     }
@@ -152,7 +160,9 @@ const campaignActions = {
   },
   read() {
     player.orchardDecision = "public";
-    msg("Iven reads only the names she has permission to speak. At the third, a carter in the doorway takes off his hat. He asks to come to the hearing. The hall is north.");
+    msg("Iven reads only the names she has permission to speak. " +
+      (player.roadDecision === "oral" ? "A carter takes off his hat and asks to come to the hearing." :
+        "The woman who tends the milepost asks to bring her father’s repair receipts.") + " The hall is north.");
   },
   seal() {
     player.orchardDecision = "sealed";
@@ -162,7 +172,9 @@ const campaignActions = {
     player.hearingDecision = "shared";
     w.brass_pass.loc = false;
     reportAdditionalEvidence();
-    msg("You lay the pass beside Neris's lamp. The councilor reaches for it, stops, and asks who will pay for the repair. The households name a sum. One by one, the people who used the roads agree to share it. The clerk opens a new book and asks Iven how to spell the first name.");
+    msg("You lay the pass beside Neris's lamp. The councilor reaches for it, stops, and asks who will pay for the repair. The households name a sum. One by one, the people who used the roads agree to share it. " + (player.trustBroken
+      ? "The clerk asks Fen to enter the signed records. Iven’s seal stays closed."
+      : "The clerk asks Iven what the witnesses have agreed to put in the new book."));
   },
   local() {
     player.hearingDecision = "local";
@@ -174,8 +186,13 @@ const campaignActions = {
     msg("You deliver the last letter. The farrier calls from the table that the mare sold after all. Outside, a new courier asks if there's room by the kitchen door.");
     msg(player.roadDecision === "oral" ? "The medicine cart driver has left a wheel rut right up to the open door." :
       "Fen has hung a copy of the old milepost dates over the stove. Someone has added this morning’s repair.");
+    msg(player.resolution === "paid"
+      ? "The widow sets her empty fare envelope by Orra’s bowl. “You could have sent it with Fen,” she says. “I’m glad you came yourself.”"
+      : "The new toll keeper hangs Orra’s old keys by the door. Someone has chalked the first repaid fares beside them.");
     msg(player.trustBroken ? "Iven’s chair is empty. You find a note on it asking you to leave the orchard’s names where they are." :
-      "Iven sits near the kitchen. The carter brings her a bowl and asks whether he may sit beside her.");
+      player.orchardDecision === "sealed"
+      ? "Someone leaves Iven a bowl and a folded scrap beside it: Thank you for keeping it closed."
+      : "The first witness whose name Iven read takes the seat beside her. Together they make room for another bowl.");
     msg("“Slide along a bit,” Orra says. “We'll make another.”");
     msg(player.hearingDecision === "shared" ? "THE END · THE SHARED ROAD" : "THE END · ONE CROSSING AT A TIME");
   },
@@ -196,11 +213,20 @@ const chapterTitles = {
 storyCommand("CampaignJournal", /^(?:journal|objectives)$/, () => {
   const [number, title] = chapterTitles[player.loc];
   msg("Chapter " + number + " of 5 · " + title);
+  if (!player.resolution) {
+    const clues = [player.sawLedger && "the ledger charges Bellwick for the plank",
+      player.heardSurveyor && "Fen counted six prepaid coppers",
+      player.heardWitness && "Leth saw Orra scratch out his own mark"].filter(Boolean);
+    msg("Bellwick clues: " + (clues.join(". ") || "none yet") + ".");
+  }
   if (player.resolution) msg(player.resolution === "paid" ? "Bellwick: Orra sold his bell to repay the fares." : "Bellwick: the village took over the crossing.");
   if (player.roadDecision) msg(player.roadDecision === "oral" ? "Old road: the medicine cart driver can testify." : "Old road: Fen preserved the signed milepost record.");
   if (player.trustBroken) msg("Orchard: Iven withdrew after you broke the seal.");
   else if (player.orchardDecision) msg(player.orchardDecision === "public" ? "Orchard: Iven brought consented public testimony." : "Orchard: Iven sealed the testimony.");
   if (player.hearingDecision) msg(player.hearingDecision === "shared" ? "Hearing: you gave up your pass as part of a shared repair agreement." : "Hearing: individual settlements can reclaim their crossings.");
+  if (player.ridgeSignal) msg("Ridge: you lit both wicks to guide the cart.");
+  if (player.keptPromise) msg("Shed: the keeper’s account can be shared without a name.");
+  if (player.clerkCopy) msg("Copy room: you found the order to change the charter date.");
   if (player.completed) msg("The last letter is delivered.");
   else msg(recapLead());
   return world.SUCCESS_NO_TURNSCRIPTS;
