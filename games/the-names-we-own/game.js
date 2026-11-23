@@ -10,7 +10,7 @@ const captions = {
   paid:"Bellwick’s name is restored. The bridge is open.",
   tolls:"Bellwick’s name is restored. The gate is closed for inspection.",
 };
-const placeNames = {tollhouse:"Tollhouse", riverbank:"Riverbank", crossing:"Bellwick bridge"};
+const placeNames = {tollhouse:"Tollhouse", riverbank:"Riverbank", crossing:"Bellwick bridge", ridge:"Signal ridge", vestry:"Orchard shed", records:"Copy room"};
 let pendingFrame;
 let ambientTimer;
 let ambientPhase = 0;
@@ -51,13 +51,32 @@ syncSceneMotion();
 
 function updateScene(animate = true) {
   const room = player.loc;
-  const stage = player.resolution || (player.spokeUp ? "debt" : "fog");
+  const stage = {
+    ridge: player.ridgeSignal ? "signaled" : "ridge",
+    vestry: player.keptPromise ? "promise" : "vestry",
+    records: player.clerkCopy ? "copied" : "records",
+    washout: player.roadDecision || "washed",
+    orchard: player.orchardDecision || "unheard",
+    hall: player.hearingDecision || (player.charterClue ? "read" : "dim"),
+    home: player.completed ? "complete" : "arrival",
+  }[room] || (player.daylight ? "paid" : player.resolution) || (player.spokeUp ? "debt" : "fog");
   if (bridge.dataset.stage === stage && bridge.dataset.location === room) return;
   const reveal = stage !== bridge.dataset.stage && (stage === "paid" || stage === "tolls");
   bridge.dataset.stage = stage;
   bridge.dataset.location = room;
   clearTimeout(pendingFrame);
-  caption.textContent = placeNames[room] + " / " + captions[stage];
+  const [chapter, title] = chapterTitles[room];
+  document.querySelector("#chapter").textContent = "CHAPTER " + chapter + " / " + title.toUpperCase();
+  const sceneStatus = {
+    ridge:"The signal basket is dark.", signaled:"Two lights burn on the ridge.",
+    vestry:"A river stone holds down a folded note.", promise:"The private note stays beneath its stone.",
+    records:"The winter drawer is open.", copied:"The copyist’s note is ready to take to the hearing.",
+    washed:"A washout cuts the village road.", oral:"The crossing is clear for the cart.", marked:"Fen has copied the milepost dates.",
+    unheard:"Name tags move in the orchard.", public:"The volunteered names can be read in public.", sealed:"The testimony is sealed.",
+    dim:"An oil lamp stands beside the road charter.", read:"The original expiry date is visible.", shared:"The hall records a shared repair agreement.", local:"The hall returns the crossings to local hands.",
+    arrival:"Bellwick’s kitchen door stands open.", complete:"The last letter is delivered.",
+  };
+  caption.textContent = (placeNames[room] || title) + " / " + (room === "tollhouse" || room === "riverbank" || room === "crossing" ? captions[stage] : sceneStatus[stage]);
   const view = room === "tollhouse" && (stage === "paid" || stage === "tolls") ? "riverbank" : room;
   if (!animate || !sceneMotionEnabled() || !reveal) {
     drawCells(bridge, terminalFrame(view, stage));
@@ -72,9 +91,23 @@ function updateScene(animate = true) {
   frame();
 }
 
-const commandButtons = document.querySelectorAll("#commands [data-command]");
+const commandBar = document.querySelector("#commands");
+const campaignButtons = new Map();
+for (const choice of campaignChoices) {
+  const button = document.createElement("button");
+  button.type = "button";
+  button.dataset.command = choice.command;
+  button.textContent = choice.label;
+  button.hidden = true;
+  campaignButtons.set(choice, button);
+  commandBar.append(button);
+}
+const commandButtons = commandBar.querySelectorAll("[data-command]");
 const commandConditions = {
   cross: bridgeOpen,
+  road: () => Boolean(player.roadDecision),
+  orchard: () => Boolean(player.orchardDecision),
+  hearing: () => Boolean(player.hearingDecision),
   confront: () => hasEvidence() && !player.spokeUp,
   settle: () => player.spokeUp && !player.resolution,
 };
@@ -85,6 +118,9 @@ function updateCommands() {
     const {room, reveal, requires} = button.dataset;
     button.hidden = Boolean((room && room !== player.loc) || (reveal && !commandConditions[reveal]()));
     button.disabled = Boolean(io.disableLevel || (requires && !commandConditions[requires]()));
+  }
+  for (const [choice, button] of campaignButtons) {
+    button.hidden = player.loc !== choice.room || !choice.ready();
   }
 }
 
@@ -116,7 +152,7 @@ function submit(raw) {
     runCmd(command);
   }
   input.value = "";
-  if (player.loc !== w.orra.loc) closeEncounter();
+  if (player.loc !== encounterRoom) closeEncounter();
   updateScene();
   updateCommands();
   if (atEnd) output.scrollTop = output.scrollHeight;

@@ -1,11 +1,14 @@
 "use strict";
 
 settings.title = "The Names We Own";
-settings.version = "0.1.0";
+settings.version = "1.0.0-rc.1";
 settings.panes = "none";
 settings.cmdEcho = false;
 settings.roomTemplate = ["#{cap:{hereName}}", "{hereDesc}", "{exitsHere:You can go {exits}.}"];
-settings.intro = "By the time you reach the tollhouse, the sign across the river says WELCOME TO. Beneath it is enough bare wood for a whole village.";
+settings.intro = [
+  "By the time you reach the tollhouse, the sign across the river says WELCOME TO. Beneath it is enough bare wood for a whole village.",
+  "You're Bellwick's youngest courier. The farrier is waiting to hear whether his mare sold. You touch the brass pass on your coat. It promises you a crossing on any council road. The gate is shut anyway.",
+];
 
 createItem("me", PLAYER(), {
   loc: "tollhouse", examine: "You're Bellwick's youngest courier. You have a bag full of mail and two boots full of rain.",
@@ -13,7 +16,7 @@ createItem("me", PLAYER(), {
   resolution: "",
 });
 
-const bridgeOpen = () => player.resolution === "paid";
+const bridgeOpen = () => player.resolution === "paid" || player.daylight === true;
 const hasEvidence = () => player.sawLedger && player.heardSurveyor && player.heardWitness;
 
 createRoom("tollhouse", {
@@ -56,7 +59,7 @@ createItem("fen", NPC(), {alias:"Fen", synonyms:["dwarf", "surveyor", "dwarf sur
   examine:"The dwarf has three pieces of notched wood laid out on the table.",
   talkto() {
     player.heardSurveyor = true;
-    msg("“Two cuts on each stick,” Fen says. “One fare out, one fare home. Six coppers in the box when I left. By morning there was a new plank and an empty box.” She weighs Orra's bell in her hand. “Good brass. Worth six, easily.”");
+    characterSpeaks("fen", "“Two cuts on each stick,” Fen says. “One fare out, one fare home. Six coppers in the box when I left. By morning there was a new plank and an empty box.” She weighs Orra's bell in her hand. “Good brass. Worth six, easily.”");
     return world.SUCCESS;
   },
 });
@@ -65,7 +68,7 @@ createItem("leth", NPC(), {alias:"Leth", synonyms:["elf", "witness", "elf witnes
   examine:"Leth has hooked a foot through the iron ring on the rattling hatch.",
   talkto() {
     player.heardWitness = true;
-    msg("“Orra said ‘Put it on my name.’ I watched him mark the ledger. Then he saw what the plank had cost and scratched his mark out.” There is a knock from beneath the hatch. “That's Neris. She's keeping the name from washing downstream.”");
+    characterSpeaks("leth", "“Orra said ‘Put it on my name.’ I watched him mark the ledger. Then he saw what the plank had cost and scratched his mark out.” There is a knock from beneath the hatch. “That's Neris. She's keeping the name from washing downstream.”");
     return world.SUCCESS;
   },
 });
@@ -110,7 +113,16 @@ storyCommand("StoryHelp", /^(?:help|commands)$/, () => {
 });
 
 storyCommand("StoryHint", /^hint$/, () => {
-  if (player.resolution) msg(player.resolution === "paid" ? "The bridge is east from the tollhouse." : "Bellwick has its name back. The crossing will stay closed until daylight.");
+  if (player.completed) msg("Your last delivery is made. You can revisit any place or save this ending.");
+  else if (player.loc === "ridge") msg("EXAMINE BASKET, or go EAST to return to Fen.");
+  else if (player.loc === "vestry") msg("EXAMINE NOTE, or go WEST to return to Iven.");
+  else if (player.loc === "records") msg("EXAMINE DRAWER, or go SOUTH to return to the hearing.");
+  else if (player.loc === "home") msg("Type DELIVER THE LETTERS when you're ready to go inside.");
+  else if (player.loc === "hall") msg(player.hearingDecision ? "Go EAST for the road home." : "EXAMINE CHARTER and TALK TO NERIS; then decide between OFFER MY PASS and REQUEST LOCAL SETTLEMENTS.");
+  else if (player.loc === "orchard") msg(player.orchardDecision ? "The hall is NORTH." : "EXAMINE TAGS and TALK TO IVEN. Then READ PUBLIC TESTIMONY or SEAL TESTIMONY.");
+  else if (player.loc === "washout") msg(player.roadDecision ? "The orchard is EAST." : "EXAMINE MILEPOST and TALK TO FEN. Then OPEN THE ROAD or RECORD THE MILEPOSTS.");
+  else if (player.loc === "crossing") msg("Fen is waiting to the NORTH.");
+  else if (player.resolution) msg(bridgeOpen() ? "The bridge is east from the tollhouse. Fen is on its northern road." : "Bellwick has its name back. WAIT UNTIL DAWN at the tollhouse for Fen's inspection.");
   else if (!player.sawLedger) msg("Start at the tollhouse desk. EXAMINE LEDGER.");
   else if (!player.heardSurveyor) msg("The tally sticks might explain the missing money. TALK TO FEN at the tollhouse.");
   else if (!player.heardWitness) msg("SOUTH goes to the riverbank. TALK TO LETH about what she witnessed.");
@@ -149,6 +161,7 @@ function settle(resolution) {
     msg("You move the damp mail closer to the stove. Through the rain, you can see BELLWICK on the far-bank sign.");
   }
   msg("The cellar hatch lifts. Neris climbs out, soaked to the elbows. “Good,” she says. “I was running out of riverbank.”");
+  msg("She takes a bundle of letters out of her coat. Each has a blank where a town should be. She gives them to Fen. “Take the courier north when the crossing is open. This happened upriver last week.”");
   return world.SUCCESS;
 }
 

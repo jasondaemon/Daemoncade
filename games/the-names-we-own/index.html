@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self'; style-src 'self'; img-src 'self'; base-uri 'none'; form-action 'none'">
   <title>The Names We Own</title>
-  <link rel="stylesheet" href="game.css?v=7">
+  <link rel="stylesheet" href="game.css?v=8">
   <script defer src="settings.js"></script>
   <script defer src="vendor/questjs/_util.js"></script>
   <script defer src="vendor/questjs/_settings.js"></script>
@@ -21,20 +21,22 @@
   <script defer src="vendor/questjs/_npc.js"></script>
   <script defer src="vendor/questjs/_parser.js"></script>
   <script defer src="vendor/questjs/_commands.js"></script>
-  <script defer src="story.js?v=7"></script>
-  <script defer src="scenes.js?v=7"></script>
-  <script defer src="encounter.js?v=7"></script>
-  <script defer src="game.js?v=7"></script>
+  <script defer src="story.js?v=8"></script>
+  <script defer src="campaign.js?v=8"></script>
+  <script defer src="side-stories.js?v=8"></script>
+  <script defer src="scenes.js?v=8"></script>
+  <script defer src="encounter.js?v=8"></script>
+  <script defer src="game.js?v=8"></script>
 </head>
 <body>
-  <header><h1>THE NAMES WE OWN</h1><span>BELLWICK CROSSING</span></header>
+  <header><h1>THE NAMES WE OWN</h1><span id="chapter">CHAPTER 1 / BELLWICK CROSSING</span></header>
   <main id="main">
     <figure aria-label="Current location">
       <div class="scene-view">
         <pre id="bridge" aria-hidden="true"></pre>
         <section id="encounter" aria-labelledby="encounter-name" hidden>
           <header class="encounter-header">
-            <h2 id="encounter-name">ORRA <span>// TROLL KEEPER</span></h2>
+            <h2 id="encounter-name"><b id="speaker-name">ORRA</b> <span id="speaker-role">// TROLL KEEPER</span></h2>
             <button id="encounter-close" type="button">Leave</button>
           </header>
           <div class="encounter-body">
@@ -61,6 +63,7 @@
         <button type="button" data-command="inventory" disabled>Inventory</button>
         <button type="button" data-command="help" disabled>Help</button>
         <button type="button" data-command="hint" disabled>Hint</button>
+        <button type="button" data-command="journal" disabled>Journal</button>
         <button type="button" data-command="examine ledger" data-room="tollhouse" hidden>Examine ledger</button>
         <button type="button" data-command="talk to orra" data-room="tollhouse" hidden>Talk to Orra</button>
         <button type="button" data-command="talk to fen" data-room="tollhouse" hidden>Talk to Fen</button>
@@ -72,6 +75,29 @@
         <button type="button" data-command="name orra" data-room="tollhouse" data-reveal="confront" hidden>Name Orra</button>
         <button type="button" data-command="sell the bell" data-room="tollhouse" data-reveal="settle" hidden>Sell the bell</button>
         <button type="button" data-command="sign over the tolls" data-room="tollhouse" data-reveal="settle" hidden>Sign over the tolls</button>
+        <button type="button" data-command="north" data-room="crossing" hidden>North · old road</button>
+        <button type="button" data-command="examine milepost" data-room="washout" hidden>Examine milepost</button>
+        <button type="button" data-command="talk to fen" data-room="washout" hidden>Talk to Fen</button>
+        <button type="button" data-command="south" data-room="washout" hidden>South · bridge</button>
+        <button type="button" data-command="east" data-room="washout" data-requires="road" hidden>East · orchard</button>
+        <button type="button" data-command="examine tags" data-room="orchard" hidden>Examine tags</button>
+        <button type="button" data-command="talk to iven" data-room="orchard" hidden>Talk to Iven</button>
+        <button type="button" data-command="west" data-room="orchard" hidden>West · old road</button>
+        <button type="button" data-command="north" data-room="orchard" data-requires="orchard" hidden>North · hall</button>
+        <button type="button" data-command="examine charter" data-room="hall" hidden>Examine charter</button>
+        <button type="button" data-command="talk to neris" data-room="hall" hidden>Talk to Neris</button>
+        <button type="button" data-command="south" data-room="hall" hidden>South · orchard</button>
+        <button type="button" data-command="east" data-room="hall" data-requires="hearing" hidden>East · road home</button>
+        <button type="button" data-command="west" data-room="home" hidden>West · council hall</button>
+        <button type="button" data-command="west" data-room="washout" hidden>West · signal ridge</button>
+        <button type="button" data-command="examine basket" data-room="ridge" hidden>Examine signal basket</button>
+        <button type="button" data-command="east" data-room="ridge" hidden>East · old road</button>
+        <button type="button" data-command="east" data-room="orchard" hidden>East · orchard shed</button>
+        <button type="button" data-command="examine note" data-room="vestry" hidden>Read folded note</button>
+        <button type="button" data-command="west" data-room="vestry" hidden>West · orchard</button>
+        <button type="button" data-command="north" data-room="hall" hidden>North · copy room</button>
+        <button type="button" data-command="examine drawer" data-room="records" hidden>Look in the drawer</button>
+        <button type="button" data-command="south" data-room="records" hidden>South · hearing</button>
       </nav>
       <p class="command-help"><kbd>↑ ↓</kbd> command history</p>
     </section>

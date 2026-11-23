@@ -82,3 +82,17 @@ button { min-height: 44px; color: #83ddb4; background: transparent; border: 0; f
 .portrait-mouth { color: #d09982; }
 .portrait-cloak { color: #76969d; }
 .portrait-clasp { color: #dbad63; }
+
+.encounter-topics[hidden] { display: none; }
+.fen-skin { color: #b38865; }
+.fen-light { color: #f5c394; }
+.fen-shadow { color: #896650; }
+.leth-skin { color: #9a8b71; }
+.leth-light { color: #dfc5a1; }
+.leth-cloak { color: #7ba49b; }
+.iven-skin { color: #a38a8a; }
+.iven-light { color: #ddbabd; }
+.iven-cloak { color: #a698be; }
+.neris-skin { color: #928d7f; }
+.neris-light { color: #d7c79f; }
+.neris-cloak { color: #a698ce; }
