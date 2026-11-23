@@ -96,3 +96,21 @@ button { min-height: 44px; color: #83ddb4; background: transparent; border: 0; f
 .neris-skin { color: #928d7f; }
 .neris-light { color: #d7c79f; }
 .neris-cloak { color: #a698ce; }
+
+.scene-view > [hidden] { display: none; }
+#scene-illustration {
+  width: min(100%, 24rem);
+  height: auto;
+  max-height: 46dvh;
+  object-fit: contain;
+  justify-self: center;
+}
+#scene-view-toggle, #scene-illustration-toggle, #retry-run {
+  font-size: .78rem;
+  padding-inline: .35rem;
+}
+#retry-run {
+  border: 1px solid #ffcf77;
+  margin-top: .7rem;
+  color: #ffcf77;
+}

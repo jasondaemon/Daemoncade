@@ -1,7 +1,7 @@
 "use strict";
 
 settings.title = "The Names We Own";
-settings.version = "1.0.0-rc.1";
+settings.version = "1.0.0-rc.2";
 settings.panes = "none";
 settings.cmdEcho = false;
 settings.roomTemplate = ["#{cap:{hereName}}", "{hereDesc}", "{exitsHere:You can go {exits}.}"];
@@ -118,7 +118,7 @@ storyCommand("StoryHint", /^hint$/, () => {
   else if (player.loc === "vestry") msg("EXAMINE NOTE, or go WEST to return to Iven.");
   else if (player.loc === "records") msg("EXAMINE DRAWER, or go SOUTH to return to the hearing.");
   else if (player.loc === "home") msg("Type DELIVER THE LETTERS when you're ready to go inside.");
-  else if (player.loc === "hall") msg(player.hearingDecision ? "Go EAST for the road home." : "EXAMINE CHARTER and TALK TO NERIS; then decide between OFFER MY PASS and REQUEST LOCAL SETTLEMENTS.");
+  else if (player.loc === "hall") msg(recapLead());
   else if (player.loc === "orchard") msg(player.orchardDecision ? "The hall is NORTH." : "EXAMINE TAGS and TALK TO IVEN. Then READ PUBLIC TESTIMONY or SEAL TESTIMONY.");
   else if (player.loc === "washout") msg(player.roadDecision ? "The orchard is EAST." : "EXAMINE MILEPOST and TALK TO FEN. Then OPEN THE ROAD or RECORD THE MILEPOSTS.");
   else if (player.loc === "crossing") msg("Fen is waiting to the NORTH.");

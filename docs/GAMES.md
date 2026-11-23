@@ -27,7 +27,7 @@ This page is generated from the per-game `game.json` files by `./scripts/build-c
 
 | Icon | Game | Version | Mobile | About |
 | --- | --- | --- | --- | --- |
-| <img src="../games/the-names-we-own/icon.png" width="48" height="48" alt=""> | [The Names We Own](../games/the-names-we-own/) | `1.0.0-rc.1` | — | A village vanishes from a road sign. Follow the missing names through an animated text adventure where your choices shape who gets home. |
+| <img src="../games/the-names-we-own/icon.png" width="48" height="48" alt=""> | [The Names We Own](../games/the-names-we-own/) | `1.0.0-rc.2` | — | A village vanishes from a road sign. Follow the missing names through an animated text adventure where your choices shape who gets home. |
 | <img src="../games/meddle/icon.webp" width="48" height="48" alt=""> | [Meddle](../games/meddle/) | `0.2.0-beta.4` | Yes | Sculpt an isometric world, shelter an autonomous tribe, challenge a rival deity, and turn influence into world-shaking power. |
 | <img src="../games/racecar/icon.webp" width="48" height="48" alt=""> | [Racecar](../games/racecar/) | `1.0.0-beta.2` | — | Build a racing career across five circuits and twenty tracks. Earn cash, collect 25 vehicles, tune performance, and qualify for tougher championships. |
 | <img src="../games/dots-and-boxes/icon.webp" width="48" height="48" alt=""> | [Dots and Boxes](../games/dots-and-boxes/) | `1.0.0-beta.1` | Yes | Draw one line at a time, close boxes, and hold the turn long enough to own the board. |

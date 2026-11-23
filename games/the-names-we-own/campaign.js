@@ -161,32 +161,30 @@ const campaignActions = {
   shared() {
     player.hearingDecision = "shared";
     w.brass_pass.loc = false;
-    presentCase();
+    reportAdditionalEvidence();
     msg("You lay the pass beside Neris's lamp. The councilor reaches for it, stops, and asks who will pay for the repair. The households name a sum. One by one, the people who used the roads agree to share it. The clerk opens a new book and asks Iven how to spell the first name.");
   },
   local() {
     player.hearingDecision = "local";
-    presentCase();
+    reportAdditionalEvidence();
     msg("You ask the council to return the crossings to the people who keep them open. The clerk draws a line through the claim on Bellwick's gate. Two more villages follow. Others will need to present their own accounts. Neris folds up her copy of the old charter. “I'll go with them,” she says.");
   },
   finish() {
     player.completed = true;
     msg("You deliver the last letter. The farrier calls from the table that the mare sold after all. Outside, a new courier asks if there's room by the kitchen door.");
+    msg(player.roadDecision === "oral" ? "The medicine cart driver has left a wheel rut right up to the open door." :
+      "Fen has hung a copy of the old milepost dates over the stove. Someone has added this morning’s repair.");
+    msg(player.trustBroken ? "Iven’s chair is empty. You find a note on it asking you to leave the orchard’s names where they are." :
+      "Iven sits near the kitchen. The carter brings her a bowl and asks whether he may sit beside her.");
     msg("“Slide along a bit,” Orra says. “We'll make another.”");
     msg(player.hearingDecision === "shared" ? "THE END · THE SHARED ROAD" : "THE END · ONE CROSSING AT A TIME");
   },
 };
 
-function presentCase() {
-  if (player.ridgeSignal) msg("The cart driver sets his two lamp wicks on the ledger. One councilor stops turning the page.");
-  if (player.keptPromise) msg("Iven repeats the orchard keeper's account of the winters they carried stone. She stops exactly where you asked her to.");
-  if (player.clerkCopy) msg("The clerk reads the note caught beneath his forms. “The date was shifted by order,” he says. “Please write that down.”");
-  msg(player.roadDecision === "oral"
-    ? "The cart driver traces the old road with one finger. “I drove it yesterday. I can take you there today.”"
-    : "Fen turns her signed rubbing so the councilor can read the dates. “That's a repair for every year you called this road abandoned.”");
-  msg(player.orchardDecision === "public"
-    ? "Iven reads the names of those who asked to be heard. The carter stands when she reaches his village."
-    : "Iven hands the clerk the sealed tally of testimony and the two witnesses sign it. Nobody has to give up a name to enter the claim.");
+function reportAdditionalEvidence() {
+  if (player.ridgeSignal) msg("The driver sets two lamp wicks on the ledger. One councilor stops turning the page.");
+  if (player.keptPromise && !player.trustBroken) msg("Iven repeats the orchard keeper's account. She stops exactly where you asked her to.");
+  if (player.clerkCopy) msg("The clerk reads the note. “The date was shifted by order. Please write that down.”");
 }
 
 const chapterTitles = {
@@ -200,10 +198,11 @@ storyCommand("CampaignJournal", /^(?:journal|objectives)$/, () => {
   msg("Chapter " + number + " of 5 · " + title);
   if (player.resolution) msg(player.resolution === "paid" ? "Bellwick: Orra sold his bell to repay the fares." : "Bellwick: the village took over the crossing.");
   if (player.roadDecision) msg(player.roadDecision === "oral" ? "Old road: the medicine cart driver can testify." : "Old road: Fen preserved the signed milepost record.");
-  if (player.orchardDecision) msg(player.orchardDecision === "public" ? "Orchard: Iven brought consented public testimony." : "Orchard: Iven sealed the testimony.");
+  if (player.trustBroken) msg("Orchard: Iven withdrew after you broke the seal.");
+  else if (player.orchardDecision) msg(player.orchardDecision === "public" ? "Orchard: Iven brought consented public testimony." : "Orchard: Iven sealed the testimony.");
   if (player.hearingDecision) msg(player.hearingDecision === "shared" ? "Hearing: you gave up your pass as part of a shared repair agreement." : "Hearing: individual settlements can reclaim their crossings.");
   if (player.completed) msg("The last letter is delivered.");
-  else msg("Type HINT for your next lead.");
+  else msg(recapLead());
   return world.SUCCESS_NO_TURNSCRIPTS;
 });
 

@@ -7,6 +7,7 @@ let freshCheckpoint;
 let lastCheckpoint;
 
 function storeCheckpoint() {
+  if (runFailed) return;
   const body = saveLoad.getSaveBody();
   if (body === lastCheckpoint) return;
   try {
@@ -47,6 +48,7 @@ function restoreCheckpoint() {
     clearScreen();
     metamsg("Resumed from your automatic checkpoint.");
     currentLocation.description();
+    metamsg(recapLead());
     checkpointStatus.textContent = "Progress restored from this device";
   } catch {
     saveLoad.loadTheWorld(freshCheckpoint);
@@ -60,6 +62,8 @@ storyCommand("RestartCheckpoint", /^(?:restart|new game)$/, () => {
       metamsg("Your current game continues.");
       return;
     }
+    crossingWarned = false;
+    disclosureWarned = false;
     saveLoad.loadTheWorld(freshCheckpoint);
     world.gameState.length = 0;
     world.saveGameState();

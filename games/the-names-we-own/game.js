@@ -91,6 +91,36 @@ function updateScene(animate = true) {
   frame();
 }
 
+const sceneIllustration = document.querySelector("#scene-illustration");
+const illustrationToggle = document.querySelector("#scene-illustration-toggle");
+const artToggle = document.querySelector("#scene-view-toggle");
+const retry = document.querySelector("#retry-run");
+let sceneArt = "animated";
+
+function updateArtView() {
+  const atTollhouse = player.loc === "tollhouse";
+  if (!atTollhouse && sceneArt === "illustration") sceneArt = "animated";
+  bridge.hidden = sceneArt !== "animated";
+  sceneIllustration.hidden = sceneArt !== "illustration";
+  illustrationToggle.hidden = !atTollhouse || sceneArt === "hidden" || sceneIllustration.dataset.unavailable === "true";
+  illustrationToggle.textContent = sceneArt === "illustration" ? "Show animated scene" : "Show illustration";
+  artToggle.textContent = sceneArt === "hidden" ? "Show art" : "Hide art";
+}
+
+artToggle.addEventListener("click", () => {
+  sceneArt = sceneArt === "hidden" ? "animated" : "hidden";
+  updateArtView();
+});
+illustrationToggle.addEventListener("click", () => {
+  sceneArt = sceneArt === "illustration" ? "animated" : "illustration";
+  updateArtView();
+});
+sceneIllustration.addEventListener("error", () => {
+  sceneIllustration.dataset.unavailable = "true";
+  if (sceneArt === "illustration") sceneArt = "animated";
+  updateArtView();
+});
+
 const commandBar = document.querySelector("#commands");
 const campaignButtons = new Map();
 for (const choice of campaignChoices) {
@@ -113,11 +143,13 @@ const commandConditions = {
 };
 
 function updateCommands() {
+  retry.hidden = !runFailed;
+  updateArtView();
   document.querySelector("#encounter-invitation").disabled = !w.invitation.isAtLoc(player.name);
   for (const button of commandButtons) {
     const {room, reveal, requires} = button.dataset;
     button.hidden = Boolean((room && room !== player.loc) || (reveal && !commandConditions[reveal]()));
-    button.disabled = Boolean(io.disableLevel || (requires && !commandConditions[requires]()));
+    button.disabled = Boolean(runFailed || io.disableLevel || (requires && !commandConditions[requires]()));
   }
   for (const [choice, button] of campaignButtons) {
     button.hidden = player.loc !== choice.room || !choice.ready();
@@ -125,6 +157,8 @@ function updateCommands() {
 }
 
 settings.afterLoad = () => {
+  crossingWarned = false;
+  disclosureWarned = false;
   closeEncounter();
   updateScene(false);
   updateCommands();
@@ -143,6 +177,18 @@ io.msgInputText = function(command) {
 
 function submit(raw) {
   const command = raw.trim();
+  if (runFailed) {
+    if (/^(?:retry|retry from the tollhouse)$/i.test(command)) {
+      runFailed = false;
+      metamsg("Back at the tollhouse. Orra’s hand is still on the gate.");
+      updateCommands();
+    } else if (command) {
+      metamsg("The run has ended. Type RETRY to return to the tollhouse.");
+    }
+    input.value = "";
+    return;
+  }
+  const location = player.loc;
   if (!command || io.disableLevel > 1 && !parser.override) return;
   const atEnd = output.scrollHeight - output.scrollTop - output.clientHeight < 24;
   if (/[<>&]/.test(command)) {
@@ -151,6 +197,10 @@ function submit(raw) {
     if (io.savedCommands.at(-1) !== command) io.savedCommands.push(command);
     io.savedCommandsPos = io.savedCommands.length;
     runCmd(command);
+    if (location !== player.loc) {
+      crossingWarned = false;
+      disclosureWarned = false;
+    }
     storeCheckpoint();
   }
   input.value = "";
@@ -202,6 +252,10 @@ for (const button of encounter.querySelectorAll("[data-topic]")) {
 }
 document.querySelector("#encounter-close").addEventListener("click", () => {
   submit("leave conversation");
+  input.focus();
+});
+retry.addEventListener("click", () => {
+  submit("retry");
   input.focus();
 });
 restoreCheckpoint();
