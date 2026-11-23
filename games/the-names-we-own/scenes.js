@@ -111,14 +111,32 @@ function terminalFrame(room, stage, visible = 8) {
       }
     }
   }
-  const inside = ["tollhouse","hall","home","vestry","records"].includes(room);
-  if (!inside) {
-    rectangle(0,0,152,18,"sky",7);
-    for (const [x,y] of [[12,4],[28,6],[47,2],[76,7],[103,3],[124,5],[141,2]]) put(x,y,"@");
-    face([[0,18],[16,7],[35,15],[55,5],[74,16],[101,8],[124,15],[145,7],[152,13],[152,24],[0,24]],"far",1);
-    face([[0,23],[42,16],[96,16],[152,20],[152,44],[0,44]],"bank",4);
-    face([[58,16],[94,16],[139,33],[152,35],[152,44],[78,44],[55,32]],"water",2);
-    for (const [x,y,size] of [[5,14,15],[18,12,12],[34,13,10],[111,11,10],[133,12,14],[146,15,19]]) pine(x,y,size,x%11);
+  const outdoor = ["crossing","washout","ridge","orchard"].includes(room);
+  if (outdoor) {
+    rectangle(0,0,sceneWidth,24,"sky",room.length);
+    const stars = {
+      crossing:[[10,3],[27,8],[51,2],[72,5],[102,4],[137,7]],
+      washout:[[24,5],[80,3],[124,6]],
+      ridge:[[10,4],[36,3],[58,8],[82,2],[112,5],[139,2]],
+      orchard:[[37,3],[73,6],[111,4]],
+    };
+    for (const [x,y] of stars[room]) put(x,y,"@");
+    if (room === "crossing") {
+      face([[0,17],[19,5],[37,15],[65,9],[83,18],[108,7],[152,15],[152,44],[0,44]],"bank",1);
+      face([[58,16],[94,16],[139,33],[152,35],[152,44],[78,44],[55,32]],"water",2);
+      for (const [x,y,size] of [[5,14,15],[19,12,12],[133,12,14],[146,15,19]]) pine(x,y,size,x%11);
+    } else if (room === "washout") {
+      face([[0,9],[49,17],[100,14],[152,12],[152,44],[0,44]],"bank",4);
+      face([[0,9],[14,4],[40,9],[59,18],[0,23]],"far",3);
+      face([[97,19],[122,9],[152,14],[152,25]],"far",7);
+    } else if (room === "ridge") {
+      face([[0,23],[21,16],[48,19],[72,10],[96,19],[117,14],[152,18],[152,33],[0,33]],"far",8);
+      face([[0,30],[44,20],[85,22],[152,25],[152,44],[0,44]],"bank",2);
+    } else {
+      face([[0,19],[66,13],[152,16],[152,44],[0,44]],"bank",6);
+      face([[0,14],[30,6],[71,9],[74,14],[33,21],[0,23]],"far",3);
+      face([[88,16],[135,7],[152,12],[152,21],[118,23]],"far",9);
+    }
   }
 
   if (room === "tollhouse") {
@@ -189,38 +207,61 @@ function terminalFrame(room, stage, visible = 8) {
       face([[37,29],[46,26],[49,34],[40,37]],"stone",4);
       if (stage === "marked") label(49,29,"[====]");
     }
-  } else {
+  } else if (room === "hall") {
+    // A long aisle leads to a raised council desk, viewed head-on.
     rectangle(0,0,152,44,"shadow");
     face([[0,0],[42,9],[42,32],[0,44]],"stone",1);
-    face([[152,0],[111,9],[111,32],[152,44]],"wall",5);
-    face([[42,29],[111,29],[152,44],[0,44]],"deck",1);
+    face([[152,0],[111,9],[111,32],[152,44]],"stone",6);
     rectangle(42,9,69,20,"wall",2);
-    lamps(49,12,9,7);
-    lamps(95,12,9,7);
-    const bench = [[37,26],[97,22],[119,27],[52,33]];
-    face([[52,32],[119,26],[119,32],[52,39]],"wall",1);
-    face(bench,"planks",2);
-    if (room === "hall") {
-      face([[61,26],[87,24],[102,27],[73,30]],"stone",3);
-      lamps(88,20,3,4);
-      if (stage !== "dim") label(73,26,stage === "read" ? "EXPIRED" : stage === "shared" ? "REPAIR" : "RETURN");
-    } else if (room === "vestry" || room === "records") {
-      if (room === "vestry") {
-        face([[21,17],[40,15],[40,28],[21,31]],"canopy",3);
-        label(68,27,"[ NOTE ]");
-      } else {
-        for (const y of [16,20,24]) {
-          rectangle(114,y,22,2,"planks",y);
-          label(118,y-1,"[|||] [||] [|]");
-        }
-        label(68,27,"[ WINTERS ]");
-      }
-      if (stage === "promise" || stage === "copied") label(62,28,"+");
-    } else if (stage === "complete") {
-      lamps(66,26,4,2);
-      lamps(91,25,4,2);
-      label(34,34,"[]");
+    face([[57,25],[92,25],[127,44],[24,44]],"path",4);
+    for (const [x,y,h] of [[20,6,29],[43,9,22],[102,9,22],[126,6,29]]) {
+      rectangle(x,y,6,h,"stone",x);
+      lamps(x+1,y+3,3,3);
     }
+    face([[53,25],[97,25],[111,30],[43,30]],"planks",2);
+    rectangle(43,30,68,5,"wall",6);
+    lamps(87,20,3,4);
+    if (stage !== "dim") label(70,28,stage === "read" ? "EXPIRED" : stage === "shared" ? "REPAIR" : "RETURN");
+  } else if (room === "home") {
+    // A low, diagonal view down a long supper table toward the kitchen.
+    rectangle(0,0,152,44,"planks",6);
+    face([[0,0],[39,7],[39,34],[0,44]],"shadow",8);
+    face([[39,31],[152,24],[152,44],[0,44]],"deck",3);
+    rectangle(111,5,23,20,"shadow",3);
+    lamps(115,8,15,13);
+    face([[14,35],[92,17],[120,22],[39,42]],"planks",2);
+    face([[39,41],[120,21],[120,27],[39,44]],"wall",7);
+    for (const [x,y] of [[42,33],[61,29],[79,24],[97,21]]) label(x,y,"[o]");
+    rectangle(25,24,9,10,"shadow",2);
+    label(27,25,"[]");
+    if (stage === "complete") lamps(36,31,7,2);
+  } else if (room === "vestry") {
+    // Seen through the shed doorway, the note is close and there is open orchard behind it.
+    rectangle(0,0,152,44,"shadow");
+    face([[4,0],[52,10],[52,34],[4,44]],"planks",2);
+    face([[151,0],[112,10],[112,34],[151,44]],"planks",5);
+    rectangle(52,10,60,24,"canopy",1);
+    face([[59,24],[91,21],[108,44],[25,44]],"path",2);
+    face([[7,31],[50,24],[83,33],[35,42]],"planks",8);
+    face([[24,32],[43,29],[57,32],[37,37]],"stone",2);
+    label(33,33,"NOTE");
+    put(41,31,"o");
+    if (stage === "promise") label(34,36,"...");
+  } else if (room === "records") {
+    // A narrow stack aisle, with the open WINTERS drawer in the foreground.
+    rectangle(0,0,152,44,"shadow");
+    face([[0,3],[70,13],[70,31],[0,44]],"wall",5);
+    face([[152,2],[91,12],[91,31],[152,44]],"wall",7);
+    face([[70,31],[91,31],[122,44],[43,44]],"deck",4);
+    for (const [y,height] of [[4,6],[13,6],[22,6],[31,6]]) {
+      face([[0,y],[66,y+5],[66,y+height+3],[0,y+height]],"planks",y);
+      label(8,y+2,"[||||] [|||] [|||||]");
+    }
+    lamps(81,12,5,6);
+    face([[82,33],[129,26],[151,32],[103,41]],"planks",4);
+    face([[91,33],[129,28],[143,32],[105,38]],"shadow",7);
+    label(104,34,"WINTERS");
+    if (stage === "copied") label(121,31,"[====]");
   }
   return cells.map(row => row.join(""));
 }
