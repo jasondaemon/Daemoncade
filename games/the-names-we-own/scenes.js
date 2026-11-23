@@ -111,7 +111,7 @@ function terminalFrame(room, stage, visible = 8) {
       }
     }
   }
-  const inside = ["hall","home","vestry","records"].includes(room);
+  const inside = ["tollhouse","hall","home","vestry","records"].includes(room);
   if (!inside) {
     rectangle(0,0,152,18,"sky",7);
     for (const [x,y] of [[12,4],[28,6],[47,2],[76,7],[103,3],[124,5],[141,2]]) put(x,y,"@");
@@ -122,12 +122,45 @@ function terminalFrame(room, stage, visible = 8) {
   }
 
   if (room === "tollhouse") {
-    bridge(stage === "paid" || stage === "tolls");
-    cottage(76,15,34);
-    face([[92,27],[100,26],[125,37],[109,40]],"water",7);
-    for (const [x,y] of [[101,29],[109,33],[117,36]]) label(x,y,"+ +");
-    pine(5,24,19,2);
-  } else if (room === "riverbank" || room === "crossing") {
+    // The courier stands inside, facing Orra's desk and the far-bank window.
+    rectangle(0,0,152,44,"shadow");
+    face([[0,0],[61,7],[61,31],[0,44]],"planks",3);
+    rectangle(61,7,77,24,"wall",2);
+    face([[61,31],[138,31],[152,44],[0,44]],"deck",4);
+    rectangle(85,8,41,17,"deck",3);
+    rectangle(88,10,35,13,"sky",8);
+    face([[88,18],[104,15],[123,18],[123,23],[88,23]],"water",2);
+    put(115,13,"@");
+    const restored = stage === "paid" || stage === "tolls";
+    const name = restored ? "BELLWICK" : stage === "debt" ? "BE..WI.." : "........";
+    rectangle(94,15,23,3,"shadow");
+    label(97,16,[...name].map((letter,index) => index < visible ? letter : ".").join(" "));
+    rectangle(12,9,23,24,"stone",3);
+    face([[16,29],[16,20],[22,16],[30,20],[30,29]],"shadow");
+    lamps(19,24,9,5);
+    face([[25,30],[74,26],[108,32],[49,38]],"planks",4);
+    face([[49,37],[108,31],[108,36],[49,43]],"wall",5);
+    face([[54,31],[73,29],[88,32],[68,35]],"stone",1);
+    label(63,32,"LEDGER");
+    lamps(79,22,4,5);
+  } else if (room === "riverbank") {
+    // Below the deck, the stone pier and cellar hatch dominate the view.
+    rectangle(0,0,152,44,"sky",7);
+    face([[0,22],[152,15],[152,44],[0,44]],"water",2);
+    face([[0,21],[33,25],[67,44],[0,44]],"bank",3);
+    face([[105,13],[133,10],[139,35],[121,40]],"stone",4);
+    face([[70,15],[152,0],[152,6],[76,25]],"shadow",5);
+    face([[60,13],[152,0],[152,3],[70,17]],"planks",2);
+    face([[4,29],[19,23],[37,33],[21,41]],"planks",1);
+    face([[8,29],[19,26],[32,33],[22,37]],"shadow",5);
+    label(18,32,"[o]");
+    lamps(33,25,3,3);
+    pine(3,9,11,4);
+    const restored = stage === "paid" || stage === "tolls";
+    const name = restored ? "BELLWICK" : stage === "debt" ? "BE..WI.." : "........";
+    rectangle(112,7,23,3,"shadow");
+    label(115,8,[...name].map((letter,index) => index < visible ? letter : ".").join(" "));
+  } else if (room === "crossing") {
     bridge(stage === "paid" || stage === "tolls");
     const name = stage === "paid" || stage === "tolls" ? "BELLWICK" : stage === "debt" ? "BE..WI.." : "........";
     rectangle(85,10,26,6,"shadow");

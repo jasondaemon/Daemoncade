@@ -79,14 +79,13 @@ function updateScene(animate = true) {
     arrival:"Bellwick’s kitchen door stands open.", complete:"The last letter is delivered.",
   };
   caption.textContent = (placeNames[room] || title) + " / " + (room === "tollhouse" || room === "riverbank" || room === "crossing" ? captions[stage] : sceneStatus[stage]);
-  const view = room === "tollhouse" && (stage === "paid" || stage === "tolls") ? "riverbank" : room;
   if (!animate || !sceneMotionEnabled() || !reveal) {
-    drawCells(bridge, terminalFrame(view, stage));
+    drawCells(bridge, terminalFrame(room, stage));
     return;
   }
   let visible = 0;
   function frame() {
-    const rows = terminalFrame(view, stage, sceneMotionEnabled() ? visible : 8);
+    const rows = terminalFrame(room, stage, sceneMotionEnabled() ? visible : 8);
     drawCells(bridge, rows);
     if (visible++ < 8 && sceneMotionEnabled()) pendingFrame = setTimeout(frame, 65);
   }
