@@ -34,8 +34,9 @@ function syncSceneMotion() {
     return;
   }
   ambientTimer = setInterval(() => {
-    if (bridge.hidden) return;
+    if (artHidden) return;
     ambientPhase++;
+    paintSceneEffects(ambientPhase);
     for (const cell of bridge.querySelectorAll("[data-ambient]")) {
       const frames = {star:twinkle, water:ripple, lamp}[cell.dataset.ambient];
       cell.textContent = frames[(ambientPhase + Number(cell.dataset.phase)) % frames.length];
@@ -80,13 +81,12 @@ function updateScene(animate = true) {
   };
   caption.textContent = (placeNames[room] || title) + " / " + (room === "tollhouse" || room === "riverbank" || room === "crossing" ? captions[stage] : sceneStatus[stage]);
   if (!animate || !sceneMotionEnabled() || !reveal) {
-    drawCells(bridge, terminalFrame(room, stage));
+    setSceneArt(room, stage, 8);
     return;
   }
   let visible = 0;
   function frame() {
-    const rows = terminalFrame(room, stage, sceneMotionEnabled() ? visible : 8);
-    drawCells(bridge, rows);
+    setSceneArt(room, stage, sceneMotionEnabled() ? visible : 8);
     if (visible++ < 8 && sceneMotionEnabled()) pendingFrame = setTimeout(frame, 65);
   }
   frame();
@@ -96,8 +96,10 @@ const artToggle = document.querySelector("#scene-view-toggle");
 const retry = document.querySelector("#retry-run");
 
 artToggle.addEventListener("click", () => {
-  bridge.hidden = !bridge.hidden;
-  artToggle.textContent = bridge.hidden ? "Show art" : "Hide art";
+  artHidden = !artHidden;
+  syncArtVisibility();
+  paintSceneEffects(ambientPhase);
+  artToggle.textContent = artHidden ? "Show art" : "Hide art";
 });
 
 const commandBar = document.querySelector("#commands");

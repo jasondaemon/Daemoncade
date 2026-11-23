@@ -114,3 +114,19 @@ button { min-height: 44px; color: #83ddb4; background: transparent; border: 0; f
 .roof { color: #cd735a; }
 .roof-light { color: #f09a64; }
 .path { color: #b39771; }
+
+#scene-plate {
+  position: relative;
+  width: min(100%, 82dvh);
+  margin-inline: auto;
+  aspect-ratio: 2 / 1;
+  overflow: hidden;
+}
+#scene-image, #scene-effects {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+#scene-image { object-fit: cover; }
+#scene-effects { pointer-events: none; }
