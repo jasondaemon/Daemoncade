@@ -1,184 +1,196 @@
 "use strict";
 
-// Every mark is one text cell. Color is applied to runs of literal characters.
-const sceneWidth = 76;
-const sceneHeight = 22;
+// Projected faces are filled entirely with colored monospaced glyphs.
+const sceneWidth = 152;
+const sceneHeight = 44;
+const cellColors = {
+  "~":"water", "=":"foam", ".":"rain", ":":"rain", ",":"reed", "v":"reed",
+  "^":"leaf", "n":"leaf", "f":"leaf-shadow", "#":"stone", "%":"stone-shadow",
+  "+":"flame", "*":"flame", "o":"flame", "$":"flame",
+  "/":"timber", "\\":"timber", "-":"timber", "|":"timber", "_":"timber",
+  "h":"timber-shadow", "r":"roof", "x":"roof-light", "a":"path",
+  "[":"stone", "]":"stone",
+};
 
-const sky = [
-  "      .          @           .                      @           .",
-  "  @         .                        .       .                         .",
-  "                    .    @                           .        @",
-  "        .                         .        @                     .",
-  "   .         .            .                       .          .        @",
-];
+const materials = {
+  sky: "                 .       :   ",
+  far: ".,f.,f%%%:: ",
+  stone: "%%##:%#%%#.",
+  bank: "ffv,^n,,,%%",
+  water: "~~= ~~: ~~~~",
+  path: "..aa..a=,",
+  deck: "-_-/--h-+",
+  shadow: "hhh|hh%%h",
+  roof: "rrrx////r",
+  roofDark: "rrhhr///",
+  planks: "|h|_h|h|+",
+  wall: "h%h|h%%",
+  light: "++*o+*",
+  pine: "^n^ff^,",
+  canopy: "fn^v^nvf,",
+};
 
-const hills = [
-  "       /#\\        /#\\                                /#\\          /#\\",
-  "  /#\\ /###\\  /#\\  /###\\                  /#\\       /###\\   /#\\  /###\\",
-  "/###/#####\\/###/#####\\          /#\\     /###\\    /#####\\ /###/#####\\",
-  "########################################################################",
-];
-
-const pine = ["    ^", "   ^^^", "  ^^^^^", " ^^^^^^^", "^^^^^^^^^", "   |||"];
-const willow = [
-  "      vvvvvvv", "   vvvvvvvvvvvvv", " vvvvvvvvvvvvvvvvv",
-  "vvv vvvvvvvvvvv vvv", "vvv   vvv|vvv   vvv", "vv      |||      vv", "        |||",
-];
-const tollhouse = [
-  "           ++", "           ||", "          /##\\", "        /######\\",
-  "      /##########\\", "    /##############\\", "  /##################\\",
-  " /____________________\\", "  |  [**]  | |  [**] |",
-  "  |  [**]  | |  [**] |", "  |________|_|_______|",
-];
-const pier = ["  |      |", "  |------|", "  |      |", " #|#    #|#", " ###    ###"];
-
-function landscape(room, stage, visible) {
+function terminalFrame(room, stage, visible = 8) {
   const cells = Array.from({length:sceneHeight}, () => Array(sceneWidth).fill(" "));
-  function layer(x, y, rows) {
-    rows.forEach((row, dy) => [...row].forEach((glyph, dx) => {
-      if (glyph !== " " && x + dx < sceneWidth && y + dy < sceneHeight) {
-        cells[y + dy][x + dx] = glyph;
-      }
-    }));
+  function put(x,y,glyph) {
+    if (x >= 0 && x < sceneWidth && y >= 0 && y < sceneHeight) cells[y][x] = glyph;
   }
-  function ground(first, last, patterns) {
-    for (let y = first; y <= last; y++) {
-      layer(0, y, [patterns[y % patterns.length].repeat(8).slice(0, sceneWidth)]);
+  function label(x,y,text) {
+    [...text].forEach((glyph,index) => put(x+index,y,glyph));
+  }
+  function face(points, material, seed = 0) {
+    const glyphs = materials[material];
+    const start = Math.max(0, Math.min(...points.map(([,y]) => y)));
+    const end = Math.min(sceneHeight, Math.max(...points.map(([,y]) => y)));
+    for (let y = start; y < end; y++) {
+      const cuts = [];
+      for (let index = 0; index < points.length; index++) {
+        const [x1,y1] = points[index];
+        const [x2,y2] = points[(index+1)%points.length];
+        if ((y1 <= y + .5 && y2 > y + .5) || (y2 <= y + .5 && y1 > y + .5)) {
+          cuts.push(x1+(y+.5-y1)*(x2-x1)/(y2-y1));
+        }
+      }
+      cuts.sort((a,b) => a-b);
+      for (let i = 0; i+1 < cuts.length; i += 2) {
+        for (let x = Math.max(0,Math.ceil(cuts[i])); x < Math.min(sceneWidth,cuts[i+1]); x++) {
+          put(x,y,glyphs[(x*17+y*11+Math.floor(x/5)*3+seed)%glyphs.length]);
+        }
+      }
     }
+  }
+  function rectangle(x,y,width,height,material,seed) {
+    face([[x,y],[x+width,y],[x+width,y+height],[x,y+height]], material, seed);
+  }
+  function pine(x,y,size,seed) {
+    rectangle(x-1,y+size-3,3,6,"planks",seed);
+    for (let tier=3; tier>=0; tier--) {
+      const top = y+Math.floor(tier*size/6);
+      const half = Math.max(3,Math.round(size*.36+tier*1.7));
+      face([[x,top],[x-half,top+Math.ceil(size/2)],[x+half,top+Math.ceil(size/2)]],"pine",seed+tier);
+    }
+  }
+  function lamps(x,y,width,height) {
+    rectangle(x,y,width,height,"light",2);
+    put(x+Math.floor(width/2),y+Math.floor(height/2),"$");
+  }
+  function cottage(x,y,width) {
+    const depth = Math.round(width*.38);
+    const height = Math.max(4,Math.round(width*.29));
+    const roof = Math.max(4,Math.round(width*.22));
+    face([[x+width,y],[x+width+depth,y-3],[x+width+depth,y+height-3],[x+width,y+height]],"wall",1);
+    rectangle(x,y,width,height,"planks",5);
+    face([[x-3,y],[x+Math.round(width/2),y-roof],[x+width+2,y]],"roof",2);
+    face([[x+Math.round(width/2),y-roof],[x+Math.round(width/2)+depth,y-roof-3],[x+width+depth+3,y-3],[x+width+2,y]],"roofDark",6);
+    lamps(x+Math.round(width*.14),y+1,Math.max(3,Math.round(width*.15)),Math.max(2,height-4));
+    lamps(x+Math.round(width*.68),y+1,Math.max(3,Math.round(width*.15)),Math.max(2,height-4));
+    rectangle(x+Math.round(width*.42),y+3,Math.max(3,Math.round(width*.19)),height-3,"shadow");
+  }
+  function bridge(repaired) {
+    face([[24,31],[100,19],[129,22],[54,37]],"shadow",2);
+    if (repaired) {
+      face([[13,30],[99,17],[127,20],[43,36]],"deck",4);
+      face([[13,27],[99,14],[101,15],[13,29]],"planks",8);
+      face([[43,32],[127,17],[127,19],[43,34]],"planks",5);
+    } else {
+      face([[13,30],[51,24],[77,27],[43,36]],"deck",4);
+      face([[73,21],[99,17],[127,20],[101,25]],"deck",6);
+    }
+    for (const [x,y,h] of [[16,28,7],[34,25,6],[47,32,7],[67,28,6],[94,17,5],[119,18,6]]) {
+      rectangle(x,y,2,h,"planks",2);
+      put(x,y,"+");
+    }
+  }
+  function grove() {
+    for (const [x,y,size,seed] of [[17,12,18,3],[36,16,19,5],[63,12,19,2],[96,13,21,4],[129,11,22,1]]) {
+      rectangle(x+12,y+6,4,16,"planks",seed);
+      face([[x,y+4],[x+7,y],[x+size,y-2],[x+size+12,y+4],[x+size+5,y+10],[x+4,y+10]],"canopy",seed);
+      for (let i=0;i<3;i++) {
+        rectangle(x+7+i*6,y+8,1,3,"planks",i);
+        label(x+6+i*6,y+11,stage === "sealed" ? "[]" : "[+]");
+      }
+    }
+  }
+  const inside = ["hall","home","vestry","records"].includes(room);
+  if (!inside) {
+    rectangle(0,0,152,18,"sky",7);
+    for (const [x,y] of [[12,4],[28,6],[47,2],[76,7],[103,3],[124,5],[141,2]]) put(x,y,"@");
+    face([[0,18],[16,7],[35,15],[55,5],[74,16],[101,8],[124,15],[145,7],[152,13],[152,24],[0,24]],"far",1);
+    face([[0,23],[42,16],[96,16],[152,20],[152,44],[0,44]],"bank",4);
+    face([[58,16],[94,16],[139,33],[152,35],[152,44],[78,44],[55,32]],"water",2);
+    for (const [x,y,size] of [[5,14,15],[18,12,12],[34,13,10],[111,11,10],[133,12,14],[146,15,19]]) pine(x,y,size,x%11);
   }
 
-  layer(0, 0, sky);
-  layer(1, 4, hills);
-  ground(17, 21, ["~~ = ~~~  ", "~  ~~~ =  ", "~~~ == ~~ "]);
   if (room === "tollhouse") {
-    ground(14, 17, [",, vv ,,,, ", "vv ,,,, vv "]);
-    layer(2, 8, willow);
-    layer(16, 9, pine);
-    layer(26, 5, tollhouse);
-    layer(51, 9, pine);
-    layer(63, 8, willow);
-    layer(31, 16, ["___--==--___", "__--==--____", "____--==--___"]);
-  } else if (room === "ridge") {
-    ground(12, 21, ["  ,   ##     ", "   #  ,  #   ", " ,   ##  ,   "]);
-    layer(8, 9, hills);
-    layer(33, 13, ["|#######|", "|_______|", " ### ###"]);
-    layer(34, 12, [stage === "signaled" ? "**   **" : ".     ."]);
-  } else if (room === "vestry" || room === "records") {
-    layer(10, 7, ["/____________________________________________________\\",
-      "|    []     |                               |    []   |",
-      "|    **     |        ____________________   |    **   |",
-      "|    ##     |       |____________________|  |    ##   |",
-      "|___________|_______|_|________________|_|__|_________|"]);
-    layer(32, 9, [room === "vestry" ? "[ NOTE ]" : "[ WINTERS ]"]);
-    if (stage === "promise" || stage === "copied") layer(34, 10, ["+"]);
-  } else if (room === "washout") {
-    ground(14, 21, [",, vv ,,,, ", "vv ,,,, vv "]);
-    layer(9, 8, ["  /##\\      /##\\                 /###\\       /##\\",
-      " /_[]_\\    /_[]_\\               /_____\\     /_[]_\\",
-      " | ++ |    | ++ |               |  +  |     | ++ |",
-      "_|____|____|____|_______________|_____|_____|____|"]);
-    layer(4, 10, pine);
-    layer(63, 9, willow);
-    layer(6, 15, stage === "oral"
-      ? ["-----------------------------------------------------------", "==========================================================="]
-      : ["-----------------------    ~~~ ~~~   ----------------------", "=======================   ~~~ ~~~~~  ======================"]);
-    layer(28, 12, ["/##", "|#|", "|#|"]);
-    if (stage === "marked") layer(31, 13, ["[====]"]);
-  } else if (room === "orchard") {
-    ground(16, 21, [",, vv ,,,, ", "vv ,,,, vv "]);
-    for (const [x,y] of [[4,7],[26,8],[51,7]]) {
-      layer(x,y,willow);
-      layer(x+3,y+5,["|   |   |", stage === "sealed" ? "[]  []  []" : "[+] [+] [+]"]);
+    bridge(stage === "paid" || stage === "tolls");
+    cottage(76,15,34);
+    face([[92,27],[100,26],[125,37],[109,40]],"water",7);
+    for (const [x,y] of [[101,29],[109,33],[117,36]]) label(x,y,"+ +");
+    pine(5,24,19,2);
+  } else if (room === "riverbank" || room === "crossing") {
+    bridge(stage === "paid" || stage === "tolls");
+    const name = stage === "paid" || stage === "tolls" ? "BELLWICK" : stage === "debt" ? "BE..WI.." : "........";
+    rectangle(85,10,26,6,"shadow");
+    label(88,12,[...name].map((letter,index) => index < visible ? letter : ".").join(" "));
+    rectangle(87,15,2,6,"planks");
+    rectangle(107,15,2,5,"planks");
+    if (stage === "tolls") label(56,27,"X X X");
+    if (room === "crossing") label(42,28,"o");
+  } else if (room === "washout" || room === "ridge" || room === "orchard") {
+    if (room === "orchard") {
+      face([[66,17],[75,17],[101,44],[42,44]],"path");
+      grove();
+    } else if (room === "ridge") {
+      face([[0,32],[39,16],[110,20],[152,44],[0,44]],"stone",3);
+      face([[46,31],[92,24],[121,44],[62,44]],"path",4);
+      rectangle(73,19,16,8,"shadow",1);
+      if (stage === "signaled") {
+        lamps(73,18,5,3);
+        lamps(85,18,5,3);
+      } else label(74,20,".        .");
+    } else {
+      cottage(31,14,15);
+      cottage(101,14,16);
+      face([[23,24],[62,20],[143,35],[90,40]],"path",3);
+      if (stage !== "oral") face([[71,22],[84,23],[104,36],[88,39]],"water",6);
+      face([[37,29],[46,26],[49,34],[40,37]],"stone",4);
+      if (stage === "marked") label(49,29,"[====]");
     }
-    layer(33, 16, [".. ..", "... ...", ".... ....", "..... .....", "...... ......"]);
-  } else if (room === "hall") {
-    layer(10, 5, ["/____________________________________________________\\",
-      "|     []    ||                            ||    []     |",
-      "|     **    ||      __________________    ||    **     |",
-      "|     ##    ||     /__________________\\   ||    ##     |",
-      "|     ##    ||     |                  |   ||    ##     |",
-      "|___________||_____|__________________|___||___________|"]);
-    layer(33, 11, ["  +", " [*]", "  |"]);
-    layer(23, 14, ["/____________________________\\", "|                            |", "|____________________________|"]);
-    if (stage !== "dim") layer(34, 15, [stage === "read" ? "EXPIRED" : stage === "shared" ? "REPAIR" : "RETURN"]);
-  } else if (room === "home") {
-    ground(17, 21, [",, vv ,,,, ", "vv ,,,, vv "]);
-    layer(13, 6, ["          /########################\\",
-      "         /__________________________\\",
-      "         |   [++]     ||     [++]   |",
-      "         |____________||____________|",
-      "  []       __________________________       []",
-      "  ||      /__________________________\\      ||",
-      "         /____________________________\\",
-      "            ||                    ||"]);
-    layer(51, 16, ["[]","||"]);
-    if (stage === "complete") layer(48, 14, ["+ + +"]);
   } else {
-    ground(11, 21, ["~~~~~ = ~~~~   ", "~ = ~~  ~~~~~  ", "~~~ == ~~~~~   "]);
-    layer(0, 7, willow);
-    layer(13, 8, pine);
-    layer(58, 8, pine);
-    layer(62, 7, willow);
-    layer(18, 12, pier);
-    layer(51, 12, pier);
-    const repaired = stage === "paid" || stage === "tolls";
-    const name = repaired ? "BELLWICK" : stage === "debt" ? "BE..WI.." : "........";
-    const sign = [...name].map((letter, index) => index < visible ? letter : ".").join(" ");
-    layer(27, 8, ["___________________", "| " + sign + " |", "|_________________|"]);
-    layer(14, 13, [repaired
-      ? "______|-----------------------------------|______"
-      : "______|--------                     ------|______"]);
-    if (stage === "tolls") layer(35, 13, ["XXX"]);
-    if (room === "crossing") layer(39, 12, ["@"]);
-    layer(3, 18, [",,,,,vvv,,,,", ",vvv,,,,vvv,,,,"]);
-    layer(58, 18, [",,,vvvv,,,,,,", ",vvvv,,,,vvv,,,,,"]);
+    rectangle(0,0,152,44,"shadow");
+    face([[0,0],[42,9],[42,32],[0,44]],"stone",1);
+    face([[152,0],[111,9],[111,32],[152,44]],"wall",5);
+    face([[42,29],[111,29],[152,44],[0,44]],"deck",1);
+    rectangle(42,9,69,20,"wall",2);
+    lamps(49,12,9,7);
+    lamps(95,12,9,7);
+    const bench = [[37,26],[97,22],[119,27],[52,33]];
+    face([[52,32],[119,26],[119,32],[52,39]],"wall",1);
+    face(bench,"planks",2);
+    if (room === "hall") {
+      face([[61,26],[87,24],[102,27],[73,30]],"stone",3);
+      lamps(88,20,3,4);
+      if (stage !== "dim") label(73,26,stage === "read" ? "EXPIRED" : stage === "shared" ? "REPAIR" : "RETURN");
+    } else if (room === "vestry" || room === "records") {
+      if (room === "vestry") {
+        face([[21,17],[40,15],[40,28],[21,31]],"canopy",3);
+        label(68,27,"[ NOTE ]");
+      } else {
+        for (const y of [16,20,24]) {
+          rectangle(114,y,22,2,"planks",y);
+          label(118,y-1,"[|||] [||] [|]");
+        }
+        label(68,27,"[ WINTERS ]");
+      }
+      if (stage === "promise" || stage === "copied") label(62,28,"+");
+    } else if (stage === "complete") {
+      lamps(66,26,4,2);
+      lamps(91,25,4,2);
+      label(34,34,"[]");
+    }
   }
   return cells.map(row => row.join(""));
 }
-
-// Expand the layout into two rows of independently shaped cells. Sparse
-// markers stay one cell wide, while surfaces gain seams and texture.
-const detailCells = {
-  " ": ["  ", "  "],
-  "@": ["@ ", "  "],
-  ".": [". ", "  "],
-  ":": [". ", " ."],
-  "#": ["##", "#:"],
-  "^": [" ^", "^^"],
-  "v": ["vv", " v"],
-  ",": [", ", " ,"],
-  "~": ["~ ", " ~"],
-  "=": ["==", " ~"],
-  "/": [" /", "/ "],
-  "\\": ["\\ ", " \\"],
-  "_": ["  ", "__"],
-  "-": ["--", "  "],
-  "|": ["| ", "| "],
-  "[": ["[ ", "| "],
-  "]": [" ]", " |"],
-  "*": ["**", " *"],
-  "+": ["++", "  "],
-  "X": ["XX", "XX"],
-};
-
-function detailFrame(rows) {
-  return rows.flatMap(row => {
-    const upper = [];
-    const lower = [];
-    for (const glyph of row) {
-      const [top, bottom] = detailCells[glyph] ?? [glyph + " ", "  "];
-      upper.push(top);
-      lower.push(bottom);
-    }
-    return [upper.join(""), lower.join("")];
-  });
-}
-
-const cellColors = {
-  "~":"water", "=":"foam", ",":"reed", "v":"reed", "^":"leaf", "#":"stone",
-  "/":"timber", "\\":"timber", "_":"timber", "|":"timber", "-":"timber",
-  "[":"flame", "]":"flame", "*":"flame", "+":"flame", ".":"rain", ":":"rain",
-};
 
 function drawCells(target, rows, palette = cellColors) {
   const fragment = document.createDocumentFragment();
@@ -198,13 +210,13 @@ function drawCells(target, rows, palette = cellColors) {
       run = "";
     }
     for (const [column, glyph] of [...row].entries()) {
-      if (glyph === "@" || glyph === "~" && (index * 7 + column) % 11 === 0) {
+      if (glyph === "@" || glyph === "$" || glyph === "~" && (index * 7 + column) % 13 === 0) {
         flush();
         const cell = document.createElement("span");
-        cell.className = glyph === "@" ? "flame" : "water";
-        cell.dataset.ambient = glyph === "@" ? "star" : "water";
+        cell.className = glyph === "~" ? "water" : "flame";
+        cell.dataset.ambient = glyph === "@" ? "star" : glyph === "$" ? "lamp" : "water";
         cell.dataset.phase = (index * 3 + column * 5) % 9;
-        cell.textContent = glyph === "@" ? "+" : "~";
+        cell.textContent = glyph === "~" ? "~" : "+";
         fragment.append(cell);
         continue;
       }
@@ -217,8 +229,4 @@ function drawCells(target, rows, palette = cellColors) {
     if (index < rows.length - 1) fragment.append("\n");
   }
   target.replaceChildren(fragment);
-}
-
-function terminalFrame(room, stage, visible = 8) {
-  return detailFrame(landscape(room, stage, visible));
 }

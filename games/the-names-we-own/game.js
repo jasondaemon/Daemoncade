@@ -17,6 +17,7 @@ let ambientPhase = 0;
 let motionPaused = false;
 const motionButton = document.querySelector("#scene-motion");
 const twinkle = ["+", "+", "x", "*", "+", "+", ".", "+", "+"];
+const lamp = ["+", "*", "+", "o", "+", "+", "*", "+", "o"];
 const ripple = ["~", "~", "-", "=", "~", ".", "~", "~", "-"];
 
 function sceneMotionEnabled() {
@@ -33,9 +34,10 @@ function syncSceneMotion() {
     return;
   }
   ambientTimer = setInterval(() => {
+    if (bridge.hidden) return;
     ambientPhase++;
     for (const cell of bridge.querySelectorAll("[data-ambient]")) {
-      const frames = cell.dataset.ambient === "star" ? twinkle : ripple;
+      const frames = {star:twinkle, water:ripple, lamp}[cell.dataset.ambient];
       cell.textContent = frames[(ambientPhase + Number(cell.dataset.phase)) % frames.length];
     }
   }, 360);
@@ -91,34 +93,12 @@ function updateScene(animate = true) {
   frame();
 }
 
-const sceneIllustration = document.querySelector("#scene-illustration");
-const illustrationToggle = document.querySelector("#scene-illustration-toggle");
 const artToggle = document.querySelector("#scene-view-toggle");
 const retry = document.querySelector("#retry-run");
-let sceneArt = "animated";
-
-function updateArtView() {
-  const atTollhouse = player.loc === "tollhouse";
-  if (!atTollhouse && sceneArt === "illustration") sceneArt = "animated";
-  bridge.hidden = sceneArt !== "animated";
-  sceneIllustration.hidden = sceneArt !== "illustration";
-  illustrationToggle.hidden = !atTollhouse || sceneArt === "hidden" || sceneIllustration.dataset.unavailable === "true";
-  illustrationToggle.textContent = sceneArt === "illustration" ? "Show animated scene" : "Show illustration";
-  artToggle.textContent = sceneArt === "hidden" ? "Show art" : "Hide art";
-}
 
 artToggle.addEventListener("click", () => {
-  sceneArt = sceneArt === "hidden" ? "animated" : "hidden";
-  updateArtView();
-});
-illustrationToggle.addEventListener("click", () => {
-  sceneArt = sceneArt === "illustration" ? "animated" : "illustration";
-  updateArtView();
-});
-sceneIllustration.addEventListener("error", () => {
-  sceneIllustration.dataset.unavailable = "true";
-  if (sceneArt === "illustration") sceneArt = "animated";
-  updateArtView();
+  bridge.hidden = !bridge.hidden;
+  artToggle.textContent = bridge.hidden ? "Show art" : "Hide art";
 });
 
 const commandBar = document.querySelector("#commands");
@@ -144,7 +124,6 @@ const commandConditions = {
 
 function updateCommands() {
   retry.hidden = !runFailed;
-  updateArtView();
   document.querySelector("#encounter-invitation").disabled = !w.invitation.isAtLoc(player.name);
   for (const button of commandButtons) {
     const {room, reveal, requires} = button.dataset;

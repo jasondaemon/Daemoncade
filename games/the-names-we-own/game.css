@@ -98,14 +98,7 @@ button { min-height: 44px; color: #83ddb4; background: transparent; border: 0; f
 .neris-cloak { color: #a698ce; }
 
 .scene-view > [hidden] { display: none; }
-#scene-illustration {
-  width: min(100%, 24rem);
-  height: auto;
-  max-height: 46dvh;
-  object-fit: contain;
-  justify-self: center;
-}
-#scene-view-toggle, #scene-illustration-toggle, #retry-run {
+#scene-view-toggle, #retry-run {
   font-size: .78rem;
   padding-inline: .35rem;
 }
@@ -114,3 +107,10 @@ button { min-height: 44px; color: #83ddb4; background: transparent; border: 0; f
   margin-top: .7rem;
   color: #ffcf77;
 }
+
+.leaf-shadow { color: #3e8769; }
+.stone-shadow { color: #5e7c8e; }
+.timber-shadow { color: #9d684c; }
+.roof { color: #cd735a; }
+.roof-light { color: #f09a64; }
+.path { color: #b39771; }
