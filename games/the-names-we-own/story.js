@@ -108,7 +108,7 @@ storyCommand("LeaveEncounter", /^(?:leave conversation|end conversation|leave)$/
 });
 
 storyCommand("StoryHelp", /^(?:help|commands)$/, () => {
-  msg("Type LOOK, EXAMINE something, TALK TO someone, or a direction like SOUTH. HINT gives a nudge. In a conversation, ASK about a topic or type LEAVE. SAVE followed by a name stores your place on this device. LOAD followed by that name restores it.");
+  msg("Type LOOK, EXAMINE something, TALK TO someone, or a direction like SOUTH. HINT gives a nudge. In a conversation, ASK about a topic or type LEAVE. Progress saves automatically on this device. Use SAVE followed by a name for an extra slot, and LOAD followed by that name to restore it. RESTART asks before starting over.");
   return world.SUCCESS_NO_TURNSCRIPTS;
 });
 

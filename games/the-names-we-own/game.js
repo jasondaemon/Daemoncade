@@ -128,6 +128,7 @@ settings.afterLoad = () => {
   closeEncounter();
   updateScene(false);
   updateCommands();
+  storeCheckpoint();
 };
 settings.playMode = "poc";
 world.init();
@@ -150,6 +151,7 @@ function submit(raw) {
     if (io.savedCommands.at(-1) !== command) io.savedCommands.push(command);
     io.savedCommandsPos = io.savedCommands.length;
     runCmd(command);
+    storeCheckpoint();
   }
   input.value = "";
   if (player.loc !== encounterRoom) closeEncounter();
@@ -202,5 +204,6 @@ document.querySelector("#encounter-close").addEventListener("click", () => {
   submit("leave conversation");
   input.focus();
 });
+restoreCheckpoint();
 updateScene(false);
 updateCommands();
