@@ -1,0 +1,16 @@
+{
+  "title": "The Names We Own",
+  "slug": "the-names-we-own",
+  "version": "1.0.0-rc.1",
+  "release_stage": "beta",
+  "order": 29,
+  "category": "Adventure",
+  "source": "Daemoncade",
+  "players": "Solo",
+  "controls": "Type commands or select actions",
+  "orientation": "auto",
+  "summary": "A village vanishes from a road sign. Follow the missing names through an animated text adventure where your choices shape who gets home.",
+  "accent": "gold",
+  "mark": "N",
+  "icon": "icon.png"
+}
