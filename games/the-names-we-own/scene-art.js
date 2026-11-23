@@ -1,7 +1,7 @@
 "use strict";
 
 const scenePlate = document.querySelector("#scene-plate");
-const sceneImage = document.querySelector("#scene-image");
+const sceneCharacters = document.querySelector("#scene-characters");
 const sceneEffects = document.querySelector("#scene-effects");
 let plateRoom;
 let plateStage;
@@ -27,25 +27,32 @@ function syncArtVisibility() {
   bridge.hidden = artHidden || plateReady;
 }
 
-sceneImage.addEventListener("load", () => {
-  plateReady = true;
-  syncArtVisibility();
-  paintSceneEffects(ambientPhase);
-});
-
-sceneImage.addEventListener("error", () => {
-  plateReady = false;
-  syncArtVisibility();
-  if (plateRoom) drawCells(bridge, terminalFrame(plateRoom, plateStage, plateLetters));
-});
+function drawGlyphBackdrop(room) {
+  const ctx = sceneCharacters.getContext("2d");
+  const artwork = glyphAtlas.rooms[room];
+  if (!ctx || !artwork) return false;
+  ctx.clearRect(0,0,sceneCharacters.width,sceneCharacters.height);
+  const height = sceneCharacters.height / artwork.rows.length;
+  const width = sceneCharacters.width / (artwork.rows[0].length / 2);
+  ctx.font = "bold " + height + "px monospace";
+  ctx.textBaseline = "middle";
+  for (const [y,row] of artwork.rows.entries()) {
+    for (let pos=0; pos<row.length; pos+=2) {
+      const glyph = glyphAtlas.glyphs[glyphAtlas.alphabet.indexOf(row[pos])];
+      if (glyph === " ") continue;
+      ctx.fillStyle = artwork.palette[glyphAtlas.alphabet.indexOf(row[pos+1])];
+      ctx.fillText(glyph,(pos/2)*width,(y+.54)*height,width);
+    }
+  }
+  return true;
+}
 
 function setSceneArt(room, stage, letters) {
   plateStage = stage;
   plateLetters = letters;
   if (room !== plateRoom) {
     plateRoom = room;
-    plateReady = false;
-    sceneImage.src = "art/" + room + ".webp?v=1";
+    plateReady = drawGlyphBackdrop(room);
     syncArtVisibility();
   }
   if (!plateReady) drawCells(bridge, terminalFrame(room, stage, letters));
@@ -60,10 +67,15 @@ function paintSceneEffects(tick) {
   const height = sceneEffects.height;
   ctx.clearRect(0,0,width,height);
   const effects = roomEffects[plateRoom];
-  function stamp(glyph, x, y, color, size = 16, alpha = .75) {
+  function stamp(glyph, x, y, color, size = 16, alpha = .75, outline = false) {
     ctx.globalAlpha = alpha;
     ctx.fillStyle = color;
     ctx.font = size + "px monospace";
+    if (outline) {
+      ctx.strokeStyle = "#0b1718";
+      ctx.lineWidth = 4;
+      ctx.strokeText(glyph,x * width,y * height);
+    }
     ctx.fillText(glyph,x * width,y * height);
   }
   for (const [i,[x,y]] of (effects.stars || []).entries()) {
@@ -89,10 +101,7 @@ function paintSceneEffects(tick) {
     const word = repaired ? "BELLWICK".slice(0,plateLetters) : "BE··WI··";
     const signX = plateRoom === "tollhouse" ? .80 : .72;
     const signY = plateRoom === "tollhouse" ? .44 : .29;
-    ctx.globalAlpha = .72;
-    ctx.fillStyle = "#0b1718";
-    ctx.fillRect(signX*width-9,signY*height-22,110,29);
-    stamp(word,signX,signY,"#ffd386",18,1);
+    stamp(word,signX,signY,"#ffd386",18,1,true);
   }
   if (plateRoom === "washout" && plateStage === "oral") {
     for (let i=0; i<13; i++) stamp("=", .41+i*.016, .72-i*.004, "#ffc987",14,.6);

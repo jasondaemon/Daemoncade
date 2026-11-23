@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self'; style-src 'self'; img-src 'self'; base-uri 'none'; form-action 'none'">
   <title>The Names We Own</title>
-  <link rel="stylesheet" href="game.css?v=14">
+  <link rel="stylesheet" href="game.css?v=15">
   <script defer src="settings.js"></script>
   <script defer src="vendor/questjs/_util.js"></script>
   <script defer src="vendor/questjs/_settings.js"></script>
@@ -28,8 +28,9 @@
   <script defer src="encounter.js?v=11"></script>
   <script defer src="stakes.js?v=11"></script>
   <script defer src="checkpoint.js?v=11"></script>
-  <script defer src="scene-art.js?v=14"></script>
-  <script defer src="game.js?v=14"></script>
+  <script defer src="scene-glyphs.js?v=15"></script>
+  <script defer src="scene-art.js?v=15"></script>
+  <script defer src="game.js?v=15"></script>
 </head>
 <body>
   <header><h1>THE NAMES WE OWN</h1><span id="chapter">CHAPTER 1 / BELLWICK CROSSING</span></header>
@@ -38,7 +39,7 @@
       <div class="scene-view">
         <pre id="bridge" aria-hidden="true"></pre>
         <div id="scene-plate" aria-hidden="true" hidden>
-          <img id="scene-image" alt="" width="960" height="480" decoding="async">
+          <canvas id="scene-characters" width="960" height="480"></canvas>
           <canvas id="scene-effects" width="960" height="480"></canvas>
         </div>
         <section id="encounter" aria-labelledby="encounter-name" hidden>

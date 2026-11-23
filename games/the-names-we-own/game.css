@@ -122,11 +122,10 @@ button { min-height: 44px; color: #83ddb4; background: transparent; border: 0; f
   aspect-ratio: 2 / 1;
   overflow: hidden;
 }
-#scene-image, #scene-effects {
+#scene-characters, #scene-effects {
   position: absolute;
   inset: 0;
   width: 100%;
   height: 100%;
 }
-#scene-image { object-fit: cover; }
 #scene-effects { pointer-events: none; }
