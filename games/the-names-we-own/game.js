@@ -31,6 +31,7 @@ function syncSceneMotion() {
   motionButton.setAttribute("aria-pressed", String(motionPaused || motion.matches));
   if (!sceneMotionEnabled()) {
     stopPortrait();
+    paintSceneEffects(0);
     return;
   }
   ambientTimer = setInterval(() => {
